@@ -56,7 +56,7 @@ export default class GlobalHeaderRight extends PureComponent {
   };
 
   render() {
-    const fullscreenIcon = ['arrows-alt', 'shrink'];
+    const fullscreenIcon = ['fullscreen', 'fullscreen-exit'];
     const fullscreenText = ['全屏', '取消全屏'];
     const fullscreen = this.state.fullscreen;
 

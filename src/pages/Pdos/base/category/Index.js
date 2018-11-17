@@ -29,10 +29,10 @@ export default class Category extends React.PureComponent {
     };
 
     return (
-      <PageHeaderWrapper title="模块管理">
+      <PageHeaderWrapper title="分类编码">
         <Page>
-          <List {...listProps} />
-          {modalType !== '' && <AOEForm {...aoeProps} />}
+          <List key="category_list" {...listProps} />
+          {modalType !== '' && <AOEForm key="category_aoeform" {...aoeProps} />}
         </Page>
       </PageHeaderWrapper>
     )

@@ -6,46 +6,47 @@ const Area = Input.TextArea;
 const TreeNode = TreeSelect.TreeNode;
 
 @Form.create()
-export default class ModuleDetail extends Component {
+export default class AOEForm extends Component {
+  constructor() {
+    super();
+    console.info("123");
+  }
   componentDidMount() {
     // 加载树数据 - 只加载未停用状态的数据
-    console.info('load module detail');
+    console.info('load category detail');
   }
 
   // 关闭窗口
   handleCloseForm = () => {
     this.props.dispatch({
-      type: 'module/updateState',
+      type: 'category/updateState',
       payload: {
         modalType: '',
       },
     });
   };
 
-  // 校验路径唯一性
+  // 校验编码唯一性
   checkPath = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
     const that = this;
-    const path = getFieldValue('path');
-    const parentId = getFieldValue('parentId');
+    const code = getFieldValue('code');
     const { currentItem } = this.props;
-    if (currentItem && currentItem.id && value === currentItem.path) {
+    if (currentItem && currentItem.code && value === currentItem.code) {
       return callback();
     } 
-      const data = { path, parentId };
+      const data = { code };
       that.props
         .dispatch({
-          type: 'module/checkUnique',
+          type: 'category/checkUnique',
           payload: data,
         })
         .then(r => {
           if (r.success) {
             return callback();
           } 
-            return callback('该路径已存在');
-          
+            return callback('该分类编码已存在');
         });
-    
   };
 
   // 渲染树节点 - 剔除状态为停用状态(0000)得节点
@@ -67,16 +68,16 @@ export default class ModuleDetail extends Component {
             );
           }
           return (
-            <Node
+            <TreeNode
               title={item.name}
               pathName={item.pathName ? item.pathName : item.name}
               key={item.id}
               value={item.id}
             />
           );
-        } 
+        }
           return null;
-        
+
       })
       .filter(item => (item || false));
   };
@@ -96,7 +97,7 @@ export default class ModuleDetail extends Component {
       };
       data.status = data.status ? '0001' : '0000';
       dispatch({
-        type: 'module/save',
+        type: 'category/save',
         payload: data,
       });
     });
@@ -125,39 +126,29 @@ export default class ModuleDetail extends Component {
         onOk={() => this.handleSaveClick()}
         title={
           modalType === 'create'
-            ? '新增模块信息'
+            ? '新增分类编码'
             : modalType === 'edit'
-              ? '编辑模块信息'
-              : '查看模块信息'
+              ? '编辑分类编码'
+              : '查看分类编码'
         }
       >
         <Form>
           {/* 第一行 */}
-          <FormItem label="名称" hasFeedback {...formRowOne}>
+          <FormItem label="分类编码" hasFeedback {...formRowOne}>
+            {getFieldDecorator('code', {
+              initialValue: currentItem.code,
+              validateTrigger: 'onBlur',
+              rules: [{ required: true, message: '请输入分类编码' }, { validator: this.checkPath }],
+            })(<Input />)}
+          </FormItem>
+          <FormItem label="分类名称" hasFeedback {...formRowOne}>
             {getFieldDecorator('name', {
               initialValue: currentItem.name,
-              rules: [{ required: true, message: '请输入模块名称' }],
-            })(<Input />)}
-          </FormItem>
-          <FormItem label="path" hasFeedback {...formRowOne}>
-            {getFieldDecorator('path', {
-              initialValue: currentItem.path,
-              validateTrigger: 'onBlur',
-              rules: [{ required: true, message: '请输入path' }, { validator: this.checkPath }],
-            })(<Input />)}
-          </FormItem>
-          <FormItem label="icon" hasFeedback {...formRowOne}>
-            {getFieldDecorator('icon', {
-              initialValue: currentItem.icon,
-              rules: [
-                {
-                  message: '模块图标',
-                },
-              ],
+              rules: [{ required: true, message: '请输入name' }],
             })(<Input />)}
           </FormItem>
           {/* 第二行 */}
-          <FormItem label="上级节点" hasFeedback {...formRowOne}>
+          <FormItem label="上级编码" hasFeedback {...formRowOne}>
             {getFieldDecorator('parentId', {
               initialValue: currentItem.parentId,
             })(
@@ -170,35 +161,17 @@ export default class ModuleDetail extends Component {
                 treeNodeLabelProp="pathName"
                 placeholder="请选择上级节点"
               >
-                <Node title="根节点" pathName="根节点" key="0" value="0" />
+                <TreeNode title="根节点" pathName="根节点" key="0" value="0" />
                 {this.renderTreeNodes(data)}
               </TreeSelect>
             )}
           </FormItem>
-          {/* 第三行 */}
-          <Row>
-            <Col span={12}>
-              <FormItem label="排序" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('orders', {
-                  initialValue: currentItem.orders,
-                  rules: [
-                    {
-                      type: 'number',
-                      message: '显示顺序',
-                    },
-                  ],
-                })(<InputNumber />)}
-              </FormItem>
-            </Col>
-            <Col span={12}>
-              <FormItem label="状态" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('status', {
-                  valuePropName: 'checked',
-                  initialValue: currentItem.status !== '0000',
-                })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
-              </FormItem>
-            </Col>
-          </Row>
+          <FormItem label="状态" hasFeedback {...formRowOne}>
+            {getFieldDecorator('status', {
+              valuePropName: 'checked',
+              initialValue: currentItem.status !== '0000',
+            })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
+          </FormItem>
           {/* 第四行 */}
           <FormItem label="备注" hasFeedback {...formRowOne}>
             {getFieldDecorator('remark', {

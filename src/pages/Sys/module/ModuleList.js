@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Table,
+  Switch,
   Icon,
   Alert,
   Popconfirm,
@@ -43,7 +44,6 @@ export default class ModuleList extends Component {
           }
         : {};
 
-    console.info(record);
     this.props.dispatch({
       type: 'module/create',
       payload: {
@@ -69,7 +69,7 @@ export default class ModuleList extends Component {
   };
 
   // 启用/停用
-  handleEnable = (record, e, status) => {
+  handleEnable = (record, checked) => {
     if (!record.id) {
       notification.error('没有选择记录');
       return;
@@ -78,7 +78,7 @@ export default class ModuleList extends Component {
       type: 'module/changeStatus',
       payload: {
         id: record.id,
-        status,
+        status: checked? '0001' : '0000',
         record,
       },
     });
@@ -164,9 +164,6 @@ export default class ModuleList extends Component {
   render() {
     const { data, selectedRowKeys, loading } = this.props;
 
-    const statusMap = { '0000': 'error', '0001': 'success' };
-    const status = { '0000': '已停用', '0001': '正常' };
-
     const column = [
       {
         title: '模块名称',
@@ -197,7 +194,7 @@ export default class ModuleList extends Component {
               <Divider type="vertical" />
               {size !== 0 && index !== size - 1 ? (
                 <BizIcon
-                  onClick={e => this.handleSort(brother, index, 'down')}
+                  onClick={() => this.handleSort(brother, index, 'down')}
                   type="descending"
                   style={{ color: '#098FFF', cursor: 'pointer' }}
                 />
@@ -206,7 +203,7 @@ export default class ModuleList extends Component {
               )}
               {size !== 0 && index !== 0 ? (
                 <BizIcon
-                  onClick={e => this.handleSort(brother, index, 'up')}
+                  onClick={() => this.handleSort(brother, index, 'up')}
                   style={{ color: '#098FFF', cursor: 'pointer' }}
                   type="ascending"
                 />
@@ -220,33 +217,25 @@ export default class ModuleList extends Component {
       {
         title: '状态',
         dataIndex: 'status',
-        render: text => <Badge status={statusMap[text]} text={status[text]} />,
+        render: (text, record) => (
+          <Switch onChange={(checked) => this.handleEnable(record, checked)}
+                  checkedChildren={<Icon type="check" />}
+                  unCheckedChildren={<Icon type="close" />}
+                  checked={'0001' === text} />
+        ),
       },
       {
         title: '操作',
         render: (text, record) =>
           record.status === '0001' && (
             <div>
-              <a onClick={e => this.handleEdit(record)}>编辑</a>
+              <a onClick={e => this.handleDelete(record, e)}>删除</a>
               <Divider type="vertical" />
-              <a onClick={e => this.handleAdd(record)}>添加下级</a>
+              <a onClick={() => this.handleEdit(record)}>编辑</a>
+              <Divider type="vertical" />
+              <a onClick={() => this.handleAdd(record)}>添加下级</a>
             </div>
           ),
-      },
-      {
-        title: '是否启用',
-        width: 150,
-        render: (text, record) => (
-          <div>
-            {record.status === '0000' ? (
-              <a onClick={e => this.handleEnable(record, e, '0001')}>启用</a>
-            ) : (
-              <a onClick={e => this.handleEnable(record, e, '0000')}>停用</a>
-            )}
-            <Divider type="vertical" />
-            <a onClick={e => this.handleDelete(record, e)}>删除</a>
-          </div>
-        ),
       },
     ];
 

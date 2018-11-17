@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Table,
+  Switch,
   Icon,
   Alert,
   Popconfirm,
@@ -18,19 +19,18 @@ import { hasChildren, getNodeBorther } from '@/utils/DataHelper';
 import styles from './Index.less';
 import tableStyle from '@/common/style/Table.less';
 import { connect } from 'dva';
-import BizIcon from '@/components/BizIcon';
 
 const { Search } = { ...Input };
 
 // 部门管理列表
 @connect(({ loading }) => ({
-  loading: loading.models.module,
+  loading: loading.models.category,
 }))
-export default class ModuleList extends Component {
+export default class List extends Component {
   // 加载模块列表
   componentDidMount() {
     this.props.dispatch({
-      type: 'module/listModule',
+      type: 'category/list',
     });
   }
 
@@ -44,7 +44,7 @@ export default class ModuleList extends Component {
         : {};
 
     this.props.dispatch({
-      type: 'module/create',
+      type: 'category/create',
       payload: {
         modalType: 'create',
         currentItem: parentId,
@@ -59,7 +59,7 @@ export default class ModuleList extends Component {
       return;
     }
     this.props.dispatch({
-      type: 'module/edit',
+      type: 'category/edit',
       payload: {
         modalType: 'edit',
         id: record.id,
@@ -74,7 +74,7 @@ export default class ModuleList extends Component {
       return;
     }
     this.props.dispatch({
-      type: 'module/changeStatus',
+      type: 'category/changeStatus',
       payload: {
         id: record.id,
         status,
@@ -93,7 +93,7 @@ export default class ModuleList extends Component {
       message.error(`错误： [${record.name}] 存在子节点,无法删除.`);
     } else {
       dispatch({
-        type: 'module/delete',
+        type: 'category/delete',
         payload: {
           param: [record.id],
         },
@@ -113,7 +113,7 @@ export default class ModuleList extends Component {
       message.error(`错误： [${blockItem}] 存在子节点,无法删除.`);
     } else {
       dispatch({
-        type: 'module/delete',
+        type: 'category/delete',
         payload: {
           param: selectedRowKeys,
         },
@@ -126,7 +126,7 @@ export default class ModuleList extends Component {
   handleSearch = val => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'module/listModule',
+      type: 'category/list',
       payload: val,
     });
   };
@@ -134,118 +134,40 @@ export default class ModuleList extends Component {
   // 行选
   handleSelectRows = rows => {
     this.props.dispatch({
-      type: 'module/updateState',
+      type: 'category/updateState',
       payload: { selectedRowKeys: rows },
-    });
-  };
-
-  // 排序操作
-  handleSort = (nodes, index, upOrDown) => {
-    const orginOrders = index;
-    const targetID = upOrDown === 'up' ? nodes[index - 1].id : nodes[index + 1].id;
-    const targetOrders = upOrDown === 'up' ? index - 1 : index + 1;
-    const switchObj = [
-      {
-        id: nodes[index].id,
-        orders: targetOrders,
-      },
-      {
-        id: targetID,
-        orders: orginOrders,
-      },
-    ];
-    this.props.dispatch({
-      type: 'module/sortModule',
-      payload: switchObj,
     });
   };
 
   render() {
     const { data, selectedRowKeys, loading } = this.props;
 
-    console.info(data);
-
-    const statusMap = { '0000': 'error', '0001': 'success' };
-    const status = { '0000': '已停用', '0001': '正常' };
-
     const column = [
       {
-        title: '模块名称',
+        title: '分类编码',
         dataIndex: 'name',
       },
       {
-        title: '图标',
-        dataIndex: 'icon',
-        render: text => <Icon type={text} />,
-      },
-      {
-        title: 'Path',
-        dataIndex: 'path',
-      },
-      {
-        title: '上级模块',
-        dataIndex: 'parentName',
-      },
-      {
-        title: '排序',
-        dataIndex: 'orders',
-        render: (text, record, index) => {
-          const brother = getNodeBorther(data, record.parentId);
-          const size = brother.length;
-          return (
-            <div>
-              {text}
-              <Divider type="vertical" />
-              {size !== 0 && index !== size - 1 ? (
-                <BizIcon
-                  onClick={e => this.handleSort(brother, index, 'down')}
-                  type="descending"
-                  style={{ color: '#098FFF', cursor: 'pointer' }}
-                />
-              ) : (
-                <BizIcon type="descending" />
-              )}
-              {size !== 0 && index !== 0 ? (
-                <BizIcon
-                  onClick={e => this.handleSort(brother, index, 'up')}
-                  style={{ color: '#098FFF', cursor: 'pointer' }}
-                  type="ascending"
-                />
-              ) : (
-                <BizIcon type="ascending" />
-              )}
-            </div>
-          );
-        },
+        title: '分类名称',
+        dataIndex: 'name',
       },
       {
         title: '状态',
         dataIndex: 'status',
-        render: text => <Badge status={statusMap[text]} text={status[text]} />,
+        render: (text) => (
+          <Switch checkedChildren={<Icon type="check" />}
+                  unCheckedChildren={<Icon type="close" />}
+                  checked={'0001' === text} />
+        )
       },
       {
-        title: '操作',
-        render: (text, record) =>
-          record.status === '0001' && (
-            <div>
-              <a onClick={e => this.handleEdit(record)}>编辑</a>
-              <Divider type="vertical" />
-              <a onClick={e => this.handleAdd(record)}>添加下级</a>
-            </div>
-          ),
-      },
-      {
-        title: '是否启用',
+        title: '',
         width: 150,
         render: (text, record) => (
           <div>
-            {record.status === '0000' ? (
-              <a onClick={e => this.handleEnable(record, e, '0001')}>启用</a>
-            ) : (
-              <a onClick={e => this.handleEnable(record, e, '0000')}>停用</a>
-            )}
-            <Divider type="vertical" />
             <a onClick={e => this.handleDelete(record, e)}>删除</a>
+            <Divider type="vertical" />
+            <a onClick={e => this.handleEdit(record)}>编辑</a>
           </div>
         ),
       },
