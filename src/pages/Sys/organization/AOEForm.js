@@ -124,6 +124,7 @@ export default class AOEForm extends Component {
 
     return (
       <Modal
+        maskClosable = { false }
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}

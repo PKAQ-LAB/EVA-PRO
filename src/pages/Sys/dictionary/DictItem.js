@@ -63,6 +63,7 @@ export default class DictItem extends React.PureComponent {
 
     return (
       <Modal
+        maskClosable = { false }
         title={itemOperateType === 'edit' ? '字典项编辑' : '字典项新增'}
         visible
         onCancel={() => this.handleCloseForm()}

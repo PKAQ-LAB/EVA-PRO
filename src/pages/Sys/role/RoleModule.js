@@ -55,6 +55,7 @@ export default class RoleModule extends PureComponent {
     const { data, checked } = { ...this.props.data };
     return (
       <Modal
+        maskClosable = { false }
         title="选择授权模块"
         okText="保存"
         cancelText="关闭"

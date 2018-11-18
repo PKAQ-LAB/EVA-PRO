@@ -17,14 +17,14 @@ const axiosWrap = axios.create({
 /* 过滤请求 */
 axiosWrap.interceptors.request.use(config => config);
 /* 过滤响应 */
-axiosWrap.interceptors.response.use((result) => {
-  /* 假设当code为0时代表响应成功 */
-  if (result.data.status !== 200) {
-    return Promise.reject(result)
-  }
-  return result;
-}, (error) => {
-  return Promise.reject(error)
-});
+// axiosWrap.interceptors.response.use((result) => {
+//   /* 假设当code为0时代表响应成功 */
+//   if (result.data.status !== 200) {
+//     return Promise.reject(result)
+//   }
+//   return result;
+// }, (error) => {
+//   return Promise.reject(error)
+// });
 
 export default axiosWrap;
