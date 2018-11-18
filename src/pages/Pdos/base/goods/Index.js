@@ -14,6 +14,7 @@ const { TreeNode } = { ...Tree };
 // 把state.goods定给组件的goods
 @connect(state => ({
   goods: state.goods,
+  categorys: state.category,
 }))
 @Form.create()
 export default class Index extends PureComponent {
@@ -23,8 +24,10 @@ export default class Index extends PureComponent {
     dispatch({
       type: 'goods/fetch',
     });
+    dispatch({
+      type: 'category/list',
+    });
   }
-
   // 树节点选择
   onSelect = selectedKeys => {
     const { dispatch } = this.props;
@@ -94,25 +97,35 @@ export default class Index extends PureComponent {
       },
     });
   };
-
-  // 左侧树
+  // 渲染树节点
+  renderTreeNodes(data) {
+    return data.map(item => {
+      if (item.children) {
+        return (
+          <TreeNode title={item.name} key={item.id} value={item.id}>
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode title={item.name} key={item.id} value={item.id} />;
+    });
+  }
+      // 左侧树
   renderCategoryTree() {
+
+    const { data } = this.props.categorys;
+    let first = [];
+    if (data && data.length > 0){
+      first.push(data[0].key);
+    }
+    console.info(first);
     return (
       <Card bordered={false}>
         <div className={styles.goodsInfoCategory}>
           <Icon type="tags" />选择商品分类
         </div>
-        <Tree showLine defaultExpandedKeys={['021']} onSelect={this.onSelect}>
-          <TreeNode title="parent 1" key="0">
-            <TreeNode title="parent 1-0" key="01">
-              <TreeNode title="leaf" key="012" />
-              <TreeNode title="leaf" key="014" />
-            </TreeNode>
-          </TreeNode>
-          <TreeNode title="parent 1-2" key="03">
-            <TreeNode title="leaf" key="031" />
-            <TreeNode title="leaf" key="032" />
-          </TreeNode>
+        <Tree showLine expandedKeys={ first } onSelect={this.onSelect}>
+          {this.renderTreeNodes(data)}
         </Tree>
       </Card>
     );

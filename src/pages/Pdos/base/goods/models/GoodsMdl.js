@@ -7,6 +7,7 @@ export default modelExtend(pageModel, {
   state: {
     currentItem: {},
     modalVisible: false,
+    categorys: [],
     modalType: 'create',
     expandForm: false,
     selectedRowKeys: [],
