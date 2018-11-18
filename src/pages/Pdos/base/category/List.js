@@ -68,7 +68,7 @@ export default class List extends Component {
   };
 
   // 启用/停用
-  handleEnable = (record, e, status) => {
+  handleEnable = (record, checked) => {
     if (!record.id) {
       notification.error('没有选择记录');
       return;
@@ -77,7 +77,7 @@ export default class List extends Component {
       type: 'category/changeStatus',
       payload: {
         id: record.id,
-        status,
+        status: checked? '0001' : '0000',
         record,
       },
     });
@@ -145,7 +145,7 @@ export default class List extends Component {
     const column = [
       {
         title: '分类编码',
-        dataIndex: 'name',
+        dataIndex: 'code',
       },
       {
         title: '分类名称',
@@ -154,8 +154,9 @@ export default class List extends Component {
       {
         title: '状态',
         dataIndex: 'status',
-        render: (text) => (
-          <Switch checkedChildren={<Icon type="check" />}
+        render: (text, record) => (
+          <Switch onChange={(checked) => this.handleEnable(record, checked)}
+                  checkedChildren={<Icon type="check" />}
                   unCheckedChildren={<Icon type="close" />}
                   checked={'0001' === text} />
         )
@@ -165,9 +166,9 @@ export default class List extends Component {
         width: 150,
         render: (text, record) => (
           <div>
-            <a onClick={e => this.handleDelete(record, e)}>删除</a>
+            <a onClick={() => this.handleEdit(record)}>编辑</a>
             <Divider type="vertical" />
-            <a onClick={e => this.handleEdit(record)}>编辑</a>
+            <a onClick={e => this.handleDelete(record, e)}>删除</a>
           </div>
         ),
       },
@@ -186,7 +187,7 @@ export default class List extends Component {
           <Col xl={6} lg={6} md={6} sm={6} xs={6}>
             <div>
               <Button icon="plus" type="primary" onClick={() => this.handleAdd('')}>
-                新增
+                新增分类
               </Button>
               {selectedRowKeys.length > 0 && (
                 <span>
@@ -195,7 +196,8 @@ export default class List extends Component {
                     placement="top"
                     onConfirm={() => this.handleBatchDelete()}
                   >
-                    <Button>删除菜单</Button>
+                    <Divider type="vertical" />
+                    <Button icon="delete" type="danger">删除分类</Button>
                   </Popconfirm>
                 </span>
               )}
@@ -203,7 +205,7 @@ export default class List extends Component {
           </Col>
           <Col xl={6} lg={6} md={6} sm={6} xs={6} offset={12}>
             <Search
-              placeholder="输入模块名称以搜索"
+              placeholder="输入分类名称以搜索"
               onSearch={value => this.handleSearch(value)}
               style={{ width: '100%' }}
             />
@@ -229,6 +231,7 @@ export default class List extends Component {
           columns={column}
           dataSource={data}
           loading={loading}
+          defaultExpandAllRows
           rowClassName={record => record.status === '0000' ? styles.disabled : styles.enabled}
           pagination={false}
           rowKey={record => record.id}

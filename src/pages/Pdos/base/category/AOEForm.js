@@ -7,10 +7,6 @@ const TreeNode = TreeSelect.TreeNode;
 
 @Form.create()
 export default class AOEForm extends Component {
-  constructor() {
-    super();
-    console.info("123");
-  }
   componentDidMount() {
     // 加载树数据 - 只加载未停用状态的数据
     console.info('load category detail');
@@ -27,7 +23,7 @@ export default class AOEForm extends Component {
   };
 
   // 校验编码唯一性
-  checkPath = (rule, value, callback) => {
+  checkCode = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
     const that = this;
     const code = getFieldValue('code');
@@ -42,6 +38,7 @@ export default class AOEForm extends Component {
           payload: data,
         })
         .then(r => {
+          console.info(r);
           if (r.success) {
             return callback();
           } 
@@ -120,6 +117,7 @@ export default class AOEForm extends Component {
 
     return (
       <Modal
+        maskClosable = {false}
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}
@@ -138,13 +136,13 @@ export default class AOEForm extends Component {
             {getFieldDecorator('code', {
               initialValue: currentItem.code,
               validateTrigger: 'onBlur',
-              rules: [{ required: true, message: '请输入分类编码' }, { validator: this.checkPath }],
+              rules: [{ required: true, message: '请输入分类编码' }, { validator: this.checkCode }],
             })(<Input />)}
           </FormItem>
           <FormItem label="分类名称" hasFeedback {...formRowOne}>
             {getFieldDecorator('name', {
               initialValue: currentItem.name,
-              rules: [{ required: true, message: '请输入name' }],
+              rules: [{ required: true, message: '请输入分类名称' }],
             })(<Input />)}
           </FormItem>
           {/* 第二行 */}

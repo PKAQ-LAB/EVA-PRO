@@ -1,12 +1,7 @@
 import modelExtend from 'dva-model-extend';
 import { model } from '@/common/model/BaseModel';
-import { messsage } from 'antd';
-import {checkUnique} from '../../../../Sys/module/services/Module';
-import {listModule} from '../../../../Sys/module/services/Module';
-import {getModule} from '../../../../Sys/module/services/Module';
-import {sortModule} from '../../../../Sys/module/services/Module';
-import {editModule} from '../../../../Sys/module/services/Module';
-import {deleteModule} from '../../../../Sys/module/services/Module';
+import { message } from 'antd';
+import { listCategory, checkUnique, editCategory, getCategory, deleteCategory, switchCategory } from '../services/CategorySvc';
 
 export default modelExtend(model, {
   namespace: 'category',
@@ -22,9 +17,9 @@ export default modelExtend(model, {
       return yield call(checkUnique, payload);
     },
     // 查询
-    *listModule({ payload }, { call, put }) {
+    *list({ payload }, { call, put }) {
       // 查询数据
-      const response = yield call(listModule, payload);
+      const response = yield call(listCategory, payload);
       if (response && response.data) {
         yield put({
           type: 'saveData',
@@ -44,7 +39,7 @@ export default modelExtend(model, {
     },
     // 编辑按钮
     *edit({ payload }, { call, put }) {
-      const response = yield call(getModule, payload);
+      const response = yield call(getCategory, payload);
       if (response && response.data) {
         yield put({
           type: 'updateState',
@@ -55,21 +50,9 @@ export default modelExtend(model, {
         });
       }
     },
-    // 排序
-    *sort({ payload }, { call, put }) {
-      const response = yield call(sortModule, payload);
-      if (response && response.data) {
-        yield put({
-          type: 'updateState',
-          payload: {
-            data: response.data,
-          },
-        });
-      }
-    },
     // 保存一条模块信息
     *save({ payload }, { call, put }) {
-      const response = yield call(editModule, payload);
+      const response = yield call(editCategory, payload);
       if (response && response.data) {
         //  关闭窗口 - 提示成功 - 加载数据
         yield put({
@@ -94,7 +77,7 @@ export default modelExtend(model, {
     },
     // 更改可用状态
     *changeStatus({ payload }, { call, put }) {
-      const response = yield call(editModule, payload);
+      const response = yield call(switchCategory, payload);
       if (response) {
         payload.record.status = payload.status;
         yield put({
@@ -106,7 +89,7 @@ export default modelExtend(model, {
     // 删除数据
     *delete({ payload, callback }, { call, put }) {
       // 查询数据
-      const response = yield call(deleteModule, payload);
+      const response = yield call(deleteCategory, payload);
       // 只有返回成功时才刷新
       if (response && response.success) {
         // 从当前数据对象中找到响应ID记录删除值
