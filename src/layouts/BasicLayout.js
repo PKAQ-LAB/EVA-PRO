@@ -158,9 +158,9 @@ export default class BasicLayout extends React.PureComponent {
 
   getMenuData() {
     const {
-      route: { routes },
+      route: { routes, authority },
     } = this.props;
-    return memoizeOneFormatter(routes);
+    return memoizeOneFormatter(routes, authority);
   }
 
   /**
@@ -195,7 +195,7 @@ export default class BasicLayout extends React.PureComponent {
     if (!currRouterData) {
       return AppInfo.title;
     }
-    const message = formatMessage({
+    const pageName = formatMessage({
       id: currRouterData.locale || currRouterData.name,
       defaultMessage: currRouterData.name,
     });

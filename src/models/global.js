@@ -10,11 +10,11 @@ export default {
   },
 
   effects: {
-    // 鑾峰彇鑿滃崟
+    // 获取菜单
     *fetchMenus({ payload }, { put, call }) {
       const response = yield call(getUserMenu, payload);
       if (response && response.data) {
-        // 鏌ヨ鏁版嵁
+        // 查询数据
         yield put({
           type: 'updateState',
           payload: {
@@ -31,9 +31,15 @@ export default {
         type: 'saveNotices',
         payload: data,
       });
+      const unreadCount = yield select(
+        state => state.global.notices.filter(item => !item.read).length
+      );
       yield put({
         type: 'user/changeNotifyCount',
-        payload: data.length,
+        payload: {
+          totalCount: data.length,
+          unreadCount,
+        },
       });
     },
     *clearNotices({ payload }, { put, select }) {
@@ -42,9 +48,37 @@ export default {
         payload,
       });
       const count = yield select(state => state.global.notices.length);
+      const unreadCount = yield select(
+        state => state.global.notices.filter(item => !item.read).length
+      );
       yield put({
         type: 'user/changeNotifyCount',
-        payload: count,
+        payload: {
+          totalCount: count,
+          unreadCount,
+        },
+      });
+    },
+    *changeNoticeReadState({ payload }, { put, select }) {
+      const notices = yield select(state =>
+        state.global.notices.map(item => {
+          const notice = { ...item };
+          if (notice.id === payload) {
+            notice.read = true;
+          }
+          return notice;
+        })
+      );
+      yield put({
+        type: 'saveNotices',
+        payload: notices,
+      });
+      yield put({
+        type: 'user/changeNotifyCount',
+        payload: {
+          totalCount: notices.length,
+          unreadCount: notices.filter(item => !item.read).length,
+        },
       });
     },
   },
