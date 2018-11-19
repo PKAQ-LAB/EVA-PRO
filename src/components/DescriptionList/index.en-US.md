@@ -4,7 +4,7 @@ cols: 1
 order: 4
 ---
 
-Groups display multiple read-only fields, which are common to informational displays on detail pages.
+Groups display multiple read-only fields, which are common to informational displays on AOEForm pages.
 
 ## API
 

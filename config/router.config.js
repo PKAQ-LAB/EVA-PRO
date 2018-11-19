@@ -37,7 +37,7 @@ export default [
           // 基
           { path: '/pdos/base', name: 'base', routes: [
               { path: '/pdos/base/category', name: 'category', component: './Pdos/base/category' },
-              // { path: '/pdos/base/goods', name: 'goods', component: './Pdos/baser/goods' },
+              { path: '/pdos/base/goods', name: 'goods', component: './Pdos/base/goods' },
               // { path: '/pdos/base/supplier', name: 'supplier', component: './Pdos/base/supplier' },
               // { path: '/pdos/base/warehouse', name: 'warehouse', component: './Pdos/base/warehouse' },
             ] },

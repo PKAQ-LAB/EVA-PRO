@@ -67,7 +67,7 @@ const breadcrumbList = [{
 }];
 
 const tabList = [{
-  key: 'detail',
+  key: 'AOEForm',
   tab: '详情',
 }, {
   key: 'rule',
@@ -88,7 +88,7 @@ ReactDOM.render(
       extraContent={extra}
       breadcrumbList={breadcrumbList}
       tabList={tabList}
-      tabActiveKey="detail"
+      tabActiveKey="AOEForm"
       onTabChange={onTabChange}
     />
   </div>
