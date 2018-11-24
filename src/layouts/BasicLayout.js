@@ -7,7 +7,6 @@ import { connect } from 'dva';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
 import pathToRegexp from 'path-to-regexp';
-import Media from 'react-media';
 import { formatMessage } from 'umi/locale';
 import Authorized from '@/utils/Authorized';
 import logo from '../assets/logo.svg';
@@ -48,16 +47,12 @@ const query = {
     minWidth: 1600,
   },
 };
-@connect(({ global, setting }) => ({
+@connect(({ global, setting, menu }) => ({
   collapsed: global.collapsed,
-  menus: global.menus,
+  menuData: menu.menuData,
   layout: setting.layout,
   ...setting,
-}))(props => (
-  <Media query="(max-width: 599px)">
-    {isMobile => <BasicLayout {...props} isMobile={isMobile} />}
-  </Media>
-))
+}))
 export default class BasicLayout extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -66,16 +61,13 @@ export default class BasicLayout extends React.PureComponent {
     this.breadcrumbNameMap = this.getBreadcrumbNameMap();
     this.matchParamsPath = memoizeOne(this.matchParamsPath, isEqual);
 
+    console.info("!2333321");
     /** 获取菜单 **/
-    this.props.dispatch({
-      type: 'global/fetchMenus',
-    });
+    // this.props.dispatch({
+    //   type: 'global/fetchMenus',
+    // });
   }
 
-  state = {
-    rendering: true,
-    isMobile: false,
-  };
   componentDidMount() {
     const {
       dispatch,
@@ -103,8 +95,8 @@ export default class BasicLayout extends React.PureComponent {
     // After changing to phone mode,
     // if collapsed is true, you need to click twice to display
     this.breadcrumbNameMap = this.getBreadcrumbNameMap();
-    const { collapsed, isMobile } = this.props;
-    if (isMobile && !preProps.isMobile && !collapsed) {
+    const { collapsed } = this.props;
+    if (!collapsed) {
       this.handleMenuCollapse(false);
     }
   }
@@ -154,12 +146,12 @@ export default class BasicLayout extends React.PureComponent {
       id: currRouterData.locale || currRouterData.name,
       defaultMessage: currRouterData.name,
     });
-    return `${message} -${AppInfo.title}`;
+    return `${pageName} -${AppInfo.title}`;
   };
 
   getLayoutStyle = () => {
-    const { fixSiderbar, isMobile, collapsed, layout } = this.props;
-    if (fixSiderbar && layout !== 'topmenu' && !isMobile) {
+    const { fixSiderbar, collapsed, layout } = this.props;
+    if (fixSiderbar && layout !== 'topmenu') {
       return {
         paddingLeft: collapsed ? '80px' : '256px',
       };
@@ -197,23 +189,20 @@ export default class BasicLayout extends React.PureComponent {
       navTheme,
       layout: PropsLayout,
       children,
-      menus,
       location: { pathname },
-      isMobile,
       menuData,
     } = this.props;
-    const { isMobile } = this.state;
+    
     const isTop = PropsLayout === 'topmenu';
     const routerConfig = this.matchParamsPath(pathname);
     const layout = (
       <Layout>
-        {isTop && !isMobile ? null : (
+        {isTop ? null : (
           <SiderMenu
             logo={logo}
             theme={navTheme}
             onCollapse={this.handleMenuCollapse}
-            menuData={menus}
-            isMobile={isMobile}
+            menuData={menuData}
             {...this.props}
           />
         )}
@@ -224,10 +213,9 @@ export default class BasicLayout extends React.PureComponent {
           }}
         >
           <Header
-            menuData={menus}
+            menuData={menuData}
             handleMenuCollapse={this.handleMenuCollapse}
             logo={logo}
-            isMobile={isMobile}
             {...this.props}
           />
           <Content style={this.getContentStyle()}>
