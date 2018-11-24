@@ -25,17 +25,16 @@
     "docker:build": "docker-compose -f ./docker/docker-compose.dev.yml build",
     "docker-prod:dev": "docker-compose -f ./docker/docker-compose.yml up",
     "docker-prod:build": "docker-compose -f ./docker/docker-compose.yml build",
-    "docker-hub:build":"docker build  -f Dockerfile.hub -t  ant-design-pro ./",
-    "docker:tag":"docker tag ant-design-pro chenshuai2144/ant-design-pro",
-    "docker:push":"npm run docker-hub:build && npm run docker:tag && docker push chenshuai2144/ant-design-pro"
+    "docker-hub:build": "docker build  -f Dockerfile.hub -t  ant-design-pro ./",
+    "docker:tag": "docker tag ant-design-pro chenshuai2144/ant-design-pro",
+    "docker:push": "npm run docker-hub:build && npm run docker:tag && docker push chenshuai2144/ant-design-pro"
   },
   "dependencies": {
-    "@antv/data-set": "^0.9.6",
-    "@babel/runtime": "^7.1.2",
-    "antd": "^3.10.4",
+    "@babel/runtime": "^7.1.5",
+    "antd": "^3.10.8",
+    "bizcharts": "^3.3.0",
+    "bizcharts-plugin-slider": "^2.1.1-beta.1",
     "axios": "^0.18.0",
-    "bizcharts": "^3.2.2",
-    "bizcharts-plugin-slider": "^2.0.3",
     "classnames": "^2.2.6",
     "dva": "^2.4.0",
     "dva-model-extend": "^0.1.2",
@@ -61,7 +60,9 @@
     "react-dom": "^16.5.1",
     "react-fittext": "^1.0.0",
     "react-router-dom": "^4.3.1",
-    "screenfull": "^3.3.2"
+    "screenfull": "^3.3.2",
+    "react-media": "^1.8.0",
+    "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
     "@antv/data-set": "^0.10.0",

@@ -7,7 +7,6 @@ import router from 'umi/router';
 import GlobalHeader from '@/components/GlobalHeader';
 import TopNavHeader from '@/components/TopNavHeader';
 import styles from './Header.less';
-import Authorized from '@/utils/Authorized';
 
 const { Header } = Layout;
 
@@ -135,7 +134,6 @@ export default class HeaderView extends PureComponent {
           <TopNavHeader
             theme={navTheme}
             mode="horizontal"
-            Authorized={Authorized}
             onCollapse={handleMenuCollapse}
             onNoticeClear={this.handleNoticeClear}
             onMenuClick={this.handleMenuClick}
