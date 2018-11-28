@@ -2,8 +2,19 @@ import React, { PureComponent } from 'react';
 import { Table, Alert, Divider } from 'antd';
 import { getValue } from '@/utils/utils';
 import styles from './List.less';
+import { connect } from 'dva';
 
+@connect(({ loading }) => ({
+  loading: loading.models.goods,
+}))
 class List extends PureComponent {
+  // 组件加载完成后加载数据
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'goods/fetch',
+    });
+  }
   // 清除选择
   cleanSelectedKeys = () => {
     this.handleSelectRows([]);
@@ -67,7 +78,7 @@ class List extends PureComponent {
   };
 
   render() {
-    const { selectedRowKeys, list, pagination, loading } = this.props;
+    const { selectedRowKeys, data, pagination, loading } = this.props;
 
     const columns = [
       {
@@ -76,13 +87,18 @@ class List extends PureComponent {
         sorter: true,
       },
       {
-        title: '分类',
+        title: '品类',
         dataIndex: 'category',
         render: val => <div style={{ textAlign: 'center' }}>{val}</div>,
       },
       {
-        title: '编码',
-        dataIndex: 'code',
+        title: '型号',
+        dataIndex: 'model',
+        sorter: true,
+      },
+      {
+        title: '助记码',
+        dataIndex: 'mnemonic',
         sorter: true,
       },
       {
@@ -93,15 +109,16 @@ class List extends PureComponent {
       },
       {
         title: '装箱规格',
-        dataIndex: 'spec',
+        dataIndex: 'boxunit',
       },
       {
         title: '条码',
-        dataIndex: 'qrcode',
+        dataIndex: 'barcode',
         sorter: true,
       },
       {
         title: '操作',
+        align: 'center',
         render: (text, record) => (
           <div>
             <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
@@ -144,9 +161,9 @@ class List extends PureComponent {
         <Table
           loading={loading}
           bordered
-          rowKey={record => record.key}
+          rowKey={record => record.id}
           rowSelection={rowSelectionProps}
-          dataSource={list}
+          dataSource={data.records}
           columns={columns}
           pagination={paginationProps}
           onSelectRow={this.handleSelectRows}

@@ -22,9 +22,6 @@ export default class Index extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'goods/fetch',
-    });
-    dispatch({
       type: 'category/list',
     });
   }
@@ -32,7 +29,7 @@ export default class Index extends PureComponent {
   onSelect = selectedKeys => {
     const { dispatch } = this.props;
     const values = {
-      category: selectedKeys[0],
+      category: "0" === selectedKeys[0]? null: selectedKeys[0],
     };
     dispatch({
       type: 'goods/fetch',
@@ -90,7 +87,7 @@ export default class Index extends PureComponent {
   handleModalVisible = () => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'goods/showModal',
+      type: 'goods/updateState',
       payload: {
         modalType: 'create',
         currentItem: {},
@@ -114,18 +111,15 @@ export default class Index extends PureComponent {
   renderCategoryTree() {
 
     const { data } = this.props.categorys;
-    let first = [];
-    if (data && data.length > 0){
-      first.push(data[0].key);
-    }
-    console.info(first);
     return (
       <Card bordered={false}>
         <div className={styles.goodsInfoCategory}>
           <Icon type="tags" />选择商品分类
         </div>
-        <Tree showLine expandedKeys={ first } onSelect={this.onSelect}>
+        <Tree showLine expandedKeys={["0"]} onSelect={this.onSelect}>
+          <TreeNode title="全部" value="all" key="0">
           {this.renderTreeNodes(data)}
+          </TreeNode>
         </Tree>
       </Card>
     );
@@ -139,12 +133,12 @@ export default class Index extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="商品名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('name')(<Input placeholder="商品名称" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="商品编码">
-              {getFieldDecorator('code')(<Input placeholder="请输入" />)}
+            <FormItem label="条码">
+              {getFieldDecorator('barcode')(<Input placeholder="商品条形码" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -166,42 +160,24 @@ export default class Index extends PureComponent {
   render() {
     const { dispatch } = this.props;
     const {
-      loading,
       data,
       selectedRowKeys,
-      modalVisible,
       modalType,
       currentItem,
     } = this.props.goods;
 
     const listPops = {
       dispatch,
-      loading,
       data,
       selectedRowKeys,
     };
 
-    const modalProps = {
-      item: modalType === 'create' ? {} : currentItem,
-      visible: modalVisible,
-      maskClosable: false,
-      // confirmLoading: loading.effects['goods/update'],
-      title: `${modalType === 'create' ? '新增商品' : '编辑商品'}`,
-      wrapClassName: 'vertical-center-modal',
-      onOk(detailData) {
-        dispatch({
-          type: 'goods/add',
-          payload: detailData,
-        });
-        message.success('添加成功');
-      },
-      onCancel() {
-        dispatch({
-          type: 'goods/hideModal',
-        });
-      },
+    const aoeProps = {
+      data,
+      dispatch,
+      currentItem,
+      modalType,
     };
-
     return (
       <PageHeaderWrapper title="商品基本信息查询">
         <Row gutter={24}>
@@ -240,7 +216,7 @@ export default class Index extends PureComponent {
           </Col>
         </Row>
         {/* 新增窗口 */}
-        {modalVisible && <Detail {...modalProps} />}
+        {modalType !== ''  && <Detail {...aoeProps} />}
       </PageHeaderWrapper>
     );
   }

@@ -81,6 +81,7 @@ export default {
   effects: {
     *getMenuData({ payload }, { put }) {
       const { routes, authority } = payload;
+      const menu = filterMenuData(memoizeOneFormatter(routes, authority));
       yield put({
         type: 'save',
         payload: filterMenuData(memoizeOneFormatter(routes, authority)),

@@ -7,6 +7,9 @@ export default modelExtend(pageModel, {
   state: {
     currentItem: {},
     modalVisible: false,
+    data:{
+      records: [],
+    },
     categorys: [],
     modalType: 'create',
     expandForm: false,
@@ -16,16 +19,12 @@ export default modelExtend(pageModel, {
   effects: {
     // 查询
     *fetch({ payload }, { call, put }) {
-      // loading
-      yield put({ type: 'showLoading' });
       // 查询数据
       const response = yield call(queryGoods, payload);
       yield put({
         type: 'saveData',
-        payload: response,
+        payload: response.data,
       });
-      // 取消loading
-      yield put({ type: 'hideLoading' });
     },
     // 新增
     *add({ payload, callback }, { call, put }) {

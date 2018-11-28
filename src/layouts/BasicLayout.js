@@ -60,12 +60,6 @@ export default class BasicLayout extends React.PureComponent {
     this.getBreadcrumbNameMap = memoizeOne(this.getBreadcrumbNameMap, isEqual);
     this.breadcrumbNameMap = this.getBreadcrumbNameMap();
     this.matchParamsPath = memoizeOne(this.matchParamsPath, isEqual);
-
-    console.info("!2333321");
-    /** 获取菜单 **/
-    // this.props.dispatch({
-    //   type: 'global/fetchMenus',
-    // });
   }
 
   componentDidMount() {
