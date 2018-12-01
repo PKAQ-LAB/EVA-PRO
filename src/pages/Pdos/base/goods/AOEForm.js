@@ -21,13 +21,13 @@ export default class AOEForm extends Component {
     });
   };
 
-  // 校验编码唯一性
+  // 校验条码唯一性
   checkCode = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
     const that = this;
     const code = getFieldValue('barcode');
     const { currentItem } = this.props;
-    if (currentItem && currentItem.code && value === currentItem.code) {
+    if (currentItem && currentItem.barcode && value === currentItem.barcode) {
       return callback();
     }
     const data = { code };
@@ -57,7 +57,6 @@ export default class AOEForm extends Component {
         ...getFieldsValue(),
         id: currentItem.id,
       };
-      data.status = data.status ? '0001' : '0000';
       dispatch({
         type: 'goods/save',
         payload: data,
@@ -68,7 +67,7 @@ export default class AOEForm extends Component {
   // 渲染界面
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { modalType, currentItem, data } = this.props;
+    const { modalType, currentItem } = this.props;
     const cmView = modalType === 'view';
 
     const formRowTwo = {
@@ -121,9 +120,9 @@ export default class AOEForm extends Component {
               ],
             })(
               <Select hasFeedback >
-                <Option value="toy">玩具</Option>
-                <Option value="omament">饰品</Option>
-                <Option value="Yiminghe">工艺品</Option>
+                <Select.Option value="toy">玩具</Select.Option>
+                <Select.Option value="omament">饰品</Select.Option>
+                <Select.Option value="Yiminghe">工艺品</Select.Option>
               </Select>
             )}
           </FormItem>
@@ -148,7 +147,8 @@ export default class AOEForm extends Component {
               <FormItem label="商品条码" hasFeedback {...formRowTwo}>
                 {getFieldDecorator('barcode', {
                   initialValue: currentItem.barcode,
-                  rules: [{ required: true, message: '商品助记码' }],
+                  validateTrigger: 'onBlur',
+                  rules: [{ required: true, message: '商品助记码' }, { validator: this.checkCode }],
                 })(<Input />)}
               </FormItem>
             </Col>
@@ -167,8 +167,8 @@ export default class AOEForm extends Component {
               <FormItem label="装箱规格" hasFeedback {...formRowTwo}>
                 {getFieldDecorator('boxunit', {
                   initialValue: currentItem.boxunit,
-                  rules: [{ required: true, type: 'number', message: '请输入装箱规格(仅限数字)' }],
-                })(<Input />)}
+                  rules: [{  type: 'number', message: '请输入装箱规格(仅限数字)' }],
+                })(<InputNumber />)}
               </FormItem>
             </Col>
           </Row>

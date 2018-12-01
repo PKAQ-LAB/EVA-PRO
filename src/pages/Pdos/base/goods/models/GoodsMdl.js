@@ -1,6 +1,7 @@
 import modelExtend from 'dva-model-extend';
-import { queryGoods, removeGoods, addGoods } from '../services/GoodsSvc';
+import { queryGoods, removeGoods, editGoods, checkUnique, getGoods } from '../services/GoodsSvc';
 import { pageModel } from '@/common/model/BaseModel';
+import { message } from 'antd';
 
 export default modelExtend(pageModel, {
   namespace: 'goods',
@@ -11,12 +12,15 @@ export default modelExtend(pageModel, {
       records: [],
     },
     categorys: [],
-    modalType: 'create',
+    modalType: '',
     expandForm: false,
     selectedRowKeys: [],
     formValues: {},
   },
   effects: {
+    *checkUnique({ payload }, { call }) {
+      return yield call(checkUnique, payload);
+    },
     // 查询
     *fetch({ payload }, { call, put }) {
       // 查询数据
@@ -26,34 +30,70 @@ export default modelExtend(pageModel, {
         payload: response.data,
       });
     },
-    // 新增
-    *add({ payload, callback }, { call, put }) {
-      yield put({ type: 'showLoading' });
-      const response = yield call(addGoods, payload);
-
-      yield put({
-        type: 'saveData',
-        payload: response,
-      });
-
-      yield put({ type: 'hideLoading' });
-
-      yield put({ type: 'hideModal' });
-      if (callback) callback();
+    // 编辑按钮
+    *edit({ payload }, { call, put }) {
+      const response = yield call(getGoods, payload);
+      if (response && response.data) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            modalType: 'edit',
+            currentItem: response.data,
+          },
+        });
+      }
+    },
+    // 保存一条模块信息
+    *save({ payload }, { call, put }) {
+      const response = yield call(editGoods, payload);
+      if (response && response.data) {
+        //  关闭窗口 - 提示成功 - 加载数据
+        yield put({
+          type: 'updateState',
+          payload: {
+            modalType: '',
+            currentItem: {},
+            data: response.data,
+          },
+        });
+        message.success('操作成功');
+      } else {
+        yield put({
+          type: 'updateState',
+          payload: {
+            modalType: '',
+            currentItem: {},
+          },
+        });
+        message.success('操作失败');
+      }
     },
     // 删除
     *remove({ payload, callback }, { call, put }) {
-      yield put({ type: 'showLoading' });
       const response = yield call(removeGoods, payload);
 
-      yield put({
-        type: 'saveData',
-        payload: response,
-      });
-
-      yield put({ type: 'hideLoading' });
-
-      if (callback) callback();
+      // 只有返回成功时才刷新
+      if (response && response.success) {
+        // 从当前数据对象中找到响应ID记录删除值
+        yield put({
+          type: 'updateState',
+          payload: {
+            data: response.data,
+            selectedRowKeys: [],
+          },
+        });
+        if (callback) {
+          callback();
+        }
+      } else {
+        message.error(`操作失败： ${response.statusText ? response.statusText : '请联系管理员'}.`);
+        yield put({
+          type: 'updateState',
+          payload: {
+            loading: { global: false },
+          },
+        });
+      }
     },
   },
 });

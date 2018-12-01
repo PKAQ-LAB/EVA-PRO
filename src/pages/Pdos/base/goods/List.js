@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Table, Alert, Divider } from 'antd';
+import { Table, Alert, Divider, notification, message } from 'antd';
 import { getValue } from '@/utils/utils';
 import styles from './List.less';
 import { connect } from 'dva';
@@ -30,50 +30,31 @@ class List extends PureComponent {
   };
 
   // 删除事件
-  handleDeleteClick = selectKey => {
+  handleDeleteClick = record => {
     const { dispatch } = this.props;
     dispatch({
       type: 'goods/remove',
-      payload: { key: [selectKey.key] },
+      payload: {
+        param: [record.id],
+      },
+      callback: () => {
+        message.success('操作成功.');
+      },
     });
   };
 
   // 编辑事件
   handleEditClick = record => {
-    const { dispatch } = this.props;
-
-    dispatch({
-      type: 'goods/showModal',
-      payload: {
-        modalType: 'update',
-        currentItem: record,
-      },
-    });
-  };
-
-  // 表格动作触发事件
-  handleListChange = (pagination, filtersArg, sorter) => {
-    const { dispatch, formValues } = this.props;
-
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
-
-    const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
+    if (!record.id) {
+      notification.error('没有选择记录');
+      return;
     }
-
-    dispatch({
-      type: 'goods/fetch',
-      payload: params,
+    this.props.dispatch({
+      type: 'goods/edit',
+      payload: {
+        modalType: 'edit',
+        id: record.id,
+      },
     });
   };
 
@@ -167,7 +148,6 @@ class List extends PureComponent {
           columns={columns}
           pagination={paginationProps}
           onSelectRow={this.handleSelectRows}
-          onChange={this.handleListChange}
         />
       </div>
     );

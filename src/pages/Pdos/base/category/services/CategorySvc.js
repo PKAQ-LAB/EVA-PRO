@@ -5,7 +5,7 @@ import { getNoUndefinedString } from '@/utils/utils';
 export async function listCategory(params) {
   return request(`/jxc/category/list?condition=${getNoUndefinedString(params)}`);
 }
-// 校验path唯一性
+// 校验编码唯一性
 export async function checkUnique(params) {
   return request('/jxc/category/checkUnique', {
     method: 'POST',
