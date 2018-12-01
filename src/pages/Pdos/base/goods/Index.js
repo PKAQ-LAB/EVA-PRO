@@ -3,8 +3,8 @@ import { connect } from 'dva';
 import { Tree, Row, Col, Card, Form, Input, Icon, Button, message, Popconfirm } from 'antd';
 import List from './List';
 import Detail from './AOEForm';
+import Page from '@/components/Page';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-
 import styles from './Index.less';
 
 const FormItem = Form.Item;
@@ -112,14 +112,14 @@ export default class Index extends PureComponent {
 
     const { data } = this.props.categorys;
     return (
-      <Card bordered={false}>
-        <div className={styles.goodsInfoCategory}>
-          <Icon type="tags" />选择商品分类
-        </div>
-        <Tree showLine expandedKeys={["0"]} onSelect={this.onSelect}>
-          <TreeNode title="全部" value="all" key="0">
+      <Card type="inner"
+            className={styles.leftTree}
+            title={
+        <div>
+          <Icon type="tags"/>&nbsp;选择商品分类</div>}
+                extra={<Button type="primary" size="small" onClick={() => this.handleFormReset()}>全部</Button>}>
+        <Tree showLine  onSelect={this.onSelect}>
           {this.renderTreeNodes(data)}
-          </TreeNode>
         </Tree>
       </Card>
     );
@@ -180,9 +180,10 @@ export default class Index extends PureComponent {
     };
     return (
       <PageHeaderWrapper title="商品基本信息查询">
-        <Row gutter={24}>
+        <Page inner>
+        <Row gutter={24}  className={styles.flex_stretch}>
           {/* 左侧树 */}
-          <Col xl={6} lg={24} md={24} sm={24} xs={24}>
+          <Col xl={6} lg={24} md={24} sm={24} xs={24} className={styles.fullHeightCol}>
             {this.renderCategoryTree()}
           </Col>
           {/* 右侧列表 */}
@@ -217,6 +218,7 @@ export default class Index extends PureComponent {
         </Row>
         {/* 新增窗口 */}
         {modalType !== ''  && <Detail {...aoeProps} />}
+        </Page>
       </PageHeaderWrapper>
     );
   }
