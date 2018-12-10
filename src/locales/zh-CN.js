@@ -77,6 +77,8 @@ export default {
   'menu.pdos.base': '基础信息',
   'menu.pdos.base.category': '分类管理',
   'menu.pdos.base.goods': '商品管理',
+  'menu.pdos.purchasing': '入库管理',
+  'menu.pdos.purchasing.orders': '采购入库单',
   'menu.result': '结果页',
   'menu.result.success': '成功页',
   'menu.result.fail': '失败页',

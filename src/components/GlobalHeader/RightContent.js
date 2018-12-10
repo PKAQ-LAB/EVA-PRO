@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage, formatMessage } from 'umi/locale';
-import { Spin, Tag, Menu, Icon, Dropdown, Avatar, Tooltip } from 'antd';
+import { Spin, Tag, Menu, Icon, Avatar, Tooltip } from 'antd';
 import Debounce from 'lodash-decorators/debounce';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
@@ -8,6 +8,7 @@ import screenfull from 'screenfull';
 
 import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from '../HeaderSearch';
+import HeaderDropdown from '../HeaderDropdown';
 import SelectLang from '../SelectLang';
 import styles from './index.less';
 
@@ -163,7 +164,6 @@ export default class GlobalHeaderRight extends PureComponent {
           onClear={onNoticeClear}
           onPopupVisibleChange={onNoticeVisibleChange}
           loading={fetchingNotices}
-          popupAlign={{ offset: [20, -16] }}
           clearClose
         >
           <NoticeIcon.Tab
@@ -192,7 +192,7 @@ export default class GlobalHeaderRight extends PureComponent {
           />
         </NoticeIcon>
         {currentUser.name ? (
-          <Dropdown overlay={menu}>
+          <HeaderDropdown overlay={menu}>
             <span className={`${styles.action} ${styles.account}`}>
               <Avatar
                 size="small"
@@ -202,7 +202,7 @@ export default class GlobalHeaderRight extends PureComponent {
               />
               <span className={styles.name}>{currentUser.name}</span>
             </span>
-          </Dropdown>
+          </HeaderDropdown>
         ) : (
           <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
         )}

@@ -105,13 +105,11 @@ export default class HeaderView extends PureComponent {
           this.setState({
             visible: true,
           });
-        }
-        if (scrollTop > 300 && visible) {
+        } else if (scrollTop > 300 && visible) {
           this.setState({
             visible: false,
           });
-        }
-        if (scrollTop < 300 && !visible) {
+        } else if (scrollTop < 300 && !visible) {
           this.setState({
             visible: true,
           });

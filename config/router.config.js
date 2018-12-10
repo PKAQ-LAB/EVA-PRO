@@ -42,9 +42,9 @@ export default [
               // { path: '/pdos/base/warehouse', name: 'warehouse', component: './Pdos/base/warehouse' },
             ] },
           // 进
-          // { path: '/pdos/purchasing', name: 'purchasing', routes: [
-          //     { path: '/pdos/purchasing/orders', name: 'orders', component: './Pdos/purchasing/orders' },
-          //   ] },
+          { path: '/pdos/purchasing', name: 'purchasing', routes: [
+              { path: '/pdos/purchasing/orders', name: 'orders', component: './Pdos/purchasing/orders' },
+            ] },
           // // 销
           // { path: '/pdos/sales', name: 'sales', routes: [
           //     { path: '/pdos/sales/orders', name: 'orders', component: './Pdos/sales/orders' },
