@@ -52,6 +52,7 @@ const query = {
 @connect(({ global, setting, menu }) => ({
   collapsed: global.collapsed,
   menuData: menu.menuData,
+  breadcrumbNameMap: menu.breadcrumbNameMap,
   layout: setting.layout,
   ...setting,
 }))
@@ -103,7 +104,10 @@ export default class BasicLayout extends React.PureComponent {
   }
 
   matchParamsPath = (pathname, breadcrumbNameMap) => {
-    const pathKey = Object.keys(breadcrumbNameMap).find(key => pathToRegexp(key).test(pathname));
+    console.info(breadcrumbNameMap);
+    const pathKey = Object.keys(breadcrumbNameMap).find(key => {
+      pathToRegexp(key).test(pathname)
+    });
     return breadcrumbNameMap[pathKey];
   };
 
