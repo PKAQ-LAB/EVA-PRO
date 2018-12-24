@@ -110,7 +110,6 @@ export default class AOEForm extends Component {
     const { getFieldDecorator } = that.props.form;
     const { modalType, currentItem, data } = that.props;
 
-    console.info(data);
     const cmView = modalType === 'view';
 
     const formItemLayout = {

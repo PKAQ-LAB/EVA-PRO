@@ -104,7 +104,6 @@ export default class BasicLayout extends React.PureComponent {
   }
 
   matchParamsPath = (pathname, breadcrumbNameMap) => {
-    console.info(breadcrumbNameMap);
     const pathKey = Object.keys(breadcrumbNameMap).find(key => {
       pathToRegexp(key).test(pathname)
     });
