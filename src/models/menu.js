@@ -4,7 +4,7 @@ import { formatMessage } from 'umi/locale';
 import Authorized from '@/utils/Authorized';
 
 const { check } = Authorized;
-  
+
 // Conversion router to menu.
 function formatter(data, parentAuthority, parentName) {
   return data
