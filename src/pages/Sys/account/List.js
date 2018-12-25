@@ -88,22 +88,23 @@ export default class List extends PureComponent {
         render: (t, r, i) => i,
       },
       {
-        title: '编码',
-        dataIndex: 'code',
-        sorter: true,
-      },
-      {
         title: '姓名',
+        align: 'left',
         dataIndex: 'name',
+        width: 200,
         sorter: true,
       },
       {
         title: '帐号',
+        align: 'left',
         dataIndex: 'account',
+        width: 200,
         render: val => <div style={{ textAlign: 'center' }}>{val}</div>,
       },
       {
         title: '手机',
+        align: 'left',
+        width: 200,
         dataIndex: 'tel',
         render: val => <div style={{ textAlign: 'center' }}>{val}</div>,
       },
@@ -167,6 +168,7 @@ export default class List extends PureComponent {
         </div>
         <Table
           loading={loading}
+          scroll={{ x: 1200 }}
           bordered
           dataSource={list}
           rowKey={record => record.id}
