@@ -127,12 +127,13 @@ export default class Account extends PureComponent {
   renderCategoryTree() {
     const { orgData } = this.props.account;
     return (
-      <Card className={styles.leftTree}>
-        <div className={styles.goodsInfoCategory}>
-          <Icon type="tags" />
-          归属部门
-        </div>
-        <Tree showLine onSelect={this.onSelect}>
+      <Card type="inner"
+            className={styles.leftTree}
+            title={
+              <div>
+                <Icon type="tags"/>&nbsp;归属部门</div>}
+            extra={<Button type="primary" size="small" onClick={() => this.handleFormReset()}>全部</Button>}>
+        <Tree showLine  onSelect={this.onSelect}>
           {this.renderTreeNodes(orgData)}
         </Tree>
       </Card>
@@ -232,6 +233,10 @@ export default class Account extends PureComponent {
   // 渲染界面
   render() {
     const { dispatch } = this.props;
+
+    console.info("user list");
+    console.info( this.props.account);
+
     const {
       loading,
       list,
