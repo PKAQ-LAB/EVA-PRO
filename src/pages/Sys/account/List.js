@@ -91,7 +91,7 @@ export default class List extends PureComponent {
         title: '姓名',
         align: 'left',
         dataIndex: 'name',
-        width: 200,
+        width: 140,
         sorter: true,
       },
       {
@@ -99,14 +99,12 @@ export default class List extends PureComponent {
         align: 'left',
         dataIndex: 'account',
         width: 200,
-        render: val => <div style={{ textAlign: 'center' }}>{val}</div>,
       },
       {
         title: '手机',
         align: 'left',
-        width: 200,
+        width: 180,
         dataIndex: 'tel',
-        render: val => <div style={{ textAlign: 'center' }}>{val}</div>,
       },
       {
         title: '性别',
