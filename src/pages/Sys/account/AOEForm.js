@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, Modal, Switch, TreeSelect } from 'antd';
+import { Row, Col, Form, Input, Modal, Switch, TreeSelect, Tooltip, Icon} from 'antd';
 import { PasswordInput } from 'antd-password-input-strength'
 
 const FormItem = Form.Item;
@@ -152,7 +152,15 @@ export default class AOEForm extends Component {
           </Row>
           <Row>
             <Col span={12}>
-              <FormItem label="密码" {...formItemLayout}>
+              <FormItem {...formItemLayout}
+                        label={(
+                          <span>
+                              密码&nbsp;
+                              <Tooltip title="密码应为 8-12 位的数字字母组合(不含空格)">
+                              <Icon type="question-circle-o" />
+                            </Tooltip>
+                          </span>
+                )}>
                 {getFieldDecorator('password', {
                   initialValue: item.password,
                   rules: [
@@ -169,6 +177,7 @@ export default class AOEForm extends Component {
           <FormItem label="所属部门" hasFeedback {...formRowOne}>
             {getFieldDecorator('deptId', {
               initialValue: item.deptId,
+              rules: [{ required: true, message: '请选择用户所属部门' }],
             })(
               <TreeSelect
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -186,9 +195,10 @@ export default class AOEForm extends Component {
           {/* 第三行 */}
           <Row>
             <Col span={12}>
-              <FormItem label="电话" hasFeedback {...formItemLayout}>
+              <FormItem label="手机号码" hasFeedback {...formItemLayout}>
                 {getFieldDecorator('tel', {
                   initialValue: item.tel,
+                  rules: [{ pattern: /^1(3|4|5|7|8)\d{9}$/, message: '请输入正确的手机号'}]
                 })(<Input addonBefore="86" type="tel" style={{ width: '100%' }} />)}
               </FormItem>
             </Col>
@@ -206,7 +216,7 @@ export default class AOEForm extends Component {
               </FormItem>
             </Col>
           </Row>
-          <FormItem label="是否锁定" hasFeedback {...formRowOne}>
+          <FormItem label="是否锁定" {...formRowOne}>
             {getFieldDecorator('locked', {
               valuePropName: 'checked',
               initialValue: !!item.locked,
