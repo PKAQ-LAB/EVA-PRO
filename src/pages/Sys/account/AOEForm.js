@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Input, Modal, Switch, TreeSelect } from 'antd';
+import { PasswordInput } from 'antd-password-input-strength'
 
 const FormItem = Form.Item;
 const Area = Input.TextArea;
@@ -31,30 +32,6 @@ export default class AOEForm extends Component {
           } 
             return callback('该账号已存在');
           
-        });
-    
-  };
-
-  // 校验编码唯一性
-  checkCode = (rule, value, callback) => {
-    const { getFieldValue } = this.props.form;
-    const code = getFieldValue('code');
-    const { item } = this.props;
-    if (item && item.id && value === item.code) {
-      return callback();
-    } 
-      const data = { code };
-      this.props
-        .dispatch({
-          type: 'account/checkUnique',
-          payload: data,
-        })
-        .then(r => {
-          if (r.success) {
-            callback();
-          } else {
-            callback('该编码已存在');
-          }
         });
     
   };
@@ -135,6 +112,8 @@ export default class AOEForm extends Component {
     return (
       <Modal
         maskClosable = { false }
+        cancelText={"取消"}
+        okText={"提交"}
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={660}
@@ -151,24 +130,6 @@ export default class AOEForm extends Component {
           {/* 第一行 */}
           <Row>
             <Col span={12}>
-              <FormItem label="姓名" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('name', {
-                  initialValue: item.name,
-                  rules: [{ required: true, message: '请输入组织名称' }],
-                })(<Input />)}
-              </FormItem>
-            </Col>
-            <Col span={12}>
-              <FormItem label="昵称" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('nickName', {
-                  initialValue: item.nickName,
-                  rules: [{ message: '请输入昵称' }],
-                })(<Input />)}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
               <FormItem label="帐号" hasFeedback {...formItemLayout}>
                 {getFieldDecorator('account', {
                   initialValue: item.account,
@@ -181,15 +142,23 @@ export default class AOEForm extends Component {
               </FormItem>
             </Col>
             <Col span={12}>
-              <FormItem label="编码" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('code', {
-                  initialValue: item.code,
-                  validateTrigger: 'onBlur',
-                  rules: [
-                    { required: true, message: '请输入用户编码' },
-                    { validator: this.checkCode },
-                  ],
+              <FormItem label="姓名" hasFeedback {...formItemLayout}>
+                {getFieldDecorator('name', {
+                  initialValue: item.name,
+                  rules: [{ required: true, message: '请输入组织名称' }],
                 })(<Input />)}
+              </FormItem>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <FormItem label="密码" {...formItemLayout}>
+                {getFieldDecorator('password', {
+                  initialValue: item.password,
+                  rules: [
+                    { required: true, message: '请输入用户密码' },
+                  ],
+                })(<PasswordInput />)}
               </FormItem>
             </Col>
           </Row>

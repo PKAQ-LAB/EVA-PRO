@@ -5,7 +5,8 @@
   align-items: stretch;
 }
 .fullHeightCol {
-  min-height: ~'calc(100vh - 240px)';
+  min-height: ~'calc(100vh - 218px)';
+  min-width: 240px;
   position: relative;
 }
 // 页面背景
@@ -36,22 +37,9 @@
     }
   }
 }
-
-.goodsInfoCategory {
-  border-bottom: 1px dotted;
-  margin-bottom: 24px;
-  line-height: 32px;
-  font-weight: bold;
-  i {
-    color: #1da9ff;
-    margin-right: 10px;
-  }
-}
-
 .goodsInfoListForm {
   :global {
     .ant-form-item {
-      margin-bottom: 24px;
       margin-right: 0;
       display: flex;
       > .ant-form-item-label {
@@ -68,15 +56,18 @@
     margin-bottom: 24px;
   }
 }
+.margin24 {
+  margin: 24px 8px;
+}
 
 @media screen and (max-width: @screen-lg) {
   .goodsInfoListForm :global(.ant-form-item) {
-    margin-right: 24px;
+    margin: 24px;
   }
 }
 
 @media screen and (max-width: @screen-md) {
   .goodsInfoListForm :global(.ant-form-item) {
-    margin-right: 8px;
+    margin: 12px;
   }
 }

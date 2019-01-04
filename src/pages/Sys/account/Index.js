@@ -203,7 +203,7 @@ export default class Account extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }} className={styles.margin24}>
           <Col md={8} sm={24}>
             <FormItem label="帐号">
               {getFieldDecorator('account')(<Input placeholder="输入帐号搜索" />)}
@@ -234,9 +234,6 @@ export default class Account extends PureComponent {
   render() {
     const { dispatch } = this.props;
 
-    console.info("user list");
-    console.info( this.props.account);
-
     const {
       loading,
       list,
@@ -263,7 +260,6 @@ export default class Account extends PureComponent {
       maskClosable: false,
       title: `${modalType === 'create' ? '新增用户' : '编辑用户'}`,
     };
-
     return (
       <PageHeaderWrapper title="用户信息管理">
         <Page inner>
