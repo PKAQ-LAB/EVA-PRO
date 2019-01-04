@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Input, Modal, Switch, TreeSelect, Tooltip, Icon} from 'antd';
 import { PasswordInput } from 'antd-password-input-strength'
+import md5 from 'md5';
 
 const FormItem = Form.Item;
 const Area = Input.TextArea;
@@ -58,8 +59,8 @@ export default class AOEForm extends Component {
         ...getFieldsValue(),
         id: item.id,
       };
-
-      console.info(data);
+      // 加密密码
+      data.password = md5(data.password);
       dispatch({
         type: 'account/save',
         payload: data,

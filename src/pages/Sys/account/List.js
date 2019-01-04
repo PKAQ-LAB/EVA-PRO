@@ -78,8 +78,7 @@ export default class List extends PureComponent {
 
   render() {
     const { list, pagination, selectedRowKeys, loading } = this.props;
-    console.info("user list");
-    console.info(list);
+    
     const statusMap = { true: 'error', false: 'success' };
     const status = { true: '锁定', false: '正常' };
 
