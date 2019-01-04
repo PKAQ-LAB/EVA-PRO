@@ -156,7 +156,10 @@ export default class AOEForm extends Component {
                 {getFieldDecorator('password', {
                   initialValue: item.password,
                   rules: [
-                    { required: true, message: '请输入用户密码' },
+                    { required: true,
+                      whitespace: true,
+                      pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
+                      message: '请输入8-16位包含数字及字母的密码' },
                   ],
                 })(<PasswordInput />)}
               </FormItem>
