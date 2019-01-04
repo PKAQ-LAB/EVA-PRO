@@ -206,17 +206,17 @@ export default class Account extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }} className={styles.margin24}>
           <Col md={8} sm={24}>
             <FormItem label="帐号">
-              {getFieldDecorator('account')(<Input placeholder="输入帐号搜索" />)}
+              {getFieldDecorator('account')(<Input id="account-search" placeholder="输入帐号搜索" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="姓名">
-              {getFieldDecorator('name')(<Input placeholder="输入用户名称搜索" />)}
+              {getFieldDecorator('name')(<Input id="account-name-search" placeholder="输入用户名称搜索" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="手机">
-              {getFieldDecorator('tel')(<Input placeholder="输入手机号搜索" />)}
+              {getFieldDecorator('tel')(<Input id="account-phone-search" placeholder="输入手机号搜索" />)}
             </FormItem>
           </Col>
         </Row>

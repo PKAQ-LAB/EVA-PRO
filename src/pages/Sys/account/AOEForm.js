@@ -58,6 +58,8 @@ export default class AOEForm extends Component {
         ...getFieldsValue(),
         id: item.id,
       };
+
+      console.info(data);
       dispatch({
         type: 'account/save',
         payload: data,
