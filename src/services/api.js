@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
-// 鑾峰彇鐢ㄦ埛鑿滃崟
+// 获取用户菜单
 export async function getUserMenu(params) {
   return request(`/module/listModuleByAttr?status=0001`);
 }
@@ -109,7 +109,7 @@ export async function updateFakeList(params) {
 }
 
 /**
- * 鐢ㄦ埛鐧诲綍
+ * 用户登录
  * @param params
  * @returns {Promise<void>}
  */
@@ -127,10 +127,9 @@ export async function fakeRegister(params) {
   });
 }
 
-export async function queryNotices() {
-  return request('/notices');
+  return request(`/api/notices?${stringify(params)}`);
 }
 
 export async function getFakeCaptcha(mobile) {
-  return request(`/captcha?mobile=${mobile}`);
+  return request(`/api/captcha?mobile=${mobile}`);
 }

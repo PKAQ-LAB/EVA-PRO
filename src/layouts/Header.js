@@ -15,7 +15,9 @@ const { Header } = Layout;
   collapsed: global.collapsed,
   fetchingNotices: loading.effects['global/fetchNotices'],
   notices: global.notices,
-  setting,
+  fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],
+  loadedAllNotices: global.loadedAllNotices,
+  setting
 }))
 export default class HeaderView extends PureComponent {
   state = {
