@@ -23,6 +23,7 @@ import styles from './BasicLayout.less';
 // lazy load SettingDrawer
 const SettingDrawer = React.lazy(() => import('@/components/SettingDrawer'));
 
+
 const { Content } = Layout;
 
 const query = {
