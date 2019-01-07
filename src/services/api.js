@@ -127,6 +127,7 @@ export async function fakeRegister(params) {
   });
 }
 
+export async function queryNotices(params = {}) {
   return request(`/api/notices?${stringify(params)}`);
 }
 
