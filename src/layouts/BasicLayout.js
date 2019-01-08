@@ -72,12 +72,16 @@ export default class BasicLayout extends React.PureComponent {
 
     const USER_KEY = "eva_user";
     const user = JSON.parse(localStorage.getItem(USER_KEY));
-    dispatch({
-      type: 'account/fetchCurrent',
-      payload: {
-        id: user.id,
-      }
-    });
+
+    if(user){
+      dispatch({
+        type: 'account/fetchCurrent',
+        payload: {
+          id: user.id,
+        }
+      });
+    }
+
     dispatch({
       type: 'setting/getSetting',
     });
