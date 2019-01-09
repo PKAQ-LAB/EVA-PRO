@@ -166,6 +166,7 @@ export default class List extends PureComponent {
         <Table
           loading={loading}
           scroll={{ x: 1200 }}
+          locale={{ emptyText: '暂无数据' }}
           bordered
           dataSource={list}
           rowKey={record => record.id}
