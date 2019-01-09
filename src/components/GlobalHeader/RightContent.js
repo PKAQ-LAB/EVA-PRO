@@ -92,7 +92,7 @@ export default class GlobalHeaderRight extends PureComponent {
 
   render() {
     const fullscreenIcon = ['fullscreen', 'fullscreen-exit'];
-    const fullscreenText = ['È«ÆÁ', 'È¡ÏûÈ«ÆÁ'];
+    const fullscreenText = ['å…¨å±', 'é€€å‡ºå…¨å±'];
     const fullscreen = this.state.fullscreen;
 
     const {
@@ -156,7 +156,7 @@ export default class GlobalHeaderRight extends PureComponent {
           }}
         />
         <Tooltip title={formatMessage({ id: 'component.globalHeader.help' })}>
-          {/* È«ÆÁ¿ØÖÆ */}
+          {/* È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */}
           <span className={styles.action} onClick={() => this.f11()}>
             <Tooltip placement="bottom" title={fullscreenText[fullscreen]}>
               <Icon type={fullscreenIcon[fullscreen]} />
