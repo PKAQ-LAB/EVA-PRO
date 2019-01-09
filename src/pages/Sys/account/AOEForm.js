@@ -223,7 +223,7 @@ export default class AOEForm extends Component {
             {getFieldDecorator('locked', {
               valuePropName: 'checked',
               initialValue: !!item.locked,
-            })(<Switch checkedChildren="启用" unCheckedChildren="锁定" />)}
+            })(<Switch checkedChildren="是" unCheckedChildren="否" />)}
           </FormItem>
           {/* 第四行 */}
           <FormItem label="备注" hasFeedback {...formRowOne}>

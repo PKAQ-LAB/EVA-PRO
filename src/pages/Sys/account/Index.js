@@ -151,9 +151,9 @@ export default class Account extends PureComponent {
         {selectedRowKeys.length > 0 && (
           <Button
             icon="lock"
-            type="normal"
+            type="danger"
             style={{ marginLeft: 8 }}
-            onClick={() => this.handleLockSwitch(1)}
+            onClick={() => this.handleLockSwitch('0000')}
           >
             锁定
           </Button>
@@ -163,7 +163,7 @@ export default class Account extends PureComponent {
             icon="unlock"
             type="danger"
             style={{ marginLeft: 8 }}
-            onClick={() => this.handleLockSwitch(0)}
+            onClick={() => this.handleLockSwitch('0001')}
           >
             解锁
           </Button>

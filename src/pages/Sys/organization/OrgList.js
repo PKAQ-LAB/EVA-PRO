@@ -160,9 +160,6 @@ export default class OrgList extends Component {
   render() {
     const { data, selectedRowKeys, loading } = this.props;
 
-    const statusMap = { '0000': 'error', '0001': 'success' };
-    const status = { '0000': '已停用', '0001': '正常' };
-
     const column = [
       {
         title: '单位/部门名称',
@@ -270,7 +267,7 @@ export default class OrgList extends Component {
           style={{ marginTop: 8, marginBottom: 8 }}
           message={
             <div>
-              已选择 已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a>{' '}
+              已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a>{' '}
               项&nbsp;&nbsp;
               <a style={{ marginLeft: 24 }} onClick={() => this.handleSelectRows([])}>
                 清空选择

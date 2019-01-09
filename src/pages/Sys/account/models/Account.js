@@ -118,7 +118,15 @@ export default modelExtend(pageModel, {
     // 切换锁定状态
     *lockSwitch({ payload }, { call, put }) {
       const response = yield call(lockUser, payload);
+
+
       if (response && response.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            list: response.data.records,
+          },
+        });
       }
     },
     // 删除

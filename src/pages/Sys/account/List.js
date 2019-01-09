@@ -79,8 +79,8 @@ export default class List extends PureComponent {
   render() {
     const { list, pagination, selectedRowKeys, loading } = this.props;
     
-    const statusMap = { true: 'error', false: 'success' };
-    const status = { true: '锁定', false: '正常' };
+    const statusMap = { '0000': 'error', '0001': 'success' };
+    const status = { '0000': '锁定', '0001': '正常' };
 
     const columns = [
       {
@@ -171,7 +171,7 @@ export default class List extends PureComponent {
           dataSource={list}
           rowKey={record => record.id}
           rowSelection={rowSelectionProps}
-          rowClassName={record => record.locked ? styles.disabled : styles.enabled}
+          rowClassName={record =>  record.locked === '0000' ? styles.disabled : styles.enabled}
           pagination={paginationProps}
           columns={columns}
           onSelectRow={this.handleSelectRows}
