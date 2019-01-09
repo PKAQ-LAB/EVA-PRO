@@ -261,7 +261,7 @@ export default class ModuleList extends Component {
                     placement="top"
                     onConfirm={() => this.handleBatchDelete()}
                   >
-                    <Button style={{ marginLeft: 8 }}>删除菜单</Button>
+                    <Button style={{ marginLeft: 8 }} type="danger">删除菜单</Button>
                   </Popconfirm>
                 </span>
               )}

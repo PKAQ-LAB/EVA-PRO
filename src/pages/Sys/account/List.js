@@ -82,7 +82,7 @@ export default class List extends PureComponent {
     const columns = [
       {
         render: (t, r, i) => i,
-        width: 50,
+        width: 30,
       },
       {
         title: '姓名',
