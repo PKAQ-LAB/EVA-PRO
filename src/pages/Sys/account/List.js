@@ -106,24 +106,10 @@ export default class List extends PureComponent {
         dataIndex: 'tel',
       },
       {
-        title: '性别',
-        dataIndex: 'spec',
-      },
-      {
         title: '状态',
         dataIndex: 'locked',
         sorter: true,
         render: text => <Badge status={statusMap[text]} text={status[text]} />,
-      },
-      {
-        title: '最后登录时间',
-        dataIndex: 'lastlogin',
-        sorter: true,
-      },
-      {
-        title: '最后登录IP',
-        dataIndex: 'lastip',
-        sorter: true,
       },
       {
         title: '操作',
