@@ -28,6 +28,7 @@ export default modelExtend(model, {
     *listOrg({ payload }, { call, put }) {
       // 查询数据
       const response = yield call(listOrg, payload);
+
       if (response && response.data) {
         yield put({
           type: 'saveData',

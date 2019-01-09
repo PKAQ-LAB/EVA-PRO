@@ -190,7 +190,7 @@ export default class AOEForm extends Component {
               </FormItem>
             </Col>
             <Col span={12}>
-              <FormItem label="状态" hasFeedback {...formItemLayout}>
+              <FormItem label="是否启用" {...formItemLayout}>
                 {getFieldDecorator('status', {
                   valuePropName: 'checked',
                   initialValue: currentItem.status !== '0000',
