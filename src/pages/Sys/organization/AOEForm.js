@@ -150,7 +150,7 @@ export default class AOEForm extends Component {
                 {getFieldDecorator('code', {
                   initialValue: currentItem.code,
                   validateTrigger: 'onBlur',
-                  rules: [{ required: true, message: '请输入编码' }, { validator: this.checkCode }],
+                  rules: [{ required: true, pattern: /^[0-9a-zA-Z_]{1,}$/, message: '请输入编码' }, { validator: this.checkCode }],
                 })(<Input />)}
               </FormItem>
             </Col>
