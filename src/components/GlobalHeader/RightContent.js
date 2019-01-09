@@ -155,14 +155,14 @@ export default class GlobalHeaderRight extends PureComponent {
             console.log('enter', value); // eslint-disable-line
           }}
         />
-        <Tooltip title={formatMessage({ id: 'component.globalHeader.help' })}>
-          {/* ȫ������ */}
+        {/*全屏*/}
+        <Tooltip title={fullscreenText[fullscreen]}>
           <span className={styles.action} onClick={() => this.f11()}>
-            <Tooltip placement="bottom" title={fullscreenText[fullscreen]}>
               <Icon type={fullscreenIcon[fullscreen]} />
-            </Tooltip>
           </span>
+        </Tooltip>
 
+        <Tooltip title={formatMessage({ id: 'component.globalHeader.help' })}>
           <a
             target="_blank"
             href="https://pro.ant.design/docs/getting-started"
