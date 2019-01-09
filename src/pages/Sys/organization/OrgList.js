@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {
   Table,
+  Switch,
+  Icon,
   Alert,
   Popconfirm,
   Divider,
@@ -64,7 +66,7 @@ export default class OrgList extends Component {
   };
 
   // 启用/停用
-  handleEnable = (record, e, status) => {
+  handleEnable = (record, checked) => {
     if (!record.id) {
       notification.error('没有选择记录');
       return;
@@ -73,7 +75,7 @@ export default class OrgList extends Component {
       type: 'organization/changeStatus',
       payload: {
         id: record.id,
-        status,
+        status: checked? '0001' : '0000',
       },
     });
   };
@@ -205,33 +207,25 @@ export default class OrgList extends Component {
       {
         title: '状态',
         dataIndex: 'status',
-        render: text => <Badge status={statusMap[text]} text={status[text]} />,
+        render: (text, record) => (
+          <Switch onChange={(checked) => this.handleEnable(record, checked)}
+                  checkedChildren={<Icon type="check" />}
+                  unCheckedChildren={<Icon type="close" />}
+                  checked={'0001' === text} />
+        )
       },
       {
         title: '操作',
         render: (text, record) =>
           record.status === '0001' && (
             <div>
+              <a onClick={() => this.handleAdd(record)}>添加下级</a>
+              <Divider type="vertical"/>
               <a onClick={() => this.handleEdit(record)}>编辑</a>
               <Divider type="vertical" />
-              <a onClick={() => this.handleAdd(record)}>添加下级</a>
+              <a onClick = {e => this.handleDelete(record, e)}>删除</a>
             </div>
-          ),
-      },
-      {
-        title: '是否启用',
-        width: 150,
-        render: (text, record) => (
-          <div>
-            {record.status === '0000' ? (
-              <a onClick={e => this.handleEnable(record, e, '0001')}>启用</a>
-            ) : (
-              <a onClick={e => this.handleEnable(record, e, '0000')}>停用</a>
-            )}
-            <Divider type="vertical" />
-            <a onClick={e => this.handleDelete(record, e)}>删除</a>
-          </div>
-        ),
+          )
       },
     ];
 

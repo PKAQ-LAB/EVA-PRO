@@ -229,11 +229,11 @@ export default class ModuleList extends Component {
         render: (text, record) =>
           record.status === '0001' && (
             <div>
+              <a onClick={() => this.handleAdd(record)}>添加下级</a>
+              <Divider type="vertical" />
               <a onClick={e => this.handleDelete(record, e)}>删除</a>
               <Divider type="vertical" />
               <a onClick={() => this.handleEdit(record)}>编辑</a>
-              <Divider type="vertical" />
-              <a onClick={() => this.handleAdd(record)}>添加下级</a>
             </div>
           ),
       },
