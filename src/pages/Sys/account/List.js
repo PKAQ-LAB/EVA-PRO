@@ -79,12 +79,10 @@ export default class List extends PureComponent {
   render() {
     const { list, pagination, selectedRowKeys, loading } = this.props;
     
-    const statusMap = { '0000': 'error', '0001': 'success' };
-    const status = { '0000': '锁定', '0001': '正常' };
-
     const columns = [
       {
         render: (t, r, i) => i,
+        width: 50,
       },
       {
         title: '姓名',
@@ -106,13 +104,6 @@ export default class List extends PureComponent {
         dataIndex: 'tel',
       },
       {
-        title: '状态',
-        dataIndex: 'locked',
-        sorter: true,
-        render: text => <Badge status={statusMap[text]} text={status[text]} />,
-      },
-      {
-        title: '操作',
         render: (text, record) => (
           <div>
             <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
@@ -151,7 +142,6 @@ export default class List extends PureComponent {
         </div>
         <Table
           loading={loading}
-          scroll={{ x: 1200 }}
           locale={{ emptyText: '暂无数据' }}
           bordered
           dataSource={list}
