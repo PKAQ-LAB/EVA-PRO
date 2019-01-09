@@ -261,7 +261,7 @@ export default class ModuleList extends Component {
                     placement="top"
                     onConfirm={() => this.handleBatchDelete()}
                   >
-                    <Button>删除菜单</Button>
+                    <Button style={{ marginLeft: 8 }}>删除菜单</Button>
                   </Popconfirm>
                 </span>
               )}
@@ -295,6 +295,7 @@ export default class ModuleList extends Component {
           columns={column}
           dataSource={data}
           loading={loading}
+          locale={{ emptyText: '暂无数据' }}
           rowClassName={record => record.status === '0000' ? styles.disabled : styles.enabled}
           pagination={false}
           rowKey={record => record.id}
