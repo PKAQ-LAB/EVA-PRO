@@ -17,7 +17,7 @@ import Exception403 from '../pages/Exception/403';
 import * as AppInfo from '@/common/config/AppInfo';
 import PageLoading from '@/components/PageLoading';
 import SiderMenu from '@/components/SiderMenu';
-
+import { title } from '../defaultSettings';
 import styles from './BasicLayout.less';
 
 // lazy load SettingDrawer
@@ -118,7 +118,7 @@ export default class BasicLayout extends React.PureComponent {
   getRouterAuthority = (pathname, routeData) => {
     let routeAuthority = ['noAuthority'];
     const getAuthority = (key, routes) => {
-      routes.map(route => {
+      routes.forEach(route => {
         if (route.path && pathToRegexp(route.path).test(key)) {
           routeAuthority = route.authority;
         } else if (route.routes) {
@@ -145,8 +145,8 @@ export default class BasicLayout extends React.PureComponent {
   };
 
   getLayoutStyle = () => {
-    const { fixSiderbar, collapsed, layout } = this.props;
-    if (fixSiderbar && layout !== 'topmenu') {
+    const { fixSiderbar, isMobile, collapsed, layout } = this.props;
+    if (fixSiderbar && layout !== 'topmenu' && !isMobile) {
       return {
         paddingLeft: collapsed ? '80px' : '256px',
       };
