@@ -23,11 +23,11 @@ export default [
       {
         path: '/sys',name: 'sys',icon: 'setting',
         routes: [
-          { path: '/sys/organization', name: 'organization', component: './Sys/organization' },
+          { path: '/sys/organization', name: 'organization', component: './Sys/organization/Index.js' },
           { path: '/sys/account', name: 'account', component: './Sys/account/Index.js' },
-          { path: '/sys/module', name: 'module', component: './Sys/module' },
-          { path: '/sys/role', name: 'role', component: './Sys/role' },
-          { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary' },
+          { path: '/sys/module', name: 'module', component: './Sys/module/Index.js' },
+          { path: '/sys/role', name: 'role', component: './Sys/role/Index.js' },
+          { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary/Index.js' },
         ],
       },
       //进销存
@@ -36,14 +36,14 @@ export default [
         routes: [
           // 基
           { path: '/pdos/base', name: 'base', routes: [
-              { path: '/pdos/base/category', name: 'category', component: './Pdos/base/category' },
-              { path: '/pdos/base/goods', name: 'goods', component: './Pdos/base/goods' },
+              { path: '/pdos/base/category', name: 'category', component: './Pdos/base/category/Index.js' },
+              { path: '/pdos/base/goods', name: 'goods', component: './Pdos/base/goods/Index.js' },
               // { path: '/pdos/base/supplier', name: 'supplier', component: './Pdos/base/supplier' },
               // { path: '/pdos/base/warehouse', name: 'warehouse', component: './Pdos/base/warehouse' },
             ] },
           // 进
           { path: '/pdos/purchasing', name: 'purchasing', routes: [
-              { path: '/pdos/purchasing/orders', name: 'orders', component: './Pdos/purchasing/orders' },
+              { path: '/pdos/purchasing/orders', name: 'orders', component: './Pdos/purchasing/orders/Index.js' },
             ] },
           // // 销
           // { path: '/pdos/sales', name: 'sales', routes: [
