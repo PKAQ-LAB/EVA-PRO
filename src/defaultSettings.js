@@ -6,6 +6,6 @@ module.exports = {
   "fixedHeader": true,
   "autoHideHeader": true,
   "fixSiderbar": true,
-  "collapse": true
+  "collapse": true,
   title: 'EVA Pro',
 };
