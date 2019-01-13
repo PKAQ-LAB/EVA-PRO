@@ -24,7 +24,7 @@ export default [
         path: '/sys',name: 'sys',icon: 'setting',
         routes: [
           { path: '/sys/organization', name: 'organization', component: './Sys/organization' },
-          { path: '/sys/account', name: 'account', component: './Sys/account' },
+          { path: '/sys/account', name: 'account', component: './Sys/account/Index.js' },
           { path: '/sys/module', name: 'module', component: './Sys/module' },
           { path: '/sys/role', name: 'role', component: './Sys/role' },
           { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary' },

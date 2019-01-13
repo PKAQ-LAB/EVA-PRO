@@ -47,7 +47,6 @@ export default {
   define: {
     APP_TYPE: process.env.APP_TYPE || '',
   },
-  treeShaking: true,
   targets: {
     ie: 11,
   },
