@@ -117,7 +117,7 @@ export default modelExtend(model, {
         yield put({
           type: 'updateState',
           payload: {
-            data: response.data.records,
+            data: response.data,
             selectedRowKeys: [],
           },
         });
