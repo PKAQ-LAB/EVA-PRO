@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Card } from 'antd';
+import Page from '@/components/Page';
 import DictGrid from './DictGrid';
 import DictDetail from './DictDetail';
 
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import styles from '../account/Index.less';
 
 @connect(state => ({
   dict: state.dict,
@@ -45,19 +47,19 @@ export default class Dict extends PureComponent {
 
     return (
       <PageHeaderWrapper title="字典信息管理">
-        <Card>
-          <Row gutter={24}>
-            {/* 左侧列表 */}
-            <Col xl={8} lg={8} md={8} sm={8} xs={8}>
-              <DictGrid {...DictGridProps} />
-            </Col>
-            {/* 右-上-字典键值列表 */}
-            {/* 右-下-字典键值新增/编辑区域 */}
-            <Col xl={16} lg={16} md={16} sm={16} xs={16}>
-              <DictDetail {...DictDetailProps} />
-            </Col>
-          </Row>
-        </Card>
+          <Page inner>
+            <Row gutter={24} className={styles.flex_stretch}>
+              {/* 左侧列表 */}
+              <Col xl={6} lg={6} md={6} sm={6} xs={6}>
+                <DictGrid {...DictGridProps} />
+              </Col>
+              {/* 右-上-字典键值列表 */}
+              {/* 右-下-字典键值新增/编辑区域 */}
+              <Col xl={18} lg={18} md={18} sm={18} xs={18}>
+                <DictDetail {...DictDetailProps} />
+              </Col>
+            </Row>
+          </Page>
       </PageHeaderWrapper>
     );
   }

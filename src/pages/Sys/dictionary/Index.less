@@ -13,25 +13,37 @@
 .blank {
 }
 //左侧字典树
+.fullHeightCol {
+  min-height: ~'calc(100vh - 218px)';
+  min-width: 240px;
+  position: relative;
+}
+
 .dict_left_tree {
-  height: 640px;
-  border: 2px solid #f6f5f4;
-  background-color: #f1f1f1;
+  &:extend(.fullHeightCol);
+  background-color: #fafaf9;
   :global {
     // 左侧列表树样式
     .ant-table-content {
       border-top: none;
     }
     .ant-table-title {
-      padding: 0px;
+      padding: 0;
     }
     .ant-card-body {
-      background: #6a6a6a;
       font-weight: bold;
       padding: 12px 8px;
       color: #efefef;
       margin-bottom: 0px;
       border-bottom: 0px;
+    }
+
+    .ant-table-small > .ant-table-content > .ant-table-body{
+      margin: 0;
+    }
+
+    .ant-table-content {
+      border: 0;
     }
   }
 }

@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Card, Table, Icon, message, Tooltip } from 'antd';
+import { Card, Table, Icon, Button, message, Tooltip } from 'antd';
 import { connect } from 'dva';
 import style from './Index.less';
+import styles from '../account/Index.less';
 // 字典管理左侧列表树
 
 @connect(({ loading }) => ({
@@ -85,22 +86,15 @@ export default class DictGrid extends PureComponent {
     ];
 
     return (
-      <div>
+      <Card type="inner"
+            className={style.dict_left_tree}
+            bodyStyle={{padding: 0}}
+            title={
+              <div>
+                <Icon type="tags"/>&nbsp;字典管理</div>}
+            extra={<Button type="primary" size="small" onClick={() => this.handleAddClick()}>新增</Button>}>
         <Table
           indentSize={5}
-          className={style.dict_left_tree}
-          title={() => (
-            <Card
-              actions={[
-                <Tooltip placement="bottom" title="新建分类">
-                  <Icon type="edit" onClick={e => this.handleAddClick()} />
-                </Tooltip>,
-                <div />,
-                ]}
-            >
-                字典分类
-            </Card>
-            )}
           onRow={(record, index) => ({
             onClick: () => this.handleOnRowClick(record, index),
           })}
@@ -108,13 +102,12 @@ export default class DictGrid extends PureComponent {
           loading={loading}
           rowKey={record => record.id}
           defaultExpandAllRows
-          scroll={{ y: 640 }}
           size="small"
           dataSource={data}
           columns={column}
           pagination={false}
         />
-      </div>
+      </Card>
     );
   }
 }
