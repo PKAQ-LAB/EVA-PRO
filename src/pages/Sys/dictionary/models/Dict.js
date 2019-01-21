@@ -121,15 +121,18 @@ export default modelExtend(model, {
     updateDictItem(state, action) {
       const currentItem = state.currentItem;
       // 更新/新增字典项列表
-      const exist = currentItem.items.find((v, i, array) => {
-        if (v.id === action.payload.formItem.id) {
-          array[i] = action.payload.formItem;
-          return true;
-        } 
-          return false;
-        
-      });
+      let exist = false;
 
+      if (currentItem) {
+        exist = currentItem.items.find((v, i, array) => {
+          if (v.id === action.payload.formItem.id) {
+            array[i] = action.payload.formItem;
+            return true;
+          }
+          return false;
+
+        });
+      }
       if (!exist) {
         currentItem.items.push(action.payload.formItem);
       }

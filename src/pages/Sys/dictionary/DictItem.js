@@ -10,12 +10,16 @@ export default class DictItem extends React.PureComponent {
   checkUnique = (r, value, callback) => {
     const { itemList, itemValues } = this.props;
 
-    const exist = itemList.find(v => value === v.keyName && v.id !== itemValues.id);
+    let exist = false;
+    if (itemList) {
+      exist = itemList.find(v => value === v.keyName && v.id !== itemValues.id);
+    }
 
     if (exist) {
       return callback('字典项已存在');
     } 
-      return callback();
+
+    return callback();
     
   };
 
