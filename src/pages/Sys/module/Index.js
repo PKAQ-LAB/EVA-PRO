@@ -2,7 +2,7 @@ import React from 'react';
 import Page from '@/components/Page';
 import { connect } from 'dva';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import ModuleList from './ModuleList';
+import List from './List';
 import AOEForm from './AOEForm';
 
 @connect(state => ({
@@ -30,7 +30,7 @@ export default class Module extends React.PureComponent {
     return (
       <PageHeaderWrapper title="模块管理">
         <Page>
-          <ModuleList {...tableProps} />
+          <List {...tableProps} />
           {modalType !== '' && <AOEForm {...modalProps} />}
         </Page>
       </PageHeaderWrapper>

@@ -27,7 +27,7 @@ const { Search } = { ...Input };
 @connect(({ loading }) => ({
   loading: loading.models.module,
 }))
-export default class ModuleList extends Component {
+export default class List extends Component {
   // 加载模块列表
   componentDidMount() {
     this.props.dispatch({
