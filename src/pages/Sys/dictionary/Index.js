@@ -55,7 +55,7 @@ export default class Dict extends PureComponent {
               </Col>
               {/* 右-上-字典键值列表 */}
               {/* 右-下-字典键值新增/编辑区域 */}
-              <Col xl={18} lg={18} md={18} sm={18} xs={18}>
+              <Col xl={17} lg={17} md={17} sm={17} xs={17}>
                 <DictDetail {...DictDetailProps} />
               </Col>
             </Row>
