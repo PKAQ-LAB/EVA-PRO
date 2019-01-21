@@ -8,4 +8,7 @@ module.exports = {
   "fixSiderbar": true,
   "collapse": true,
   title: 'EVA Pro',
+  menu: {
+    disableLocal: false,
+  },
 };

@@ -17,7 +17,8 @@ import Exception403 from '../pages/Exception/403';
 import * as AppInfo from '@/common/config/AppInfo';
 import PageLoading from '@/components/PageLoading';
 import SiderMenu from '@/components/SiderMenu';
-import { title } from '../defaultSettings';
+import { menu, title } from '../defaultSettings';
+
 import styles from './BasicLayout.less';
 
 // lazy load SettingDrawer
@@ -137,10 +138,12 @@ export default class BasicLayout extends React.PureComponent {
     if (!currRouterData) {
       return AppInfo.title;
     }
-    const pageName = formatMessage({
-      id: currRouterData.locale || currRouterData.name,
-      defaultMessage: currRouterData.name,
-    });
+    const pageName = menu.disableLocal
+      ? currRouterData.name
+      : formatMessage({
+          id: currRouterData.locale || currRouterData.name,
+          defaultMessage: currRouterData.name,
+        });
     return `${pageName} -${AppInfo.title}`;
   };
 
