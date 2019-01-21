@@ -82,7 +82,7 @@ export default modelExtend(pageModel, {
           payload: {
             modalType: '',
             currentItem: {},
-            list: response.data.data,
+            list: response.data.records,
             pagination: {
               showSizeChanger: true,
               showQuickJumper: true,

@@ -146,25 +146,22 @@ export default class Role extends PureComponent {
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
     return (
-      <Form onSubmit={this.handleSearch} layout="inline">
+      <Form onSubmit={this.handleSearch} layout="inline" style={{marginLeft: 8}}>
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
             <FormItem label="角色名称">
               {getFieldDecorator('name')(<Input placeholder="输入角色名称搜索" />)}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
             <FormItem label="角色编码">
               {getFieldDecorator('code')(<Input placeholder="输入角色编码搜索" />)}
             </FormItem>
           </Col>
+          <Col md={8} sm={24}>
+            {this.renderRightBtn()}
+          </Col>
         </Row>
-        <Card
-          bordered={false}
-          className={styles.noPadding}
-          title={this.renderLeftBtn()}
-          extra={this.renderRightBtn()}
-        />
       </Form>
     );
   }
@@ -204,9 +201,10 @@ export default class Role extends PureComponent {
       title: `${modalType === 'create' ? '新增角色' : '编辑角色'}`,
     };
     return (
-      <PageHeaderWrapper title="角色授权管理">
+      <PageHeaderWrapper title={this.renderSimpleForm()}>
         <Card>
-          {this.renderSimpleForm()}
+          { this.renderLeftBtn() }
+
           <List {...listPops} />
         </Card>
         {operateType === 'Module' && (
