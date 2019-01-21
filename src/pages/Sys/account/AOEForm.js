@@ -61,6 +61,8 @@ export default class AOEForm extends Component {
       };
       // 加密密码
       data.password = md5(data.password);
+
+      data.locked = data.locked ? '0001' : '0000';
       dispatch({
         type: 'account/save',
         payload: data,
@@ -148,7 +150,7 @@ export default class AOEForm extends Component {
               <FormItem label="姓名" hasFeedback {...formItemLayout}>
                 {getFieldDecorator('name', {
                   initialValue: item.name,
-                  rules: [{ required: true, message: '请输入组织名称' }],
+                  rules: [{ required: true, message: '请输入用户姓名' }],
                 })(<Input />)}
               </FormItem>
             </Col>
