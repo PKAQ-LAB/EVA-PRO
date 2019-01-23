@@ -83,7 +83,6 @@ export default modelExtend(pageModel, {
             },
           },
         });
-        message.success('操作成功');
       } else {
         yield put({
           type: 'updateState',
@@ -92,7 +91,6 @@ export default modelExtend(pageModel, {
             currentItem: {},
           },
         });
-        message.success('操作失败');
       }
     },
     // 查询
@@ -148,7 +146,6 @@ export default modelExtend(pageModel, {
           },
         });
       }
-      if (callback) callback();
     },
   },
   reducers: {

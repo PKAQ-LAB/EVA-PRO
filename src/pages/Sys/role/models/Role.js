@@ -192,7 +192,6 @@ export default modelExtend(pageModel, {
           },
         });
       }
-      if (callback) callback();
     },
     // -- end
   },

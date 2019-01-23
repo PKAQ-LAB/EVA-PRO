@@ -43,10 +43,7 @@ export default class List extends PureComponent {
       type: 'account/remove',
       payload: {
         param: [record.id],
-      },
-      callback: () => {
-        message.success('操作成功.');
-      },
+      }
     });
   };
 
@@ -104,6 +101,7 @@ export default class List extends PureComponent {
         dataIndex: 'tel',
       },
       {
+        align: 'center',
         render: (text, record) => (
           <div>
             <a onClick={e => this.handleEditClick(record, e)}>编辑</a>

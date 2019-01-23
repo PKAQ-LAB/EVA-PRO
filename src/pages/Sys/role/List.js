@@ -77,10 +77,7 @@ export default class RoleGrid extends PureComponent {
       type: 'role/remove',
       payload: {
         param: [record.id],
-      },
-      callback: () => {
-        message.success('操作成功.');
-      },
+      }
     });
   };
 
