@@ -156,6 +156,7 @@ export default modelExtend(pageModel, {
       return {
         ...state,
         currentUser: action.payload || {},
+        type: 'user'
       };
     },
   },

@@ -73,7 +73,6 @@ export default class BasicLayout extends React.PureComponent {
 
     const USER_KEY = "eva_user";
     const user = JSON.parse(localStorage.getItem(USER_KEY));
-
     if(user){
       dispatch({
         type: 'account/fetchCurrent',
@@ -82,7 +81,6 @@ export default class BasicLayout extends React.PureComponent {
         }
       });
     }
-
     dispatch({
       type: 'setting/getSetting',
     });

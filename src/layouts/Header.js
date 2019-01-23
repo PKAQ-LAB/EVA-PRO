@@ -10,8 +10,8 @@ import styles from './Header.less';
 
 const { Header } = Layout;
 
-@connect(({ account, global, setting, loading }) => ({
-  currentUser: account.currentUser,
+@connect(({ user, global, setting, loading }) => ({
+  currentUser: user.currentUser,
   collapsed: global.collapsed,
   fetchingNotices: loading.effects['global/fetchNotices'],
   notices: global.notices,
