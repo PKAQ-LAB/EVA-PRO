@@ -95,7 +95,7 @@ export default class Role extends PureComponent {
         {selectedRowKeys.length > 0 && (
           <Button
             icon="lock"
-            type="normal"
+            type="default"
             style={{ marginLeft: 8 }}
             onClick={() => this.handleLockSwitch(1)}
           >
