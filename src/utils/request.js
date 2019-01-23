@@ -98,7 +98,6 @@ export default function request(url, option) {
       };
       newOptions.data = JSON.stringify(newOptions.body);
     } else {
-      // newOptions.body is FormData
       newOptions.headers = {
         ...newOptions.headers,
       };
