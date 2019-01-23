@@ -63,6 +63,23 @@ export default class Role extends PureComponent {
     });
   };
 
+  // 批量删除
+  handleRemoveClick = () => {
+    const {
+      dispatch,
+      role: { selectedRowKeys },
+    } = this.props;
+
+    if (!selectedRowKeys) return;
+
+    dispatch({
+      type: 'role/remove',
+      payload: {
+        param: selectedRowKeys,
+      },
+    });
+  };
+
   // 搜索事件
   handleSearch = e => {
     e.preventDefault();
