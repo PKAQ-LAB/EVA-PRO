@@ -1,5 +1,4 @@
-import { notification } from 'antd';
-import router from 'umi/router';
+import { notification, message } from 'antd';
 import hash from 'hash.js';
 import cookie from 'react-cookies';
 
@@ -130,6 +129,12 @@ export default function request(url, option) {
     .then(checkStatus)
     .then(response => cachedSave(response, hashcode))
     .then(response => {
+      message.config({maxCount:1});
+      if(response.status === 200){
+        message.success(response.statusText || '操作成功.');
+      } else {
+        message.error(response.statusText || '操作失败.');
+      }
       return response.data;
     })
     .catch(e => {

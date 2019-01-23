@@ -7,7 +7,6 @@ import RoleModule from './RoleModule';
 import RoleUser from './RoleUser';
 import RoleConfig from './RoleConfig';
 import AOEForm from './AOEForm';
-import styles from './Index.less';
 
 const FormItem = Form.Item;
 
