@@ -148,13 +148,4 @@ export default modelExtend(pageModel, {
       }
     },
   },
-  reducers: {
-    saveCurrentUser(state, action) {
-      return {
-        ...state,
-        currentUser: action.payload || {},
-        type: 'user'
-      };
-    },
-  },
 });

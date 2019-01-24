@@ -130,9 +130,10 @@ export default function request(url, option) {
     .then(response => {
       message.config({maxCount:1});
       if(response.status === 200){
-        message.success(response.statusText || '操作成功.');
+      
+        message.success(response.statusText || response.data.statusText || '操作成功.');
       } else {
-        message.error(response.statusText || '操作失败.');
+        message.error(response.statusText || response.data.statusText || '操作失败.');
       }
       return response.data;
     })

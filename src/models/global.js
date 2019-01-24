@@ -4,28 +4,13 @@ export default {
   namespace: 'global',
 
   state: {
+    currentUser: {},
     collapsed: false,
     notices: [],
-    menus: [],
- 	loadedAllNotices: false,
+  	loadedAllNotices: false,
   },
 
   effects: {
-    // 获取菜单
-    *fetchMenus({ payload }, { put, call }) {
-      const response = yield call(getUserMenu, payload);
-      if (response && response.data) {
-        // 查询数据
-        yield put({
-          type: 'updateState',
-          payload: {
-            menus: response.data,
-          },
-        });
-      } else {
-        yield put(routerRedux.push('/user/login'));
-      }
-    },
     *fetchNotices(_, { call, put }) {
       const data = yield call(queryNotices);
       const loadedAllNotices = data && data.length && data[data.length - 1] === null;
@@ -146,6 +131,13 @@ export default {
       return {
         ...state,
         loadedAllNotices: payload,
+      };
+    },
+    saveCurrentUser(state, action) {
+      return {
+        ...state,
+        currentUser: action.payload || {},
+        type: 'user'
       };
     },
   },

@@ -19,18 +19,22 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: {
-          ...response,
-          'currentAuthority' : 'admin'
-        },
-      });
       // 登录鉴权
       if (response && response.success) {
-        // 拿到token 存cookie
-        cookie.save(TOKEN_KEY, response.data.token, {
-          maxAge: 60 * 60 * 24,
+        // 更新用户权限
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {
+            ...response,
+            'currentAuthority' : 'admin'
+          },
+        });
+        // 更新用户菜单
+        // TODO
+        // 更新currentUser
+        yield put({
+          type: 'global/saveCurrentUser',
+          payload: response.data.user
         });
         localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
 

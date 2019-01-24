@@ -11,6 +11,8 @@ export default ({ children }) => {
     let pathName = children.props.location.pathname;
     const logined = isLogin();
 
+    console.info("logined : " + logined);
+
     if(logined){
       if ("/user/login" === pathName){
         return <Redirect to="/"/>
