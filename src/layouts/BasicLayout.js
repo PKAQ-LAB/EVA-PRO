@@ -6,15 +6,14 @@ import memoizeOne from 'memoize-one';
 import { connect } from 'dva';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
-import pathToRegexp from 'path-to-regexp';
 import { formatMessage } from 'umi/locale';
+import pathToRegexp from 'path-to-regexp';
 import Authorized from '@/utils/Authorized';
 import logo from '../assets/logo.svg';
 import Footer from './Footer';
 import Header from './Header';
 import Context from './MenuContext';
 import Exception403 from '../pages/Exception/403';
-import * as AppInfo from '@/common/config/AppInfo';
 import PageLoading from '@/components/PageLoading';
 import SiderMenu from '@/components/SiderMenu';
 import { menu, title } from '../defaultSettings';
@@ -68,10 +67,14 @@ export default class BasicLayout extends React.PureComponent {
   componentDidMount() {
     const {
       dispatch,
-      route: { routes, authority },
     } = this.props;
 
+    //获取用户菜单
     dispatch({
+      type: 'menu/loadMenuData',
+    });
+    // 获取用户设置
+    this.props.dispatch({
       type: 'setting/getSetting',
     });
   }
@@ -95,7 +98,7 @@ export default class BasicLayout extends React.PureComponent {
 
   matchParamsPath = (pathname, breadcrumbNameMap) => {
     const pathKey = Object.keys(breadcrumbNameMap).find(key => {
-      pathToRegexp(key).test(pathname)
+        return key === pathname;
     });
     return breadcrumbNameMap[pathKey];
   };
@@ -117,10 +120,11 @@ export default class BasicLayout extends React.PureComponent {
   };
 
   getPageTitle = (pathname, breadcrumbNameMap) => {
+
     const currRouterData = this.matchParamsPath(pathname, breadcrumbNameMap);
 
     if (!currRouterData) {
-      return AppInfo.title;
+      return title;
     }
     const pageName = menu.disableLocal
       ? currRouterData.name
@@ -128,7 +132,7 @@ export default class BasicLayout extends React.PureComponent {
           id: currRouterData.locale || currRouterData.name,
           defaultMessage: currRouterData.name,
         });
-    return `${pageName} -${AppInfo.title}`;
+    return `${pageName} -${title}`;
   };
 
   getLayoutStyle = () => {

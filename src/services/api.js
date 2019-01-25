@@ -1,9 +1,9 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
-// 获取用户菜单
-export async function getUserMenu(params) {
-  return request(`/module/listModuleByAttr?status=0001`);
+// 鑾峰彇鐢ㄦ埛鑿滃崟
+export async function getUserMenu() {
+  return request(`/auth/fetch`);
 }
 
 export async function queryProjectNotice() {
@@ -109,7 +109,7 @@ export async function updateFakeList(params) {
 }
 
 /**
- * 用户登录
+ * 鐢ㄦ埛鐧诲綍
  * @param params
  * @returns {Promise<void>}
  */

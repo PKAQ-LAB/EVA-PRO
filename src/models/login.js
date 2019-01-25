@@ -29,13 +29,12 @@ export default {
             'currentAuthority' : 'admin'
           },
         });
-        // 更新用户菜单
-        // TODO
-        // 更新currentUser
-        yield put({
-          type: 'global/saveCurrentUser',
-          payload: response.data.user
+
+        // 拿到token 存cookie
+        cookie.save(TOKEN_KEY, response.data.token, {
+          maxAge: 60 * 60 * 24,
         });
+
         localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
 
         reloadAuthorized();
