@@ -80,10 +80,8 @@ export default class BasicLayout extends React.PureComponent {
   }
 
   componentDidUpdate(preProps) {
-    // After changing to phone mode,
-    // if collapsed is true, you need to click twice to display
     const { collapsed } = this.props;
-    if (!collapsed) {
+    if (!!collapsed) {
       this.handleMenuCollapse(false);
     }
   }

@@ -71,8 +71,6 @@ export default {
       const menuData = response.data.modules;
       const breadcrumbNameMap = memoizeOneGetBreadcrumbNameMap(menuData);
 
-      console.info(menuData);
-      console.info(breadcrumbNameMap);
       yield put({
         type: 'save',
         payload: { menuData, breadcrumbNameMap },
