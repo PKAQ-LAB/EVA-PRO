@@ -2,10 +2,9 @@ import { notification, message } from 'antd';
 import hash from 'hash.js';
 import cookie from 'react-cookies';
 
-
+import ax from './axiosWrap';
 import { isAntdPro } from './utils';
 import * as AppInfo from '@/common/config/AppInfo';
-import ax from './axiosWrap';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -29,14 +28,10 @@ const checkStatus = response => {
     return response;
   }
 
-  const errortext = codeMessage[response.status] || response.statusText;
-  notification.error({
-    message: `请求错误 ${response.status}: ${response.url}`,
-    description: errortext,
-  });
+  const errortext = response.message? response.message: codeMessage[response.status] ;
+
   const error = new Error(errortext);
   error.name = response.status;
-  error.response = response.status;
   error.response = response;
   throw error;
 };
@@ -131,19 +126,21 @@ export default function request(url, option) {
       message.config({maxCount:1});
       if(response.status === 200){
       
-        message.success(response.statusText || response.data.statusText || '操作成功.');
+        message.success(response.message || response.data.message || '操作成功.');
       } else {
-        message.error(response.statusText || response.data.statusText || '操作失败.');
+        message.error(response.message || response.data.message || '操作失败.');
       }
       return response.data;
     })
     .catch(e => {
+
+      console.info(e.response);
       const response = e.response;
       let status = "", errortext = "", requestUrl = "";
 
       if(response){
         status = response? response.status: 400;
-        errortext = response.statusText ? response.statusText : codeMessage[response.status];
+        errortext = response.message || response.data.message || codeMessage[response.status];
         requestUrl = response.config.url;
       }
 

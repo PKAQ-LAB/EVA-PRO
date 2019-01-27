@@ -104,7 +104,7 @@ export default modelExtend(model, {
           callback();
         }
       } else {
-        message.error(`操作失败： ${response.statusText ? response.statusText : '请联系管理员'}.`);
+        message.error(`操作失败： ${response.message || '请联系管理员'}.`);
         yield put({
           type: 'updateState',
           payload: {

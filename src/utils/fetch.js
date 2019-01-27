@@ -26,7 +26,7 @@ function checkStatus(response) {
     return response;
   }
 
-  const errortext = response.statusText ? response.statusText : codeMessage[response.status];
+  const errortext = response.message || codeMessage[response.status];
   const error = new Error(errortext);
   error.url = response.url;
   error.name = response.status;
@@ -86,7 +86,7 @@ export default function request(url, options) {
       Promise.resolve(e.response).then(r => {
         notification.error({
           message: `请求错误 : ${url}`,
-          description: r ? `${r.statusText}` : '服务器错误',
+          description: r ? `${r.message}` : '服务器错误',
         });
       });
 
