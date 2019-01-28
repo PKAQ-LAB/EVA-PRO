@@ -43,22 +43,10 @@ const UserLayout = ({ children }) => (
         <div className={styles.header}>
           <Link to="/">
             <img alt="logo" className={styles.logo} src={logo} />
-            <span className={styles.title}>Ant Design</span>
+            <span className={styles.title}>{AppInfo.title}</span>
           </Link>
         </div>
-        <div className={styles.content}>
-          <div className={styles.top}>
-            <div className={styles.header}>
-              <Link to="/">
-                <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>{AppInfo.title}</span>
-              </Link>
-            </div>
-            <div className={styles.desc}>{AppInfo.description}</div>
-          </div>
-          {children}
-        </div>
-        <GlobalFooter links={links} copyright={copyright} />
+        <div className={styles.desc}>{AppInfo.description}</div>
       </div>
       {children}
     </div>

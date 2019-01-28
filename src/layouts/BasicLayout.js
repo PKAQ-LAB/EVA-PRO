@@ -69,11 +69,11 @@ export default class BasicLayout extends React.Component {
       dispatch,
     } = this.props;
 
-    //��ȡ�û��˵�
+    //获取菜单
     dispatch({
       type: 'menu/loadMenuData',
     });
-    // ��ȡ�û�����
+    // 获取设置
     this.props.dispatch({
       type: 'setting/getSetting',
     });
