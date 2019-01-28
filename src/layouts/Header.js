@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { formatMessage } from 'umi/locale';
 import { Layout, message } from 'antd';
 import Animate from 'rc-animate';
@@ -19,7 +19,7 @@ const { Header } = Layout;
   loadedAllNotices: global.loadedAllNotices,
   setting
 }))
-export default class HeaderView extends PureComponent {
+export default class HeaderView extends Component {
   state = {
     visible: true,
   };

@@ -57,7 +57,7 @@ const query = {
   layout: setting.layout,
   ...setting,
 }))
-export default class BasicLayout extends React.PureComponent {
+export default class BasicLayout extends React.Component {
   constructor(props) {
     super(props);
     this.getPageTitle = memoizeOne(this.getPageTitle);
@@ -69,11 +69,11 @@ export default class BasicLayout extends React.PureComponent {
       dispatch,
     } = this.props;
 
-    //获取用户菜单
+    //��ȡ�û��˵�
     dispatch({
       type: 'menu/loadMenuData',
     });
-    // 获取用户设置
+    // ��ȡ�û�����
     this.props.dispatch({
       type: 'setting/getSetting',
     });
