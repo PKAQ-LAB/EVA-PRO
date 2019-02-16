@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
-// 鑾峰彇鐢ㄦ埛鑿滃崟
+// 获取用户菜单
 export async function getUserMenu() {
   return request(`/auth/fetch`);
 }
@@ -63,8 +63,8 @@ export async function queryTags() {
   return request('/tags');
 }
 
-export async function queryBasicProfile() {
-  return request('/profile/basic');
+export async function queryBasicProfile(id) {
+  return request(`/profile/basic?id=${id}`);
 }
 
 export async function queryAdvancedProfile() {
@@ -109,7 +109,7 @@ export async function updateFakeList(params) {
 }
 
 /**
- * 鐢ㄦ埛鐧诲綍
+ * 用户登录
  * @param params
  * @returns {Promise<void>}
  */

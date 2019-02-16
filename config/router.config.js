@@ -19,7 +19,7 @@ export default [
     routes: [
       // dashboard
       { path: '/', redirect: '/sys/organization' },
-      // ç³»ç»Ÿç®¡ç†
+      // ÏµÍ³¹ÜÀí
       {
         path: '/sys',name: 'sys',icon: 'setting',
         routes: [
@@ -30,33 +30,33 @@ export default [
           { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary/Index.js' },
         ],
       },
-      //è¿›é”€å­˜
+      //½øÏú´æ
       {
         path: '/pdos',name: 'pdos',icon: 'shop',
         routes: [
-          // åŸº
+          // »ù
           { path: '/pdos/base', name: 'base', routes: [
               { path: '/pdos/base/category', name: 'category', component: './Pdos/base/category/Index.js' },
               { path: '/pdos/base/goods', name: 'goods', component: './Pdos/base/goods/Index.js' },
               // { path: '/pdos/base/supplier', name: 'supplier', component: './Pdos/base/supplier' },
               // { path: '/pdos/base/warehouse', name: 'warehouse', component: './Pdos/base/warehouse' },
             ] },
-          // è¿›
+          // ½ø
           { path: '/pdos/purchasing', name: 'purchasing', routes: [
               { path: '/pdos/purchasing/orders', name: 'orders', component: './Pdos/purchasing/orders/Index.js' },
             ] },
-          // // é”€
+          // // Ïú
           // { path: '/pdos/sales', name: 'sales', routes: [
           //     { path: '/pdos/sales/orders', name: 'orders', component: './Pdos/sales/orders' },
           //   ] },
-          // // å­˜
+          // // ´æ
           // { path: '/pdos/inventory', name: 'inventory', routes: [
           //     { path: '/pdos/inventory/accbook', name: 'accbook', component: './Pdos/inventory/accbook' },
           //   ] },
           // { path: '/pdos/analysis', name: 'analysis', routes: [] },
         ],
       },
-      // å¼‚å¸¸é¡µ
+      // Òì³£Ò³
       {
         name: 'exception',icon: 'warning',path: '/exception',
         routes: [
@@ -67,7 +67,7 @@ export default [
           {path: '/exception/trigger',name: 'trigger',hideInMenu: true,component: './Exception/TriggerException',},
         ],
       },
-      // ä¸ªäººä¸­å¿ƒ
+      // ¸öÈËÖĞĞÄ
       {
         name: 'account',icon: 'user',path: '/account',
         routes: [
