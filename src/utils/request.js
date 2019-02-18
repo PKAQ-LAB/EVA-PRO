@@ -1,6 +1,7 @@
 import { notification, message } from 'antd';
 import hash from 'hash.js';
-import cookie from 'react-cookies';
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
 import ax from './axiosWrap';
 import { isAntdPro } from './utils';
@@ -75,7 +76,7 @@ export default function request(url, option) {
   const defaultOptions = {
     credentials: 'include',
     headers: {
-      Authorization: (cookie.load('eva_token') ? 'Bearer'+cookie.load('eva_token') : ''),
+      Authorization: (localStorage.getItem('eva_token') ? 'Bearer'+localStorage.getItem('eva_token') : ''),
       'Content-Type': 'application/json; charset=utf-8',
       Accept: 'application/json',
     }
@@ -125,7 +126,6 @@ export default function request(url, option) {
     .then(response => {
       message.config({maxCount:1});
       if(response.status === 200){
-      
         message.success(response.message || response.data.message || '操作成功.');
       } else {
         message.error(response.message || response.data.message || '操作失败.');
@@ -133,8 +133,6 @@ export default function request(url, option) {
       return response.data;
     })
     .catch(e => {
-
-      console.info(e.response);
       const response = e.response;
       let status = "", errortext = "", requestUrl = "";
 

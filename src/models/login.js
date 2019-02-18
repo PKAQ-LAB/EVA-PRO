@@ -4,7 +4,8 @@ import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
-import cookie from 'react-cookies';
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
 const USER_KEY = "eva_user";
 const TOKEN_KEY = "eva_token";
@@ -30,10 +31,12 @@ export default {
           },
         });
 
+        console.info("response.data.token");
+        console.info(response.data.token);
+        console.info(TOKEN_KEY);
+
         // 拿到token 存cookie
-        cookie.save(TOKEN_KEY, response.data.token, {
-          maxAge: 60 * 60 * 24,
-        });
+        localStorage.setItem(TOKEN_KEY, response.data.token);
 
         localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
 
@@ -71,7 +74,7 @@ export default {
 
     *logout(_, { put }) {
       // 删除token
-      cookie.remove(TOKEN_KEY);
+      localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
       
       yield put({

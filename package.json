@@ -34,9 +34,9 @@
     "@antv/data-set": "^0.10.1",
     "@babel/runtime": "^7.3.1",
     "antd": "^3.13.0",
-    "bizcharts": "^3.4.3",
-    "axios": "^0.18.0",
     "antd-password-input-strength": "^1.0.3",
+    "axios": "^0.18.0",
+    "bizcharts": "^3.4.3",
     "bizcharts-plugin-slider": "^2.1.1-beta.1",
     "classnames": "^2.2.6",
     "dva": "^2.4.1",
@@ -58,14 +58,14 @@
     "rc-animate": "^2.6.0",
     "react": "^16.7.0",
     "react-container-query": "^0.11.0",
-    "react-cookies": "^0.1.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-document-title": "^2.0.3",
     "react-dom": "^16.7.0",
     "react-fittext": "^1.0.0",
     "react-media": "^1.9.2",
     "react-router-dom": "^4.3.1",
-    "screenfull": "^3.3.2"
+    "screenfull": "^3.3.2",
+    "universal-cookie": "^3.0.7"
   },
   "devDependencies": {
     "@types/react": "^16.8.1",

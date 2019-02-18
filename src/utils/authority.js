@@ -1,4 +1,5 @@
-import cookie from 'react-cookies';
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
 // use localStorage to store the authority info, which might be sent from server in actual project.
 export function getAuthority(str) {
@@ -23,8 +24,10 @@ export function getAuthority(str) {
  * @returns {boolean}
  */
 export function isLogin(){
-  const eva_token = cookie.load('eva_token');
+  // const eva_token = cookies.get('eva_token');
+  const eva_token = localStorage.getItem('eva_token');
   console.info("eva_token : " + eva_token);
+
   return eva_token && eva_token !== '';
 }
 
