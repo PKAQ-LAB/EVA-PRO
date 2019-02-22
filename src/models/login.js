@@ -75,8 +75,7 @@ export default {
     *logout(_, { put }) {
       // 删除token
       localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
-      
+
       yield put({
         type: 'changeLoginStatus',
         payload: {
