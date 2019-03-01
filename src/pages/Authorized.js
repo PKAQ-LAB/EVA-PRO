@@ -6,7 +6,7 @@ import Authorized from '@/utils/Authorized';
 
 function AuthComponent({ children, location, routerData, status }) {
   const isLogin = status === 'ok';
-
+  const pathName = children.props.location.pathname;
   const getRouteAuthority = (pathname, routeData) => {
     const routes = routeData.slice(); // clone
 
@@ -29,26 +29,23 @@ function AuthComponent({ children, location, routerData, status }) {
 
     return getAuthority(routes, pathname);
   };
-  return (
- 	let pathName = children.props.location.pathname;
-    const logined = isLogin();
 
-    console.info("logined : " + logined);
-
-	if(logined){
-      if ("/user/login" === pathName){
-        return <Redirect to="/"/>
-      }
-     <Authorized
-      authority={getRouteAuthority(location.pathname, routerData)}
-      noMatch={ <Redirect to="/user/login" />}
-     >
-      {children}
-     </Authorized>
-	} else {
-      return <Redirect to="/user/login"/>
+  if(isLogin){
+    if ("/user/login" === pathName){
+      return <Redirect to="/"/>
+    } else {
+      return (
+        <Authorized
+          authority={getRouteAuthority(location.pathname, routerData)}
+          noMatch={ <Redirect to="/exception/403" /> }
+        >
+          {children}
+        </Authorized>
+      )
     }
-  );
+  } else {
+      return <Redirect to="/user/login"/>
+  }
 }
 export default connect(({ menu: menuModel, login: loginModel }) => ({
   routerData: menuModel.routerData,
