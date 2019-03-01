@@ -62,6 +62,7 @@ export default {
 
   state: {
     menuData: [],
+    routerData: [],
     breadcrumbNameMap: {},
   },
 
@@ -73,7 +74,7 @@ export default {
 
       yield put({
         type: 'save',
-        payload: { menuData, breadcrumbNameMap },
+        payload: { menuData, breadcrumbNameMap, routerData: routes },
       });
 
       // 更新currentUser

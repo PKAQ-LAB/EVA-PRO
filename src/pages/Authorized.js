@@ -1,26 +1,56 @@
 import React from 'react';
-import RenderAuthorized from '@/components/Authorized';
-import { getAuthority, isLogin } from '@/utils/authority';
 import Redirect from 'umi/redirect';
+import pathToRegexp from 'path-to-regexp';
+import { connect } from 'dva';
+import Authorized from '@/utils/Authorized';
 
-const Authority = getAuthority();
-const Authorized = RenderAuthorized(Authority);
+function AuthComponent({ children, location, routerData, status }) {
+  const isLogin = status === 'ok';
 
-export default ({ children }) => {
+  const getRouteAuthority = (pathname, routeData) => {
+    const routes = routeData.slice(); // clone
 
-    let pathName = children.props.location.pathname;
+    const getAuthority = (routeDatas, path) => {
+      let authorities;
+      routeDatas.forEach(route => {
+        // check partial route
+        if (pathToRegexp(`${route.path}(.*)`).test(path)) {
+          if (route.authority) {
+            authorities = route.authority;
+          }
+          // is exact route?
+          if (!pathToRegexp(route.path).test(path) && route.routes) {
+            authorities = getAuthority(route.routes, path);
+          }
+        }
+      });
+      return authorities;
+    };
+
+    return getAuthority(routes, pathname);
+  };
+  return (
+ 	let pathName = children.props.location.pathname;
     const logined = isLogin();
 
     console.info("logined : " + logined);
 
-    if(logined){
+	if(logined){
       if ("/user/login" === pathName){
         return <Redirect to="/"/>
       }
-      return  <Authorized authority={children.props.route.authority} noMatch={<Redirect to="/user/login"/>}>
-                {children}
-              </Authorized>
-    } else {
+     <Authorized
+      authority={getRouteAuthority(location.pathname, routerData)}
+      noMatch={ <Redirect to="/user/login" />}
+     >
+      {children}
+     </Authorized>
+	} else {
       return <Redirect to="/user/login"/>
     }
-};
+  );
+}
+export default connect(({ menu: menuModel, login: loginModel }) => ({
+  routerData: menuModel.routerData,
+  status: loginModel.status,
+}))(AuthComponent);
