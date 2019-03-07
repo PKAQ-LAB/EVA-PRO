@@ -68,10 +68,13 @@ export default {
 
   effects: {
     *loadMenuData({ payload }, { call, put }) {
+      const { routes } = payload;
+
       const response =  yield call(getUserMenu, payload);
       const menuData = response.data.modules;
       const breadcrumbNameMap = memoizeOneGetBreadcrumbNameMap(menuData);
-
+      console.info("loadMenuData");
+      console.info(menuData);
       yield put({
         type: 'save',
         payload: { menuData, breadcrumbNameMap, routerData: routes },

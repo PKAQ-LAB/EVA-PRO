@@ -3,9 +3,10 @@ import Redirect from 'umi/redirect';
 import pathToRegexp from 'path-to-regexp';
 import { connect } from 'dva';
 import Authorized from '@/utils/Authorized';
+import { getAuthority, isLogin } from '@/utils/authority';
 
 function AuthComponent({ children, location, routerData, status }) {
-  const isLogin = status === 'ok';
+  const logined = isLogin();
   const pathName = children.props.location.pathname;
   const getRouteAuthority = (pathname, routeData) => {
     const routes = routeData.slice(); // clone
@@ -30,7 +31,7 @@ function AuthComponent({ children, location, routerData, status }) {
     return getAuthority(routes, pathname);
   };
 
-  if(isLogin){
+  if(logined){
     if ("/user/login" === pathName){
       return <Redirect to="/"/>
     } else {
@@ -44,7 +45,7 @@ function AuthComponent({ children, location, routerData, status }) {
       )
     }
   } else {
-      return <Redirect to="/user/login"/>
+    return <Redirect to="/user/login"/>
   }
 }
 export default connect(({ menu: menuModel, login: loginModel }) => ({
