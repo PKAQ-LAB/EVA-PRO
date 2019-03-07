@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage, formatMessage } from 'umi/locale';
-import { Spin, Tag, Menu, Icon, Avatar, Tooltip } from 'antd';
+import { Spin, Tag, Menu, Icon, Avatar, Tooltip, message } from 'antd';
 import Debounce from 'lodash-decorators/debounce';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
@@ -76,34 +76,17 @@ export default class GlobalHeaderRight extends PureComponent {
     });
   };
 
-  fetchMoreNotices = tabProps => {
-    const { list, name } = tabProps;
-    const { dispatch, notices = [] } = this.props;
-    const lastItemId = notices[notices.length - 1].id;
-    dispatch({
-      type: 'global/fetchMoreNotices',
-      payload: {
-        lastItemId,
-        type: name,
-        offset: list.length,
-      },
-    });
-  };
-
   render() {
     const fullscreenIcon = ['fullscreen', 'fullscreen-exit'];
-    const fullscreenText = ['ÂÖ®Â±è', 'ÈÄÄÂá∫ÂÖ®Â±è'];
+    const fullscreenText = ['»´∆¡', 'ÕÀ≥ˆ»´∆¡'];
     const fullscreen = this.state.fullscreen;
 
     const {
       currentUser,
-      fetchingMoreNotices,
       fetchingNotices,
-      loadedAllNotices,
       onNoticeVisibleChange,
       onMenuClick,
       onNoticeClear,
-      skeletonCount,
       theme,
     } = this.props;
     const menu = (
@@ -127,11 +110,6 @@ export default class GlobalHeaderRight extends PureComponent {
         </Menu.Item>
       </Menu>
     );
-    const loadMoreProps = {
-      skeletonCount,
-      loadedAll: loadedAllNotices,
-      loading: fetchingMoreNotices,
-    };
     const noticeData = this.getNoticeData();
     const unreadMsg = this.getUnreadData(noticeData);
     let className = styles.right;
@@ -155,7 +133,7 @@ export default class GlobalHeaderRight extends PureComponent {
             console.log('enter', value); // eslint-disable-line
           }}
         />
-        {/*ÂÖ®Â±è*/}
+        {/*»´∆¡*/}
         <Tooltip title={fullscreenText[fullscreen]}>
           <span className={styles.action} onClick={() => this.f11()}>
               <Icon type={fullscreenIcon[fullscreen]} />
@@ -179,44 +157,43 @@ export default class GlobalHeaderRight extends PureComponent {
             console.log(item, tabProps); // eslint-disable-line
             this.changeReadState(item, tabProps);
           }}
+          loading={fetchingNotices}
           locale={{
             emptyText: formatMessage({ id: 'component.noticeIcon.empty' }),
             clear: formatMessage({ id: 'component.noticeIcon.clear' }),
-            loadedAll: formatMessage({ id: 'component.noticeIcon.loaded' }),
-            loadMore: formatMessage({ id: 'component.noticeIcon.loading-more' }),
+            viewMore: formatMessage({ id: 'component.noticeIcon.view-more' }),
+            notification: formatMessage({ id: 'component.globalHeader.notification' }),
+            message: formatMessage({ id: 'component.globalHeader.message' }),
+            event: formatMessage({ id: 'component.globalHeader.event' }),
           }}
           onClear={onNoticeClear}
-          onLoadMore={this.fetchMoreNotices}
           onPopupVisibleChange={onNoticeVisibleChange}
-          loading={fetchingNotices}
+          onViewMore={() => message.info('Click on view more')}
           clearClose
         >
           <NoticeIcon.Tab
             count={unreadMsg.notification}
             list={noticeData.notification}
-            title={formatMessage({ id: 'component.globalHeader.notification' })}
-            name="notification"
+            title="notification"
             emptyText={formatMessage({ id: 'component.globalHeader.notification.empty' })}
             emptyImage="https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg"
-            {...loadMoreProps}
+            showViewMore
           />
           <NoticeIcon.Tab
             count={unreadMsg.message}
             list={noticeData.message}
-            title={formatMessage({ id: 'component.globalHeader.message' })}
-            name="message"
+            title="message"
             emptyText={formatMessage({ id: 'component.globalHeader.message.empty' })}
             emptyImage="https://gw.alipayobjects.com/zos/rmsportal/sAuJeJzSKbUmHfBQRzmZ.svg"
-            {...loadMoreProps}
+            showViewMore
           />
           <NoticeIcon.Tab
             count={unreadMsg.event}
             list={noticeData.event}
-            title={formatMessage({ id: 'component.globalHeader.event' })}
-            name="event"
+            title="event"
             emptyText={formatMessage({ id: 'component.globalHeader.event.empty' })}
             emptyImage="https://gw.alipayobjects.com/zos/rmsportal/HsIsxMZiWKrNUavQUXqx.svg"
-            {...loadMoreProps}
+            showViewMore
           />
         </NoticeIcon>
         {currentUser.name ? (
