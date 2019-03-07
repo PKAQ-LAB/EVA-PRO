@@ -4,7 +4,6 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
-import Media from 'react-media';
 import logo from '../assets/logo.svg';
 import Footer from './Footer';
 import Header from './Header';
@@ -54,14 +53,16 @@ const query = {
 export default class BasicLayout extends React.Component {
   componentDidMount() {
     const {
-      dispatch,
+      route: { routes, authority },
     } = this.props;
 
-    //获取菜单
-    dispatch({
+    console.info("load menus ");
+    //鑾峰彇鑿滃崟
+    this.props.dispatch({
       type: 'menu/loadMenuData',
+      payload: { routes, authority },
     });
-    // 获取设置
+    // 鑾峰彇璁剧疆
     this.props.dispatch({
       type: 'setting/getSetting',
     });
@@ -112,6 +113,9 @@ export default class BasicLayout extends React.Component {
       breadcrumbNameMap,
       fixedHeader,
     } = this.props;
+
+    console.info("baisc layout:");
+    console.info(menuData);
 
     const isTop = PropsLayout === 'topmenu';
     const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};

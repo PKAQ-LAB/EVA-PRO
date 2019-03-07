@@ -46,7 +46,7 @@ export default class UserLayout extends Component {
       route: {routes, authority},
     } = this.props;
     dispatch({
-      type: 'menu/getMenuData',
+      type: 'menu/loadMenuData',
       payload: {routes, authority},
     });
   }
