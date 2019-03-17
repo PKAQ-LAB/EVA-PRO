@@ -8,7 +8,7 @@ import { getAuthority, isLogin } from '@/utils/authority';
 function AuthComponent({ children, location, routerData, status }) {
   const logined = isLogin();
   const pathName = children.props.location.pathname;
-  const isLogin = status === 'ok';
+ 
   const getRouteAuthority = (path, routeData) => {
     let authorities;
     routeData.forEach(route => {
