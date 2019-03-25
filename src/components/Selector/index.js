@@ -18,10 +18,10 @@ export default class Selector extends PureComponent {
     const code = this.props.code;
     if (code) {
       request(`/dict/query/${code}`).then( response => {
-        const data = Object.keys(response.data);
-        if(data){
+        if(response && response.data){
+          const data = Object.keys(response.data);
           const options = data.map(v =>
-            <Option key={v}>
+            <Option key={v} value={v}>
               { response.data[v] }
             </Option>
           );
@@ -36,6 +36,7 @@ export default class Selector extends PureComponent {
     const { options } = this.state;
     return (
       <Select { ...this.props }>
+        <Option value="">全部</Option>
         {options}
       </Select>
     )
