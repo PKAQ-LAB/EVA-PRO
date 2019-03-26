@@ -8,7 +8,6 @@ import logo from '../assets/logo.svg';
 import Footer from './Footer';
 import Header from './Header';
 import Context from './MenuContext';
-import PageLoading from '@/components/PageLoading';
 import SiderMenu from '@/components/SiderMenu';
 import getPageTitle from '@/utils/getPageTitle';
 import styles from './BasicLayout.less';
@@ -53,18 +52,22 @@ const query = {
 export default class BasicLayout extends React.Component {
   componentDidMount() {
     const {
-      route: { routes, authority },
+      route: { routes, path, authority },
     } = this.props;
 
     console.info("load menus ");
-    //鑾峰彇鑿滃崟
+    //获取菜单
     this.props.dispatch({
       type: 'menu/loadMenuData',
       payload: { routes, authority },
     });
-    // 鑾峰彇璁剧疆
+    // 获取设置
     this.props.dispatch({
       type: 'setting/getSetting',
+    });
+    dispatch({
+      type: 'menu/getMenuData',
+      payload: { routes, path, authority },
     });
   }
 
@@ -160,7 +163,7 @@ export default class BasicLayout extends React.Component {
             )}
           </ContainerQuery>
         </DocumentTitle>
-        <Suspense fallback={<PageLoading />}>{this.renderSettingDrawer()}</Suspense>
+        <Suspense fallback={null}>{this.renderSettingDrawer()}</Suspense>
       </React.Fragment>
     );
   }
