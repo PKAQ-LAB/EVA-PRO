@@ -110,7 +110,7 @@ export default {
 
   effects: {
     *loadMenuData({ payload }, { call, put }) {
-      const { routes, authority, path } = payload;
+      const { routes } = payload;
 
       const response =  yield call(getUserMenu, payload);
       const menuData = response.data.modules;

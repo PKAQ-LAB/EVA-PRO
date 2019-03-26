@@ -3,11 +3,13 @@ import Redirect from 'umi/redirect';
 import pathToRegexp from 'path-to-regexp';
 import { connect } from 'dva';
 import Authorized from '@/utils/Authorized';
-import { getAuthority } from '@/utils/authority';
+import { getAuthority, isLogin } from '@/utils/authority';
 import Exception403 from '@/pages/Exception/403';
 
-function AuthComponent({ children, location, routerData, status }) {
+function AuthComponent({ children, location, routerData }) {
   const logined = isLogin();
+  console.info("logined: " + logined);
+
   const pathName = children.props.location.pathname;
  
   const getRouteAuthority = (path, routeData) => {

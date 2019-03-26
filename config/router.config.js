@@ -24,7 +24,7 @@ export default [
     Routes: ['src/pages/Authorized'],
     routes: [
       // dashboard
-      { path: '/', redirect: '/sys/organization', authority: ['admin', 'user'] },
+      { path: '/', redirect: '/sys/organization' },
       // 系统管理
       {
         path: '/sys',name: 'sys',icon: 'setting',

@@ -64,10 +64,7 @@ export default class BasicLayout extends React.Component {
     // ªÒ»°…Ë÷√
     this.props.dispatch({
       type: 'setting/getSetting',
-    });
-    dispatch({
-      type: 'menu/getMenuData',
-      payload: { routes, path, authority },
+      payload: { routes, path, authority },   
     });
   }
 
