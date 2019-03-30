@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import md5 from 'md5';
-import { formatMessage, FormattedMessage } from 'umi/locale';
-import Link from 'umi/link';
+import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';import Link from 'umi/link';
 import { Checkbox, Alert, Icon } from 'antd';
 import Login from '@/components/Login';
 import styles from './Login.less';
