@@ -7,13 +7,6 @@ const Option = Select.Option;
  * 远程获取下拉菜单选项
  */
 export default class Selector extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      code: '',
-      options: [],
-    };
-  }
   componentDidMount() {
     const code = this.props.code;
     if (code) {
@@ -32,11 +25,12 @@ export default class Selector extends PureComponent {
       });
     }
   }
+
   render() {
-    const { options } = this.state;
+    const { options, showAll = true } = this.state;
     return (
-      <Select { ...this.props }>
-        <Option value="">全部</Option>
+      <Select {...this.props}>
+        { showAll && <Option value="">全部</Option> }
         {options}
       </Select>
     )
