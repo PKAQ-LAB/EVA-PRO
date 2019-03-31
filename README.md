@@ -17,8 +17,13 @@ $ yarn install
 $ yarn start         # visit http://localhost:8000
 ```
 
-## 设置淘宝镜像
+## 设置国内源or镜像
+
+**设置淘宝镜像**
 yarn config set registry https://registry.npm.taobao.org --global
+
+**国内源**
+$ npm i yarn tyarn -g
 
 ## 需要补充得知识
  - [antd实战](https://www.yuque.com/ant-design/course)
