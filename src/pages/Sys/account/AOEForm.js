@@ -62,7 +62,7 @@ export default class AOEForm extends Component {
       // 加密密码
       data.password = md5(data.password);
 
-      data.locked = data.locked ? '0001' : '0000';
+      data.locked = data.locked ? '0000' : '0001';
       dispatch({
         type: 'account/save',
         payload: data,
