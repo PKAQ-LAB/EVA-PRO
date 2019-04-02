@@ -1,12 +1,20 @@
 import React, { PureComponent } from 'react';
 import { Select } from 'antd';
 import request from '@/utils/request';
+
 const Option = Select.Option;
 
 /**
  * 远程获取下拉菜单选项
  */
 export default class Selector extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      options: [],
+    };
+  }
+
   componentDidMount() {
     const code = this.props.code;
     if (code) {
@@ -31,7 +39,7 @@ export default class Selector extends PureComponent {
     return (
       <Select {...this.props}>
         { showAll && <Option value="">全部</Option> }
-        {options}
+        { options }
       </Select>
     )
   }

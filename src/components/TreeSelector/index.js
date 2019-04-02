@@ -5,6 +5,13 @@ import request from '@/utils/request';
  * 远程获取树形结构下拉菜单选项
  */
 export default class TreeSelector extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      treeData: [],
+    };
+  }
+
   componentDidMount() {
     const {url, showAll = true } = this.props.url;
     if (url) {
