@@ -103,7 +103,10 @@ export default modelExtend(model, {
         payload.record.status = payload.status;
         yield put({
           type: 'updateState',
-          currentItem: payload.record,
+          payload: {
+            data: response.data,
+            selectedRowKeys: [],
+          },
         });
       }
     },
