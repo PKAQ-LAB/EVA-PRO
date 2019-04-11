@@ -21,7 +21,7 @@ export async function queryRule(params) {
 export async function removeRule(params) {
   return request('/rule', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
       method: 'delete',
     },
@@ -31,7 +31,7 @@ export async function removeRule(params) {
 export async function addRule(params) {
   return request('/rule', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
       method: 'post',
     },
@@ -41,7 +41,7 @@ export async function addRule(params) {
 export async function updateRule(params) {
   return request('/rule', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
       method: 'update',
     },
@@ -51,7 +51,7 @@ export async function updateRule(params) {
 export async function fakeSubmitForm(params) {
   return request('/forms', {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 
@@ -79,7 +79,7 @@ export async function removeFakeList(params) {
   const { count = 5, ...restParams } = params;
   return request(`/fake_list?count=${count}`, {
     method: 'POST',
-    body: {
+    data: {
       ...restParams,
       method: 'delete',
     },
@@ -90,7 +90,7 @@ export async function addFakeList(params) {
   const { count = 5, ...restParams } = params;
   return request(`/fake_list?count=${count}`, {
     method: 'POST',
-    body: {
+    data: {
       ...restParams,
       method: 'post',
     },
@@ -101,7 +101,7 @@ export async function updateFakeList(params) {
   const { count = 5, ...restParams } = params;
   return request(`/fake_list?count=${count}`, {
     method: 'POST',
-    body: {
+    data: {
       ...restParams,
       method: 'update',
     },
@@ -116,14 +116,14 @@ export async function updateFakeList(params) {
 export async function fakeAccountLogin(params) {
   return request('/auth/login', {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 
 export async function fakeRegister(params) {
   return request('/register', {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 

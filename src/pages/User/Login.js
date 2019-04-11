@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import md5 from 'md5';
-import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';import Link from 'umi/link';
-import { Checkbox, Alert, Icon } from 'antd';
+import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
+import { Checkbox, Alert, message } from 'antd';
 import Login from '@/components/Login';
 import styles from './Login.less';
 
@@ -13,14 +13,6 @@ const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
   submitting: loading.effects['login/login'],
 }))
 class LoginPage extends Component {
-
-  constructor(props) {
-    super(props);
-
-    console.info("this is login page: " );
-
-  }
-
   state = {
     type: 'account',
     autoLogin: true,
@@ -43,21 +35,23 @@ class LoginPage extends Component {
           })
             .then(resolve)
             .catch(reject);
+          message.warning(formatMessage({ id: 'app.login.verification-code-warning' }));
         }
       });
     });
 
-  handleSubmit = (err, values) => {
+  handleSubmit = (err, formdata) => {
     const { type } = this.state;
     if (!err) {
       const { dispatch } = this.props;
+      const loginData = formdata;
 
-      values.password = md5(values.password);
+      loginData.password = md5(formdata.password);
 
       dispatch({
         type: 'login/login',
         payload: {
-          ...values,
+          ...loginData,
           type,
         },
       });

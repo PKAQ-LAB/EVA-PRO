@@ -1,5 +1,6 @@
-import Cookies from 'universal-cookie';
-const cookies = new Cookies();
+// import Cookies from 'universal-cookie';
+
+// const cookies = new Cookies();
 
 // use localStorage to store the authority info, which might be sent from server in actual project.
 export function getAuthority(str) {
@@ -16,19 +17,20 @@ export function getAuthority(str) {
   if (typeof authority === 'string') {
     return [authority];
   }
+  if (!authority && APP_TYPE === 'site') {
+    return ['admin'];
+  }
   return authority;
 }
-
 /**
- * 是否登录
+ * 持久化token
  * @returns {boolean}
  */
-export function isLogin(){
+export function isLogin() {
   // const eva_token = cookies.get('eva_token');
-  const eva_token = localStorage.getItem('eva_token');
-  console.info("eva_token : " + eva_token);
+  const evaToken = localStorage.getItem('eva_token');
 
-  return eva_token && eva_token !== '';
+  return evaToken && evaToken !== '';
 }
 
 export function setAuthority(authority) {
