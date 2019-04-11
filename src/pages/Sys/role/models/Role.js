@@ -149,7 +149,8 @@ export default modelExtend(pageModel, {
           currentItem: payload.currentItem,
           userData: {
             data: {
-              list: response.data.users.data,
+              list: response.data.users.records,
+              checked: response.data.checked,
               pagination: {
                 showSizeChanger: true,
                 showQuickJumper: true,
