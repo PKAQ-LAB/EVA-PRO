@@ -37,6 +37,7 @@ $ npm i yarn tyarn -g
  - [react router入门] (http://www.ruanyifeng.com/blog/2016/05/react_router.html?utm_source=tool.lu)
  - [saga入门] (https://www.jianshu.com/p/89ed2a01a3db)
  - [saga文档](https://redux-saga-in-chinese.js.org/index.html)
+ - [ES检查中文说明](https://cloud.tencent.com/developer/section/1135734)
 
 目录说明   
 - dist: 打包目录   

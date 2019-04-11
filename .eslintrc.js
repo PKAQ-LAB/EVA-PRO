@@ -1,5 +1,11 @@
 module.exports = {
   parser: 'babel-eslint',
+  parserOptions: {
+    ecmaFeatures: {
+      legacyDecorators: true,
+      experimentalObjectRestSpread: true,
+    },
+  },
   extends: ['airbnb', 'prettier', 'plugin:compat/recommended'],
   env: {
     browser: true,
