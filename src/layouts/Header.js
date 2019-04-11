@@ -17,7 +17,7 @@ const { Header } = Layout;
   notices: global.notices,
   fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],
   loadedAllNotices: global.loadedAllNotices,
-  setting
+  setting,
 }))
 export default class HeaderView extends Component {
   state = {
@@ -129,7 +129,10 @@ export default class HeaderView extends Component {
     const isTop = layout === 'topmenu';
     const width = this.getHeadWidth();
     const HeaderDom = visible ? (
-      <Header style={{ padding: 0, width }} className={fixedHeader ? styles.fixedHeader : ''}>
+      <Header
+        style={{ padding: 0, width, zIndex: 2 }}
+        className={fixedHeader ? styles.fixedHeader : ''}
+      >
         {isTop && !isMobile ? (
           <TopNavHeader
             theme={navTheme}
