@@ -15,7 +15,6 @@ import styles from './BasicLayout.less';
 // lazy load SettingDrawer
 const SettingDrawer = React.lazy(() => import('@/components/SettingDrawer'));
 
-
 const { Content } = Layout;
 
 const query = {
@@ -55,16 +54,15 @@ export default class BasicLayout extends React.Component {
       route: { routes, path, authority },
     } = this.props;
 
-    console.info("load menus ");
-    //获取菜单
+    // 鍔犺浇鑿滃崟
     this.props.dispatch({
       type: 'menu/loadMenuData',
       payload: { routes, authority },
     });
-    // 获取设置
+    // 鍔犺浇閰嶇疆
     this.props.dispatch({
       type: 'setting/getSetting',
-      payload: { routes, path, authority },   
+      payload: { routes, path, authority },
     });
   }
 
@@ -113,9 +111,6 @@ export default class BasicLayout extends React.Component {
       breadcrumbNameMap,
       fixedHeader,
     } = this.props;
-
-    console.info("baisc layout:");
-    console.info(menuData);
 
     const isTop = PropsLayout === 'topmenu';
     const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};

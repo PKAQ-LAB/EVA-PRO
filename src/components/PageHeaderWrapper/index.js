@@ -47,9 +47,9 @@ const PageHeaderWrapper = ({
   ...restProps
 }) => {
   return (
-    <div style={{ margin: '-24px -24px 0' }} className={classNames(classNames, styles.main)}>
+    <div style={{ margin: '0 -24px 0' }} className={classNames(classNames, styles.main)}>
       {top}
-      {title && content && (
+      {title && (
         <MenuContext.Consumer>
           {value => {
             return (
