@@ -7,6 +7,7 @@ export interface TagSelectProps {
   value?: string[] | number[];
   style?: React.CSSProperties;
   hideCheckAll?: boolean;
+  mode?: string;
   actionsText?: {
     expandText?: React.ReactNode;
     collapseText?: React.ReactNode;
