@@ -49,7 +49,7 @@ const PageHeaderWrapper = ({
   return (
     <div style={{ margin: '0 -24px 0' }} className={classNames(classNames, styles.main)}>
       {top}
-      {title && (
+      {
         <MenuContext.Consumer>
           {value => {
             return (
@@ -89,7 +89,7 @@ const PageHeaderWrapper = ({
             );
           }}
         </MenuContext.Consumer>
-      )}
+      }
       {children ? (
         <div className={styles['children-content']}>
           <GridContent>{children}</GridContent>
