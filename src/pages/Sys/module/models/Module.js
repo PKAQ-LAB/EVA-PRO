@@ -74,7 +74,7 @@ export default modelExtend(model, {
     // 保存一条模块信息
     *save({ payload }, { call, put }) {
       const response = yield call(editModule, payload);
-      if (response && response.data) {
+      if (response && response.success && response.data) {
         //  关闭窗口 - 提示成功 - 加载数据
         yield put({
           type: 'updateState',
@@ -99,7 +99,7 @@ export default modelExtend(model, {
     // 更改可用状态
     *changeStatus({ payload }, { call, put }) {
       const response = yield call(editModule, payload);
-      if (response) {
+      if (response  && response.success) {
         payload.record.status = payload.status;
         yield put({
           type: 'updateState',
