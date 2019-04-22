@@ -3,11 +3,16 @@ import pathToRegexp from 'path-to-regexp';
 import Link from 'umi/link';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { urlToList } from '../_utils/pathTools';
+import { menu } from '../../defaultSettings';
 
 // 渲染Breadcrumb 子节点
 // Render the Breadcrumb child node
 const itemRender = (route, params, routes, paths) => {
   const last = routes.indexOf(route) === routes.length - 1;
+  // if path is home, use Link。
+  if (route.path === '/') {
+    return <Link to={paths.join('/')}>{route.breadcrumbName}</Link>;
+  }
   return last || !route.component ? (
     <span>{route.breadcrumbName}</span>
   ) : (
@@ -17,7 +22,10 @@ const itemRender = (route, params, routes, paths) => {
 
 const renderItemLocal = item => {
   if (item.locale) {
-    return formatMessage({ id: item.locale, defaultMessage: item.name });
+    const name = menu.disableLocal
+      ? item.name
+      : formatMessage({ id: item.locale, defaultMessage: item.name });
+    return name;
   }
   return item.name;
 };
