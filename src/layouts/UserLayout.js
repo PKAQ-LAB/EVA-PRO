@@ -8,6 +8,7 @@ import DocumentTitle from 'react-document-title';
 import SelectLang from '@/components/SelectLang';
 import styles from './UserLayout.less';
 import logo from '../assets/logo.svg';
+import * as AppInfo from '@/common/config/AppInfo';
 import getPageTitle from '@/utils/getPageTitle';
 
 const links = [
@@ -30,54 +31,54 @@ const links = [
 
 const copyright = (
   <Fragment>
-    Copyright <Icon type="copyright" /> 2018 蚂蚁金服体验技术部出品
+    Copyright <Icon type="copyright" /> {AppInfo.copyright}
   </Fragment>
 );
 
-class UserLayout extends Component {
+@connect(({ menu }) => ({
+  menuData: menu.menuData,
+  breadcrumbNameMap: menu.breadcrumbNameMap,
+}))
+export default class UserLayout extends Component {
   componentDidMount() {
     const {
       dispatch,
-      route: { routes, authority },
+      route: {routes, authority},
     } = this.props;
     dispatch({
-      type: 'menu/getMenuData',
-      payload: { routes, authority },
+      type: 'menu/loadMenuData',
+      payload: {routes, authority},
     });
   }
 
   render() {
     const {
       children,
-      location: { pathname },
+      location: {pathname},
       breadcrumbNameMap,
     } = this.props;
+
     return (
       <DocumentTitle title={getPageTitle(pathname, breadcrumbNameMap)}>
         <div className={styles.container}>
           <div className={styles.lang}>
-            <SelectLang />
+            <SelectLang/>
           </div>
           <div className={styles.content}>
             <div className={styles.top}>
               <div className={styles.header}>
                 <Link to="/">
-                  <img alt="logo" className={styles.logo} src={logo} />
-                  <span className={styles.title}>Ant Design</span>
+                  <img alt="logo" className={styles.logo} src={logo}/>
+                  <span className={styles.title}>{AppInfo.title}</span>
                 </Link>
               </div>
-              <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+              <div className={styles.desc}>{AppInfo.description}</div>
             </div>
             {children}
           </div>
-          <GlobalFooter links={links} copyright={copyright} />
+          <GlobalFooter links={links} copyright={copyright}/>
         </div>
       </DocumentTitle>
-    );
+    )
   }
-}
-
-export default connect(({ menu: menuModel }) => ({
-  menuData: menuModel.menuData,
-  breadcrumbNameMap: menuModel.breadcrumbNameMap,
-}))(UserLayout);
+};

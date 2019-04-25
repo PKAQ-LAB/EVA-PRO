@@ -10,7 +10,16 @@ import styles from './Header.less';
 
 const { Header } = Layout;
 
-class HeaderView extends Component {
+@connect(({ global, setting, loading }) => ({
+  currentUser: global.currentUser,
+  collapsed: global.collapsed,
+  fetchingNotices: loading.effects['global/fetchNotices'],
+  notices: global.notices,
+  fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],
+  loadedAllNotices: global.loadedAllNotices,
+  setting,
+}))
+export default class HeaderView extends Component {
   state = {
     visible: true,
   };
@@ -152,12 +161,3 @@ class HeaderView extends Component {
     );
   }
 }
-
-export default connect(({ user, global, setting, loading }) => ({
-  currentUser: user.currentUser,
-  collapsed: global.collapsed,
-  fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],
-  fetchingNotices: loading.effects['global/fetchNotices'],
-  notices: global.notices,
-  setting,
-}))(HeaderView);

@@ -4,7 +4,6 @@ import DocumentTitle from 'react-document-title';
 import { connect } from 'dva';
 import { ContainerQuery } from 'react-container-query';
 import classNames from 'classnames';
-import Media from 'react-media';
 import logo from '../assets/logo.svg';
 import Footer from './Footer';
 import Header from './Header';
@@ -42,21 +41,27 @@ const query = {
     minWidth: 1600,
   },
 };
-
-class BasicLayout extends React.Component {
+@connect(({ global, setting, menu }) => ({
+  collapsed: global.collapsed,
+  menuData: menu.menuData,
+  breadcrumbNameMap: menu.breadcrumbNameMap,
+  layout: setting.layout,
+  ...setting,
+}))
+export default class BasicLayout extends React.Component {
   componentDidMount() {
     const {
-      dispatch,
       route: { routes, path, authority },
     } = this.props;
-    dispatch({
-      type: 'user/fetchCurrent',
+
+    // 加载菜单
+    this.props.dispatch({
+      type: 'menu/loadMenuData',
+      payload: { routes, authority },
     });
-    dispatch({
+    // 加载配置
+    this.props.dispatch({
       type: 'setting/getSetting',
-    });
-    dispatch({
-      type: 'menu/getMenuData',
       payload: { routes, path, authority },
     });
   }
@@ -106,7 +111,6 @@ class BasicLayout extends React.Component {
       layout: PropsLayout,
       children,
       location: { pathname },
-      isMobile,
       menuData,
       breadcrumbNameMap,
       fixedHeader,
@@ -116,13 +120,12 @@ class BasicLayout extends React.Component {
     const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};
     const layout = (
       <Layout>
-        {isTop && !isMobile ? null : (
+        {isTop ? null : (
           <SiderMenu
             logo={logo}
             theme={navTheme}
             onCollapse={this.handleMenuCollapse}
             menuData={menuData}
-            isMobile={isMobile}
             {...this.props}
           />
         )}
@@ -136,7 +139,6 @@ class BasicLayout extends React.Component {
             menuData={menuData}
             handleMenuCollapse={this.handleMenuCollapse}
             logo={logo}
-            isMobile={isMobile}
             {...this.props}
           />
           <Content className={styles.content} style={contentStyle}>
@@ -162,15 +164,3 @@ class BasicLayout extends React.Component {
     );
   }
 }
-
-export default connect(({ global, setting, menu: menuModel }) => ({
-  collapsed: global.collapsed,
-  layout: setting.layout,
-  menuData: menuModel.menuData,
-  breadcrumbNameMap: menuModel.breadcrumbNameMap,
-  ...setting,
-}))(props => (
-  <Media query="(max-width: 599px)">
-    {isMobile => <BasicLayout {...props} isMobile={isMobile} />}
-  </Media>
-));

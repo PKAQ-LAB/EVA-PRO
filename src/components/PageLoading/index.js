@@ -1,10 +1,9 @@
 import React from 'react';
-import { Spin } from 'antd';
+import { Spin, Icon } from 'antd';
+import styles from './index.less';
 
-// loading components from code split
-// https://umijs.org/plugin/umi-plugin-react.html#dynamicimport
 export default () => (
-  <div style={{ paddingTop: 100, textAlign: 'center' }}>
-    <Spin size="large" />
+  <div className={styles.contentInner} >
+    <Spin indicator={<Icon type="deployment-unit" style={{ fontSize: 36 }} spin />} />
   </div>
 );

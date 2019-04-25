@@ -2,7 +2,10 @@ import moment from 'moment';
 import React from 'react';
 import nzh from 'nzh/cn';
 import { parse, stringify } from 'qs';
-
+// 获取非Undefined字符串
+export function getNoUndefinedString(obj) {
+  return obj ? obj : '';
+}
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
 }
@@ -152,7 +155,7 @@ export function isUrl(path) {
 
 export function formatWan(val) {
   const v = val * 1;
-  if (!v || Number.isNaN(v)) return '';
+  if (!v) return '';
 
   let result = val;
   if (val > 10000) {

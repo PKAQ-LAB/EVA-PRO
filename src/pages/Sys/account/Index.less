@@ -1,0 +1,74 @@
+@import '~antd/lib/style/themes/default.less';
+
+.flex_stretch {
+  display: flex;
+  align-items: stretch;
+}
+.fullHeightCol {
+  min-height: ~'calc(100vh - 218px)';
+  min-width: 240px;
+  position: relative;
+}
+// 页面背景
+.leftTree {
+  &:extend(.fullHeightCol);
+  background-color: #fafaf9;
+}
+// card 标题区0边距
+.noPadding {
+  :global  {
+    .ant-card-head-title,
+    .ant-card-extra {
+      padding: 5px;
+    }
+    .ant-card-head {
+      padding: 5px;
+    }
+    .ant-card-body{
+      padding: 5px;
+    }
+  }
+}
+.goodsInfoList {
+  .goodsInfoListOperator {
+    margin-bottom: 16px;
+    button {
+      margin-right: 8px;
+    }
+  }
+}
+.goodsInfoListForm {
+  :global {
+    .ant-form-item {
+      margin-right: 0;
+      display: flex;
+      > .ant-form-item-label {
+        width: auto;
+        padding-right: 8px;
+      }
+    }
+    .ant-form-item-control-wrapper {
+      flex: 1;
+    }
+  }
+  .submitButtons {
+    white-space: nowrap;
+    margin-bottom: 24px;
+  }
+}
+.margin24 {
+  margin: 12px 8px;
+  padding: 0 5px;
+}
+
+@media screen and (max-width: @screen-lg) {
+  .goodsInfoListForm :global(.ant-form-item) {
+    margin: 24px;
+  }
+}
+
+@media screen and (max-width: @screen-md) {
+  .goodsInfoListForm :global(.ant-form-item) {
+    margin: 12px;
+  }
+}

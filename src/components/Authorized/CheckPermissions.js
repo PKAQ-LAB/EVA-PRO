@@ -1,4 +1,5 @@
 import React from 'react';
+// eslint-disable-next-line import/no-cycle
 import PromiseRender from './PromiseRender';
 import { CURRENT } from './renderAuthorize';
 
@@ -11,6 +12,7 @@ import { CURRENT } from './renderAuthorize';
  * @param { 未通过的组件 | no pass components } Exception
  */
 const checkPermissions = (authority, currentAuthority, target, Exception) => {
+
   // 没有判定权限.默认查看所有
   // Retirement authority, return target;
   if (!authority) {

@@ -1,15 +1,17 @@
-import { queryNotices } from '@/services/api';
+import { queryNotices, getUserMenu } from '@/services/api';
 
 export default {
   namespace: 'global',
 
   state: {
+    currentUser: {},
     collapsed: false,
     notices: [],
+  	loadedAllNotices: false,
   },
 
   effects: {
-    *fetchNotices(_, { call, put, select }) {
+    *fetchNotices(_, { call, put }) {
       const data = yield call(queryNotices);
       yield put({
         type: 'saveNotices',
@@ -68,6 +70,12 @@ export default {
   },
 
   reducers: {
+    updateState(state, { payload }) {
+      return {
+        ...state,
+        ...payload,
+      };
+    },
     changeLayoutCollapsed(state, { payload }) {
       return {
         ...state,
@@ -84,6 +92,13 @@ export default {
       return {
         ...state,
         notices: state.notices.filter(item => item.type !== payload),
+      };
+    },
+    saveCurrentUser(state, action) {
+      return {
+        ...state,
+        currentUser: action.payload || {},
+        type: 'user'
       };
     },
   },

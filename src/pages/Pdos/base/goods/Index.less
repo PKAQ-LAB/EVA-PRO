@@ -1,0 +1,60 @@
+@import '~antd/lib/style/themes/default.less';
+@import '~@/utils/utils.less';
+
+.fullHeightCol {
+  min-height: ~'calc(100vh - 240px)';
+  position: relative;
+}
+
+.flex_stretch {
+  display: flex;
+  align-items: stretch;
+}
+
+.leftTree {
+  &:extend(.fullHeightCol);
+  background-color: #fafaf9;
+}
+
+.goodsInfoList {
+  .goodsInfoListOperator {
+    margin-bottom: 16px;
+    button {
+      margin-right: 8px;
+    }
+  }
+}
+
+.goodsInfoListForm {
+  :global {
+    .ant-form-item {
+      display: flex;
+      margin-right: 0;
+      margin-bottom: 24px;
+      > .ant-form-item-label {
+        width: auto;
+        padding-right: 8px;
+        line-height: 32px;
+      }
+    }
+    .ant-form-item-control-wrapper {
+      flex: 1;
+    }
+  }
+  .submitButtons {
+    margin-bottom: 24px;
+    white-space: nowrap;
+  }
+}
+
+@media screen and (max-width: @screen-lg) {
+  .goodsInfoListForm :global(.ant-form-item) {
+    margin-right: 24px;
+  }
+}
+
+@media screen and (max-width: @screen-md) {
+  .goodsInfoListForm :global(.ant-form-item) {
+    margin-right: 8px;
+  }
+}

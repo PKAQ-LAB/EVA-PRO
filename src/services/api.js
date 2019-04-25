@@ -1,20 +1,25 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
+// 获取用户菜单
+export async function getUserMenu() {
+  return request(`/auth/fetch`);
+}
+
 export async function queryProjectNotice() {
-  return request('/api/project/notice');
+  return request('/project/notice');
 }
 
 export async function queryActivities() {
-  return request('/api/activities');
+  return request('/activities');
 }
 
 export async function queryRule(params) {
-  return request(`/api/rule?${stringify(params)}`);
+  return request(`/rule?${stringify(params)}`);
 }
 
 export async function removeRule(params) {
-  return request('/api/rule', {
+  return request('/rule', {
     method: 'POST',
     data: {
       ...params,
@@ -24,7 +29,7 @@ export async function removeRule(params) {
 }
 
 export async function addRule(params) {
-  return request('/api/rule', {
+  return request('/rule', {
     method: 'POST',
     data: {
       ...params,
@@ -33,46 +38,46 @@ export async function addRule(params) {
   });
 }
 
-export async function updateRule(params = {}) {
-  return request(`/api/rule?${stringify(params.query)}`, {
+export async function updateRule(params) {
+  return request('/rule', {
     method: 'POST',
     data: {
-      ...params.body,
+      ...params,
       method: 'update',
     },
   });
 }
 
 export async function fakeSubmitForm(params) {
-  return request('/api/forms', {
+  return request('/forms', {
     method: 'POST',
     data: params,
   });
 }
 
 export async function fakeChartData() {
-  return request('/api/fake_chart_data');
+  return request('/fake_chart_data');
 }
 
 export async function queryTags() {
-  return request('/api/tags');
+  return request('/tags');
 }
 
 export async function queryBasicProfile(id) {
-  return request(`/api/profile/basic?id=${id}`);
+  return request(`/profile/basic?id=${id}`);
 }
 
 export async function queryAdvancedProfile() {
-  return request('/api/profile/advanced');
+  return request('/profile/advanced');
 }
 
 export async function queryFakeList(params) {
-  return request(`/api/fake_list?${stringify(params)}`);
+  return request(`/fake_list?${stringify(params)}`);
 }
 
 export async function removeFakeList(params) {
   const { count = 5, ...restParams } = params;
-  return request(`/api/fake_list?count=${count}`, {
+  return request(`/fake_list?count=${count}`, {
     method: 'POST',
     data: {
       ...restParams,
@@ -83,7 +88,7 @@ export async function removeFakeList(params) {
 
 export async function addFakeList(params) {
   const { count = 5, ...restParams } = params;
-  return request(`/api/fake_list?count=${count}`, {
+  return request(`/fake_list?count=${count}`, {
     method: 'POST',
     data: {
       ...restParams,
@@ -94,7 +99,7 @@ export async function addFakeList(params) {
 
 export async function updateFakeList(params) {
   const { count = 5, ...restParams } = params;
-  return request(`/api/fake_list?count=${count}`, {
+  return request(`/fake_list?count=${count}`, {
     method: 'POST',
     data: {
       ...restParams,
@@ -103,15 +108,20 @@ export async function updateFakeList(params) {
   });
 }
 
+/**
+ * 用户登录
+ * @param params
+ * @returns {Promise<void>}
+ */
 export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
+  return request('/auth/login', {
     method: 'POST',
     data: params,
   });
 }
 
 export async function fakeRegister(params) {
-  return request('/api/register', {
+  return request('/register', {
     method: 'POST',
     data: params,
   });

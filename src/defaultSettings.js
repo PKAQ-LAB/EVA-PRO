@@ -1,15 +1,16 @@
 module.exports = {
-  navTheme: 'dark', // theme for nav menu
-  primaryColor: '#1890FF', // primary color of ant design
-  layout: 'sidemenu', // nav menu position: sidemenu or topmenu
-  contentWidth: 'Fluid', // layout of content: Fluid or Fixed, only works when layout is topmenu
-  fixedHeader: false, // sticky header
-  autoHideHeader: false, // auto hide header
-  fixSiderbar: false, // sticky siderbar
+  "navTheme": "dark",
+  "primaryColor": "#1890FF",
+  "layout": "sidemenu",
+  "contentWidth": "Fluid",
+  "fixedHeader": true,
+  "autoHideHeader": true,
+  "fixSiderbar": true,
+  "collapse": true,
+  title: 'EVA Admin',
   menu: {
     disableLocal: false,
   },
-  title: 'Ant Design Pro',
   pwa: true,
   // Your custom iconfont Symbol script Url
   // eg：//at.alicdn.com/t/font_1039637_btcrd5co4w.js

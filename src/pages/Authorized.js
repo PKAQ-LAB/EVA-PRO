@@ -3,12 +3,12 @@ import Redirect from 'umi/redirect';
 import pathToRegexp from 'path-to-regexp';
 import { connect } from 'dva';
 import Authorized from '@/utils/Authorized';
-import { getAuthority } from '@/utils/authority';
-import Exception403 from '@/pages/Exception/403';
+import { getAuthority, isLogin } from '@/utils/authority';
 
-function AuthComponent({ children, location, routerData }) {
-  const auth = getAuthority();
-  const isLogin = auth && auth[0] !== 'guest';
+function AuthComponent({ children, location, routerData, status }) {
+  const logined = isLogin();
+  const pathName = children.props.location.pathname;
+ 
   const getRouteAuthority = (path, routeData) => {
     let authorities;
     routeData.forEach(route => {
@@ -24,15 +24,25 @@ function AuthComponent({ children, location, routerData }) {
     });
     return authorities;
   };
-  return (
-    <Authorized
-      authority={getRouteAuthority(location.pathname, routerData)}
-      noMatch={isLogin ? <Exception403 /> : <Redirect to="/user/login" />}
-    >
-      {children}
-    </Authorized>
-  );
+
+  if(logined){
+    if ("/user/login" === pathName){
+      return <Redirect to="/"/>
+    } else {
+      return (
+        <Authorized
+          authority={getRouteAuthority(location.pathname, routerData)}
+          noMatch={ <Redirect to="/exception/403" /> }
+        >
+          {children}
+        </Authorized>
+      )
+    }
+  } else {
+    return <Redirect to="/user/login"/>
+  }
 }
-export default connect(({ menu: menuModel }) => ({
+export default connect(({ menu: menuModel, login: loginModel }) => ({
   routerData: menuModel.routerData,
+  status: loginModel.status,
 }))(AuthComponent);

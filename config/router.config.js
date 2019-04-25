@@ -24,272 +24,79 @@ export default [
     Routes: ['src/pages/Authorized'],
     routes: [
       // dashboard
-      { path: '/', redirect: '/dashboard/analysis', authority: ['admin', 'user'] },
+      { path: '/', redirect: '/sys/organization' },
+      // 系统管理
       {
-        path: '/dashboard',
-        name: 'dashboard',
-        icon: 'dashboard',
+        path: '/sys',name: 'sys',icon: 'setting',
         routes: [
-          {
-            path: '/dashboard/analysis',
-            name: 'analysis',
-            component: './Dashboard/Analysis',
-          },
-          {
-            path: '/dashboard/monitor',
-            name: 'monitor',
-            component: './Dashboard/Monitor',
-          },
-          {
-            path: '/dashboard/workplace',
-            name: 'workplace',
-            component: './Dashboard/Workplace',
-          },
+          { path: '/sys/organization', name: 'organization', component: './Sys/organization/Index.js' },
+          { path: '/sys/account', name: 'account', component: './Sys/account/Index.js' },
+          { path: '/sys/module', name: 'module', component: './Sys/module/Index.js' },
+          { path: '/sys/role', name: 'role', component: './Sys/role/Index.js' },
+          { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary/Index.js' },
         ],
       },
-      // forms
+      //进销存
       {
-        path: '/form',
-        icon: 'form',
-        name: 'form',
+        path: '/pdos',name: 'pdos',icon: 'shop',
         routes: [
-          {
-            path: '/form/basic-form',
-            name: 'basicform',
-            component: './Forms/BasicForm',
-          },
-          {
-            path: '/form/step-form',
-            name: 'stepform',
-            component: './Forms/StepForm',
-            hideChildrenInMenu: true,
-            routes: [
-              {
-                path: '/form/step-form',
-                redirect: '/form/step-form/info',
-              },
-              {
-                path: '/form/step-form/info',
-                name: 'info',
-                component: './Forms/StepForm/Step1',
-              },
-              {
-                path: '/form/step-form/confirm',
-                name: 'confirm',
-                component: './Forms/StepForm/Step2',
-              },
-              {
-                path: '/form/step-form/result',
-                name: 'result',
-                component: './Forms/StepForm/Step3',
-              },
-            ],
-          },
-          {
-            path: '/form/advanced-form',
-            name: 'advancedform',
-            authority: ['admin'],
-            component: './Forms/AdvancedForm',
-          },
+          // 基
+          { path: '/pdos/base', name: 'base', routes: [
+              { path: '/pdos/base/category', name: 'category', component: './Pdos/base/category/Index.js' },
+              { path: '/pdos/base/goods', name: 'goods', component: './Pdos/base/goods/Index.js' },
+              // { path: '/pdos/base/supplier', name: 'supplier', component: './Pdos/base/supplier' },
+              // { path: '/pdos/base/warehouse', name: 'warehouse', component: './Pdos/base/warehouse' },
+            ] },
+          // 进
+          { path: '/pdos/purchasing', name: 'purchasing', routes: [
+              { path: '/pdos/purchasing/orders', name: 'orders', component: './Pdos/purchasing/orders/Index.js' },
+            ] },
+          // // 销
+          // { path: '/pdos/sales', name: 'sales', routes: [
+          //     { path: '/pdos/sales/orders', name: 'orders', component: './Pdos/sales/orders' },
+          //   ] },
+          // // 存
+          // { path: '/pdos/inventory', name: 'inventory', routes: [
+          //     { path: '/pdos/inventory/accbook', name: 'accbook', component: './Pdos/inventory/accbook' },
+          //   ] },
+          // { path: '/pdos/analysis', name: 'analysis', routes: [] },
         ],
       },
-      // list
+      // 异常页
       {
-        path: '/list',
-        icon: 'table',
-        name: 'list',
-        routes: [
-          {
-            path: '/list/table-list',
-            name: 'searchtable',
-            component: './List/TableList',
-          },
-          {
-            path: '/list/basic-list',
-            name: 'basiclist',
-            component: './List/BasicList',
-          },
-          {
-            path: '/list/card-list',
-            name: 'cardlist',
-            component: './List/CardList',
-          },
-          {
-            path: '/list/search',
-            name: 'searchlist',
-            component: './List/List',
-            routes: [
-              {
-                path: '/list/search',
-                redirect: '/list/search/articles',
-              },
-              {
-                path: '/list/search/articles',
-                name: 'articles',
-                component: './List/Articles',
-              },
-              {
-                path: '/list/search/projects',
-                name: 'projects',
-                component: './List/Projects',
-              },
-              {
-                path: '/list/search/applications',
-                name: 'applications',
-                component: './List/Applications',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        path: '/profile',
-        name: 'profile',
-        icon: 'profile',
-        routes: [
-          // profile
-          {
-            path: '/profile/basic',
-            name: 'basic',
-            component: './Profile/BasicProfile',
-          },
-          {
-            path: '/profile/basic/:id',
-            name: 'basic',
-            hideInMenu: true,
-            component: './Profile/BasicProfile',
-          },
-          {
-            path: '/profile/advanced',
-            name: 'advanced',
-            authority: ['admin'],
-            component: './Profile/AdvancedProfile',
-          },
-        ],
-      },
-      {
-        name: 'result',
-        icon: 'check-circle-o',
-        path: '/result',
-        routes: [
-          // result
-          {
-            path: '/result/success',
-            name: 'success',
-            component: './Result/Success',
-          },
-          { path: '/result/fail', name: 'fail', component: './Result/Error' },
-        ],
-      },
-      {
-        name: 'exception',
-        icon: 'warning',
-        path: '/exception',
+        name: 'exception',icon: 'warning',path: '/exception',
         routes: [
           // exception
-          {
-            path: '/exception/403',
-            name: 'not-permission',
-            component: './Exception/403',
-          },
-          {
-            path: '/exception/404',
-            name: 'not-find',
-            component: './Exception/404',
-          },
-          {
-            path: '/exception/500',
-            name: 'server-error',
-            component: './Exception/500',
-          },
-          {
-            path: '/exception/trigger',
-            name: 'trigger',
-            hideInMenu: true,
-            component: './Exception/TriggerException',
-          },
+          {path: '/exception/403',name: 'not-permission',component: './Exception/403',},
+          {path: '/exception/404',name: 'not-find',component: './Exception/404',},
+          {path: '/exception/500',name: 'server-error',component: './Exception/500',},
+          {path: '/exception/trigger',name: 'trigger',hideInMenu: true,component: './Exception/TriggerException',},
         ],
       },
+      // 个人中心
       {
-        name: 'account',
-        icon: 'user',
-        path: '/account',
+        name: 'account',icon: 'user',path: '/account',
         routes: [
-          {
-            path: '/account/center',
-            name: 'center',
-            component: './Account/Center/Center',
+          {path: '/account/center',name: 'center',component: './Account/Center/Center',
             routes: [
-              {
-                path: '/account/center',
-                redirect: '/account/center/articles',
-              },
-              {
-                path: '/account/center/articles',
-                component: './Account/Center/Articles',
-              },
-              {
-                path: '/account/center/applications',
-                component: './Account/Center/Applications',
-              },
-              {
-                path: '/account/center/projects',
-                component: './Account/Center/Projects',
-              },
+              {path: '/account/center',redirect: '/account/center/articles',},
+              {path: '/account/center/articles',component: './Account/Center/Articles',},
+              {path: '/account/center/applications',component: './Account/Center/Applications',},
+              {path: '/account/center/projects',component: './Account/Center/Projects',},
             ],
           },
           {
-            path: '/account/settings',
-            name: 'settings',
-            component: './Account/Settings/Info',
+            path: '/account/settings',name: 'settings',component: './Account/Settings/Info',
             routes: [
-              {
-                path: '/account/settings',
-                redirect: '/account/settings/base',
-              },
-              {
-                path: '/account/settings/base',
-                component: './Account/Settings/BaseView',
-              },
-              {
-                path: '/account/settings/security',
-                component: './Account/Settings/SecurityView',
-              },
-              {
-                path: '/account/settings/binding',
-                component: './Account/Settings/BindingView',
-              },
-              {
-                path: '/account/settings/notification',
-                component: './Account/Settings/NotificationView',
-              },
+              {path: '/account/settings',redirect: '/account/settings/base',},
+              {path: '/account/settings/base',component: './Account/Settings/BaseView',},
+              {path: '/account/settings/security',component: './Account/Settings/SecurityView',},
+              {path: '/account/settings/binding',component: './Account/Settings/BindingView',},
+              {path: '/account/settings/notification',component: './Account/Settings/NotificationView',},
             ],
           },
         ],
-      },
-      //  editor
-      {
-        name: 'editor',
-        icon: 'highlight',
-        path: '/editor',
-        routes: [
-          {
-            path: '/editor/flow',
-            name: 'flow',
-            component: './Editor/GGEditor/Flow',
-          },
-          {
-            path: '/editor/mind',
-            name: 'mind',
-            component: './Editor/GGEditor/Mind',
-          },
-          {
-            path: '/editor/koni',
-            name: 'koni',
-            component: './Editor/GGEditor/Koni',
-          },
-        ],
-      },
+      },    
       {
         component: '404',
       },

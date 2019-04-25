@@ -1,8 +1,11 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import { Spin, Tag, Menu, Icon, Avatar, Tooltip, message } from 'antd';
+import Debounce from 'lodash-decorators/debounce';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
+import screenfull from 'screenfull';
+
 import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from '../HeaderSearch';
 import HeaderDropdown from '../HeaderDropdown';
@@ -10,6 +13,10 @@ import SelectLang from '../SelectLang';
 import styles from './index.less';
 
 export default class GlobalHeaderRight extends PureComponent {
+  state = {
+    fullscreen: 0,
+  };
+
   getNoticeData() {
     const { notices = [] } = this.props;
     if (notices.length === 0) {
@@ -41,7 +48,13 @@ export default class GlobalHeaderRight extends PureComponent {
     return groupBy(newNotices, 'type');
   }
 
-  getUnreadData = noticeData => {
+  @Debounce(600)
+  f11 = () => {
+    this.setState({
+      fullscreen: screenfull.isFullscreen ? 0 : 1,
+    });
+    screenfull.toggle();
+  };  getUnreadData = noticeData => {
     const unreadMsg = {};
     Object.entries(noticeData).forEach(([key, value]) => {
       if (!unreadMsg[key]) {
@@ -64,6 +77,10 @@ export default class GlobalHeaderRight extends PureComponent {
   };
 
   render() {
+    const fullscreenIcon = ['fullscreen', 'fullscreen-exit'];
+    const fullscreenText = ['全屏', '退出全屏'];
+    const fullscreen = this.state.fullscreen;
+
     const {
       currentUser,
       fetchingNotices,
@@ -116,6 +133,13 @@ export default class GlobalHeaderRight extends PureComponent {
             console.log('enter', value); // eslint-disable-line
           }}
         />
+        {/*全屏*/}
+        <Tooltip title={fullscreenText[fullscreen]}>
+          <span className={styles.action} onClick={() => this.f11()}>
+              <Icon type={fullscreenIcon[fullscreen]} />
+          </span>
+        </Tooltip>
+
         <Tooltip title={formatMessage({ id: 'component.globalHeader.help' })}>
           <a
             target="_blank"

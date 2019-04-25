@@ -44,10 +44,11 @@ const PageHeaderWrapper = ({
   content,
   logo,
   extraContent,
+  hiddenBreadcrumb,
   ...restProps
 }) => {
   return (
-    <div style={{ margin: '-24px -24px 0' }} className={classNames(classNames, styles.main)}>
+    <div style={{ margin: '0 -24px 0' }} className={classNames(wrapperClassName, styles.main)}>
       {top}
       <MenuContext.Consumer>
         {value => {
@@ -66,11 +67,14 @@ const PageHeaderWrapper = ({
               }
               key="pageheader"
               {...restProps}
-              breadcrumb={conversionBreadcrumbList({
-                ...value,
-                ...restProps,
-                home: <FormattedMessage id="menu.home" defaultMessage="Home" />,
-              })}
+              breadcrumb={
+                !hiddenBreadcrumb &&
+                conversionBreadcrumbList({
+                  ...value,
+                  ...restProps,
+                  home: <FormattedMessage id="menu.home" defaultMessage="Home" />,
+                })
+              }
               className={styles.pageHeader}
               linkElement={Link}
               footer={renderFooter(restProps)}

@@ -66,6 +66,7 @@ export default class SiderMenu extends PureComponent {
       <Sider
         trigger={null}
         collapsible
+        defaultCollapsed = {false}
         collapsed={collapsed}
         breakpoint="lg"
         onCollapse={collapse => {
