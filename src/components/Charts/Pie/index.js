@@ -6,14 +6,13 @@ import classNames from 'classnames';
 import ReactFitText from 'react-fittext';
 import Debounce from 'lodash-decorators/debounce';
 import Bind from 'lodash-decorators/bind';
-import autoHeight from '../autoHeight';
-
+import ResizeObserver from 'resize-observer-polyfill';
 import styles from './index.less';
 
 /* eslint react/no-danger:0 */
-@autoHeight()
 class Pie extends Component {
   state = {
+    height: 0,
     legendData: [],
     legendBlock: false,
   };
@@ -26,6 +25,7 @@ class Pie extends Component {
       },
       { passive: true }
     );
+    this.resizeObserver();
   }
 
   componentDidUpdate(preProps) {
@@ -93,6 +93,23 @@ class Pie extends Component {
     });
   };
 
+  resizeObserver() {
+    const ro = new ResizeObserver(entries => {
+      const { height } = entries[0].contentRect;
+      this.setState(preState => {
+        if (preState.height !== height) {
+          return {
+            height,
+          };
+        }
+        return null;
+      });
+    });
+    if (this.chartDom) {
+      ro.observe(this.chartDom);
+    }
+  }
+
   // for window resize auto responsive legend
   @Bind()
   @Debounce(300)
@@ -125,7 +142,6 @@ class Pie extends Component {
       className,
       style,
       height,
-      forceFit = true,
       percent,
       color,
       inner = 0.75,
@@ -134,7 +150,7 @@ class Pie extends Component {
       lineWidth = 1,
     } = this.props;
 
-    const { legendData, legendBlock } = this.state;
+    const { legendData, height: stateHeight, legendBlock } = this.state;
     const pieClassName = classNames(styles.pie, className, {
       [styles.hasLegend]: !!hasLegend,
       [styles.legendBlock]: legendBlock,
@@ -207,41 +223,45 @@ class Pie extends Component {
 
     return (
       <div ref={this.handleRoot} className={pieClassName} style={style}>
-        <ReactFitText maxFontSize={25}>
-          <div className={styles.chart}>
-            <Chart
-              scale={scale}
-              height={height}
-              forceFit={forceFit}
-              data={dv}
-              padding={padding}
-              animate={animate}
-              onGetG2Instance={this.getG2Instance}
-            >
-              {!!tooltip && <Tooltip showTitle={false} />}
-              <Coord type="theta" innerRadius={inner} />
-              <Geom
-                style={{ lineWidth, stroke: '#fff' }}
-                tooltip={tooltip && tooltipFormat}
-                type="intervalStack"
-                position="percent"
-                color={['x', percent || percent === 0 ? formatColor : defaultColors]}
-                selected={selected}
-              />
-            </Chart>
+        <div
+          ref={ref => {
+            this.chartDom = ref;
+          }}
+        >
+          <ReactFitText maxFontSize={25}>
+            <div className={styles.chart}>
+              <Chart
+                scale={scale}
+                height={height || stateHeight}
+                data={dv}
+                padding={padding}
+                animate={animate}
+                onGetG2Instance={this.getG2Instance}
+              >
+                {!!tooltip && <Tooltip showTitle={false} />}
+                <Coord type="theta" innerRadius={inner} />
+                <Geom
+                  style={{ lineWidth, stroke: '#fff' }}
+                  tooltip={tooltip && tooltipFormat}
+                  type="intervalStack"
+                  position="percent"
+                  color={['x', percent || percent === 0 ? formatColor : defaultColors]}
+                  selected={selected}
+                />
+              </Chart>
 
-            {(subTitle || total) && (
-              <div className={styles.total}>
-                {subTitle && <h4 className="pie-sub-title">{subTitle}</h4>}
-                {/* eslint-disable-next-line */}
-                {total && (
-                  <div className="pie-stat">{typeof total === 'function' ? total() : total}</div>
-                )}
-              </div>
-            )}
-          </div>
-        </ReactFitText>
-
+              {(subTitle || total) && (
+                <div className={styles.total}>
+                  {subTitle && <h4 className="pie-sub-title">{subTitle}</h4>}
+                  {/* eslint-disable-next-line */}
+                  {total && (
+                    <div className="pie-stat">{typeof total === 'function' ? total() : total}</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </ReactFitText>
+        </div>
         {hasLegend && (
           <ul className={styles.legend}>
             {legendData.map((item, i) => (
