@@ -36,32 +36,6 @@ export default [
           { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary/Index.js' },
         ],
       },
-      //进销存
-      {
-        path: '/pdos',name: 'pdos',icon: 'shop',
-        routes: [
-          // 基
-          { path: '/pdos/base', name: 'base', routes: [
-              { path: '/pdos/base/category', name: 'category', component: './Pdos/base/category/Index.js' },
-              { path: '/pdos/base/goods', name: 'goods', component: './Pdos/base/goods/Index.js' },
-              // { path: '/pdos/base/supplier', name: 'supplier', component: './Pdos/base/supplier' },
-              // { path: '/pdos/base/warehouse', name: 'warehouse', component: './Pdos/base/warehouse' },
-            ] },
-          // 进
-          { path: '/pdos/purchasing', name: 'purchasing', routes: [
-              { path: '/pdos/purchasing/orders', name: 'orders', component: './Pdos/purchasing/orders/Index.js' },
-            ] },
-          // // 销
-          // { path: '/pdos/sales', name: 'sales', routes: [
-          //     { path: '/pdos/sales/orders', name: 'orders', component: './Pdos/sales/orders' },
-          //   ] },
-          // // 存
-          // { path: '/pdos/inventory', name: 'inventory', routes: [
-          //     { path: '/pdos/inventory/accbook', name: 'accbook', component: './Pdos/inventory/accbook' },
-          //   ] },
-          // { path: '/pdos/analysis', name: 'analysis', routes: [] },
-        ],
-      },
       // 异常页
       {
         name: 'exception',icon: 'warning',path: '/exception',
