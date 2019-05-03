@@ -23,7 +23,9 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
 };
-
+const server = {
+  url: 'http://localhost:9007/hctms',
+};
 /**
  * 异常处理程序
  */
@@ -65,8 +67,15 @@ const errorHandler = error => {
  * 配置request请求时的默认参数
  */
 const request = extend({
-  errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
+  prefix: server.url,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json; charset=utf-8',
+  },
+  // 默认错误处理
+  errorHandler,
+  // 默认请求是否带上cookie
+  credentials: 'include',
 });
 
 export default request;

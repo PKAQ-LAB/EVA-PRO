@@ -7,7 +7,9 @@ module.exports = {
   "autoHideHeader": true,
   "fixSiderbar": true,
   "collapse": true,
-  title: 'EVA Admin',
+  title: '西海岸新区石化区封闭区运输管理平台',
+  copyright: ' 2018 Power by HCTMS',
+  description: '',
   menu: {
     disableLocal: false,
   },

@@ -8,8 +8,8 @@ import DocumentTitle from 'react-document-title';
 import SelectLang from '@/components/SelectLang';
 import styles from './UserLayout.less';
 import logo from '../assets/logo.svg';
-import * as AppInfo from '@/common/config/AppInfo';
 import getPageTitle from '@/utils/getPageTitle';
+import defaultSettings from '../src/defaultSettings';
 
 const links = [
   {
@@ -31,7 +31,7 @@ const links = [
 
 const copyright = (
   <Fragment>
-    Copyright <Icon type="copyright" /> {AppInfo.copyright}
+    Copyright <Icon type="copyright" /> {defaultSettings.copyright}
   </Fragment>
 );
 
@@ -69,10 +69,10 @@ export default class UserLayout extends Component {
               <div className={styles.header}>
                 <Link to="/">
                   <img alt="logo" className={styles.logo} src={logo}/>
-                  <span className={styles.title}>{AppInfo.title}</span>
+                  <span className={styles.title}>{defaultSettings.title}</span>
                 </Link>
               </div>
-              <div className={styles.desc}>{AppInfo.description}</div>
+              <div className={styles.desc}>{defaultSettings.description}</div>
             </div>
             {children}
           </div>
