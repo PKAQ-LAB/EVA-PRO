@@ -14,7 +14,7 @@ export async function getUser(params) {
 export async function checkUnique(params) {
   return request('/account/checkUnique', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -23,7 +23,7 @@ export async function checkUnique(params) {
 export async function saveUser(params) {
   return request('/account/edit', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -32,7 +32,7 @@ export async function saveUser(params) {
 export async function delUser(params) {
   return request('/account/del', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -42,7 +42,7 @@ export async function delUser(params) {
 export async function lockUser(params) {
   return request('/account/lock', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });

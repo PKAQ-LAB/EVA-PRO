@@ -12,7 +12,7 @@ export async function getDict(params) {
 export async function checkUnique(params) {
   return request('/dict/checkUnique', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -29,7 +29,7 @@ export async function deleteDictItem(params) {
 export async function editDict(params) {
   return request('/dict/edit', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -38,7 +38,7 @@ export async function editDict(params) {
 export async function editDictItem(params) {
   return request('/dictItem/edit', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });

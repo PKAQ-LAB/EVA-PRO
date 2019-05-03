@@ -9,7 +9,6 @@ const TreeNode = TreeSelect.TreeNode;
 export default class AOEForm extends Component {
   componentDidMount() {
     // 加载树数据 - 只加载未停用状态的数据
-    console.info('load module detail');
   }
 
   // 关闭窗口
@@ -23,7 +22,8 @@ export default class AOEForm extends Component {
   };
 
   // 校验路径唯一性
-  checkPath = (rule, value, callback) => {
+  // eslint-disable-next-line consistent-return
+  checkPath = (value, callback) => {
     const { getFieldValue } = this.props.form;
     const that = this;
     const path = getFieldValue('path');
@@ -31,21 +31,19 @@ export default class AOEForm extends Component {
     const { currentItem } = this.props;
     if (currentItem && currentItem.id && value === currentItem.path) {
       return callback();
-    } 
-      const data = { path, parentId };
-      that.props
-        .dispatch({
-          type: 'module/checkUnique',
-          payload: data,
-        })
-        .then(r => {
-          if (r.success) {
-            return callback();
-          } 
-            return callback('该路径已存在');
-          
-        });
-    
+    }
+    const data = { path, parentId };
+    that.props
+      .dispatch({
+        type: 'module/checkUnique',
+        payload: data,
+      })
+      .then(r => {
+        if (r && r.success) {
+          return callback();
+        }
+        return callback('该路径已存在');
+      });
   };
 
   // 渲染树节点 - 剔除状态为停用状态(0000)得节点
@@ -74,11 +72,10 @@ export default class AOEForm extends Component {
               value={item.id}
             />
           );
-        } 
-          return null;
-        
+        }
+        return null;
       })
-      .filter(item => (item || false));
+      .filter(item => item || false);
   };
 
   // 保存
@@ -108,10 +105,6 @@ export default class AOEForm extends Component {
     const { modalType, currentItem, data } = this.props;
     const cmView = modalType === 'view';
 
-    console.info("data - -- > ");
-    console.info(data);
-
-
     const formItemLayout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
@@ -123,7 +116,7 @@ export default class AOEForm extends Component {
 
     return (
       <Modal
-        maskClosable = { false }
+        maskClosable={false}
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}
@@ -132,8 +125,8 @@ export default class AOEForm extends Component {
           modalType === 'create'
             ? '新增模块信息'
             : modalType === 'edit'
-              ? '编辑模块信息'
-              : '查看模块信息'
+            ? '编辑模块信息'
+            : '查看模块信息'
         }
       >
         <Form>
@@ -175,7 +168,7 @@ export default class AOEForm extends Component {
                 treeNodeLabelProp="pathName"
                 placeholder="请选择上级节点"
               >
-                <Node title="根节点" pathName="根节点" key="0" value="0" />
+                <TreeNode title="根节点" pathName="根节点" key="0" value="0" />
                 {this.renderTreeNodes(data)}
               </TreeSelect>
             )}
@@ -196,7 +189,7 @@ export default class AOEForm extends Component {
               </FormItem>
             </Col>
             <Col span={12}>
-              <FormItem label="是否启用"  {...formItemLayout}>
+              <FormItem label="是否启用" {...formItemLayout}>
                 {getFieldDecorator('status', {
                   valuePropName: 'checked',
                   initialValue: currentItem.status !== '0000',
