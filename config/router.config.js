@@ -25,7 +25,7 @@ export default [
     routes: [
       // dashboard
       { path: '/', redirect: '/sys/organization' },
-      // œµÕ≥π‹¿Ì
+      // Á≥ªÁªüÁÆ°ÁêÜ
       {
         path: '/sys',name: 'sys',icon: 'setting',
         routes: [
@@ -36,7 +36,7 @@ export default [
           { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary/Index.js' },
         ],
       },
-      // “Ï≥£“≥
+      // ÂºÇÂ∏∏È°µ
       {
         name: 'exception',icon: 'warning',path: '/exception',
         routes: [
@@ -47,7 +47,7 @@ export default [
           {path: '/exception/trigger',name: 'trigger',hideInMenu: true,component: './Exception/TriggerException',},
         ],
       },
-      // ∏ˆ»À÷––ƒ
+      // ‰∏™‰∫∫‰∏≠ÂøÉ
       {
         name: 'account',icon: 'user',path: '/account',
         routes: [
@@ -70,7 +70,7 @@ export default [
             ],
           },
         ],
-      },    
+      },
       {
         component: '404',
       },
