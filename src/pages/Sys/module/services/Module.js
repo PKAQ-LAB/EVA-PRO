@@ -12,7 +12,7 @@ export async function listModule(params) {
 export async function editModule(params) {
   return request('/module/edit', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -21,14 +21,14 @@ export async function editModule(params) {
 export async function sortModule(params) {
   return request('/module/sort', {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 // 根据ID删除组织
 export async function deleteModule(params) {
   return request('/module/del', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -37,7 +37,7 @@ export async function deleteModule(params) {
 export async function checkUnique(params) {
   return request('/module/checkUnique', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });

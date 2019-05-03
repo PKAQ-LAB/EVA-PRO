@@ -17,14 +17,14 @@ export async function listOrgByAttr(params) {
 export async function sortOrg(params) {
   return request('/organization/sort', {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 // 新增/编辑组织信息
 export async function editOrg(params) {
   return request('/organization/edit', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -33,7 +33,7 @@ export async function editOrg(params) {
 export async function switchStatus(params) {
   return request('/organization/switchStatus', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -42,7 +42,7 @@ export async function switchStatus(params) {
 export async function deleteOrg(params) {
   return request('/organization/del', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -51,7 +51,7 @@ export async function deleteOrg(params) {
 export async function checkUnique(params) {
   return request('/organization/checkUnique', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });

@@ -26,7 +26,7 @@ export async function listUser(params) {
 export async function checkUnique(params) {
   return request('/role/checkUnique', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -35,7 +35,7 @@ export async function checkUnique(params) {
 export async function saveRole(params) {
   return request('/role/save', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -44,7 +44,7 @@ export async function saveRole(params) {
 export async function saveUser(params) {
   return request('/role/saveUser', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -53,7 +53,7 @@ export async function saveUser(params) {
 export async function saveModule(params) {
   return request('/role/saveModule', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -62,7 +62,7 @@ export async function saveModule(params) {
 export async function delRole(params) {
   return request('/role/del', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });
@@ -72,7 +72,7 @@ export async function delRole(params) {
 export async function lockRole(params) {
   return request('/role/lock', {
     method: 'POST',
-    body: {
+    data: {
       ...params,
     },
   });

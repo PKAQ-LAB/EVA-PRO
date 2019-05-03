@@ -31,8 +31,8 @@ export default class Module extends React.PureComponent {
       <PageHeaderWrapper title="模块管理">
         <Page>
           <List {...tableProps} />
-          {modalType !== '' && <AOEForm {...modalProps} />}
         </Page>
+        {modalType !== '' && <AOEForm {...modalProps} />}
       </PageHeaderWrapper>
     );
   }
