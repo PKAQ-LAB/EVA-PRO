@@ -8,8 +8,8 @@ import DocumentTitle from 'react-document-title';
 import SelectLang from '@/components/SelectLang';
 import styles from './UserLayout.less';
 import logo from '../assets/logo.svg';
-import * as AppInfo from '@/common/config/AppInfo';
 import getPageTitle from '@/utils/getPageTitle';
+import defaultSettings from '@/defaultSettings';
 
 const links = [
   {
@@ -31,7 +31,7 @@ const links = [
 
 const copyright = (
   <Fragment>
-    Copyright <Icon type="copyright" /> {AppInfo.copyright}
+    Copyright <Icon type="copyright" /> {defaultSettings.copyright}
   </Fragment>
 );
 
@@ -43,18 +43,18 @@ export default class UserLayout extends Component {
   componentDidMount() {
     const {
       dispatch,
-      route: {routes, authority},
+      route: { routes, authority },
     } = this.props;
     dispatch({
       type: 'menu/loadMenuData',
-      payload: {routes, authority},
+      payload: { routes, authority },
     });
   }
 
   render() {
     const {
       children,
-      location: {pathname},
+      location: { pathname },
       breadcrumbNameMap,
     } = this.props;
 
@@ -62,23 +62,23 @@ export default class UserLayout extends Component {
       <DocumentTitle title={getPageTitle(pathname, breadcrumbNameMap)}>
         <div className={styles.container}>
           <div className={styles.lang}>
-            <SelectLang/>
+            <SelectLang />
           </div>
           <div className={styles.content}>
             <div className={styles.top}>
               <div className={styles.header}>
                 <Link to="/">
-                  <img alt="logo" className={styles.logo} src={logo}/>
-                  <span className={styles.title}>{AppInfo.title}</span>
+                  <img alt="logo" className={styles.logo} src={logo} />
+                  <span className={styles.title}>{defaultSettings.title}</span>
                 </Link>
               </div>
-              <div className={styles.desc}>{AppInfo.description}</div>
+              <div className={styles.desc}>{defaultSettings.description}</div>
             </div>
             {children}
           </div>
-          <GlobalFooter links={links} copyright={copyright}/>
+          <GlobalFooter links={links} copyright={copyright} />
         </div>
       </DocumentTitle>
-    )
+    );
   }
-};
+}
