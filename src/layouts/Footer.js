@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Layout, Icon } from 'antd';
 import GlobalFooter from '@/components/GlobalFooter';
-import defaultSettings from '../src/defaultSettings';
+import defaultSettings from '@/defaultSettings';
 
 const { Footer } = Layout;
 const FooterView = () => (

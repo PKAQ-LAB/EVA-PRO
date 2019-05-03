@@ -9,7 +9,7 @@ import SelectLang from '@/components/SelectLang';
 import styles from './UserLayout.less';
 import logo from '../assets/logo.svg';
 import getPageTitle from '@/utils/getPageTitle';
-import defaultSettings from '../src/defaultSettings';
+import defaultSettings from '@/defaultSettings';
 
 const links = [
   {
@@ -43,18 +43,18 @@ export default class UserLayout extends Component {
   componentDidMount() {
     const {
       dispatch,
-      route: {routes, authority},
+      route: { routes, authority },
     } = this.props;
     dispatch({
       type: 'menu/loadMenuData',
-      payload: {routes, authority},
+      payload: { routes, authority },
     });
   }
 
   render() {
     const {
       children,
-      location: {pathname},
+      location: { pathname },
       breadcrumbNameMap,
     } = this.props;
 
@@ -62,13 +62,13 @@ export default class UserLayout extends Component {
       <DocumentTitle title={getPageTitle(pathname, breadcrumbNameMap)}>
         <div className={styles.container}>
           <div className={styles.lang}>
-            <SelectLang/>
+            <SelectLang />
           </div>
           <div className={styles.content}>
             <div className={styles.top}>
               <div className={styles.header}>
                 <Link to="/">
-                  <img alt="logo" className={styles.logo} src={logo}/>
+                  <img alt="logo" className={styles.logo} src={logo} />
                   <span className={styles.title}>{defaultSettings.title}</span>
                 </Link>
               </div>
@@ -76,9 +76,9 @@ export default class UserLayout extends Component {
             </div>
             {children}
           </div>
-          <GlobalFooter links={links} copyright={copyright}/>
+          <GlobalFooter links={links} copyright={copyright} />
         </div>
       </DocumentTitle>
-    )
+    );
   }
-};
+}

@@ -4,7 +4,8 @@ import RightContent from '../GlobalHeader/RightContent';
 import BaseMenu from '../SiderMenu/BaseMenu';
 import { getFlatMenuKeys } from '../SiderMenu/SiderMenuUtils';
 import styles from './index.less';
-import defaultSettings from '../src/defaultSettings';
+import defaultSettings from '@/defaultSettings';
+
 export default class TopNavHeader extends PureComponent {
   state = {
     maxWidth: undefined,
