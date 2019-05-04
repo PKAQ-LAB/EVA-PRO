@@ -1,5 +1,4 @@
 import React from 'react';
-import Page from '@/components/Page';
 import { connect } from 'dva';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import List from './List';
@@ -29,9 +28,7 @@ export default class Module extends React.PureComponent {
 
     return (
       <PageHeaderWrapper title="模块管理">
-        <Page>
-          <List {...tableProps} />
-        </Page>
+        <List {...tableProps} />
         {modalType !== '' && <AOEForm {...modalProps} />}
       </PageHeaderWrapper>
     );

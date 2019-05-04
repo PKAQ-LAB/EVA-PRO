@@ -106,7 +106,7 @@ export default modelExtend(model, {
     },
     // 删除一条字典项
     *deleteDictItem({ payload }, { call, put }) {
-      const response = yield call(deleteDictItem, payload);
+      yield call(deleteDictItem, payload);
       const id = payload.id;
       yield put({
         type: 'removeDictItem',
@@ -122,15 +122,14 @@ export default modelExtend(model, {
       const currentItem = state.currentItem;
       // 更新/新增字典项列表
       let exist = false;
-
-      if (currentItem) {
+      if (currentItem && currentItem.items) {
         exist = currentItem.items.find((v, i, array) => {
           if (v.id === action.payload.formItem.id) {
+            // eslint-disable-next-line no-param-reassign
             array[i] = action.payload.formItem;
             return true;
           }
           return false;
-
         });
       }
       if (!exist) {

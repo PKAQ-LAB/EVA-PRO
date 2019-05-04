@@ -23,7 +23,7 @@ export default class AOEForm extends Component {
 
   // 校验路径唯一性
   // eslint-disable-next-line consistent-return
-  checkPath = (value, callback) => {
+  checkPath = (re, value, callback) => {
     const { getFieldValue } = this.props.form;
     const that = this;
     const path = getFieldValue('path');
