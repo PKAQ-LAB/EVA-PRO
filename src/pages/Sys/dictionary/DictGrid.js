@@ -1,14 +1,12 @@
-import React, { PureComponent } from 'react';
-import { Card, Table, Icon, Button, message, Tooltip } from 'antd';
+import React from 'react';
+import { Card, Table, Icon, Button, message } from 'antd';
 import { connect } from 'dva';
 import style from './Index.less';
-import styles from '../account/Index.less';
 // 字典管理左侧列表树
-
 @connect(({ loading }) => ({
   loading: loading.models.dict,
 }))
-export default class DictGrid extends PureComponent {
+export default class DictGrid extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -49,7 +47,6 @@ export default class DictGrid extends PureComponent {
 
   // 新建分类
   handleAddClick = () => {
-    console.info('add type click');
     this.props.dispatch({
       type: 'dict/updateState',
       payload: {
@@ -78,7 +75,7 @@ export default class DictGrid extends PureComponent {
           record.parentId === '0' ? (
             ''
           ) : (
-            <a onClick={e => this.handleDelete(record)}>
+            <a onClick={() => this.handleDelete(record)}>
               <Icon type="delete" />
             </a>
           ),
@@ -86,19 +83,28 @@ export default class DictGrid extends PureComponent {
     ];
 
     return (
-      <Card type="inner"
-            className={style.dict_left_tree}
-            bodyStyle={{padding: 0}}
-            title={
-              <div>
-                <Icon type="tags"/>&nbsp;字典管理</div>}
-            extra={<Button type="primary" size="small" onClick={() => this.handleAddClick()}>新增</Button>}>
+      <Card
+        type="inner"
+        className={style.dict_left_tree}
+        bodyStyle={{ padding: 0 }}
+        title={
+          <div>
+            <Icon type="tags" />
+            &nbsp;字典管理
+          </div>
+        }
+        extra={
+          <Button type="primary" size="small" onClick={() => this.handleAddClick()}>
+            新增
+          </Button>
+        }
+      >
         <Table
           indentSize={5}
           onRow={(record, index) => ({
             onClick: () => this.handleOnRowClick(record, index),
           })}
-          rowClassName={record => record.children ? style.top_node : style.blank}
+          rowClassName={record => (record.children ? style.top_node : style.blank)}
           loading={loading}
           rowKey={record => record.id}
           defaultExpandAllRows

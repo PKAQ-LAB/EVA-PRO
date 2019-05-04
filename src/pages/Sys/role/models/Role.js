@@ -12,7 +12,6 @@ import {
   lockRole,
   checkUnique,
   getDictItemByRoleId,
-  message,
 } from '../services/RoleService';
 // 角色授权管理model
 export default modelExtend(pageModel, {
@@ -56,9 +55,7 @@ export default modelExtend(pageModel, {
     },
     // 切换锁定状态
     *lockSwitch({ payload }, { call }) {
-      const response = yield call(lockRole, payload);
-      if (response && response.success) {
-      }
+      yield call(lockRole, payload);
     },
     // 编辑按钮
     *edit({ payload }, { call, put }) {
@@ -92,7 +89,6 @@ export default modelExtend(pageModel, {
             },
           },
         });
-        message.success('操作成功');
       } else {
         yield put({
           type: 'updateState',
@@ -101,17 +97,11 @@ export default modelExtend(pageModel, {
             currentItem: {},
           },
         });
-        message.success('操作失败');
       }
     },
     // 保存模块关系表
-    *saveModule({ payload }, { call, put }) {
-      const response = yield call(saveModule, payload);
-      if (response && response.success) {
-        message.success('操作成功');
-      } else {
-        message.success('操作失败');
-      }
+    *saveModule({ payload }, { call }) {
+      yield call(saveModule, payload);
     },
     // 加载模块授权列表
     *listModule({ payload }, { call, put }) {
@@ -167,15 +157,10 @@ export default modelExtend(pageModel, {
     },
     // 保存模块关系表
     *saveUser({ payload }, { call }) {
-      const response = yield call(saveUser, payload);
-      if (response && response.success) {
-        message.success('操作成功');
-      } else {
-        message.success('操作失败');
-      }
+      yield call(saveUser, payload);
     },
     // 删除
-    *remove({ payload, callback }, { call, put }) {
+    *remove({ payload }, { call, put }) {
       const response = yield call(delRole, payload);
       if (response && response.success) {
         yield put({

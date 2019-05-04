@@ -127,13 +127,22 @@ export default class Account extends PureComponent {
   renderCategoryTree() {
     const { orgData } = this.props.account;
     return (
-      <Card type="inner"
-            className={styles.leftTree}
-            title={
-              <div>
-                <Icon type="tags"/>&nbsp;归属部门</div>}
-            extra={<Button type="primary" size="small" onClick={() => this.handleFormReset()}>全部</Button>}>
-        <Tree showLine  onSelect={this.onSelect}>
+      <Card
+        type="inner"
+        className={styles.leftTree}
+        title={
+          <div>
+            <Icon type="tags" />
+            &nbsp;归属部门
+          </div>
+        }
+        extra={
+          <Button type="primary" size="small" onClick={() => this.handleFormReset()}>
+            全部
+          </Button>
+        }
+      >
+        <Tree showLine onSelect={this.onSelect}>
           {this.renderTreeNodes(orgData)}
         </Tree>
       </Card>
@@ -206,17 +215,23 @@ export default class Account extends PureComponent {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }} className={styles.margin24}>
           <Col md={8} sm={24}>
             <FormItem label="帐号">
-              {getFieldDecorator('account')(<Input id="account-search" placeholder="输入帐号搜索" />)}
+              {getFieldDecorator('account')(
+                <Input id="account-search" placeholder="输入帐号搜索" />
+              )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="姓名">
-              {getFieldDecorator('name')(<Input id="account-name-search" placeholder="输入用户名称搜索" />)}
+              {getFieldDecorator('name')(
+                <Input id="account-name-search" placeholder="输入用户名称搜索" />
+              )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="手机">
-              {getFieldDecorator('tel')(<Input id="account-phone-search" placeholder="输入手机号搜索" />)}
+              {getFieldDecorator('tel')(
+                <Input id="account-phone-search" placeholder="输入手机号搜索" />
+              )}
             </FormItem>
           </Col>
         </Row>

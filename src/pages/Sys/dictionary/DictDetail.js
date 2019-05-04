@@ -6,16 +6,15 @@ import style from './Index.less';
 import DictItem from './DictItem';
 
 const FormItem = Form.Item;
-const Area = Input.TextArea;
 const Option = Select.Option;
-
+// 字典项右侧界面
 @Form.create()
 @connect(({ loading }) => ({
   submitting: loading.effects['dict/submit'],
 }))
 export default class DictDetail extends Component {
   // 校验编码唯一性
-  checkUnique = (rule, value, callback) => {
+  checkUnique = (r, v, callback) => {
     const { getFieldValue } = this.props.form;
     const { currentItem, codeUnique } = this.props;
 
@@ -33,9 +32,8 @@ export default class DictDetail extends Component {
       .then(() => {
         if (!codeUnique) {
           return callback('已存在该编码');
-        } 
-          return callback();
-        
+        }
+        return callback();
       });
   };
 
@@ -125,8 +123,9 @@ export default class DictDetail extends Component {
       {
         title: '是否可用',
         dataIndex: 'enable',
-        render: (text, record) => record.status === '0001' ? (
-          <Badge status="success" text="正常" />
+        render: (text, record) =>
+          record.status === '0001' ? (
+            <Badge status="success" text="正常" />
           ) : (
             <Badge status="error" text="停用" />
           ),
@@ -218,11 +217,6 @@ export default class DictDetail extends Component {
               </FormItem>
             </Col>
           </FormItem>
-          <FormItem label="备注" {...formRowOne}>
-            {getFieldDecorator('remark', {
-              initialValue: currentItem.remark,
-            })(<Area disabled={operateType === ''} />)}
-          </FormItem>
         </Form>
         <Divider />
         <Card
@@ -239,7 +233,7 @@ export default class DictDetail extends Component {
         />
         <Table
           rowKey={record => record.id}
-          rowClassName={record => record.status === '0000' ? style.disabled : style.enabled}
+          rowClassName={record => (record.status === '0000' ? style.disabled : style.enabled)}
           columns={column}
           dataSource={currentItem.items}
           pagination={false}

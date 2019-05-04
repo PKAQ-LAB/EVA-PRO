@@ -1,11 +1,10 @@
 import React from 'react';
 import { Form, Input, Modal, Col, InputNumber, Switch } from 'antd';
 
-const TextArea = Input.TextArea;
 const FormItem = Form.Item;
-
+// 字典项表格新增
 @Form.create()
-export default class DictItem extends React.PureComponent {
+export default class DictItem extends React.Component {
   // 校验key唯一
   checkUnique = (r, value, callback) => {
     const { itemList, itemValues } = this.props;
@@ -17,10 +16,9 @@ export default class DictItem extends React.PureComponent {
 
     if (exist) {
       return callback('字典项已存在');
-    } 
+    }
 
     return callback();
-    
   };
 
   // 保存子表
@@ -67,7 +65,7 @@ export default class DictItem extends React.PureComponent {
 
     return (
       <Modal
-        maskClosable = { false }
+        maskClosable={false}
         title={itemOperateType === 'edit' ? '字典项编辑' : '字典项新增'}
         visible
         onCancel={() => this.handleCloseForm()}
@@ -103,9 +101,6 @@ export default class DictItem extends React.PureComponent {
                 })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
               </FormItem>
             </Col>
-          </FormItem>
-          <FormItem label="备注" {...formRowOne}>
-            {getFieldDecorator('remark')(<TextArea />)}
           </FormItem>
         </Form>
       </Modal>
