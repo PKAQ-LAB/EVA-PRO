@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import md5 from 'md5';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { Checkbox, Alert, message } from 'antd';
+import { Checkbox, Alert, Modal } from 'antd';
 import Login from '@/components/Login';
 import styles from './Login.less';
 
@@ -35,7 +35,10 @@ class LoginPage extends Component {
           })
             .then(resolve)
             .catch(reject);
-          message.warning(formatMessage({ id: 'app.login.verification-code-warning' }));
+
+          Modal.info({
+            title: formatMessage({ id: 'app.login.verification-code-warning' }),
+          });
         }
       });
     });
