@@ -30,6 +30,8 @@ export default modelExtend(pageModel, {
       checked: [],
     },
     configData: [],
+    name: '',
+    code: '',
   },
   effects: {
     // 校验编码唯一性

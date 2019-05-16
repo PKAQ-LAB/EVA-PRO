@@ -35,7 +35,7 @@ export default modelExtend(model, {
       }
     },
     // 新增/新增子节点
-    *create({ payload }, { call, put }) {
+    *create({ payload }, { put }) {
       // 有id时为新增下级，加载父级节点相关信息
       yield put({
         type: 'updateState',
@@ -47,7 +47,6 @@ export default modelExtend(model, {
     // 编辑按钮
     *edit({ payload }, { call, put }) {
       const response = yield call(getModule, payload);
-      console.info(response.data);
 
       if (response && response.data) {
         yield put({
@@ -99,8 +98,9 @@ export default modelExtend(model, {
     // 更改可用状态
     *changeStatus({ payload }, { call, put }) {
       const response = yield call(editModule, payload);
-      if (response  && response.success) {
-        payload.record.status = payload.status;
+      if (response && response.success) {
+        const op = payload;
+        op.record.status = payload.status;
         yield put({
           type: 'updateState',
           payload: {

@@ -6,7 +6,6 @@ import {
   Alert,
   Popconfirm,
   Divider,
-  Badge,
   Button,
   Card,
   Input,
@@ -37,7 +36,7 @@ export default class OrgList extends Component {
 
   // 新增
   handleAdd = record => {
-    const id =  typeof(record) === 'object'? record.parent : '';
+    const id = typeof record === 'object' ? record.parent : '';
     this.props.dispatch({
       type: 'organization/create',
       payload: {
@@ -75,7 +74,7 @@ export default class OrgList extends Component {
       type: 'organization/changeStatus',
       payload: {
         id: record.id,
-        status: checked? '0001' : '0000',
+        status: checked ? '0001' : '0000',
       },
     });
   };
@@ -181,7 +180,7 @@ export default class OrgList extends Component {
               <Divider type="vertical" />
               {size !== 0 && index !== size - 1 ? (
                 <BizIcon
-                  onClick={e => this.handleSort(brother, index, 'down')}
+                  onClick={() => this.handleSort(brother, index, 'down')}
                   type="descending"
                   style={{ color: '#098FFF', cursor: 'pointer' }}
                 />
@@ -205,11 +204,13 @@ export default class OrgList extends Component {
         title: '状态',
         dataIndex: 'status',
         render: (text, record) => (
-          <Switch onChange={(checked) => this.handleEnable(record, checked)}
-                  checkedChildren={<Icon type="check" />}
-                  unCheckedChildren={<Icon type="close" />}
-                  checked={'0001' === text} />
-        )
+          <Switch
+            onChange={checked => this.handleEnable(record, checked)}
+            checkedChildren={<Icon type="check" />}
+            unCheckedChildren={<Icon type="close" />}
+            checked={text === '0001'}
+          />
+        ),
       },
       {
         title: '操作',
@@ -217,12 +218,19 @@ export default class OrgList extends Component {
           record.status === '0001' && (
             <div>
               <a onClick={() => this.handleAdd(record)}>添加下级</a>
-              <Divider type="vertical"/>
+              <Divider type="vertical" />
               <a onClick={() => this.handleEdit(record)}>编辑</a>
               <Divider type="vertical" />
-              <a onClick = {e => this.handleDelete(record, e)}>删除</a>
+              <Popconfirm
+                title="确定要删除吗？"
+                okText="确定"
+                cancelText="取消"
+                onConfirm={e => this.handleDelete(record, e)}
+              >
+                <a>删除</a>
+              </Popconfirm>
             </div>
-          )
+          ),
       },
     ];
 
@@ -248,7 +256,9 @@ export default class OrgList extends Component {
                     placement="top"
                     onConfirm={() => this.handleBatchDelete()}
                   >
-                    <Button style={{ marginLeft: 8 }} type="danger">删除菜单</Button>
+                    <Button style={{ marginLeft: 8 }} type="danger">
+                      删除菜单
+                    </Button>
                   </Popconfirm>
                 </span>
               )}
@@ -267,8 +277,7 @@ export default class OrgList extends Component {
           style={{ marginTop: 8, marginBottom: 8 }}
           message={
             <div>
-              已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a>{' '}
-              项&nbsp;&nbsp;
+              已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
               <a style={{ marginLeft: 24 }} onClick={() => this.handleSelectRows([])}>
                 清空选择
               </a>
@@ -282,7 +291,7 @@ export default class OrgList extends Component {
           columns={column}
           dataSource={data}
           loading={loading}
-          rowClassName={record => record.status === '0000' ? styles.disabled : styles.enabled}
+          rowClassName={record => (record.status === '0000' ? styles.disabled : styles.enabled)}
           pagination={false}
           rowKey={record => record.id}
           rowSelection={rowSelection}

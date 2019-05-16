@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Table, Alert, Divider, Badge, notification, message } from 'antd';
+import { Table, Alert, Divider, notification } from 'antd';
 import { connect } from 'dva';
 import styles from './List.less';
 import { getValue } from '@/utils/utils';
@@ -43,7 +43,7 @@ export default class List extends PureComponent {
       type: 'account/remove',
       payload: {
         param: [record.id],
-      }
+      },
     });
   };
 
@@ -75,7 +75,7 @@ export default class List extends PureComponent {
 
   render() {
     const { list, pagination, selectedRowKeys, loading } = this.props;
-    
+
     const columns = [
       {
         render: (t, r, i) => i,
@@ -145,7 +145,7 @@ export default class List extends PureComponent {
           dataSource={list}
           rowKey={record => record.id}
           rowSelection={rowSelectionProps}
-          rowClassName={record =>  record.locked === '0000' ? styles.disabled : styles.enabled}
+          rowClassName={record => (record.locked === '0000' ? styles.disabled : styles.enabled)}
           pagination={paginationProps}
           columns={columns}
           onSelectRow={this.handleSelectRows}
