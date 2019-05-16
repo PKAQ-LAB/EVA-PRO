@@ -5,7 +5,6 @@ import DictGrid from './DictGrid';
 import DictDetail from './DictDetail';
 
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import styles from '../account/Index.less';
 
 @connect(({ dict }) => ({
   dict,
@@ -42,7 +41,7 @@ export default class Dict extends React.Component {
 
     return (
       <PageHeaderWrapper title="字典信息管理">
-        <Row gutter={24} className={styles.flex_stretch}>
+        <Row gutter={8} type="flex" justify="space-around">
           {/* 左侧列表 */}
           <Col xl={6} lg={6} md={6} sm={6} xs={6}>
             <DictGrid {...DictGridProps} />

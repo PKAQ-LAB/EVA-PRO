@@ -3,7 +3,6 @@ import { connect } from 'dva';
 import { Tree, Row, Col, Card, Form, Input, Icon, Button, Popconfirm } from 'antd';
 import AccountList from './List';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import Page from '@/components/Page';
 import AOEForm from './AOEForm';
 import styles from './Index.less';
 
@@ -277,25 +276,23 @@ export default class Account extends PureComponent {
     };
     return (
       <PageHeaderWrapper title="用户信息管理">
-        <Page inner>
-          <Row gutter={24} className={styles.flex_stretch}>
-            {/* 左侧树 */}
-            <Col xl={6} lg={6} md={6} sm={6} xs={6} className={styles.fullHeightCol}>
-              {this.renderCategoryTree()}
-            </Col>
-            {/* 右侧列表 */}
-            <Col xl={18} lg={18} md={18} sm={18} xs={18}>
-              <Card bordered={false} className={styles.noPadding}>
-                <div className={styles.goodsInfoList}>
-                  <div className={styles.goodsInfoListForm}>{this.renderSimpleForm()}</div>
-                  <AccountList {...listPops} />
-                </div>
-              </Card>
-            </Col>
-          </Row>
-          {/* 新增窗口 */}
-          {modalType !== '' && <AOEForm {...modalProps} />}
-        </Page>
+        <Row gutter={24} type="flex" justify="space-around">
+          {/* 左侧树 */}
+          <Col xl={6} lg={6} md={6} sm={6} xs={6} className={styles.fullHeightCol}>
+            {this.renderCategoryTree()}
+          </Col>
+          {/* 右侧列表 */}
+          <Col xl={18} lg={18} md={18} sm={18} xs={18}>
+            <Card bordered={false} className={styles.noPadding}>
+              <div className={styles.goodsInfoList}>
+                <div className={styles.goodsInfoListForm}>{this.renderSimpleForm()}</div>
+                <AccountList {...listPops} />
+              </div>
+            </Card>
+          </Col>
+        </Row>
+        {/* 新增窗口 */}
+        {modalType !== '' && <AOEForm {...modalProps} />}
       </PageHeaderWrapper>
     );
   }

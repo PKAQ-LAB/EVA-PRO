@@ -1,22 +1,18 @@
 @import '~antd/lib/style/themes/default.less';
 
-.flex_stretch {
-  display: flex;
-  align-items: stretch;
-}
 .fullHeightCol {
-  min-height: ~'calc(100vh - 218px)';
-  min-width: 240px;
   position: relative;
+  min-width: 240px;
+  min-height: ~'calc(100vh - 218px)';
 }
 // 页面背景
 .leftTree {
-  &:extend(.fullHeightCol);
   background-color: #fafaf9;
+  &:extend(.fullHeightCol);
 }
 // card 标题区0边距
 .noPadding {
-  :global  {
+  :global {
     .ant-card-head-title,
     .ant-card-extra {
       padding: 5px;
@@ -24,7 +20,7 @@
     .ant-card-head {
       padding: 5px;
     }
-    .ant-card-body{
+    .ant-card-body {
       padding: 5px;
     }
   }
@@ -40,8 +36,8 @@
 .goodsInfoListForm {
   :global {
     .ant-form-item {
-      margin-right: 0;
       display: flex;
+      margin-right: 0;
       > .ant-form-item-label {
         width: auto;
         padding-right: 8px;
@@ -52,8 +48,8 @@
     }
   }
   .submitButtons {
-    white-space: nowrap;
     margin-bottom: 24px;
+    white-space: nowrap;
   }
 }
 .margin24 {
