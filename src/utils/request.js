@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /**
  * request 网络请求工具
  * 更详细的api文档: https://bigfish.alipay.com/doc/api#request
@@ -29,13 +30,14 @@ const codeMessage = {
   504: '网关超时。',
 };
 const server = {
-  url: 'http://localhost:8080/hctms',
+  url: 'http://localhost:9009/api',
 };
 /**
  * 异常处理程序
  */
 const errorHandler = error => {
   const { response = {} } = error;
+
   const errortext = codeMessage[response.status] || response.statusText;
   const { status, url } = response;
 
@@ -51,7 +53,7 @@ const errorHandler = error => {
     return;
   }
   notification.error({
-    message: `请求错误 ${status}: ${url}`,
+    message: `请求错误 ${status}: ${url} ${response}`,
     description: errortext,
   });
   // environment should not be used
@@ -103,9 +105,11 @@ request.interceptors.request.use((url, options) => {
  */
 request.interceptors.response.use(async response => {
   const result = await response.clone().json();
+  const auth_token = response.headers.get('Auth_Token');
+  const token = result.data.token;
 
-  if (result.data.token) {
-    cookies.set(TOKEN_KEY, result.data.token);
+  if (token || auth_token) {
+    cookies.set(TOKEN_KEY, token || auth_token);
   }
   return response;
 });
