@@ -53,7 +53,7 @@ const errorHandler = error => {
     return;
   }
   notification.error({
-    message: `请求错误 ${status}: ${url} ${response}`,
+    message: `请求错误 ${status}: ${url}`,
     description: errortext,
   });
   // environment should not be used
@@ -106,7 +106,7 @@ request.interceptors.request.use((url, options) => {
 request.interceptors.response.use(async response => {
   const result = await response.clone().json();
   const auth_token = response.headers.get('Auth_Token');
-  const token = result.data.token;
+  const token = result.data ? result.data.token : null;
 
   if (token || auth_token) {
     cookies.set(TOKEN_KEY, token || auth_token);
