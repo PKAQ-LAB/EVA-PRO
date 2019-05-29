@@ -7,6 +7,7 @@ import { reloadAuthorized } from '@/utils/Authorized';
 import Cookies from 'universal-cookie';
 
 const cookies = new Cookies();
+
 const USER_KEY = 'eva_user';
 const TOKEN_KEY = 'eva_token';
 
@@ -33,14 +34,10 @@ export default {
 
         cookies.set(USER_KEY, response.data.user);
 
-        // 拿到token 存cookie
-        localStorage.setItem(TOKEN_KEY, response.data.token);
-
-        localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
-
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
+
         let { redirect } = params;
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
@@ -73,7 +70,6 @@ export default {
       // 删除token
       cookies.remove(TOKEN_KEY);
       cookies.remove(USER_KEY);
-      localStorage.removeItem(TOKEN_KEY);
 
       yield put({
         type: 'changeLoginStatus',
