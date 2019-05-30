@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Table, Icon, Button, message } from 'antd';
+import { Card, Table, Icon, Button, message, Popconfirm } from 'antd';
 import { connect } from 'dva';
 import style from './Index.less';
 // 字典管理左侧列表树
@@ -75,9 +75,16 @@ export default class DictGrid extends React.Component {
           record.parentId === '0' ? (
             ''
           ) : (
-            <a onClick={() => this.handleDelete(record)}>
-              <Icon type="delete" />
-            </a>
+            <Popconfirm
+              title="确定要删除吗？"
+              okText="确定"
+              cancelText="取消"
+              onConfirm={() => this.handleDelete(record)}
+            >
+              <a>
+                <Icon type="delete" />
+              </a>
+            </Popconfirm>
           ),
       },
     ];

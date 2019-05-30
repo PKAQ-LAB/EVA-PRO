@@ -24,6 +24,7 @@ export default modelExtend(pageModel, {
     moduleData: {
       data: [],
       checked: [],
+      allCheckedKeys: [],
     },
     userData: {
       data: [],
@@ -102,8 +103,16 @@ export default modelExtend(pageModel, {
       }
     },
     // 保存模块关系表
-    *saveModule({ payload }, { call }) {
-      yield call(saveModule, payload);
+    *saveModule({ payload }, { call, put }) {
+      const response = yield call(saveModule, payload);
+      if (response) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            operateType: '',
+          },
+        });
+      }
     },
     // 加载模块授权列表
     *listModule({ payload }, { call, put }) {

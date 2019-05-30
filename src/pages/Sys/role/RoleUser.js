@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { Modal, Table } from 'antd';
-import styles from './Index.less';
 // 授权用户窗口
 export default class RoleUser extends PureComponent {
   componentDidMount() {
@@ -44,6 +43,7 @@ export default class RoleUser extends PureComponent {
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
+      // eslint-disable-next-line no-undef
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});

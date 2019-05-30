@@ -4,16 +4,11 @@ import { Modal, Tree } from 'antd';
 const Node = Tree.TreeNode;
 //  授权模块窗口
 export default class RoleModule extends PureComponent {
-  // 初始化加载数据
-  componentDidMount() {
-    console.info('load role module');
-  }
-
   // 保存模块关系
   handleSubmit = () => {
     const { currentItem } = this.props;
-    const { checked } = { ...this.props.data };
-    const modules = checked.map(item => ({ moduleId: item }));
+    const { allCheckedKeys } = { ...this.props.data };
+    const modules = allCheckedKeys.map(item => ({ moduleId: item }));
 
     this.props.dispatch({
       type: 'role/saveModule',
@@ -27,19 +22,22 @@ export default class RoleModule extends PureComponent {
   // 保存已选
   onCheck = (checkedKeys, info) => {
     const { data } = { ...this.props.data };
+    const allCheckedKeys = checkedKeys.concat(info.halfCheckedKeys);
     this.props.dispatch({
       type: 'role/updateState',
       payload: {
         moduleData: {
           data,
           checked: checkedKeys,
+          allCheckedKeys,
         },
       },
     });
   };
 
   // 渲染树节点
-  renderTreeNodes = data => data.map(item => {
+  renderTreeNodes = data =>
+    data.map(item => {
       if (item.children) {
         return (
           <Node title={item.name} key={item.id} dataRef={item}>
@@ -55,7 +53,7 @@ export default class RoleModule extends PureComponent {
     const { data, checked } = { ...this.props.data };
     return (
       <Modal
-        maskClosable = { false }
+        maskClosable={false}
         title="选择授权模块"
         okText="保存"
         cancelText="关闭"
