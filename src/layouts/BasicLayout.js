@@ -80,6 +80,7 @@ export default class BasicLayout extends React.Component {
       tabListKey: [routeKey],
       activeKey: routeKey,
       routeKey,
+      hasTab: true,
     };
   }
 
@@ -184,28 +185,45 @@ export default class BasicLayout extends React.Component {
     const { key } = e;
     const tabLists = this.updateTree(routes);
     const { tabListKey, tabList } = this.state;
-    router.push(key);
-    this.setState({
-      activeKey: key,
-    });
-    tabLists.map(v => {
-      if (v.key === key) {
-        const tabname = breadcrumbNameMap[v.key].name;
-        if (tabList.length === 0) {
-          v.closable = false;
-          v.tab = tabname;
-          this.setState({
-            tabList: [...tabList, v],
-          });
-        } else if (!tabListKey.includes(v.key)) {
-          v.tab = tabname;
-          this.setState({
-            tabList: [...tabList, v],
-            tabListKey: [...tabListKey, v.key],
-          });
-        }
+    if (key === 'logout') {
+      // 退出登录
+      this.props.dispatch({
+        type: 'login/logout',
+      });
+    } else {
+      router.push(key);
+      this.setState({
+        activeKey: key,
+      });
+      if (key === '/account/center' || key === '/account/settings') {
+        // 个人中心或个人设置
+        this.setState({
+          hasTab: false,
+        });
+        return;
       }
-    });
+      tabLists.map(v => {
+        if (v.key === key && v.content) {
+          const tabname = breadcrumbNameMap[v.key].name;
+          this.setState({
+            hasTab: true,
+          });
+          if (tabList.length === 0) {
+            v.closable = false;
+            v.tab = tabname;
+            this.setState({
+              tabList: [...tabList, v],
+            });
+          } else if (!tabListKey.includes(v.key)) {
+            v.tab = tabname;
+            this.setState({
+              tabList: [...tabList, v],
+              tabListKey: [...tabListKey, v.key],
+            });
+          }
+        }
+      });
+    }
   };
 
   // 切换 tab页 router.push(key);
@@ -290,11 +308,15 @@ export default class BasicLayout extends React.Component {
       fixedHeader,
       hidenAntTabs,
     } = this.props;
-    const { activeKey } = this.state;
+    const { activeKey, hasTab } = this.state;
+    let pathName = pathname;
+    if (pathname !== activeKey) {
+      pathName = activeKey;
+    }
 
     const isTop = PropsLayout === 'topmenu';
     const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};
-    const routerConfig = this.getRouterAuthority(pathname, routes);
+    const routerConfig = this.getRouterAuthority(pathName, routes);
     this.props.location.onHandlePage = this.onHandlePage;
     const menu = (
       <Menu onClick={this.onClickHover}>
@@ -334,9 +356,10 @@ export default class BasicLayout extends React.Component {
             handleMenuCollapse={this.handleMenuCollapse}
             logo={logo}
             {...this.props}
+            onMenuClick={this.onHandlePage}
           />
           <Content className={styles.content} style={contentStyle}>
-            {hidenAntTabs ? (
+            {hidenAntTabs || !hasTab ? (
               <Authorized authority={routerConfig} noMatch={<Exception404 />}>
                 {children}
               </Authorized>
