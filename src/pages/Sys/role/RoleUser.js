@@ -82,7 +82,7 @@ export default class RoleUser extends PureComponent {
       },
       {
         title: '所属部门',
-        dataIndex: 'deptId',
+        dataIndex: 'deptName',
       },
     ];
 
