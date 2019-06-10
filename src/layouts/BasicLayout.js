@@ -122,7 +122,7 @@ export default class BasicLayout extends React.Component {
             locale: node.locale,
             closable: true,
             content: node.component,
-            istab: node.istab,
+            istab: node.istab === false ? node.istab : true,
           });
         }
         if (node.routes && node.routes.length > 0) {

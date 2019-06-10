@@ -33,24 +33,13 @@ export default [
         routes: [
           {
             path: '/sys/organization',
-            istab: true,
             name: 'organization',
             component: './Sys/organization/Index.js',
           },
-          {
-            path: '/sys/account',
-            istab: true,
-            name: 'account',
-            component: './Sys/account/Index.js',
-          },
-          { path: '/sys/module', istab: true, name: 'module', component: './Sys/module/Index.js' },
-          { path: '/sys/role', istab: true, name: 'role', component: './Sys/role/Index.js' },
-          {
-            path: '/sys/dictionary',
-            istab: true,
-            name: 'dictionary',
-            component: './Sys/dictionary/Index.js',
-          },
+          { path: '/sys/account', name: 'account', component: './Sys/account/Index.js' },
+          { path: '/sys/module', name: 'module', component: './Sys/module/Index.js' },
+          { path: '/sys/role', name: 'role', component: './Sys/role/Index.js' },
+          { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary/Index.js' },
         ],
       },
       //进销存
@@ -123,6 +112,7 @@ export default [
         routes: [
           {
             path: '/account/center',
+            istab: false,
             name: 'center',
             component: './Account/Center/Center',
             routes: [
@@ -134,6 +124,7 @@ export default [
           },
           {
             path: '/account/settings',
+            istab: false,
             name: 'settings',
             component: './Account/Settings/Info',
             routes: [
