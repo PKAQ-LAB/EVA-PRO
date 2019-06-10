@@ -80,7 +80,7 @@ export default class BasicLayout extends React.Component {
       tabListKey: [routeKey],
       activeKey: routeKey,
       routeKey,
-      hasTab: true,
+      isTab: true,
     };
   }
 
@@ -122,6 +122,7 @@ export default class BasicLayout extends React.Component {
             locale: node.locale,
             closable: true,
             content: node.component,
+            istab: node.istab === false ? node.istab : true,
           });
         }
         if (node.routes && node.routes.length > 0) {
@@ -195,18 +196,17 @@ export default class BasicLayout extends React.Component {
       this.setState({
         activeKey: key,
       });
-      if (key === '/account/center' || key === '/account/settings') {
-        // 个人中心或个人设置
-        this.setState({
-          hasTab: false,
-        });
-        return;
-      }
       tabLists.map(v => {
         if (v.key === key && v.content) {
+          if (!v.istab) {
+            this.setState({
+              isTab: false,
+            });
+            return;
+          }
           const tabname = breadcrumbNameMap[v.key].name;
           this.setState({
-            hasTab: true,
+            isTab: true,
           });
           if (tabList.length === 0) {
             v.closable = false;
@@ -308,7 +308,7 @@ export default class BasicLayout extends React.Component {
       fixedHeader,
       hidenAntTabs,
     } = this.props;
-    const { activeKey, hasTab } = this.state;
+    const { activeKey, isTab } = this.state;
     let pathName = pathname;
     if (pathname !== activeKey) {
       pathName = activeKey;
@@ -359,13 +359,12 @@ export default class BasicLayout extends React.Component {
             onMenuClick={this.onHandlePage}
           />
           <Content className={styles.content} style={contentStyle}>
-            {hidenAntTabs || !hasTab ? (
+            {hidenAntTabs || !isTab ? (
               <Authorized authority={routerConfig} noMatch={<Exception404 />}>
                 {children}
               </Authorized>
             ) : this.state.tabList && this.state.tabList.length ? (
               <Tabs
-                // className={styles.tabs}
                 activeKey={activeKey}
                 onChange={this.onChange}
                 tabBarExtraContent={operations}

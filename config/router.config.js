@@ -25,78 +25,121 @@ export default [
     routes: [
       // dashboard
       { path: '/', redirect: '/sys/organization' },
-      // œµÕ≥π‹¿Ì
+      // Á≥ªÁªüÁÆ°ÁêÜ
       {
-        path: '/sys',name: 'sys',icon: 'setting',
+        path: '/sys',
+        name: 'sys',
+        icon: 'setting',
         routes: [
-          { path: '/sys/organization', name: 'organization', component: './Sys/organization/Index.js' },
+          {
+            path: '/sys/organization',
+            name: 'organization',
+            component: './Sys/organization/Index.js',
+          },
           { path: '/sys/account', name: 'account', component: './Sys/account/Index.js' },
           { path: '/sys/module', name: 'module', component: './Sys/module/Index.js' },
           { path: '/sys/role', name: 'role', component: './Sys/role/Index.js' },
           { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary/Index.js' },
         ],
       },
-      //Ω¯œ˙¥Ê
+      //ËøõÈîÄÂ≠ò
       {
-        path: '/pdos',name: 'pdos',icon: 'shop',
+        path: '/pdos',
+        name: 'pdos',
+        icon: 'shop',
         routes: [
-          // ª˘
-          { path: '/pdos/base', name: 'base', routes: [
-              { path: '/pdos/base/category', name: 'category', component: './Pdos/base/category/Index.js' },
+          // Âü∫
+          {
+            path: '/pdos/base',
+            name: 'base',
+            routes: [
+              {
+                path: '/pdos/base/category',
+                name: 'category',
+                component: './Pdos/base/category/Index.js',
+              },
               { path: '/pdos/base/goods', name: 'goods', component: './Pdos/base/goods/Index.js' },
               // { path: '/pdos/base/supplier', name: 'supplier', component: './Pdos/base/supplier' },
               // { path: '/pdos/base/warehouse', name: 'warehouse', component: './Pdos/base/warehouse' },
-            ] },
-          // Ω¯
-          { path: '/pdos/purchasing', name: 'purchasing', routes: [
-              { path: '/pdos/purchasing/orders', name: 'orders', component: './Pdos/purchasing/orders/Index.js' },
-            ] },
-          // // œ˙
+            ],
+          },
+          // Ëøõ
+          {
+            path: '/pdos/purchasing',
+            name: 'purchasing',
+            routes: [
+              {
+                path: '/pdos/purchasing/orders',
+                name: 'orders',
+                component: './Pdos/purchasing/orders/Index.js',
+              },
+            ],
+          },
+          // // ÈîÄ
           // { path: '/pdos/sales', name: 'sales', routes: [
           //     { path: '/pdos/sales/orders', name: 'orders', component: './Pdos/sales/orders' },
           //   ] },
-          // // ¥Ê
+          // // Â≠ò
           // { path: '/pdos/inventory', name: 'inventory', routes: [
           //     { path: '/pdos/inventory/accbook', name: 'accbook', component: './Pdos/inventory/accbook' },
           //   ] },
           // { path: '/pdos/analysis', name: 'analysis', routes: [] },
         ],
       },
-      // “Ï≥£“≥
+      // ÂºÇÂ∏∏È°µ
       {
-        name: 'exception',icon: 'warning',path: '/exception',
+        name: 'exception',
+        icon: 'warning',
+        path: '/exception',
         routes: [
           // exception
-          {path: '/exception/403',name: 'not-permission',component: './Exception/403',},
-          {path: '/exception/404',name: 'not-find',component: './Exception/404',},
-          {path: '/exception/500',name: 'server-error',component: './Exception/500',},
-          {path: '/exception/trigger',name: 'trigger',hideInMenu: true,component: './Exception/TriggerException',},
+          { path: '/exception/403', name: 'not-permission', component: './Exception/403' },
+          { path: '/exception/404', name: 'not-find', component: './Exception/404' },
+          { path: '/exception/500', name: 'server-error', component: './Exception/500' },
+          {
+            path: '/exception/trigger',
+            name: 'trigger',
+            hideInMenu: true,
+            component: './Exception/TriggerException',
+          },
         ],
       },
-      // ∏ˆ»À÷––ƒ
+      // ‰∏™‰∫∫‰∏≠ÂøÉ
       {
-        name: 'account',icon: 'user',path: '/account',
+        name: 'account',
+        icon: 'user',
+        path: '/account',
         routes: [
-          {path: '/account/center',name: 'center',component: './Account/Center/Center',
+          {
+            path: '/account/center',
+            istab: false,
+            name: 'center',
+            component: './Account/Center/Center',
             routes: [
-              {path: '/account/center',redirect: '/account/center/articles',},
-              {path: '/account/center/articles',component: './Account/Center/Articles',},
-              {path: '/account/center/applications',component: './Account/Center/Applications',},
-              {path: '/account/center/projects',component: './Account/Center/Projects',},
+              { path: '/account/center', redirect: '/account/center/articles' },
+              { path: '/account/center/articles', component: './Account/Center/Articles' },
+              { path: '/account/center/applications', component: './Account/Center/Applications' },
+              { path: '/account/center/projects', component: './Account/Center/Projects' },
             ],
           },
           {
-            path: '/account/settings',name: 'settings',component: './Account/Settings/Info',
+            path: '/account/settings',
+            istab: false,
+            name: 'settings',
+            component: './Account/Settings/Info',
             routes: [
-              {path: '/account/settings',redirect: '/account/settings/base',},
-              {path: '/account/settings/base',component: './Account/Settings/BaseView',},
-              {path: '/account/settings/security',component: './Account/Settings/SecurityView',},
-              {path: '/account/settings/binding',component: './Account/Settings/BindingView',},
-              {path: '/account/settings/notification',component: './Account/Settings/NotificationView',},
+              { path: '/account/settings', redirect: '/account/settings/base' },
+              { path: '/account/settings/base', component: './Account/Settings/BaseView' },
+              { path: '/account/settings/security', component: './Account/Settings/SecurityView' },
+              { path: '/account/settings/binding', component: './Account/Settings/BindingView' },
+              {
+                path: '/account/settings/notification',
+                component: './Account/Settings/NotificationView',
+              },
             ],
           },
         ],
-      },    
+      },
       {
         component: '404',
       },
