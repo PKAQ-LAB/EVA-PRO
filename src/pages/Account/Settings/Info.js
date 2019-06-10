@@ -94,7 +94,6 @@ class Info extends Component {
     const { mode, selectKey } = this.state;
 
     const cookies = new Cookies();
-    console.info(cookies.get('eva_user'));
     const currentUser = cookies.get('eva_user').id;
     if (!currentUser) {
       return '';
