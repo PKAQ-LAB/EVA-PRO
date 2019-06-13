@@ -33,13 +33,34 @@ export default [
         routes: [
           {
             path: '/sys/organization',
+            tabname: '组织管理',
             name: 'organization',
             component: './Sys/organization/Index.js',
           },
-          { path: '/sys/account', name: 'account', component: './Sys/account/Index.js' },
-          { path: '/sys/module', name: 'module', component: './Sys/module/Index.js' },
-          { path: '/sys/role', name: 'role', component: './Sys/role/Index.js' },
-          { path: '/sys/dictionary', name: 'dictionary', component: './Sys/dictionary/Index.js' },
+          {
+            path: '/sys/account',
+            name: 'account',
+            tabname: '用户管理',
+            component: './Sys/account/Index.js',
+          },
+          {
+            path: '/sys/module',
+            name: 'module',
+            tabname: '模块管理',
+            component: './Sys/module/Index.js',
+          },
+          {
+            path: '/sys/role',
+            name: 'role',
+            tabname: '权限管理',
+            component: './Sys/role/Index.js',
+          },
+          {
+            path: '/sys/dictionary',
+            name: 'dictionary',
+            tabname: '字典管理',
+            component: './Sys/dictionary/Index.js',
+          },
         ],
       },
       //进销存
