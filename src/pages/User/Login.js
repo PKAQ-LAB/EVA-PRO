@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import md5 from 'md5';
 import { formatMessage, FormattedMessage } from 'umi-plugin-react/locale';
-import { Checkbox, Alert, Modal } from 'antd';
+import { Checkbox, Modal } from 'antd';
 import Login from '@/components/Login';
 import styles from './Login.less';
 
@@ -68,13 +68,10 @@ class LoginPage extends Component {
     });
   };
 
-  renderMessage = content => (
-    <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
-  );
-
   render() {
-    const { login, submitting } = this.props;
+    const { submitting } = this.props;
     const { type, autoLogin } = this.state;
+
     return (
       <div className={styles.main}>
         <Login
@@ -113,12 +110,6 @@ class LoginPage extends Component {
             />
           </Tab>
           <Tab key="mobile" tab={formatMessage({ id: 'app.login.tab-login-mobile' })}>
-            {login.status === 'error' &&
-              login.type === 'mobile' &&
-              !submitting &&
-              this.renderMessage(
-                formatMessage({ id: 'app.login.message-invalid-verification-code' })
-              )}
             <Mobile
               name="mobile"
               placeholder={formatMessage({ id: 'form.phone-number.placeholder' })}
