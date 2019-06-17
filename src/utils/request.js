@@ -4,9 +4,13 @@
  * 更详细的api文档: https://bigfish.alipay.com/doc/api#request
  */
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 import router from 'umi/router';
 import Cookies from 'universal-cookie';
+
+message.config({
+  maxCount: 1,
+});
 
 const cookies = new Cookies();
 
@@ -111,6 +115,13 @@ request.interceptors.response.use(async response => {
   if (token || auth_token) {
     cookies.set(TOKEN_KEY, token || auth_token);
   }
+
+  if (result && result.success) {
+    message.success(result.message || '操作成功');
+  } else {
+    message.error(result.message || '操作失败');
+  }
+
   return response;
 });
 
