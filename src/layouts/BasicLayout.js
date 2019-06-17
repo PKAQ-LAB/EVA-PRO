@@ -62,15 +62,16 @@ export default class BasicLayout extends React.Component {
   constructor(props) {
     super(props);
     const { routes } = props.route;
-    const routeKey = '/sys/organization';
-    const tabName = '组织管理'; // routeKey 为设置首页设置 试试 '/dashboard/analysis' 或其他key值
+    const { location } = this.props;
+
+    // routeKey 为设置首页设置 试试 '/dashboard/analysis' 或其他key值
+    const routeKey = location.pathname === '/' ? '/sys/organization' : location.pathname;
     const tabLists = this.updateTree(routes);
     const tabList = [];
     tabLists.map(v => {
       if (v.key === routeKey) {
         if (tabList.length === 0) {
           v.closable = false;
-          v.tab = tabName;
           tabList.push(v);
         }
       }
@@ -117,7 +118,7 @@ export default class BasicLayout extends React.Component {
       data.forEach(node => {
         if (!node.level) {
           treeList.push({
-            tab: node.name,
+            tab: node.tabname,
             key: node.path,
             locale: node.locale,
             closable: true,
@@ -182,7 +183,6 @@ export default class BasicLayout extends React.Component {
   // 点击左侧菜单
   onHandlePage = e => {
     const { routes } = this.props.route;
-    const { breadcrumbNameMap } = this.props;
     const { key } = e;
     const tabLists = this.updateTree(routes);
     const { tabListKey, tabList } = this.state;
@@ -204,18 +204,15 @@ export default class BasicLayout extends React.Component {
             });
             return;
           }
-          const tabname = breadcrumbNameMap[v.key].name;
           this.setState({
             isTab: true,
           });
           if (tabList.length === 0) {
             v.closable = false;
-            v.tab = tabname;
             this.setState({
               tabList: [...tabList, v],
             });
           } else if (!tabListKey.includes(v.key)) {
-            v.tab = tabname;
             this.setState({
               tabList: [...tabList, v],
               tabListKey: [...tabListKey, v.key],

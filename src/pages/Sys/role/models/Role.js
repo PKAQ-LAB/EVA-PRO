@@ -21,6 +21,7 @@ export default modelExtend(pageModel, {
     modalType: '',
     operateType: '',
     selectedRowKeys: [],
+    roleId: '',
     moduleData: {
       data: [],
       checked: [],
