@@ -46,9 +46,6 @@ const errorHandler = error => {
   const { status, url } = response;
 
   if (status === 401) {
-    notification.error({
-      message: errortext || '未登录或登录已过期，请重新登录。',
-    });
     // @HACK
     /* eslint-disable no-underscore-dangle */
     window.g_app._store.dispatch({
