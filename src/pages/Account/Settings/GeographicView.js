@@ -20,10 +20,10 @@ const nullSlectItem = {
 })
 class GeographicView extends PureComponent {
   componentDidMount = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'geographic/fetchProvince',
-    });
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'geographic/fetchProvince',
+    // });
   };
 
   componentDidUpdate(props) {

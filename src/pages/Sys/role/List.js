@@ -24,6 +24,12 @@ export default class RoleGrid extends PureComponent {
   // 用户授权按钮
   handleRoleClick = (record, operate) => {
     const { dispatch } = this.props;
+    dispatch({
+      type: 'role/updateState',
+      payload: {
+        roleId: record.id,
+      },
+    });
 
     dispatch({
       type: `role/list${operate}`,

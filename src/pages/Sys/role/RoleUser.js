@@ -1,15 +1,14 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'dva';
 import { Modal, Table } from 'antd';
-import styles from './Index.less';
 // 授权用户窗口
+@connect(state => ({
+  role: state.role,
+}))
 export default class RoleUser extends PureComponent {
-  componentDidMount() {
-    console.info('load role user');
-  }
-
   // 保存模块关系
   handleSubmit = () => {
-    const { currentItem } = this.props;
+    const { roleId } = this.props.role;
     const { checked } = { ...this.props.data };
     let users = [];
     if (checked && checked.length > 0) {
@@ -18,10 +17,11 @@ export default class RoleUser extends PureComponent {
     this.props.dispatch({
       type: 'role/saveUser',
       payload: {
-        id: currentItem.id,
+        id: roleId,
         users,
       },
     });
+    this.props.handleCancel();
   };
 
   // 保存已选
@@ -41,9 +41,11 @@ export default class RoleUser extends PureComponent {
   // 表格动作触发事件
   handleListChange = (pagination, filtersArg, sorter) => {
     const { dispatch, formValues } = this.props;
+    const { roleId } = this.props.role;
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
+      // eslint-disable-next-line no-undef
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});
@@ -51,6 +53,7 @@ export default class RoleUser extends PureComponent {
     const params = {
       page: pagination.current,
       pageSize: pagination.pageSize,
+      roleId,
       ...formValues,
       ...filters,
     };
@@ -82,7 +85,7 @@ export default class RoleUser extends PureComponent {
       },
       {
         title: '所属部门',
-        dataIndex: 'deptId',
+        dataIndex: 'deptName',
       },
     ];
 

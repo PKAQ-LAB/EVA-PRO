@@ -18,21 +18,19 @@ export default class AOEForm extends Component {
 
     if (item && item.id && value === item.code) {
       return callback();
-    } 
-      const data = { code };
-      this.props
-        .dispatch({
-          type: 'role/checkUnique',
-          payload: data,
-        })
-        .then(r => {
-          if (r.success) {
-            return callback();
-          } 
-            return callback('编码已存在');
-          
-        });
-    
+    }
+    const data = { code };
+    this.props
+      .dispatch({
+        type: 'role/checkUnique',
+        payload: data,
+      })
+      .then(r => {
+        if (r.success) {
+          return callback();
+        }
+        return callback('编码已存在');
+      });
   };
 
   // 关闭窗口
@@ -80,7 +78,7 @@ export default class AOEForm extends Component {
     };
     return (
       <Modal
-        maskClosable = { false }
+        maskClosable={false}
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}
@@ -89,8 +87,8 @@ export default class AOEForm extends Component {
           modalType === 'create'
             ? '新增角色信息'
             : modalType === 'edit'
-              ? '编辑角色信息'
-              : '查看角色信息'
+            ? '编辑角色信息'
+            : '查看角色信息'
         }
       >
         <Form>

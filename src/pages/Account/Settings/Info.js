@@ -4,6 +4,7 @@ import router from 'umi/router';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Menu } from 'antd';
 import GridContent from '@/components/PageHeaderWrapper/GridContent';
+import Cookies from 'universal-cookie';
 import styles from './Info.less';
 
 const { Item } = Menu;
@@ -19,15 +20,6 @@ class Info extends Component {
       base: <FormattedMessage id="app.settings.menuMap.basic" defaultMessage="Basic Settings" />,
       security: (
         <FormattedMessage id="app.settings.menuMap.security" defaultMessage="Security Settings" />
-      ),
-      binding: (
-        <FormattedMessage id="app.settings.menuMap.binding" defaultMessage="Account Binding" />
-      ),
-      notification: (
-        <FormattedMessage
-          id="app.settings.menuMap.notification"
-          defaultMessage="New Message Notification"
-        />
       ),
     };
     const key = location.pathname.replace(`${match.path}/`, '');
@@ -98,11 +90,14 @@ class Info extends Component {
   };
 
   render() {
-    const { children, currentUser } = this.props;
-    if (!currentUser.userid) {
+    const { children } = this.props;
+    const { mode, selectKey } = this.state;
+
+    const cookies = new Cookies();
+    const currentUser = cookies.get('eva_user').id;
+    if (!currentUser) {
       return '';
     }
-    const { mode, selectKey } = this.state;
     return (
       <GridContent>
         <div
