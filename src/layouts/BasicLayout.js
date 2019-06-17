@@ -325,7 +325,7 @@ export default class BasicLayout extends React.Component {
     const operations = (
       <Dropdown overlay={menu}>
         <a className="ant-dropdown-link" href="#">
-          Hover me
+          操作
           <Icon type="down" />
         </a>
       </Dropdown>
