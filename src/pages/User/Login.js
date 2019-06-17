@@ -1,3 +1,4 @@
+/* eslint-disable compat/compat */
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import md5 from 'md5';
@@ -91,6 +92,7 @@ class LoginPage extends Component {
               this.renderMessage(formatMessage({ id: 'app.login.message-invalid-credentials' }))}
             <UserName
               name="account"
+              autoFocus
               placeholder={`${formatMessage({ id: 'app.login.userName' })}`}
               rules={[
                 {
