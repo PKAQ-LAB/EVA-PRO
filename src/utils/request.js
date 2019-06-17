@@ -38,12 +38,12 @@ const server = {
 const errorHandler = error => {
   const { response = {} } = error;
 
-  const errortext = codeMessage[response.status] || response.statusText;
+  const errortext = error.data.message || codeMessage[response.status];
   const { status, url } = response;
 
   if (status === 401) {
     notification.error({
-      message: '未登录或登录已过期，请重新登录。',
+      message: errortext || '未登录或登录已过期，请重新登录。',
     });
     // @HACK
     /* eslint-disable no-underscore-dangle */
