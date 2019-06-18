@@ -34,7 +34,7 @@ const codeMessage = {
   504: '网关超时。',
 };
 const server = {
-  url: 'http://localhost:9009/api',
+  url: 'http://42.159.105.116:8080/hctms',
 };
 /**
  * 异常处理程序
