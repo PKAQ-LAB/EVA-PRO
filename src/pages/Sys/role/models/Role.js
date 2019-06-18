@@ -18,10 +18,10 @@ export default modelExtend(pageModel, {
   namespace: 'role',
   state: {
     currentItem: {},
+    roleId: '',
     modalType: '',
     operateType: '',
     selectedRowKeys: [],
-    roleId: '',
     moduleData: {
       data: [],
       checked: [],
@@ -82,7 +82,6 @@ export default modelExtend(pageModel, {
           type: 'updateState',
           payload: {
             modalType: '',
-            currentItem: {},
             list: response.data.records,
             pagination: {
               showSizeChanger: true,
@@ -145,31 +144,43 @@ export default modelExtend(pageModel, {
     // 获取所有用户
     *listUser({ payload }, { call, put }) {
       const response = yield call(listUser, payload);
+      const data = {
+        userData: {
+          data: {
+            list: response.data.users.records,
+            checked: response.data.checked,
+            pagination: {
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: total => `共 ${total} 条`,
+              total: response.data.users.total,
+              current: response.data.users.current,
+            },
+          },
+          checked: response.data.checked,
+        },
+        operateType: 'User',
+      };
+
+      if (payload.currentItem) {
+        data.currentItem = payload.currentItem;
+      }
+
       yield put({
         type: 'updateState',
-        payload: {
-          currentItem: payload.currentItem,
-          userData: {
-            data: {
-              list: response.data.users.records,
-              checked: response.data.checked,
-              pagination: {
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: total => `共 ${total} 条`,
-                total: response.data.users.total,
-                current: response.data.users.current,
-              },
-            },
-            checked: response.data.checked,
-          },
-          operateType: 'User',
-        },
+        payload: data,
       });
     },
     // 保存模块关系表
-    *saveUser({ payload }, { call }) {
+    *saveUser({ payload }, { call, put }) {
       yield call(saveUser, payload);
+
+      yield put({
+        type: 'updateState',
+        payload: {
+          operateType: '',
+        },
+      });
     },
     // 删除
     *remove({ payload }, { call, put }) {

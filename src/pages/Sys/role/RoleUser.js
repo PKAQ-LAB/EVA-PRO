@@ -1,15 +1,16 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'dva';
 import { Modal, Table } from 'antd';
 // 授权用户窗口
-@connect(state => ({
-  role: state.role,
-}))
 export default class RoleUser extends PureComponent {
+  componentDidMount() {
+    console.info('load role user');
+  }
+
   // 保存模块关系
   handleSubmit = () => {
-    const { roleId } = this.props.role;
+    const { roleId } = this.props;
     const { checked } = { ...this.props.data };
+
     let users = [];
     if (checked && checked.length > 0) {
       users = checked.map(item => ({ userId: item }));
@@ -21,7 +22,6 @@ export default class RoleUser extends PureComponent {
         users,
       },
     });
-    this.props.handleCancel();
   };
 
   // 保存已选
@@ -40,8 +40,9 @@ export default class RoleUser extends PureComponent {
 
   // 表格动作触发事件
   handleListChange = (pagination, filtersArg, sorter) => {
-    const { dispatch, formValues } = this.props;
-    const { roleId } = this.props.role;
+    const { dispatch, roleId } = this.props;
+
+    console.info(`roleId  - > ${roleId}`);
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
@@ -54,7 +55,6 @@ export default class RoleUser extends PureComponent {
       page: pagination.current,
       pageSize: pagination.pageSize,
       roleId,
-      ...formValues,
       ...filters,
     };
     if (sorter.field) {
@@ -69,6 +69,7 @@ export default class RoleUser extends PureComponent {
 
   render() {
     const { operateType } = this.props;
+
     const {
       data: { list, pagination },
       checked,
@@ -108,7 +109,7 @@ export default class RoleUser extends PureComponent {
         cancelText="关闭"
         onOk={() => this.handleSubmit()}
         onCancel={() => this.props.handleCancel()}
-        width={750}
+        width="60%"
         bodyStyle={{ maxHeight: 500, overflowY: 'auto', overflowX: 'auto' }}
       >
         {/* 左侧部门树列表 */}

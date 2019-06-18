@@ -195,8 +195,9 @@ export default class Role extends PureComponent {
   render() {
     const { dispatch, loading } = this.props;
     const {
-      modalType,
       list,
+      roleId,
+      modalType,
       pagination,
       operateType,
       moduleData,
@@ -214,7 +215,7 @@ export default class Role extends PureComponent {
     };
 
     const modalProps = {
-      currentItem,
+      roleId,
       dispatch,
       operateType,
     };
