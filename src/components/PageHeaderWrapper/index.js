@@ -50,7 +50,7 @@ const PageHeaderWrapper = ({
   ...restProps
 }) => {
   return (
-    <div style={{ margin: '0 -20px 0' }} className={classNames(wrapperClassName, styles.main)}>
+    <div className={classNames(wrapperClassName, styles.main)}>
       {top}
       <MenuContext.Consumer>
         {value => {
@@ -68,7 +68,7 @@ const PageHeaderWrapper = ({
                       <Title
                         level={4}
                         style={{
-                          marginBottom: 0,
+                          margin: '0 -12px 0',
                           display: 'inline-block',
                         }}
                       >
@@ -107,7 +107,7 @@ const PageHeaderWrapper = ({
         }}
       </MenuContext.Consumer>
       {children ? (
-        <div className={styles['children-content']}>
+        <div className={styles['children-content']} style={{ margin: '0 -12px 0' }}>
           <GridContent>{children}</GridContent>
         </div>
       ) : null}

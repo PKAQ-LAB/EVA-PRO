@@ -42,8 +42,6 @@ export default class RoleUser extends PureComponent {
   handleListChange = (pagination, filtersArg, sorter) => {
     const { dispatch, roleId } = this.props;
 
-    console.info(`roleId  - > ${roleId}`);
-
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
       // eslint-disable-next-line no-undef
