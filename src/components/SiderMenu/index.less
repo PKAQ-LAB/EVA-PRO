@@ -6,18 +6,16 @@
   position: relative;
   height: @nav-header-height;
   padding-left: (@menu-collapsed-width - 32px) / 2;
+  padding-left: 8px;
   overflow: hidden;
   line-height: @nav-header-height;
-  padding-left: (@menu-collapsed-width - 32px) / 2;
-  padding-left: 8px;
-  transition: all 0.3s;
   background: #212121;
-  overflow: hidden;
+  transition: all 0.3s;
   img {
     display: inline-block;
     height: 32px;
-    vertical-align: middle;
     height: 50px;
+    vertical-align: middle;
   }
   h1 {
     display: inline-block;
@@ -29,16 +27,6 @@
     vertical-align: middle;
   }
 }
-:global {
-  // ²à±ßÀ¸µ×É«
-  .ant-layout-sider {
-    background: #3a3a3a;
-  }
-  .drawer .drawer-content {
-    background: #272822;
-  }
-}
-
 .sider {
   position: relative;
   z-index: 10;
@@ -78,16 +66,16 @@
     }
   }
   :global {
-
-    // Ò»¼¶²Ëµ¥µ×É«
-    .ant-menu-dark, .ant-menu-dark .ant-menu-sub {
+    // ä¸€çº§èœå•åº•è‰²
+    .ant-menu-dark,
+    .ant-menu-dark .ant-menu-sub {
       background: #3a3a3a;
     }
-    // ¶ş¼¶²Ëµ¥ÑÕÉ«
+    // äºŒçº§èœå•é¢œè‰²
     .ant-menu-dark .ant-menu-inline.ant-menu-sub {
       background: #272822;
     }
-    // Ñ¡ÖĞ²Ëµ¥ÑÕÉ«
+    // é€‰ä¸­èœå•é¢œè‰²
     .ant-menu.ant-menu-dark .ant-menu-item-selected,
     .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
       background-color: #515151;
@@ -102,15 +90,15 @@
         .sider-menu-item-img
         + span,
       & > .ant-menu-submenu > .ant-menu-submenu-title .sider-menu-item-img + span {
-        max-width: 0;
         display: inline-block;
+        max-width: 0;
         opacity: 0;
       }
     }
     .ant-menu-item .sider-menu-item-img + span,
     .ant-menu-submenu-title .sider-menu-item-img + span {
-      transition: opacity 0.3s @ease-in-out, width 0.3s @ease-in-out;
       opacity: 1;
+      transition: opacity 0.3s @ease-in-out, width 0.3s @ease-in-out;
     }
   }
 }
@@ -121,13 +109,19 @@
 }
 
 :global {
+  // ä¾§è¾¹æ åº•è‰²
+  .ant-layout-sider {
+    background: #3a3a3a;
+  }
+  .drawer .drawer-content {
+    background: #272822;
+  }
+
   .top-nav-menu li.ant-menu-item {
     height: @nav-header-height;
     line-height: @nav-header-height;
   }
-  .drawer .drawer-content {
-    background: #001529;
-  }
+
   .ant-menu-inline-collapsed {
     & > .ant-menu-item .sider-menu-item-img + span,
     &

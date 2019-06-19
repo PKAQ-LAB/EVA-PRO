@@ -62,13 +62,13 @@ const PageHeaderWrapper = ({
                 })}
               >
                 <PageHeader
+                  style={{ margin: '0 -12px 0' }}
                   title={
                     <>
                       {logo && <span className={styles.logo}>{logo}</span>}
                       <Title
                         level={4}
                         style={{
-                          margin: '0 -12px 0',
                           display: 'inline-block',
                         }}
                       >
