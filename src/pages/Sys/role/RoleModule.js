@@ -6,14 +6,14 @@ const Node = Tree.TreeNode;
 export default class RoleModule extends PureComponent {
   // 保存模块关系
   handleSubmit = () => {
-    const { currentItem } = this.props;
+    const { roleId } = this.props;
     const { allCheckedKeys } = { ...this.props.data };
     const modules = allCheckedKeys.map(item => ({ moduleId: item }));
 
     this.props.dispatch({
       type: 'role/saveModule',
       payload: {
-        id: currentItem.id,
+        id: roleId,
         modules,
       },
     });

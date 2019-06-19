@@ -120,12 +120,10 @@ export default modelExtend(pageModel, {
       yield put({
         type: 'updateState',
         payload: {
-          currentItem: payload.currentItem,
           moduleData: {
             data: response.data.modules,
             checked: response.data.checked,
           },
-          operateType: 'Module',
         },
       });
     },
@@ -159,7 +157,6 @@ export default modelExtend(pageModel, {
           },
           checked: response.data.checked,
         },
-        operateType: 'User',
       };
 
       if (payload.currentItem) {

@@ -47,7 +47,7 @@ export default class HeaderView extends Component {
     if (isMobile || !fixedHeader || layout === 'topmenu') {
       return '100%';
     }
-    return collapsed ? 'calc(100% - 80px)' : 'calc(100% - 256px)';
+    return collapsed ? 'calc(100% - 80px)' : 'calc(100% - 220px)';
   };
 
   handleNoticeClear = type => {

@@ -140,7 +140,7 @@ export default class BasicLayout extends React.Component {
     const { fixSiderbar, isMobile, collapsed, layout } = this.props;
     if (fixSiderbar && layout !== 'topmenu' && !isMobile) {
       return {
-        paddingLeft: collapsed ? '80px' : '256px',
+        paddingLeft: collapsed ? '80px' : '220px',
       };
     }
     return null;

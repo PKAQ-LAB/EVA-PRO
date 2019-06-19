@@ -6,16 +6,18 @@
   position: relative;
   height: @nav-header-height;
   padding-left: (@menu-collapsed-width - 32px) / 2;
-  padding-left: 8px;
   overflow: hidden;
   line-height: @nav-header-height;
-  background: #212121;
+  padding-left: (@menu-collapsed-width - 32px) / 2;
+  padding-left: 8px;
   transition: all 0.3s;
+  background: #212121;
+  overflow: hidden;
   img {
     display: inline-block;
     height: 32px;
-    height: 50px;
     vertical-align: middle;
+    height: 50px;
   }
   h1 {
     display: inline-block;
@@ -27,6 +29,16 @@
     vertical-align: middle;
   }
 }
+:global {
+  // 侧边栏底色
+  .ant-layout-sider {
+    background: #3a3a3a;
+  }
+  .drawer .drawer-content {
+    background: #272822;
+  }
+}
+
 .sider {
   position: relative;
   z-index: 10;
@@ -90,15 +102,15 @@
         .sider-menu-item-img
         + span,
       & > .ant-menu-submenu > .ant-menu-submenu-title .sider-menu-item-img + span {
-        display: inline-block;
         max-width: 0;
+        display: inline-block;
         opacity: 0;
       }
     }
     .ant-menu-item .sider-menu-item-img + span,
     .ant-menu-submenu-title .sider-menu-item-img + span {
-      opacity: 1;
       transition: opacity 0.3s @ease-in-out, width 0.3s @ease-in-out;
+      opacity: 1;
     }
   }
 }
@@ -109,19 +121,13 @@
 }
 
 :global {
-  // 侧边栏底色
-  .ant-layout-sider {
-    background: #3a3a3a;
-  }
-  .drawer .drawer-content {
-    background: #272822;
-  }
-
   .top-nav-menu li.ant-menu-item {
     height: @nav-header-height;
     line-height: @nav-header-height;
   }
-
+  .drawer .drawer-content {
+    background: #001529;
+  }
   .ant-menu-inline-collapsed {
     & > .ant-menu-item .sider-menu-item-img + span,
     &
