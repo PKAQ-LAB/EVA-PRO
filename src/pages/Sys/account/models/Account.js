@@ -19,6 +19,12 @@ export default modelExtend(pageModel, {
     modalType: '',
     selectedRowKeys: [],
     formValues: {},
+    account: '',
+    name: '',
+    tel: '',
+    pagination: {
+      current: '1',
+    },
   },
   effects: {
     // 查询当前用户
@@ -64,7 +70,7 @@ export default modelExtend(pageModel, {
       }
     },
     // 保存提交
-    *save({ payload }, { call, put }) {
+    *save({ payload, callback }, { call, put }) {
       const response = yield call(saveUser, payload);
       if (response && response.data) {
         yield put({
@@ -82,6 +88,7 @@ export default modelExtend(pageModel, {
             },
           },
         });
+        if (callback) callback();
       } else {
         yield put({
           type: 'updateState',
@@ -101,6 +108,7 @@ export default modelExtend(pageModel, {
         type: 'updateState',
         payload: {
           list: userData.data.records,
+          selectedRowKeys: [],
           pagination: {
             showSizeChanger: true,
             showQuickJumper: true,
@@ -120,12 +128,20 @@ export default modelExtend(pageModel, {
           type: 'updateState',
           payload: {
             list: response.data.records,
+            selectedRowKeys: [],
+            pagination: {
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: total => `共 ${total} 条`,
+              total: response.data.total,
+              current: response.data.current,
+            },
           },
         });
       }
     },
     // 删除
-    *remove({ payload }, { call, put }) {
+    *remove({ payload, callback }, { call, put }) {
       const response = yield call(delUser, payload);
       if (response && response.success) {
         yield put({
@@ -142,6 +158,9 @@ export default modelExtend(pageModel, {
             selectedRowKeys: [],
           },
         });
+        if (callback) {
+          callback();
+        }
       }
     },
   },
