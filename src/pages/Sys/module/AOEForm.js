@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, InputNumber, Modal, Switch, TreeSelect } from 'antd';
+import { Row, Col, Form, Input, Modal, Switch, TreeSelect } from 'antd';
 
 const FormItem = Form.Item;
 const Area = Input.TextArea;
@@ -174,29 +174,12 @@ export default class AOEForm extends Component {
             )}
           </FormItem>
           {/* 第三行 */}
-          <Row>
-            <Col span={12}>
-              <FormItem label="排序" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('orders', {
-                  initialValue: currentItem.orders,
-                  rules: [
-                    {
-                      type: 'number',
-                      message: '显示顺序',
-                    },
-                  ],
-                })(<InputNumber />)}
-              </FormItem>
-            </Col>
-            <Col span={12}>
-              <FormItem label="是否启用" {...formItemLayout}>
-                {getFieldDecorator('status', {
-                  valuePropName: 'checked',
-                  initialValue: currentItem.status !== '0000',
-                })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
-              </FormItem>
-            </Col>
-          </Row>
+          <FormItem label="是否启用" {...formRowOne}>
+            {getFieldDecorator('status', {
+              valuePropName: 'checked',
+              initialValue: currentItem.status !== '0000',
+            })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
+          </FormItem>
           {/* 第四行 */}
           <FormItem label="备注" hasFeedback {...formRowOne}>
             {getFieldDecorator('remark', {

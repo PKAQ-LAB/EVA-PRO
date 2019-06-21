@@ -143,8 +143,16 @@ export default [
                 istab: false,
                 component: './Account/Center/Articles',
               },
-              { path: '/account/center/applications', component: './Account/Center/Applications' },
-              { path: '/account/center/projects', component: './Account/Center/Projects' },
+              {
+                path: '/account/center/applications',
+                istab: false,
+                component: './Account/Center/Applications',
+              },
+              {
+                path: '/account/center/projects',
+                istab: false,
+                component: './Account/Center/Projects',
+              },
             ],
           },
           {
@@ -159,7 +167,11 @@ export default [
                 istab: false,
                 component: './Account/Settings/BaseView',
               },
-              { path: '/account/settings/security', component: './Account/Settings/SecurityView' },
+              {
+                path: '/account/settings/security',
+                istab: false,
+                component: './Account/Settings/SecurityView',
+              },
               { path: '/account/settings/binding', component: './Account/Settings/BindingView' },
               {
                 path: '/account/settings/notification',
