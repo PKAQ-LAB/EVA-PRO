@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Form, Input, Modal, Switch, TreeSelect, Tooltip, Icon } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
+import { connect } from 'dva';
 import md5 from 'md5';
 
 const FormItem = Form.Item;
@@ -8,6 +9,9 @@ const Area = Input.TextArea;
 const TreeNode = TreeSelect.TreeNode;
 
 @Form.create()
+@connect(state => ({
+  account: state.account,
+}))
 export default class AOEForm extends Component {
   // 校验账号唯一性
   // eslint-disable-next-line consistent-return
@@ -45,6 +49,7 @@ export default class AOEForm extends Component {
   // 保存
   handleSaveClick = () => {
     const { dispatch, item } = this.props;
+    const { account, name, tel, pagination } = this.props.account;
     const { getFieldsValue, validateFields } = this.props.form;
     validateFields(errors => {
       if (errors) {
@@ -61,6 +66,17 @@ export default class AOEForm extends Component {
       dispatch({
         type: 'account/save',
         payload: data,
+        callback: () => {
+          this.props.dispatch({
+            type: 'account/fetch',
+            payload: {
+              pageNo: pagination.current,
+              account,
+              name,
+              tel,
+            },
+          });
+        },
       });
     });
   };

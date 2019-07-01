@@ -43,9 +43,8 @@ export default class AOEForm extends Component {
         if (r.success) {
           return callback();
         }
-          return callback('该编码已存在');
+        return callback('该编码已存在');
       });
-
   };
 
   // 渲染树节点 - 剔除状态为停用状态(0000)得节点
@@ -75,10 +74,9 @@ export default class AOEForm extends Component {
             />
           );
         }
-          return null;
-
+        return null;
       })
-      .filter(item => (item || false));
+      .filter(item => item || false);
   };
 
   // 保存
@@ -123,7 +121,7 @@ export default class AOEForm extends Component {
 
     return (
       <Modal
-        maskClosable = { false }
+        maskClosable={false}
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}
@@ -131,7 +129,9 @@ export default class AOEForm extends Component {
         title={
           modalType === 'create'
             ? '新增组织信息'
-            : modalType === 'edit'? '编辑组织信息': '查看组织信息'
+            : modalType === 'edit'
+            ? '编辑组织信息'
+            : '查看组织信息'
         }
       >
         <Form>
@@ -150,7 +150,10 @@ export default class AOEForm extends Component {
                 {getFieldDecorator('code', {
                   initialValue: currentItem.code,
                   validateTrigger: 'onBlur',
-                  rules: [{ required: true, pattern: /^[0-9a-zA-Z_]{1,}$/, message: '请输入编码' }, { validator: this.checkCode }],
+                  rules: [
+                    { required: true, pattern: /^[0-9a-zA-Z_]{1,}$/, message: '请输入编码' },
+                    { validator: this.checkCode },
+                  ],
                 })(<Input />)}
               </FormItem>
             </Col>

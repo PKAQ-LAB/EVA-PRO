@@ -41,6 +41,14 @@ export default class Account extends PureComponent {
     const { form, dispatch } = this.props;
     form.resetFields();
     dispatch({
+      type: 'account/updateState',
+      payload: {
+        account: '',
+        name: '',
+        tel: '',
+      },
+    });
+    dispatch({
       type: 'account/fetchUser',
       payload: {},
     });
@@ -89,6 +97,14 @@ export default class Account extends PureComponent {
         ...fieldsValue,
         updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
       };
+      dispatch({
+        type: 'account/updateState',
+        payload: {
+          account: fieldsValue.account,
+          name: fieldsValue.name,
+          tel: fieldsValue.tel,
+        },
+      });
       dispatch({
         type: 'account/fetchUser',
         payload: values,
