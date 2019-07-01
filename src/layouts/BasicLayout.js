@@ -68,8 +68,13 @@ export default class BasicLayout extends React.Component {
     const routeKey = location.pathname === '/' ? '/sys/organization' : location.pathname;
     const tabLists = this.updateTree(routes);
     const tabList = [];
+    let isTab = true;
     tabLists.map(v => {
       if (v.key === routeKey) {
+        if (!v.istab) {
+          isTab = false;
+          return;
+        }
         if (tabList.length === 0) {
           v.closable = false;
           tabList.push(v);
@@ -81,7 +86,7 @@ export default class BasicLayout extends React.Component {
       tabListKey: [routeKey],
       activeKey: routeKey,
       routeKey,
-      isTab: true,
+      isTab,
     };
   }
 
