@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Card, Form, Popconfirm, Input, Button, Row, Col } from 'antd';
+import { Card, Form, Popconfirm, Input, Button } from 'antd';
 import { connect } from 'dva';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import List from './List';
@@ -58,8 +58,14 @@ export default class Role extends PureComponent {
     const { form, dispatch } = this.props;
     form.resetFields();
     dispatch({
+      type: 'role/updateState',
+      payload: {
+        name: '',
+        code: '',
+      },
+    });
+    dispatch({
       type: 'role/listRole',
-      payload: {},
     });
   };
 
@@ -93,6 +99,13 @@ export default class Role extends PureComponent {
         ...fieldsValue,
         updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
       };
+      dispatch({
+        type: 'role/updateState',
+        payload: {
+          name: form.getFieldValue('name'),
+          code: form.getFieldValue('code'),
+        },
+      });
       dispatch({
         type: 'role/listRole',
         payload: values,
@@ -161,23 +174,20 @@ export default class Role extends PureComponent {
   // 简单搜索条件
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
+    const { name, code } = this.props.role;
     return (
-      <Form onSubmit={this.handleSearch} layout="inline" style={{marginLeft: 8}}>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={6} sm={24}>
-            <FormItem label="角色名称">
-              {getFieldDecorator('name')(<Input placeholder="输入角色名称搜索" />)}
-            </FormItem>
-          </Col>
-          <Col md={6} sm={24}>
-            <FormItem label="角色编码">
-              {getFieldDecorator('code')(<Input placeholder="输入角色编码搜索" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            {this.renderRightBtn()}
-          </Col>
-        </Row>
+      <Form onSubmit={this.handleSearch} layout="inline" style={{ marginLeft: 8 }}>
+        <FormItem label="角色名称">
+          {getFieldDecorator('name', {
+            initialValue: name,
+          })(<Input placeholder="输入角色名称搜索" />)}
+        </FormItem>
+        <FormItem label="角色编码">
+          {getFieldDecorator('code', {
+            initialValue: code,
+          })(<Input placeholder="输入角色编码搜索" />)}
+        </FormItem>
+        <FormItem>{this.renderRightBtn()}</FormItem>
       </Form>
     );
   }
@@ -185,8 +195,9 @@ export default class Role extends PureComponent {
   render() {
     const { dispatch, loading } = this.props;
     const {
-      modalType,
       list,
+      roleId,
+      modalType,
       pagination,
       operateType,
       moduleData,
@@ -204,7 +215,7 @@ export default class Role extends PureComponent {
     };
 
     const modalProps = {
-      currentItem,
+      roleId,
       dispatch,
       operateType,
     };
@@ -217,10 +228,12 @@ export default class Role extends PureComponent {
       title: `${modalType === 'create' ? '新增角色' : '编辑角色'}`,
     };
     return (
-      <PageHeaderWrapper title={this.renderSimpleForm()}>
+      <PageHeaderWrapper>
         <Card>
-          { this.renderLeftBtn() }
-
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            {this.renderLeftBtn()}
+            {this.renderSimpleForm()}
+          </div>
           <List {...listPops} />
         </Card>
         {operateType === 'Module' && (

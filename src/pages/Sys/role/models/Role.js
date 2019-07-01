@@ -18,18 +18,22 @@ export default modelExtend(pageModel, {
   namespace: 'role',
   state: {
     currentItem: {},
+    roleId: '',
     modalType: '',
     operateType: '',
     selectedRowKeys: [],
     moduleData: {
       data: [],
       checked: [],
+      allCheckedKeys: [],
     },
     userData: {
       data: [],
       checked: [],
     },
     configData: [],
+    name: '',
+    code: '',
   },
   effects: {
     // 校验编码唯一性
@@ -78,7 +82,6 @@ export default modelExtend(pageModel, {
           type: 'updateState',
           payload: {
             modalType: '',
-            currentItem: {},
             list: response.data.records,
             pagination: {
               showSizeChanger: true,
@@ -100,8 +103,16 @@ export default modelExtend(pageModel, {
       }
     },
     // 保存模块关系表
-    *saveModule({ payload }, { call }) {
-      yield call(saveModule, payload);
+    *saveModule({ payload }, { call, put }) {
+      const response = yield call(saveModule, payload);
+      if (response) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            operateType: '',
+          },
+        });
+      }
     },
     // 加载模块授权列表
     *listModule({ payload }, { call, put }) {
@@ -109,12 +120,10 @@ export default modelExtend(pageModel, {
       yield put({
         type: 'updateState',
         payload: {
-          currentItem: payload.currentItem,
           moduleData: {
             data: response.data.modules,
             checked: response.data.checked,
           },
-          operateType: 'Module',
         },
       });
     },
@@ -133,31 +142,42 @@ export default modelExtend(pageModel, {
     // 获取所有用户
     *listUser({ payload }, { call, put }) {
       const response = yield call(listUser, payload);
+      const data = {
+        userData: {
+          data: {
+            list: response.data.users.records,
+            checked: response.data.checked,
+            pagination: {
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: total => `共 ${total} 条`,
+              total: response.data.users.total,
+              current: response.data.users.current,
+            },
+          },
+          checked: response.data.checked,
+        },
+      };
+
+      if (payload.currentItem) {
+        data.currentItem = payload.currentItem;
+      }
+
       yield put({
         type: 'updateState',
-        payload: {
-          currentItem: payload.currentItem,
-          userData: {
-            data: {
-              list: response.data.users.records,
-              checked: response.data.checked,
-              pagination: {
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: total => `共 ${total} 条`,
-                total: response.data.users.total,
-                current: response.data.users.current,
-              },
-            },
-            checked: response.data.checked,
-          },
-          operateType: 'User',
-        },
+        payload: data,
       });
     },
     // 保存模块关系表
-    *saveUser({ payload }, { call }) {
+    *saveUser({ payload }, { call, put }) {
       yield call(saveUser, payload);
+
+      yield put({
+        type: 'updateState',
+        payload: {
+          operateType: '',
+        },
+      });
     },
     // 删除
     *remove({ payload }, { call, put }) {

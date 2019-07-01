@@ -1,5 +1,18 @@
 import React, { Component } from 'react';
-import { Card, Input, Badge, Button, Table, Form, Row, Col, Select, Divider, Icon } from 'antd';
+import {
+  Card,
+  Input,
+  Badge,
+  Button,
+  Table,
+  Form,
+  Row,
+  Col,
+  Select,
+  Divider,
+  Icon,
+  Popconfirm,
+} from 'antd';
 import { connect } from 'dva';
 import style from './Index.less';
 
@@ -140,7 +153,14 @@ export default class DictDetail extends Component {
           <div>
             <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
             <Divider type="vertical" />
-            <a onClick={e => this.handleDeleteClick(record, e)}>删除</a>
+            <Popconfirm
+              title="确定要删除吗？"
+              okText="确定"
+              cancelText="取消"
+              onConfirm={() => this.handleDeleteClick(record)}
+            >
+              <a>删除</a>
+            </Popconfirm>
           </div>
         ),
       },

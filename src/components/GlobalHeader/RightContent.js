@@ -54,7 +54,9 @@ export default class GlobalHeaderRight extends PureComponent {
       fullscreen: screenfull.isFullscreen ? 0 : 1,
     });
     screenfull.toggle();
-  };  getUnreadData = noticeData => {
+  };
+
+  getUnreadData = noticeData => {
     const unreadMsg = {};
     Object.entries(noticeData).forEach(([key, value]) => {
       if (!unreadMsg[key]) {
@@ -78,7 +80,7 @@ export default class GlobalHeaderRight extends PureComponent {
 
   render() {
     const fullscreenIcon = ['fullscreen', 'fullscreen-exit'];
-    const fullscreenText = ['È«ÆÁ', 'ÍË³öÈ«ÆÁ'];
+    const fullscreenText = ['å…¨å±', 'é€€å‡ºå…¨å±'];
     const fullscreen = this.state.fullscreen;
 
     const {
@@ -91,17 +93,13 @@ export default class GlobalHeaderRight extends PureComponent {
     } = this.props;
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-        <Menu.Item key="userCenter">
+        <Menu.Item key="/account/center">
           <Icon type="user" />
           <FormattedMessage id="menu.account.center" defaultMessage="account center" />
         </Menu.Item>
-        <Menu.Item key="userinfo">
+        <Menu.Item key="/account/settings">
           <Icon type="setting" />
           <FormattedMessage id="menu.account.settings" defaultMessage="account settings" />
-        </Menu.Item>
-        <Menu.Item key="triggerError">
-          <Icon type="close-circle" />
-          <FormattedMessage id="menu.account.trigger" defaultMessage="Trigger Error" />
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="logout">
@@ -133,10 +131,10 @@ export default class GlobalHeaderRight extends PureComponent {
             console.log('enter', value); // eslint-disable-line
           }}
         />
-        {/*È«ÆÁ*/}
+        {/* å…¨å± */}
         <Tooltip title={fullscreenText[fullscreen]}>
           <span className={styles.action} onClick={() => this.f11()}>
-              <Icon type={fullscreenIcon[fullscreen]} />
+            <Icon type={fullscreenIcon[fullscreen]} />
           </span>
         </Tooltip>
 

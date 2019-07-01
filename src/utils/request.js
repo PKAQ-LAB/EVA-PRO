@@ -1,10 +1,20 @@
+/* eslint-disable camelcase */
 /**
  * request 网络请求工具
  * 更详细的api文档: https://bigfish.alipay.com/doc/api#request
  */
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 import router from 'umi/router';
+import Cookies from 'universal-cookie';
+
+message.config({
+  maxCount: 1,
+});
+
+const cookies = new Cookies();
+
+const TOKEN_KEY = 'eva_token';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -24,20 +34,18 @@ const codeMessage = {
   504: '网关超时。',
 };
 const server = {
-  url: 'http://localhost:9007/hctms',
+  url: 'http://localhost:9009/api',
 };
 /**
  * 异常处理程序
  */
 const errorHandler = error => {
   const { response = {} } = error;
-  const errortext = codeMessage[response.status] || response.statusText;
+
+  const errortext = error.data.message || codeMessage[response.status];
   const { status, url } = response;
 
   if (status === 401) {
-    notification.error({
-      message: '未登录或登录已过期，请重新登录。',
-    });
     // @HACK
     /* eslint-disable no-underscore-dangle */
     window.g_app._store.dispatch({
@@ -62,20 +70,56 @@ const errorHandler = error => {
     router.push('/exception/404');
   }
 };
-
 /**
  * 配置request请求时的默认参数
  */
+
 const request = extend({
   prefix: server.url,
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json; charset=utf-8',
-  },
+  useCache: false,
   // 默认错误处理
   errorHandler,
   // 默认请求是否带上cookie
-  credentials: 'include',
+  credentials: 'omit',
+});
+
+// request拦截器, 改变url 或 options.
+request.interceptors.request.use((url, options) => {
+  // eslint-disable-next-line no-param-reassign
+  options.headers = {
+    ...options.headers,
+    Accept: 'application/json',
+    Authorization: cookies.get(TOKEN_KEY) ? `Bearer${cookies.get(TOKEN_KEY)}` : '',
+    'Content-Type': 'application/json; charset=utf-8',
+  };
+  return {
+    url,
+    options: {
+      ...options,
+      interceptors: true,
+    },
+  };
+});
+
+/**
+ * 4. 基于response interceptors
+ */
+request.interceptors.response.use(async response => {
+  const result = await response.clone().json();
+  const auth_token = response.headers.get('Auth_Token');
+  const token = result.data ? result.data.token : null;
+
+  if (token || auth_token) {
+    cookies.set(TOKEN_KEY, token || auth_token);
+  }
+
+  if (result && result.success) {
+    message.success(result.message || '操作成功');
+  } else {
+    message.error(result.message || '操作失败');
+  }
+
+  return response;
 });
 
 export default request;

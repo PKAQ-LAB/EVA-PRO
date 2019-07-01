@@ -1,6 +1,5 @@
 import modelExtend from 'dva-model-extend';
 import { pageModel } from '@/common/model/BaseModel';
-import { message } from 'antd';
 import {
   listUser,
   delUser,
@@ -22,8 +21,8 @@ export default modelExtend(pageModel, {
     formValues: {},
   },
   effects: {
-    /** 查询当前用户 **/
-    *fetchCurrent({ payload }, { call, put }){
+    // 查询当前用户
+    *fetchCurrent({ payload }, { call, put }) {
       const response = yield call(getUser, payload);
       yield put({
         type: 'saveCurrentUser',
@@ -116,8 +115,6 @@ export default modelExtend(pageModel, {
     // 切换锁定状态
     *lockSwitch({ payload }, { call, put }) {
       const response = yield call(lockUser, payload);
-
-
       if (response && response.success) {
         yield put({
           type: 'updateState',
@@ -128,7 +125,7 @@ export default modelExtend(pageModel, {
       }
     },
     // 删除
-    *remove({ payload, callback }, { call, put }) {
+    *remove({ payload }, { call, put }) {
       const response = yield call(delUser, payload);
       if (response && response.success) {
         yield put({

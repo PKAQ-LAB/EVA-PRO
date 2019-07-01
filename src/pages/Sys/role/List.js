@@ -1,53 +1,55 @@
 import React, { PureComponent } from 'react';
-import { Table, Icon, Alert, Divider, Badge, message, notification } from 'antd';
+import { Table, Icon, Alert, Divider, Badge, notification, Popconfirm } from 'antd';
+import { connect } from 'dva';
 import styles from './Index.less';
-
+@connect(state => ({
+  role: state.role,
+  loading: state.loading.models.role,
+}))
 export default class RoleGrid extends PureComponent {
   // 初始化加载数据
   componentDidMount() {
     const { dispatch } = this.props;
+    const { name, code, pagination } = this.props.role;
     dispatch({
       type: 'role/listRole',
+      payload: {
+        page: pagination.current,
+        name,
+        code,
+      },
     });
   }
 
   // 用户授权按钮
   handleRoleClick = (record, operate) => {
-    const { dispatch } = this.props;
+    this.props.dispatch({
+      type: `role/updateState`,
+      payload: {
+        roleId: record.id,
+        operateType: operate,
+      },
+    });
 
-    dispatch({
+    this.props.dispatch({
       type: `role/list${operate}`,
       payload: {
         roleId: record.id,
-        currentItem: record,
         operateType: operate,
       },
     });
   };
 
-  // 表格动作触发事件
-  handleListChange = (pagination, filtersArg, sorter) => {
-    const { dispatch, formValues } = this.props;
-
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
-
-    const params = {
-      page: pagination.current,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
-
-    dispatch({
-      type: 'role/list',
-      payload: params,
+  // 分页
+  handlePageChange = pagination => {
+    const { name, code } = this.props.role;
+    this.props.dispatch({
+      type: 'role/listRole',
+      payload: {
+        page: pagination.current,
+        name,
+        code,
+      },
     });
   };
 
@@ -77,7 +79,7 @@ export default class RoleGrid extends PureComponent {
       type: 'role/remove',
       payload: {
         param: [record.id],
-      }
+      },
     });
   };
 
@@ -117,7 +119,7 @@ export default class RoleGrid extends PureComponent {
         title: '模块授权',
         render: (text, record) => (
           <div>
-            <a onClick={e => this.handleRoleClick(record, 'Module')}>
+            <a onClick={() => this.handleRoleClick(record, 'Module')}>
               <Icon type="bars" />
               模块授权
             </a>
@@ -136,23 +138,19 @@ export default class RoleGrid extends PureComponent {
         ),
       },
       {
-        title: '配置授权',
-        render: (text, record) => (
-          <div>
-            <a onClick={e => this.handleRoleClick(record, 'Config')}>
-              <Icon type="setting" />
-              配置授权
-            </a>
-          </div>
-        ),
-      },
-      {
         title: '操作',
         render: (text, record) => (
           <div>
             <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
             <Divider type="vertical" />
-            <a onClick={e => this.handleDeleteClick(record, e)}>删除</a>
+            <Popconfirm
+              title="确定要删除吗？"
+              okText="确定"
+              cancelText="取消"
+              onConfirm={e => this.handleDeleteClick(record, e)}
+            >
+              <a>删除</a>
+            </Popconfirm>
           </div>
         ),
       },
@@ -176,9 +174,9 @@ export default class RoleGrid extends PureComponent {
           pagination={paginationProps}
           bordered
           rowSelection={rowSelectionProps}
-          rowClassName={record => record.locked ? styles.disabled : styles.enabled}
+          rowClassName={record => (record.locked ? styles.disabled : styles.enabled)}
           onSelectRow={this.handleSelectRows}
-          onChange={this.handleListChange}
+          onChange={this.handlePageChange}
           dataSource={list}
           columns={column}
           loading={loading}

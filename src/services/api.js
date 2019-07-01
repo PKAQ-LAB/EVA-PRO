@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
-// 获取用户菜单
+// 鑾峰彇鐢ㄦ埛鑿滃崟
 export async function getUserMenu() {
   return request(`/auth/fetch`);
 }
@@ -109,7 +109,7 @@ export async function updateFakeList(params) {
 }
 
 /**
- * 用户登录
+ * 鐢ㄦ埛鐧诲綍
  * @param params
  * @returns {Promise<void>}
  */

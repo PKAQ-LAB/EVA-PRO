@@ -5,7 +5,7 @@ import webpackPlugin from './plugin.config';
 import defaultSettings from '../src/defaultSettings';
 import slash from 'slash2';
 
-const { pwa, primaryColor } = defaultSettings;
+const { pwa, primaryColor, fontSizeBase } = defaultSettings;
 // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, TEST } = process.env;
 
@@ -65,6 +65,7 @@ export default {
   // https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': primaryColor,
+    'font-size-base': fontSizeBase,
   },
   ignoreMomentLocale: true,
   lessLoaderOptions: {

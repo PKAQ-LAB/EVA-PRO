@@ -37,7 +37,7 @@ export default modelExtend(model, {
       }
     },
     // 新增/新增子节点
-    *create({ payload }, { call, put }) {
+    *create({ payload }, { put }) {
       // 有id时为新增下级，加载父级节点相关信息
       yield put({
         type: 'updateState',

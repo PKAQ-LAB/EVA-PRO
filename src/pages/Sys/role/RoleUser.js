@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { Modal, Table } from 'antd';
-import styles from './Index.less';
 // 授权用户窗口
 export default class RoleUser extends PureComponent {
   componentDidMount() {
@@ -9,8 +8,9 @@ export default class RoleUser extends PureComponent {
 
   // 保存模块关系
   handleSubmit = () => {
-    const { currentItem } = this.props;
+    const { roleId } = this.props;
     const { checked } = { ...this.props.data };
+
     let users = [];
     if (checked && checked.length > 0) {
       users = checked.map(item => ({ userId: item }));
@@ -18,7 +18,7 @@ export default class RoleUser extends PureComponent {
     this.props.dispatch({
       type: 'role/saveUser',
       payload: {
-        id: currentItem.id,
+        id: roleId,
         users,
       },
     });
@@ -40,10 +40,11 @@ export default class RoleUser extends PureComponent {
 
   // 表格动作触发事件
   handleListChange = (pagination, filtersArg, sorter) => {
-    const { dispatch, formValues } = this.props;
+    const { dispatch, roleId } = this.props;
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
+      // eslint-disable-next-line no-undef
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});
@@ -51,7 +52,7 @@ export default class RoleUser extends PureComponent {
     const params = {
       page: pagination.current,
       pageSize: pagination.pageSize,
-      ...formValues,
+      roleId,
       ...filters,
     };
     if (sorter.field) {
@@ -66,6 +67,7 @@ export default class RoleUser extends PureComponent {
 
   render() {
     const { operateType } = this.props;
+
     const {
       data: { list, pagination },
       checked,
@@ -82,7 +84,7 @@ export default class RoleUser extends PureComponent {
       },
       {
         title: '所属部门',
-        dataIndex: 'deptId',
+        dataIndex: 'deptName',
       },
     ];
 
@@ -105,7 +107,7 @@ export default class RoleUser extends PureComponent {
         cancelText="关闭"
         onOk={() => this.handleSubmit()}
         onCancel={() => this.props.handleCancel()}
-        width={750}
+        width="60%"
         bodyStyle={{ maxHeight: 500, overflowY: 'auto', overflowX: 'auto' }}
       >
         {/* 左侧部门树列表 */}

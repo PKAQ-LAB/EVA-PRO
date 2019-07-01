@@ -134,6 +134,12 @@ export default class BaseMenu extends PureComponent {
     this.wrap = ref;
   };
 
+  // 点击左侧菜单
+  handleClick = e => {
+    const { onHandlePage } = this.props;
+    onHandlePage(e);
+  };
+
   render() {
     const {
       openKeys,
@@ -169,6 +175,7 @@ export default class BaseMenu extends PureComponent {
           theme={theme}
           onOpenChange={handleOpenChange}
           selectedKeys={selectedKeys}
+          onClick={this.handleClick}
           style={style}
           className={cls}
           {...props}

@@ -5,10 +5,11 @@ import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
 import Cookies from 'universal-cookie';
+
 const cookies = new Cookies();
 
-const USER_KEY = "eva_user";
-const TOKEN_KEY = "eva_token";
+const USER_KEY = 'eva_user';
+const TOKEN_KEY = 'eva_token';
 
 export default {
   namespace: 'login',
@@ -27,22 +28,16 @@ export default {
           type: 'changeLoginStatus',
           payload: {
             ...response,
-            'currentAuthority' : 'admin'
+            currentAuthority: 'admin',
           },
         });
 
-        console.info("response.data.token");
-        console.info(response.data.token);
-        console.info(TOKEN_KEY);
-
-        // 拿到token 存cookie
-        localStorage.setItem(TOKEN_KEY, response.data.token);
-
-        localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+        cookies.set(USER_KEY, response.data.user);
 
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
+
         let { redirect } = params;
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
@@ -73,7 +68,8 @@ export default {
 
     *logout(_, { put }) {
       // 删除token
-      localStorage.removeItem(TOKEN_KEY);
+      cookies.remove(TOKEN_KEY);
+      cookies.remove(USER_KEY);
 
       yield put({
         type: 'changeLoginStatus',

@@ -47,7 +47,7 @@ export default class HeaderView extends Component {
     if (isMobile || !fixedHeader || layout === 'topmenu') {
       return '100%';
     }
-    return collapsed ? 'calc(100% - 80px)' : 'calc(100% - 256px)';
+    return collapsed ? 'calc(100% - 80px)' : 'calc(100% - 220px)';
   };
 
   handleNoticeClear = type => {
@@ -65,15 +65,11 @@ export default class HeaderView extends Component {
 
   handleMenuClick = ({ key }) => {
     const { dispatch } = this.props;
-    if (key === 'userCenter') {
+    if (key === '/account/center') {
       router.push('/account/center');
       return;
     }
-    if (key === 'triggerError') {
-      router.push('/exception/trigger');
-      return;
-    }
-    if (key === 'userinfo') {
+    if (key === '/account/settings') {
       router.push('/account/settings/base');
       return;
     }

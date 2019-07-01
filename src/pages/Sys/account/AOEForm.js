@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, Modal, Switch, TreeSelect, Tooltip, Icon} from 'antd';
-import { PasswordInput } from 'antd-password-input-strength'
+import { Row, Col, Form, Input, Modal, Switch, TreeSelect, Tooltip, Icon } from 'antd';
+import { PasswordInput } from 'antd-password-input-strength';
 import md5 from 'md5';
 
 const FormItem = Form.Item;
@@ -9,32 +9,27 @@ const TreeNode = TreeSelect.TreeNode;
 
 @Form.create()
 export default class AOEForm extends Component {
-  componentDidMount() {
-    console.info('load org detail');
-  }
-
   // 校验账号唯一性
+  // eslint-disable-next-line consistent-return
   checkAccount = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
     const account = getFieldValue('account');
     const { item } = this.props;
     if (item && item.id && value === item.account) {
       return callback();
-    } 
-      const data = { account };
-      this.props
-        .dispatch({
-          type: 'account/checkUnique',
-          payload: data,
-        })
-        .then(r => {
-          if (r.success) {
-            return callback();
-          } 
-            return callback('该账号已存在');
-          
-        });
-    
+    }
+    const data = { account };
+    this.props
+      .dispatch({
+        type: 'account/checkUnique',
+        payload: data,
+      })
+      .then(r => {
+        if (r.success) {
+          return callback();
+        }
+        return callback('该账号已存在');
+      });
   };
 
   // 关闭窗口
@@ -71,7 +66,8 @@ export default class AOEForm extends Component {
   };
 
   // 渲染树节点
-  renderTreeNodes = data => data
+  renderTreeNodes = data =>
+    data
       .map(item => {
         if (item.status === '0001') {
           if (item.children) {
@@ -87,18 +83,17 @@ export default class AOEForm extends Component {
             );
           }
           return (
-            <Node
+            <TreeNode
               title={item.name}
               pathname={item.pathname ? item.pathname : item.name}
               key={item.id}
               value={item.id}
             />
           );
-        } 
-          return null;
-        
+        }
+        return null;
       })
-      .filter(item => (item || false));
+      .filter(item => item || false);
 
   // 渲染界面
   render() {
@@ -116,9 +111,9 @@ export default class AOEForm extends Component {
     };
     return (
       <Modal
-        maskClosable = { false }
-        cancelText={"取消"}
-        okText={"提交"}
+        maskClosable={false}
+        cancelText="取消"
+        okText="提交"
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={660}
@@ -127,8 +122,8 @@ export default class AOEForm extends Component {
           modalType === 'create'
             ? '新增用户信息'
             : modalType === 'edit'
-              ? '编辑用户信息'
-              : '查看用户信息'
+            ? '编辑用户信息'
+            : '查看用户信息'
         }
       >
         <Form>
@@ -157,22 +152,26 @@ export default class AOEForm extends Component {
           </Row>
           <Row>
             <Col span={12}>
-              <FormItem {...formItemLayout}
-                        label={(
-                          <span>
-                              密码&nbsp;
-                              <Tooltip title="密码应为 8-12 位的数字字母组合(不含空格)">
-                              <Icon type="question-circle-o" />
-                            </Tooltip>
-                          </span>
-                )}>
+              <FormItem
+                {...formItemLayout}
+                label={
+                  <span>
+                    密码&nbsp;
+                    <Tooltip title="密码应为 8-12 位的数字字母组合(不含空格)">
+                      <Icon type="question-circle-o" />
+                    </Tooltip>
+                  </span>
+                }
+              >
                 {getFieldDecorator('password', {
                   initialValue: item.password,
                   rules: [
-                    { required: true,
+                    {
+                      required: true,
                       whitespace: true,
                       pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
-                      message: '请输入8-16位包含数字及字母的密码' },
+                      message: '请输入8-16位包含数字及字母的密码',
+                    },
                   ],
                 })(<PasswordInput />)}
               </FormItem>
@@ -203,7 +202,7 @@ export default class AOEForm extends Component {
               <FormItem label="手机号码" hasFeedback {...formItemLayout}>
                 {getFieldDecorator('tel', {
                   initialValue: item.tel,
-                  rules: [{ pattern: /^1(3|4|5|7|8)\d{9}$/, message: '请输入正确的手机号'}]
+                  rules: [{ pattern: /^1(3|4|5|7|8)\d{9}$/, message: '请输入正确的手机号' }],
                 })(<Input addonBefore="86" type="tel" style={{ width: '100%' }} />)}
               </FormItem>
             </Col>

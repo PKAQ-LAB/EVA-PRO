@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import { formatMessage } from 'umi-plugin-react/locale';
-import { connect } from 'dva';
 import Link from 'umi/link';
 import { Icon } from 'antd';
 import GlobalFooter from '@/components/GlobalFooter';
@@ -8,7 +7,6 @@ import DocumentTitle from 'react-document-title';
 import SelectLang from '@/components/SelectLang';
 import styles from './UserLayout.less';
 import logo from '../assets/logo.svg';
-import getPageTitle from '@/utils/getPageTitle';
 import defaultSettings from '@/defaultSettings';
 
 const links = [
@@ -34,32 +32,13 @@ const copyright = (
     Copyright <Icon type="copyright" /> {defaultSettings.copyright}
   </Fragment>
 );
-
-@connect(({ menu }) => ({
-  menuData: menu.menuData,
-  breadcrumbNameMap: menu.breadcrumbNameMap,
-}))
+// eslint-disable-next-line react/prefer-stateless-function
 export default class UserLayout extends Component {
-  componentDidMount() {
-    const {
-      dispatch,
-      route: { routes, authority },
-    } = this.props;
-    dispatch({
-      type: 'menu/loadMenuData',
-      payload: { routes, authority },
-    });
-  }
-
   render() {
-    const {
-      children,
-      location: { pathname },
-      breadcrumbNameMap,
-    } = this.props;
+    const { children } = this.props;
 
     return (
-      <DocumentTitle title={getPageTitle(pathname, breadcrumbNameMap)}>
+      <DocumentTitle title="">
         <div className={styles.container}>
           <div className={styles.lang}>
             <SelectLang />
