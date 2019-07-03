@@ -2,8 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { formatMessage } from 'umi-plugin-react/locale';
 import Link from 'umi/link';
 import { Icon } from 'antd';
-import GlobalFooter from '@/components/GlobalFooter';
 import DocumentTitle from 'react-document-title';
+import GlobalFooter from '@/components/GlobalFooter';
 import SelectLang from '@/components/SelectLang';
 import styles from './UserLayout.less';
 import logo from '../assets/logo.svg';
@@ -38,7 +38,7 @@ export default class UserLayout extends Component {
     const { children } = this.props;
 
     return (
-      <DocumentTitle title="">
+      <DocumentTitle title={defaultSettings.title}>
         <div className={styles.container}>
           <div className={styles.lang}>
             <SelectLang />
