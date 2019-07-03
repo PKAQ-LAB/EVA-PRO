@@ -138,6 +138,17 @@ export default class RoleGrid extends PureComponent {
         ),
       },
       {
+        title: '配置授权',
+        render: (text, record) => (
+          <div>
+            <a onClick={() => this.handleRoleClick(record, 'Config')}>
+              <Icon type="setting" />
+              配置授权
+            </a>
+          </div>
+        ),
+      },
+      {
         title: '操作',
         render: (text, record) => (
           <div>

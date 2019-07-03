@@ -44,6 +44,7 @@ export default class Role extends PureComponent {
     const {
       role: { selectedRowKeys },
     } = this.props;
+
     this.props.dispatch({
       type: 'role/lockSwitch',
       payload: {
@@ -126,7 +127,7 @@ export default class Role extends PureComponent {
             icon="lock"
             type="default"
             style={{ marginLeft: 8 }}
-            onClick={() => this.handleLockSwitch(1)}
+            onClick={() => this.handleLockSwitch('0001')}
           >
             锁定
           </Button>
@@ -136,7 +137,7 @@ export default class Role extends PureComponent {
             icon="unlock"
             type="danger"
             style={{ marginLeft: 8 }}
-            onClick={() => this.handleLockSwitch(0)}
+            onClick={() => this.handleLockSwitch('0000')}
           >
             解锁
           </Button>
