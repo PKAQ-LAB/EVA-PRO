@@ -25,9 +25,9 @@ export function getAuthority(str) {
  * @returns {boolean}
  */
 export function isLogin() {
-  const evaToken = cookies.get('eva_token');
+  const authToken = cookies.get('auth_token');
 
-  return evaToken && evaToken !== '';
+  return authToken && authToken !== '';
 }
 
 export function setAuthority(authority) {

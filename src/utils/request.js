@@ -6,15 +6,10 @@
 import { extend } from 'umi-request';
 import { message } from 'antd';
 import router from 'umi/router';
-import Cookies from 'universal-cookie';
 
 message.config({
   maxCount: 1,
 });
-
-const cookies = new Cookies();
-
-const TOKEN_KEY = 'eva_token';
 
 const server = {
   url: 'http://localhost:9009/api',
@@ -57,7 +52,7 @@ const request = extend({
   // 默认错误处理
   errorHandler,
   // 默认请求是否带上cookie
-  credentials: 'omit',
+  credentials: 'include',
 });
 
 // request拦截器, 改变url 或 options.
@@ -66,7 +61,6 @@ request.interceptors.request.use((url, options) => {
   options.headers = {
     ...options.headers,
     Accept: 'application/json',
-    Authorization: cookies.get(TOKEN_KEY) ? `Bearer${cookies.get(TOKEN_KEY)}` : '',
     'Content-Type': 'application/json; charset=utf-8',
   };
   return {
@@ -83,13 +77,6 @@ request.interceptors.request.use((url, options) => {
  */
 request.interceptors.response.use(async response => {
   const result = await response.clone().json();
-  const auth_token = response.headers.get('Auth_Token');
-  const token = result.data ? result.data.token : null;
-
-  if (token || auth_token) {
-    cookies.set(TOKEN_KEY, token || auth_token);
-  }
-
   if (result && result.success) {
     if (result.message) {
       message.success(result.message);
