@@ -67,8 +67,8 @@ export default {
 
     *logout(_, { put }) {
       // 删除token
-      cookies.remove(TOKEN_KEY);
-      cookies.remove(USER_KEY);
+      cookies.remove(TOKEN_KEY, { maxAge: -1 });
+      cookies.remove(USER_KEY, { maxAge: -1 });
 
       yield put({
         type: 'changeLoginStatus',
