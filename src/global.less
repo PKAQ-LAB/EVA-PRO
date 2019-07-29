@@ -33,23 +33,6 @@ ol {
   list-style: none;
 }
 
-@media (max-width: @screen-xs) {
-  .ant-table {
-    width: 100%;
-    overflow-x: auto;
-    &-thead > tr,
-    &-tbody > tr {
-      > th,
-      > td {
-        white-space: pre;
-        > span {
-          display: block;
-        }
-      }
-    }
-  }
-}
-
 body .ant-drawer .ant-drawer-content {
   opacity: 1;
 }
@@ -58,22 +41,30 @@ body .anticon svg {
   display: block;
 }
 
-// 表头颜色
-.ant-table-content {
-  border-top: 5px solid #1da9ff;
-}
-// 表头复选列
-.ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
-  border-top: 5px solid #1da9ff;
-}
-// 表高度
-.ant-table-row {
-  height: 36px;
-}
-.ant-table-tbody > tr > td {
-  padding: 12px;
-}
-.ant-tree.ant-tree-show-line li span.ant-tree-switcher {
-  background-image: none;
-  background-color: transparent;
+:global {
+  // 表头颜色
+  .ant-table-content {
+    border-top: 5px solid #1da9ff;
+  }
+  .ant-table-fixed-left {
+    border-top: 5px solid #1da9ff;
+  }
+  .ant-table-fixed-right {
+    border-top: 5px solid #1da9ff;
+  }
+  // 表头复选列
+  .ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
+    border-top: 5px solid #1da9ff;
+  }
+  // 表高度
+  .ant-table-row {
+    height: 36px;
+  }
+  .ant-table-tbody > tr > td {
+    padding: 12px;
+  }
+  .ant-tree.ant-tree-show-line li span.ant-tree-switcher {
+    background-image: none;
+    background-color: transparent;
+  }
 }
