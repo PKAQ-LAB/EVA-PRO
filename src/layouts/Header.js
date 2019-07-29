@@ -74,9 +74,8 @@ export default class HeaderView extends Component {
       return;
     }
     if (key === 'logout') {
-      dispatch({
-        type: 'login/logout',
-      });
+      dispatch({ type: 'RESET' });
+      dispatch({ type: 'login/logout' });
     }
   };
 

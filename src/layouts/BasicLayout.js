@@ -6,20 +6,17 @@ import React, { Suspense } from 'react';
 import { Layout, Tabs, Menu, Dropdown, Icon } from 'antd';
 import router from 'umi/router';
 import { Route } from 'react-router-dom';
-import Authorized from '@/utils/Authorized';
 import DocumentTitle from 'react-document-title';
 import { ContainerQuery } from 'react-container-query';
-import pathToRegexp from 'path-to-regexp';
 import classNames from 'classnames';
+import { connect } from 'dva';
 import logo from '../assets/logo.svg';
 import Footer from './Footer';
 import Header from './Header';
 import Context from './MenuContext';
-import { connect } from 'dva';
 import SiderMenu from '@/components/SiderMenu';
 import getPageTitle from '@/utils/getPageTitle';
 import styles from './BasicLayout.less';
-import Exception404 from '@/pages/404';
 
 // lazy load SettingDrawer
 const SettingDrawer = React.lazy(() => import('@/components/SettingDrawer'));
@@ -92,18 +89,18 @@ export default class BasicLayout extends React.Component {
 
   componentDidMount() {
     const {
-      route: { routes, path, authority },
+      route: { routes, path },
     } = this.props;
 
     // 加载菜单
     this.props.dispatch({
       type: 'menu/loadMenuData',
-      payload: { routes, authority },
+      payload: { routes },
     });
     // 加载配置
     this.props.dispatch({
       type: 'setting/getSetting',
-      payload: { routes, path, authority },
+      payload: { routes, path },
     });
   }
 
@@ -169,22 +166,6 @@ export default class BasicLayout extends React.Component {
     return <SettingDrawer />;
   };
 
-  getRouterAuthority = (pathname, routeData) => {
-    let routeAuthority = ['noAuthority'];
-    const getAuthority = (key, routes) => {
-      routes.map(route => {
-        if (route.path && pathToRegexp(route.path).test(key)) {
-          routeAuthority = route.authority;
-        } else if (route.routes) {
-          routeAuthority = getAuthority(key, route.routes);
-        }
-        return route;
-      });
-      return routeAuthority;
-    };
-    return getAuthority(pathname, routeData);
-  };
-
   // 点击左侧菜单
   onHandlePage = e => {
     const { routes } = this.props.route;
@@ -192,6 +173,7 @@ export default class BasicLayout extends React.Component {
     const tabLists = this.updateTree(routes);
     const { tabListKey, tabList } = this.state;
     if (key === 'logout') {
+      this.props.dispatch({ type: 'RESET' });
       // 退出登录
       this.props.dispatch({
         type: 'login/logout',
@@ -318,7 +300,6 @@ export default class BasicLayout extends React.Component {
 
     const isTop = PropsLayout === 'topmenu';
     const contentStyle = !fixedHeader ? { paddingTop: 0 } : {};
-    const routerConfig = this.getRouterAuthority(pathName, routes);
     this.props.location.onHandlePage = this.onHandlePage;
     const menu = (
       <Menu onClick={this.onClickHover}>
@@ -362,9 +343,7 @@ export default class BasicLayout extends React.Component {
           />
           <Content className={styles.content} style={contentStyle}>
             {hidenAntTabs || !isTab ? (
-              <Authorized authority={routerConfig} noMatch={<Exception404 />}>
-                {children}
-              </Authorized>
+              { children }
             ) : this.state.tabList && this.state.tabList.length ? (
               <Tabs
                 activeKey={activeKey}
@@ -384,14 +363,12 @@ export default class BasicLayout extends React.Component {
               >
                 {this.state.tabList.map(item => (
                   <TabPane tab={item.tab} key={item.key} closable={item.closable}>
-                    <Authorized authority={routerConfig} noMatch={<Exception404 />}>
-                      <Route
-                        key={item.key}
-                        path={item.path}
-                        component={item.content}
-                        exact={item.exact}
-                      />
-                    </Authorized>
+                    <Route
+                      key={item.key}
+                      path={item.path}
+                      component={item.content}
+                      exact={item.exact}
+                    />
                   </TabPane>
                 ))}
               </Tabs>

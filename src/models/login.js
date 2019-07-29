@@ -1,16 +1,13 @@
-/* eslint-disable compat/compat */
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
 import Cookies from 'universal-cookie';
 import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
-import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
-import { reloadAuthorized } from '@/utils/Authorized';
 
 const cookies = new Cookies();
 
-const USER_KEY = 'eva_user';
-const TOKEN_KEY = 'eva_token';
+const USER_KEY = 'user_info';
+const TOKEN_KEY = 'auth_token';
 
 export default {
   namespace: 'login',
@@ -29,11 +26,11 @@ export default {
           type: 'changeLoginStatus',
           payload: {
             ...response,
-            currentAuthority: 'admin',
           },
         });
 
-        reloadAuthorized();
+        cookies.set(USER_KEY, response.data.user || {}, { path: '/' });
+
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
 
@@ -49,7 +46,8 @@ export default {
             redirect = null;
           }
         }
-        yield put(routerRedux.replace(redirect || '/'));
+        // yield put(routerRedux.replace(redirect || '/'));
+        window.location.href = '/';
       } else {
         yield put({
           type: 'updateState',
@@ -67,17 +65,15 @@ export default {
 
     *logout(_, { put }) {
       // 删除token
-      cookies.remove(TOKEN_KEY, { maxAge: -1 });
-      cookies.remove(USER_KEY, { maxAge: -1 });
+      cookies.remove(TOKEN_KEY, { maxAge: -1, path: '/' });
+      cookies.remove(USER_KEY, { maxAge: -1, path: '/' });
 
       yield put({
         type: 'changeLoginStatus',
         payload: {
           status: false,
-          currentAuthority: 'guest',
         },
       });
-      reloadAuthorized();
       const { redirect } = getPageQuery();
       // redirect
       if (window.location.pathname !== '/user/login' && !redirect) {
@@ -101,7 +97,6 @@ export default {
       };
     },
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
       return {
         ...state,
         status: payload.status,

@@ -1,10 +1,6 @@
 import memoizeOne from 'memoize-one';
 import isEqual from 'lodash/isEqual';
-import Authorized from '@/utils/Authorized';
 import { getUserMenu } from '@/services/api';
-
-const { check } = Authorized;
-
 /**
  * get SubMenu or Item
  */
@@ -28,7 +24,7 @@ const filterMenuData = menuData => {
   }
   return menuData
     .filter(item => item.name && !item.hideInMenu)
-    .map(item => check(item.authority, getSubMenu(item)))
+    .map(item => getSubMenu(item))
     .filter(item => item);
 };
 /**

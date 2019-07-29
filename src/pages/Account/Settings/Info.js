@@ -3,8 +3,8 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import { FormattedMessage } from 'umi-plugin-react/locale';
 import { Menu } from 'antd';
-import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import Cookies from 'universal-cookie';
+import GridContent from '@/components/PageHeaderWrapper/GridContent';
 import styles from './Info.less';
 
 const { Item } = Menu;
@@ -94,7 +94,7 @@ class Info extends Component {
     const { mode, selectKey } = this.state;
 
     const cookies = new Cookies();
-    const currentUser = cookies.get('eva_user').id;
+    const currentUser = cookies.get('user_info').id;
     if (!currentUser) {
       return '';
     }

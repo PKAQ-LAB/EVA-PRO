@@ -49,7 +49,7 @@ class Center extends PureComponent {
   render() {
     const { listLoading, currentUserLoading, match, location, children } = this.props;
     const cookies = new Cookies();
-    const currentUser = cookies.get('eva_user');
+    const currentUser = cookies.get('user_info');
 
     const operationTabList = [
       {

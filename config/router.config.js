@@ -21,7 +21,6 @@ export default [
   {
     path: '/',
     component: '../layouts/BasicLayout',
-    Routes: ['src/pages/Authorized'],
     routes: [
       // dashboard
       { path: '/', redirect: '/sys/organization' },
