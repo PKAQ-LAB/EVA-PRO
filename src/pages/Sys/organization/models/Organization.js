@@ -1,6 +1,5 @@
 import modelExtend from 'dva-model-extend';
 import { model } from '@/common/model/BaseModel';
-import { message } from 'antd';
 import {
   editOrg,
   getOrg,
@@ -84,16 +83,6 @@ export default modelExtend(model, {
             data: response.data,
           },
         });
-        message.success('操作成功');
-      } else {
-        yield put({
-          type: 'updateState',
-          payload: {
-            modalType: '',
-            currentItem: {},
-          },
-        });
-        message.success('操作失败');
       }
     },
     // 更改可用状态
@@ -125,8 +114,6 @@ export default modelExtend(model, {
         if (callback) {
           callback();
         }
-      } else {
-        message.error(`操作失败： ${response.message ? response.message : '请联系管理员'}.`);
       }
     },
   },

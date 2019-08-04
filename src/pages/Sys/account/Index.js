@@ -13,6 +13,7 @@ const { TreeNode } = { ...Tree };
 // 把state.goods定给组件的goods
 @connect(state => ({
   account: state.account,
+  submitting: state.loading.effects['account/save'],
 }))
 @Form.create()
 export default class Account extends PureComponent {
@@ -40,14 +41,6 @@ export default class Account extends PureComponent {
   handleFormReset = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
-    dispatch({
-      type: 'account/updateState',
-      payload: {
-        account: '',
-        name: '',
-        tel: '',
-      },
-    });
     dispatch({
       type: 'account/fetchUser',
       payload: {},
@@ -97,14 +90,6 @@ export default class Account extends PureComponent {
         ...fieldsValue,
         updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
       };
-      dispatch({
-        type: 'account/updateState',
-        payload: {
-          account: fieldsValue.account,
-          name: fieldsValue.name,
-          tel: fieldsValue.tel,
-        },
-      });
       dispatch({
         type: 'account/fetchUser',
         payload: values,
@@ -262,7 +247,7 @@ export default class Account extends PureComponent {
 
   // 渲染界面
   render() {
-    const { dispatch } = this.props;
+    const { dispatch, submitting } = this.props;
 
     const {
       loading,
@@ -284,6 +269,7 @@ export default class Account extends PureComponent {
 
     const modalProps = {
       item: modalType === 'create' ? {} : currentItem,
+      submitting,
       orgData,
       modalType,
       dispatch,

@@ -6,11 +6,12 @@ import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 @connect(state => ({
   organization: state.organization,
+  submitting: state.loading.effects['organization/save'],
 }))
 export default class organization extends Component {
   // 组件加载完成后加载数据
   render() {
-    const { dispatch } = this.props;
+    const { dispatch, submitting } = this.props;
     const { data, selectedRowKeys, modalType, currentItem } = this.props.organization;
 
     const tableProps = {
@@ -22,6 +23,7 @@ export default class organization extends Component {
       data,
       dispatch,
       currentItem,
+      submitting,
       modalType,
     };
 

@@ -62,13 +62,13 @@ const PageHeaderWrapper = ({
                 })}
               >
                 <PageHeader
-                  style={{ margin: '0 -12px 0' }}
                   title={
                     <>
                       {logo && <span className={styles.logo}>{logo}</span>}
                       <Title
                         level={4}
                         style={{
+                          marginBottom: 0,
                           display: 'inline-block',
                         }}
                       >
@@ -107,7 +107,7 @@ const PageHeaderWrapper = ({
         }}
       </MenuContext.Consumer>
       {children ? (
-        <div className={styles['children-content']} style={{ margin: '0 -12px 0' }}>
+        <div className={styles['children-content']} style={{ margin: '0 -24px 0' }}>
           <GridContent>{children}</GridContent>
         </div>
       ) : null}

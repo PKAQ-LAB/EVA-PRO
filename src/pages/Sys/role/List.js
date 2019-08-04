@@ -31,6 +31,7 @@ export default class RoleGrid extends PureComponent {
       },
     });
 
+
     this.props.dispatch({
       type: `role/list${operate}`,
       payload: {
@@ -133,17 +134,6 @@ export default class RoleGrid extends PureComponent {
             <a onClick={() => this.handleRoleClick(record, 'User')}>
               <Icon type="usergroup-add" />
               用户授权
-            </a>
-          </div>
-        ),
-      },
-      {
-        title: '配置授权',
-        render: (text, record) => (
-          <div>
-            <a onClick={() => this.handleRoleClick(record, 'Config')}>
-              <Icon type="setting" />
-              配置授权
             </a>
           </div>
         ),

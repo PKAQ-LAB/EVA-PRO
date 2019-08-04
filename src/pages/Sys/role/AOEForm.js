@@ -6,9 +6,6 @@ const Area = Input.TextArea;
 
 @Form.create()
 export default class AOEForm extends Component {
-  componentDidMount() {
-    console.info('load role detail');
-  }
 
   // 校验角色编码唯一性
   checkCode = (rule, value, callback) => {
@@ -65,7 +62,7 @@ export default class AOEForm extends Component {
   // 渲染界面
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { modalType, item } = this.props;
+    const { modalType, item, loading } = this.props;
     const cmView = modalType === 'view';
 
     const formItemLayout = {
@@ -79,6 +76,7 @@ export default class AOEForm extends Component {
     return (
       <Modal
         maskClosable={false}
+        confirmLoading={loading}
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}

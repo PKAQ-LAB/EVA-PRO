@@ -48,7 +48,7 @@ export default modelExtend(pageModel, {
         payload: {
           list: response.data.records,
           pagination: {
-            showSizeChanger: true,
+            showSizeChanger: false,
             showQuickJumper: true,
             showTotal: total => `共 ${total} 条`,
             total: response.data.total,
@@ -84,7 +84,7 @@ export default modelExtend(pageModel, {
             modalType: '',
             list: response.data.records,
             pagination: {
-              showSizeChanger: true,
+              showSizeChanger: false,
               showQuickJumper: true,
               showTotal: total => `共 ${total} 条`,
               total: response.data.total,
@@ -133,7 +133,6 @@ export default modelExtend(pageModel, {
       yield put({
         type: 'updateState',
         payload: {
-          currentItem: payload.currentItem,
           configData: response,
           operateType: 'Config',
         },
@@ -148,7 +147,7 @@ export default modelExtend(pageModel, {
             list: response.data.users.records,
             checked: response.data.checked,
             pagination: {
-              showSizeChanger: true,
+              showSizeChanger: false,
               showQuickJumper: true,
               showTotal: total => `共 ${total} 条`,
               total: response.data.users.total,
@@ -157,9 +156,9 @@ export default modelExtend(pageModel, {
           },
           checked: response.data.checked,
         },
-      };
+      }
 
-      if (payload.currentItem) {
+      if(payload.currentItem){
         data.currentItem = payload.currentItem;
       }
 
@@ -188,7 +187,7 @@ export default modelExtend(pageModel, {
           payload: {
             list: response.data.records,
             pagination: {
-              showSizeChanger: true,
+              showSizeChanger: false,
               showQuickJumper: true,
               showTotal: total => `共 ${total} 条`,
               total: response.data.total,

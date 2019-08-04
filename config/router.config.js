@@ -87,13 +87,7 @@ export default [
           {
             path: '/pdos/purchasing',
             name: 'purchasing',
-            routes: [
-              {
-                path: '/pdos/purchasing/orders',
-                name: 'orders',
-                component: './Pdos/purchasing/orders/Index.js',
-              },
-            ],
+            component: './Pdos/purchasing',
           },
           // // 销
           // { path: '/pdos/sales', name: 'sales', routes: [

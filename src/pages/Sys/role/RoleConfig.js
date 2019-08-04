@@ -8,6 +8,7 @@ export default class RoleConfig extends PureComponent {
       <Modal
         visible={operateType === 'Config'}
         title="选择授权参数"
+        confirmLoading={loading}
         okText="保存"
         cancelText="关闭"
         onCancel={() => this.props.handleCancel()}

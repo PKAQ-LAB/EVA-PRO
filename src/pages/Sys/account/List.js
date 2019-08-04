@@ -7,9 +7,6 @@ import { getValue } from '@/utils/utils';
 @connect(({ loading }) => ({
   loading: loading.models.account,
 }))
-@connect(state => ({
-  account: state.account,
-}))
 export default class List extends PureComponent {
   // 清除选择
   cleanSelectedKeys = () => {
@@ -42,30 +39,21 @@ export default class List extends PureComponent {
 
   // 单条删除
   handleDeleteClick = record => {
-    const { account, name, tel, pagination } = this.props.account;
     this.props.dispatch({
       type: 'account/remove',
       payload: {
         param: [record.id],
-      },
-      callback: () => {
-        this.props.dispatch({
-          type: 'account/fetch',
-          payload: {
-            pageNo: pagination.current,
-            account,
-            name,
-            tel,
-          },
-        });
       },
     });
   };
 
   // 表格动作触发事件
   handleListChange = (pagination, filtersArg, sorter) => {
-    const { account, name, tel } = this.props.account;
     const { dispatch, formValues } = this.props;
+
+    if (sorter.field) {
+      return;
+    }
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
       const newObj = { ...obj };
@@ -74,23 +62,12 @@ export default class List extends PureComponent {
     }, {});
 
     const params = {
+      page: pagination.current,
+      pageSize: pagination.pageSize,
       ...formValues,
       ...filters,
-      pageNo: pagination.current,
-      account,
-      name,
-      tel,
     };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
 
-    dispatch({
-      type: 'account/updateState',
-      payload: {
-        pageNo: pagination.current,
-      },
-    });
     dispatch({
       type: 'account/fetch',
       payload: params,
@@ -110,11 +87,13 @@ export default class List extends PureComponent {
         align: 'left',
         dataIndex: 'name',
         width: 140,
-        sorter: true,
+        sorter: (a, b) => a.name && a.name.localeCompare(b.name),
+        sortDirections: ['descend', 'ascend'],
       },
       {
         title: '帐号',
         align: 'left',
+        sorter: (a, b) => a.account && a.account.localeCompare(b.account),
         dataIndex: 'account',
         width: 200,
       },
@@ -123,6 +102,12 @@ export default class List extends PureComponent {
         align: 'left',
         width: 180,
         dataIndex: 'tel',
+      },
+      {
+        title: '是否锁定',
+        align: 'left',
+        width: 180,
+        dataIndex: 'locked',
       },
       {
         align: 'center',
@@ -176,7 +161,7 @@ export default class List extends PureComponent {
           dataSource={list}
           rowKey={record => record.id}
           rowSelection={rowSelectionProps}
-          rowClassName={record => (record.locked === '0000' ? styles.disabled : styles.enabled)}
+          rowClassName={record => (record.locked === '0001' ? styles.disabled : styles.enabled)}
           pagination={paginationProps}
           columns={columns}
           onSelectRow={this.handleSelectRows}

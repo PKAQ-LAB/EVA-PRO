@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, Modal, Switch, TreeSelect } from 'antd';
+import { Row, Col, Form, Input, InputNumber, Modal, Switch, TreeSelect } from 'antd';
 
 const FormItem = Form.Item;
 const Area = Input.TextArea;
@@ -102,8 +102,7 @@ export default class AOEForm extends Component {
   // 渲染界面
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { modalType, currentItem, data } = this.props;
-    const cmView = modalType === 'view';
+    const { modalType, currentItem, data, submitting } = this.props;
 
     const formItemLayout = {
       labelCol: { span: 8 },
@@ -120,6 +119,7 @@ export default class AOEForm extends Component {
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}
+        confirmLoading={submitting}
         onOk={() => this.handleSaveClick()}
         title={
           modalType === 'create'
@@ -174,12 +174,29 @@ export default class AOEForm extends Component {
             )}
           </FormItem>
           {/* 第三行 */}
-          <FormItem label="是否启用" {...formRowOne}>
-            {getFieldDecorator('status', {
-              valuePropName: 'checked',
-              initialValue: currentItem.status !== '0000',
-            })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
-          </FormItem>
+          <Row>
+            <Col span={12}>
+              <FormItem label="排序" hasFeedback {...formItemLayout}>
+                {getFieldDecorator('orders', {
+                  initialValue: currentItem.orders,
+                  rules: [
+                    {
+                      type: 'number',
+                      message: '显示顺序',
+                    },
+                  ],
+                })(<InputNumber />)}
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem label="是否启用" {...formItemLayout}>
+                {getFieldDecorator('status', {
+                  valuePropName: 'checked',
+                  initialValue: currentItem.status !== '0000',
+                })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
+              </FormItem>
+            </Col>
+          </Row>
           {/* 第四行 */}
           <FormItem label="备注" hasFeedback {...formRowOne}>
             {getFieldDecorator('remark', {
@@ -191,36 +208,6 @@ export default class AOEForm extends Component {
               ],
             })(<Area />)}
           </FormItem>
-          {/* 第五行 */}
-          {cmView && (
-            <Row>
-              <Col span={12}>
-                <FormItem label="创建人" {...formItemLayout}>
-                  <Input disabled defaultValue={currentItem.description} />
-                </FormItem>
-              </Col>
-              <Col span={12}>
-                <FormItem label="创建时间" {...formItemLayout}>
-                  <Input disabled defaultValue={currentItem.description} />
-                </FormItem>
-              </Col>
-            </Row>
-          )}
-          {/* 第六行 */}
-          {cmView && (
-            <Row>
-              <Col span={12}>
-                <FormItem label="修改人" {...formItemLayout}>
-                  <Input disabled defaultValue={currentItem.description} />
-                </FormItem>
-              </Col>
-              <Col span={12}>
-                <FormItem label="修改时间" {...formItemLayout}>
-                  <Input disabled defaultValue={currentItem.description} />
-                </FormItem>
-              </Col>
-            </Row>
-          )}
         </Form>
       </Modal>
     );

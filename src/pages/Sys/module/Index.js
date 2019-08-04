@@ -6,11 +6,12 @@ import AOEForm from './AOEForm';
 
 @connect(state => ({
   module: state.module,
+  submitting: state.loading.effects['module/save'],
 }))
 export default class Module extends React.PureComponent {
   // 组件加载完成后加载数据
   render() {
-    const { dispatch } = this.props;
+    const { dispatch, submitting } = this.props;
     const { data, selectedRowKeys, modalType, currentItem } = this.props.module;
 
     const tableProps = {
@@ -24,6 +25,7 @@ export default class Module extends React.PureComponent {
       dispatch,
       currentItem,
       modalType,
+      submitting
     };
 
     return (

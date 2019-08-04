@@ -49,11 +49,12 @@ export default class RoleModule extends PureComponent {
     });
 
   render() {
-    const { operateType } = this.props;
+    const { operateType, loading } = this.props;
     const { data, checked } = { ...this.props.data };
     return (
       <Modal
         maskClosable={false}
+        confirmLoading={loading}
         title="选择授权模块"
         okText="保存"
         cancelText="关闭"
