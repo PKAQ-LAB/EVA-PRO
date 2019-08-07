@@ -14,10 +14,10 @@ import {
   message,
   notification,
 } from 'antd';
+import { connect } from 'dva';
 import { hasChildren, getNodeBorther } from '@/utils/DataHelper';
 import styles from './index.less';
 import tableStyle from '@/common/style/Table.less';
-import { connect } from 'dva';
 import BizIcon from '@/components/BizIcon';
 
 const { Search } = { ...Input };
