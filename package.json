@@ -90,7 +90,8 @@
     "umi": "^2.8.16",
     "umi-plugin-react": "^1.9.14",
     "umi-request": "^1.1.0",
-    "universal-cookie": "^4.0.2"
+    "universal-cookie": "^4.0.2",
+    "xlsx": "^0.15.0"
   },
   "devDependencies": {
     "@types/history": "^4.7.2",
