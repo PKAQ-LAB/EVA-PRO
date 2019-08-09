@@ -129,7 +129,7 @@ export default class AOEForm extends Component {
           {/* 第一行 */}
           <Row>
             <Col span={12}>
-              <FormItem label="帐号" hasFeedback {...formItemLayout} style={{marginBottom: 0}}>
+              <FormItem label="帐号" hasFeedback {...formItemLayout} style={{ marginBottom: 0 }}>
                 {getFieldDecorator('account', {
                   initialValue: item.account,
                   validateTrigger: 'onBlur',
@@ -141,7 +141,7 @@ export default class AOEForm extends Component {
               </FormItem>
             </Col>
             <Col span={12}>
-              <FormItem label="姓名" hasFeedback {...formItemLayout} style={{marginBottom: 0}}>
+              <FormItem label="姓名" hasFeedback {...formItemLayout} style={{ marginBottom: 0 }}>
                 {getFieldDecorator('name', {
                   initialValue: item.name,
                   rules: [{ required: true, message: '请输入用户姓名' }],
@@ -149,39 +149,38 @@ export default class AOEForm extends Component {
               </FormItem>
             </Col>
           </Row>
-          {
-          modalType !== 'edit' &&
-          <Row>
-            <Col span={12}>
-              <FormItem
-                {...formItemLayout}
-                style={{marginBottom: 0}}
-                label={
-                  <span>
-                    密码&nbsp;
-                    <Tooltip title="密码应为 8-12 位的数字字母组合(不含空格)">
-                      <Icon type="question-circle-o" />
-                    </Tooltip>
-                  </span>
-                }
-              >
-                {getFieldDecorator('password', {
-                  initialValue: item.password,
-                  rules: [
-                    {
-                      required: true,
-                      whitespace: true,
-                      pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
-                      message: '请输入8-16位包含数字及字母的密码',
-                    },
-                  ],
-                })(<PasswordInput autoComplete="off" />)}
-              </FormItem>
-            </Col>
-          </Row>
-          }
+          {modalType !== 'edit' && (
+            <Row>
+              <Col span={12}>
+                <FormItem
+                  {...formItemLayout}
+                  style={{ marginBottom: 0 }}
+                  label={
+                    <span>
+                      密码&nbsp;
+                      <Tooltip title="密码应为 8-12 位的数字字母组合(不含空格)">
+                        <Icon type="question-circle-o" />
+                      </Tooltip>
+                    </span>
+                  }
+                >
+                  {getFieldDecorator('password', {
+                    initialValue: item.password,
+                    rules: [
+                      {
+                        required: true,
+                        whitespace: true,
+                        pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
+                        message: '请输入8-16位包含数字及字母的密码',
+                      },
+                    ],
+                  })(<PasswordInput autoComplete="new-password" />)}
+                </FormItem>
+              </Col>
+            </Row>
+          )}
           {/* 第二行 */}
-          <FormItem label="所属部门" hasFeedback {...formRowOne} style={{marginBottom: 0}}>
+          <FormItem label="所属部门" hasFeedback {...formRowOne} style={{ marginBottom: 0 }}>
             {getFieldDecorator('deptId', {
               initialValue: item.deptId,
               rules: [{ required: true, message: '请选择用户所属部门' }],
@@ -202,7 +201,12 @@ export default class AOEForm extends Component {
           {/* 第三行 */}
           <Row>
             <Col span={12}>
-              <FormItem label="手机号码" hasFeedback {...formItemLayout} style={{marginBottom: 0}}>
+              <FormItem
+                label="手机号码"
+                hasFeedback
+                {...formItemLayout}
+                style={{ marginBottom: 0 }}
+              >
                 {getFieldDecorator('tel', {
                   initialValue: item.tel,
                   rules: [{ pattern: /^1(3|4|5|7|8)\d{9}$/, message: '请输入正确的手机号' }],
@@ -210,7 +214,7 @@ export default class AOEForm extends Component {
               </FormItem>
             </Col>
             <Col span={12}>
-              <FormItem label="邮箱" hasFeedback {...formItemLayout} style={{marginBottom: 0}}>
+              <FormItem label="邮箱" hasFeedback {...formItemLayout} style={{ marginBottom: 0 }}>
                 {getFieldDecorator('email', {
                   initialValue: item.email,
                   rules: [
@@ -219,18 +223,18 @@ export default class AOEForm extends Component {
                       message: '请输入邮箱地址',
                     },
                   ],
-                })(<Input autoComplete="off" />)}
+                })(<Input />)}
               </FormItem>
             </Col>
           </Row>
-          <FormItem label="是否锁定" {...formRowOne} style={{marginBottom: 0}}>
+          <FormItem label="是否锁定" {...formRowOne} style={{ marginBottom: 0 }}>
             {getFieldDecorator('locked', {
               valuePropName: 'checked',
               initialValue: item.locked === '0001',
             })(<Switch checkedChildren="是" unCheckedChildren="否" />)}
           </FormItem>
           {/* 第四行 */}
-          <FormItem label="备注" hasFeedback {...formRowOne} style={{marginBottom: 0}}>
+          <FormItem label="备注" hasFeedback {...formRowOne} style={{ marginBottom: 0 }}>
             {getFieldDecorator('remark', {
               initialValue: item.remark,
               rules: [
