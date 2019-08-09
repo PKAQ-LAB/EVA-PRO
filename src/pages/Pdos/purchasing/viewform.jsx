@@ -4,15 +4,15 @@ import MainAOEForm from './form/mainform';
 import LineList from './form/linelist';
 
 // Stateless组件
-const PurchasingAOEForm = () => {
+const PurchasingViewForm = () => {
   return (
     <div>
       {/* 主表 */}
-      <MainAOEForm />
-      <Divider>采购入库单明细</Divider>
+      <MainAOEForm view />
+      <Divider />
       {/* 子表 */}
-      <LineList />
+      <LineList view />
     </div>
   );
 };
-export default PurchasingAOEForm;
+export default PurchasingViewForm;

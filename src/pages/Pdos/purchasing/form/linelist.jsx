@@ -5,18 +5,15 @@ import * as XLSX from 'xlsx';
 import defaultSettings from '@/defaultSettings';
 import LineAOEForm from './lineform';
 
-const goodsType = { 汽油: '0001', 柴油: '0002', 甲烷: '0003' };
-const unit = { KG: '0001', 'm³': '0002', L: '0003' };
-
 @connect(state => ({
-  waybillMgt: state.waybillMgt,
-  loading: state.loading.models.waybillMgt,
+  purchasing: state.purchasing,
+  loading: state.loading.models.purchasing,
 }))
-export default class WayBillMgtLineList extends PureComponent {
+export default class PurchasingLineList extends PureComponent {
   // 新增窗口
   handleModalVisible = () => {
     this.props.dispatch({
-      type: 'waybillMgt/updateState',
+      type: 'purchasing/updateState',
       payload: {
         modalType: 'create',
         editItem: undefined,
@@ -26,7 +23,7 @@ export default class WayBillMgtLineList extends PureComponent {
 
   // 删除明细
   handleDeleteClick = index => {
-    const { lineData, selectedLineRowKeys } = this.props.waybillMgt;
+    const { lineData, selectedLineRowKeys } = this.props.purchasing;
     if (index || index === 0) {
       lineData.splice(index, 1);
     } else {
@@ -35,7 +32,7 @@ export default class WayBillMgtLineList extends PureComponent {
       });
     }
     this.props.dispatch({
-      type: 'waybillMgt/updateState',
+      type: 'purchasing/updateState',
       payload: { lineData },
     });
   };
@@ -43,7 +40,7 @@ export default class WayBillMgtLineList extends PureComponent {
   // 修改编辑
   handleEditClick = (record, index) => {
     this.props.dispatch({
-      type: 'waybillMgt/updateState',
+      type: 'purchasing/updateState',
       payload: {
         modalType: 'edit',
         editItem: index,
@@ -54,14 +51,14 @@ export default class WayBillMgtLineList extends PureComponent {
   // 行选事件
   handleSelectRows = rows => {
     this.props.dispatch({
-      type: 'waybillMgt/updateState',
+      type: 'purchasing/updateState',
       payload: { selectedLineRowKeys: rows },
     });
   };
 
   // excel上传
   handleUpload = (file, fileList) => {
-    let { lineData } = this.props.waybillMgt;
+    let { lineData } = this.props.purchasing;
     const that = this;
 
     const rABS = true;
@@ -105,14 +102,9 @@ export default class WayBillMgtLineList extends PureComponent {
         }
         // 构建子表对象
         const tempObj = {};
-        tempObj.carNum = item[0];
-        tempObj.goodsName = item[1];
-        tempObj.goodsType = goodsType[item[2]];
-        tempObj.planAmount = item[3];
-        tempObj.unitName = item[4];
-        tempObj.unit = unit[item[4]];
-        tempObj.tankNumber = item[5];
-        tempObj.remark = item[6];
+        tempObj.code = item[0];
+        tempObj.categroy = item[1];
+        tempObj.model = item[2];
 
         return tempObj;
       });
@@ -124,7 +116,7 @@ export default class WayBillMgtLineList extends PureComponent {
       lineData = lineData.concat(jsonArr);
 
       that.props.dispatch({
-        type: 'waybillMgt/updateState',
+        type: 'purchasing/updateState',
         payload: { lineData },
       });
       // 导入提示
@@ -152,16 +144,19 @@ export default class WayBillMgtLineList extends PureComponent {
   };
 
   renderBtn() {
-    const { selectedLineRowKeys } = this.props.waybillMgt;
+    const { view = false } = this.props;
+    const { selectedLineRowKeys } = this.props.purchasing;
     return (
       <div>
-        <Button type="primary" onClick={() => this.handleModalVisible()}>
-          新增明细
-        </Button>
-        <Divider type="vertical" />
-        {selectedLineRowKeys.length > 0 && (
+        {!view && (
+          <Button type="primary" onClick={() => this.handleModalVisible()}>
+            新增明细
+          </Button>
+        )}
+        {!view && <Divider type="vertical" />}
+        {!view && selectedLineRowKeys.length > 0 && (
           <Popconfirm
-            title="确定要删除选中的运单明细吗?"
+            title="确定要删除选中的采购入库单明细吗?"
             placement="top"
             onConfirm={() => this.handleDeleteClick()}
           >
@@ -169,20 +164,25 @@ export default class WayBillMgtLineList extends PureComponent {
           </Popconfirm>
         )}
         {selectedLineRowKeys.length > 0 && <Divider type="vertical" />}
-        <Upload beforeUpload={this.handleUpload} showUploadList={false}>
-          <Button>Excel导入</Button>
-        </Upload>
-        <Divider type="vertical" />
-        <Button href={`${defaultSettings.URL}/template.xlsx`} target="_blank">
-          下载Excel导入模板
-        </Button>
+        {!view && (
+          <Upload beforeUpload={this.handleUpload} showUploadList={false}>
+            <Button>Excel导入</Button>
+          </Upload>
+        )}
+        {!view && <Divider type="vertical" />}
+        {!view && (
+          <Button href={`${defaultSettings.URL}/template.xlsx`} target="_blank">
+            {' '}
+            下载Excel导入模板
+          </Button>
+        )}
       </div>
     );
   }
 
   render() {
-    const { selectedLineRowKeys, lineData, modalType } = this.props.waybillMgt;
-    const { loading } = this.props;
+    const { viewLineData, selectedLineRowKeys, lineData, modalType } = this.props.purchasing;
+    const { loading, view = false } = this.props;
 
     const columns = [
       {
@@ -191,9 +191,8 @@ export default class WayBillMgtLineList extends PureComponent {
         fixed: 'left',
       },
       {
-        title: '车牌号',
-        align: 'center',
-        dataIndex: 'carNum',
+        title: '品名',
+        dataIndex: 'name',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 90 }}>{text}</div>
@@ -202,9 +201,8 @@ export default class WayBillMgtLineList extends PureComponent {
         sorter: (a, b) => a.carNum && a.carNum.localeCompare(b.carNum),
       },
       {
-        title: '货品名称',
-        align: 'left',
-        dataIndex: 'goodsName',
+        title: '分类名称',
+        dataIndex: 'categoryName',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 150 }}>{text}</div>
@@ -212,9 +210,9 @@ export default class WayBillMgtLineList extends PureComponent {
         },
       },
       {
-        title: '计划量',
-        align: 'left',
-        dataIndex: 'planAmount',
+        title: '产品型号',
+        dataIndex: 'model',
+        width: 130,
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>{text}</div>
@@ -234,19 +232,8 @@ export default class WayBillMgtLineList extends PureComponent {
         },
       },
       {
-        title: '储罐编号',
-        align: 'left',
-        dataIndex: 'tankNumber',
-        render: text => {
-          return (
-            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>{text}</div>
-          );
-        },
-      },
-      {
-        title: '备注',
-        align: 'left',
-        dataIndex: 'remark',
+        title: '条码',
+        dataIndex: 'barcode',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>{text}</div>
@@ -258,16 +245,18 @@ export default class WayBillMgtLineList extends PureComponent {
         width: 120,
         render: (text, record, index) => (
           <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>
-            <a onClick={() => this.handleEditClick(record, index)}>修改</a>
-            <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => this.handleDeleteClick(index)}
-            >
-              <a>删除</a>
-            </Popconfirm>
+            {!view && <a onClick={() => this.handleEditClick(record, index)}>修改</a>}
+            {!view && <Divider type="vertical" />}
+            {!view && (
+              <Popconfirm
+                title="确定要删除吗？"
+                okText="确定"
+                cancelText="取消"
+                onConfirm={() => this.handleDeleteClick(index)}
+              >
+                <a>删除</a>
+              </Popconfirm>
+            )}
           </div>
         ),
       },
@@ -283,7 +272,7 @@ export default class WayBillMgtLineList extends PureComponent {
     };
 
     return (
-      <Card title="运单明细" extra={this.renderBtn()} bodyStyle={{ padding: 0 }}>
+      <Card title="采购入库单明细" extra={this.renderBtn()} bodyStyle={{ padding: 0 }}>
         <Table
           loading={loading}
           bordered
@@ -291,10 +280,9 @@ export default class WayBillMgtLineList extends PureComponent {
           pagination={false}
           rowKey={record => record.id}
           rowSelection={rowSelectionProps}
-          rowClassName={record => (record.locked === '0002' ? 'disabled' : 'enabled')}
           onSelect={this.handleSelectRows}
           onChange={this.handleListChange}
-          dataSource={lineData}
+          dataSource={view ? viewLineData : lineData}
           columns={columns}
         />
         {modalType && <LineAOEForm />}

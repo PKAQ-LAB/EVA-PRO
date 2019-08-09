@@ -2,19 +2,20 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import { Card, Tabs, Icon } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import WaybillMgtList from './list';
-import WayBillMgtAOEForm from './aoeform';
+import PurchasingList from './list';
+import PurchasingAOEForm from './aoeform';
+import PurchasingViewForm from './viewform';
 
 const { TabPane } = Tabs;
 
 @connect(state => ({
-  waybillMgt: state.waybillMgt,
+  purchasing: state.purchasing,
 }))
-export default class WayBillMgt extends PureComponent {
+export default class Purchasing extends PureComponent {
   // tab 切换
   handleTabChange = activeKey => {
     this.props.dispatch({
-      type: 'waybillMgt/updateState',
+      type: 'purchasing/updateState',
       payload: {
         activeKey,
       },
@@ -22,10 +23,10 @@ export default class WayBillMgt extends PureComponent {
   };
 
   render() {
-    const { editTab, activeKey, operateType } = this.props.waybillMgt;
+    const { editTab, activeKey, operateType, viewTab } = this.props.purchasing;
 
     return (
-      <PageHeaderWrapper title="运单管理" content="用于管理进出封闭区的物流运输运单信息">
+      <PageHeaderWrapper title="采购入库单" content="用于管理采购入库单信息">
         <Card>
           <Tabs activeKey={activeKey} onChange={this.handleTabChange}>
             {/* 列表界面 */}
@@ -33,12 +34,12 @@ export default class WayBillMgt extends PureComponent {
               tab={
                 <span>
                   <Icon type="unordered-list" />
-                  运单列表
+                  采购入库单列表
                 </span>
               }
               key="list"
             >
-              <WaybillMgtList />
+              <PurchasingList />
             </TabPane>
 
             {/* 编辑界面 */}
@@ -48,12 +49,28 @@ export default class WayBillMgt extends PureComponent {
                 tab={
                   <span>
                     <Icon type="edit" />
-                    {operateType === 'create' ? '新增运单' : '编辑运单'}
+                    {operateType === 'create' ? '新增采购入库单' : '编辑采购入库单'}
                   </span>
                 }
                 key="edit"
               >
-                <WayBillMgtAOEForm />
+                <PurchasingAOEForm />
+              </TabPane>
+            )}
+
+            {/* 查看界面 */}
+            {viewTab && (
+              <TabPane
+                closable
+                tab={
+                  <span>
+                    <Icon type="edit" />
+                    查看采购入库单
+                  </span>
+                }
+                key="view"
+              >
+                <PurchasingViewForm />
               </TabPane>
             )}
           </Tabs>

@@ -56,9 +56,9 @@ body .anticon svg {
   .ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
     border-top: 5px solid #1da9ff;
   }
-  .ant-table {
-    min-height: 496px !important;
-  }
+  // .ant-table {
+  //   min-height: 496px !important;
+  // }
   // 表高度
   .ant-table-row {
     height: 36px;
@@ -73,6 +73,11 @@ body .anticon svg {
   // 让表单紧凑
   .ant-form-item {
     margin-bottom: 5px !important;
+  }
+
+  // 表格滚动条
+  .ant-table-body {
+    overflow: auto;
   }
 }
 
@@ -89,6 +94,4 @@ body .anticon svg {
 // 禁用颜色
 .disabled {
   background-color: #fff5ee;
-}
-.enabled {
 }

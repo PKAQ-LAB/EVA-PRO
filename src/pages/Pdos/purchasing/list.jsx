@@ -1,18 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import {
-  Divider,
-  Popconfirm,
-  Table,
-  Alert,
-  Row,
-  Col,
-  Input,
-  Button,
-  Form,
-  DatePicker,
-  Modal,
-} from 'antd';
+import { Divider, Popconfirm, Table, Alert, Row, Col, Input, Button, Form, DatePicker } from 'antd';
 import moment from 'moment';
 import { getValue } from '@/utils/utils';
 
@@ -20,21 +8,21 @@ const { RangePicker } = DatePicker;
 
 @Form.create()
 @connect(state => ({
-  waybillMgt: state.waybillMgt,
-  loading: state.loading.models.waybillMgt,
+  purchasing: state.purchasing,
+  loading: state.loading.models.purchasing,
 }))
-export default class WayBillMgtList extends PureComponent {
+export default class PurchasingList extends PureComponent {
   // 组件加载完成后加载数据
   componentDidMount() {
     this.props.dispatch({
-      type: 'waybillMgt/fetch',
+      type: 'purchasing/fetch',
     });
   }
 
   // 新增
   handleCreateClick = () => {
     this.props.dispatch({
-      type: 'waybillMgt/updateState',
+      type: 'purchasing/updateState',
       payload: {
         editTab: true,
         activeKey: 'edit',
@@ -50,52 +38,33 @@ export default class WayBillMgtList extends PureComponent {
   // 编辑
   handleEditClick = r => {
     this.props.dispatch({
-      type: 'waybillMgt/getWaybill',
+      type: 'purchasing/getPurchasing',
       payload: {
-        id: r.mainId,
+        id: r.id,
       },
     });
   };
 
-  // 结束操作
-  handleOverClick = r => {
-    const that = this;
-    Modal.confirm({
-      content: '结束操作后，整个运单都将被结束，不允许进出场预约操作，请确认是否继续？',
-      onOk() {
-        let { sr } = that.props.waybillMgt;
-        if (sr) {
-          sr = sr.map(item => {
-            return item.mainId;
-          });
-        }
-
-        const keys = r ? [r.mainId] : sr;
-
-        if (keys.length < 1) return;
-
-        that.props.dispatch({
-          type: 'waybillMgt/gameOver',
-          payload: {
-            param: keys,
-          },
-        });
+  // 查看
+  handleViewClick = r => {
+    this.props.dispatch({
+      type: 'purchasing/viewPurchasing',
+      payload: {
+        id: r.id,
       },
-      okText: '确认',
-      cancelText: '取消',
     });
   };
 
   // 删除
   handleDeleteClick = r => {
-    const { selectedRowKeys } = this.props.waybillMgt;
+    const { selectedRowKeys } = this.props.purchasing;
 
     const keys = r ? [r.id] : selectedRowKeys;
 
     if (keys.length < 1) return;
 
     this.props.dispatch({
-      type: 'waybillMgt/remove',
+      type: 'purchasing/remove',
       payload: {
         param: keys,
       },
@@ -108,12 +77,11 @@ export default class WayBillMgtList extends PureComponent {
   };
 
   // 行选事件
-  handleSelectRows = (rows, sr) => {
+  handleSelectRows = rows => {
     this.props.dispatch({
-      type: 'waybillMgt/updateState',
+      type: 'purchasing/updateState',
       payload: {
         selectedRowKeys: rows,
-        sr,
       },
     });
   };
@@ -129,16 +97,15 @@ export default class WayBillMgtList extends PureComponent {
       if (err) return;
 
       const values = {
-        beginDate:
-          fieldsValue.plannedDate && fieldsValue.plannedDate[0].format('YYYY-MM-DD HH:mm:ss'),
-        endDate:
-          fieldsValue.plannedDate && fieldsValue.plannedDate[1].format('YYYY-MM-DD HH:mm:ss'),
+        beginDate: fieldsValue.orderDate && fieldsValue.orderDate[0].format('YYYY-MM-DD HH:mm:ss'),
+        endDate: fieldsValue.orderDate && fieldsValue.orderDate[1].format('YYYY-MM-DD HH:mm:ss'),
         ...fieldsValue,
       };
-      delete values.plannedDate;
+      // 删除orderdate日期数组
+      delete values.orderDate;
 
       this.props.dispatch({
-        type: 'waybillMgt/fetch',
+        type: 'purchasing/fetch',
         payload: values,
       });
     });
@@ -150,7 +117,7 @@ export default class WayBillMgtList extends PureComponent {
     form.resetFields();
     // 重置后重新查询数据
     this.props.dispatch({
-      type: 'waybillMgt/fetch',
+      type: 'purchasing/fetch',
     });
   };
 
@@ -174,7 +141,7 @@ export default class WayBillMgtList extends PureComponent {
     }
 
     this.props.dispatch({
-      type: 'waybillMgt/fetch',
+      type: 'purchasing/fetch',
       payload: params,
     });
   };
@@ -182,23 +149,19 @@ export default class WayBillMgtList extends PureComponent {
   // 简单搜索条件
   renderSimpleForm() {
     const { getFieldDecorator } = this.props.form;
+    const { loading } = this.props;
 
     return (
       <Form onSubmit={this.handleSearch} layout="inline" style={{ marginBottom: 10 }}>
         <Row type="flex" justify="space-between">
           <Col>
-            <Form.Item label="通知单/运单号">
-              {getFieldDecorator('waybillNum')(
-                <Input id="account-search" placeholder="请输入通知单/运单号" />
+            <Form.Item label="采购入库单号">
+              {getFieldDecorator('code')(
+                <Input id="account-search" placeholder="请输入采购入库单号" />
               )}
             </Form.Item>
-            <Form.Item label="作业任务名称">
-              {getFieldDecorator('taskName')(
-                <Input id="account-search" placeholder="请输入作业任务名称" />
-              )}
-            </Form.Item>
-            <Form.Item label="计划日期">
-              {getFieldDecorator('plannedDate')(
+            <Form.Item label="入库日期">
+              {getFieldDecorator('orderDate')(
                 <RangePicker
                   ranges={{ 默认: [moment().startOf('day'), moment().add('days', 90)] }}
                 />
@@ -207,10 +170,11 @@ export default class WayBillMgtList extends PureComponent {
           </Col>
           <Col>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" loading={loading}>
                 查询
               </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+              <Divider type="vertical" />
+              <Button onClick={this.handleFormReset} loading={loading}>
                 重置
               </Button>
             </Form.Item>
@@ -221,7 +185,7 @@ export default class WayBillMgtList extends PureComponent {
   }
 
   render() {
-    const { pagination, selectedRowKeys, listData } = this.props.waybillMgt;
+    const { pagination, selectedRowKeys, listData } = this.props.purchasing;
     const { loading } = this.props;
 
     const columns = [
@@ -231,8 +195,8 @@ export default class WayBillMgtList extends PureComponent {
         fixed: 'left',
       },
       {
-        title: '作业任务名称',
-        dataIndex: 'taskName',
+        title: '入库单号',
+        dataIndex: 'code',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 200 }}>
@@ -240,12 +204,11 @@ export default class WayBillMgtList extends PureComponent {
             </div>
           );
         },
-        sorter: (a, b) =>
-          a.companyAbbreviation && a.companyAbbreviation.localeCompare(b.companyAbbreviation),
+        sorter: (a, b) => a.code && a.code.localeCompare(b.code),
       },
       {
-        title: '通知单/运单号',
-        dataIndex: 'waybillNum',
+        title: '入库日期',
+        dataIndex: 'orderDate',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 150 }}>
@@ -253,12 +216,10 @@ export default class WayBillMgtList extends PureComponent {
             </div>
           );
         },
-        sorter: (a, b) => a.waybillNum && a.waybillNum.localeCompare(b.waybillNum),
       },
       {
-        title: '车牌号',
-        align: 'center',
-        dataIndex: 'carNum',
+        title: '仓库',
+        dataIndex: 'stock',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 90 }}>
@@ -266,11 +227,10 @@ export default class WayBillMgtList extends PureComponent {
             </div>
           );
         },
-        sorter: (a, b) => a.carNum && a.carNum.localeCompare(b.carNum),
       },
       {
-        title: '货品名称',
-        dataIndex: 'goodsName',
+        title: '采购类型',
+        dataIndex: 'purchasingType',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 150 }}>
@@ -280,20 +240,8 @@ export default class WayBillMgtList extends PureComponent {
         },
       },
       {
-        title: '计划量',
-        dataIndex: 'planAmount',
-        render: text => {
-          return (
-            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>
-              {text || '-'}
-            </div>
-          );
-        },
-      },
-      {
-        title: '单位',
-        align: 'center',
-        dataIndex: 'unit',
+        title: '制单人名称',
+        dataIndex: 'operatorNm',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 60 }}>
@@ -303,8 +251,8 @@ export default class WayBillMgtList extends PureComponent {
         },
       },
       {
-        title: '储罐编号',
-        dataIndex: 'tankNumber',
+        title: '采购人名称',
+        dataIndex: 'purchaserNm',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>
@@ -314,21 +262,8 @@ export default class WayBillMgtList extends PureComponent {
         },
       },
       {
-        title: '业务类型',
-        align: 'center',
-        dataIndex: 'businessType',
-        render: text => {
-          return (
-            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 90 }}>
-              {text || '-'}
-            </div>
-          );
-        },
-      },
-      {
-        title: '状态',
-        align: 'center',
-        dataIndex: 'status',
+        title: '供应商名称',
+        dataIndex: 'supplierNm',
         render: text => {
           return (
             <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 90 }}>
@@ -347,7 +282,6 @@ export default class WayBillMgtList extends PureComponent {
           );
         },
         dataIndex: 'gmtModify',
-        sorter: (a, b) => a.gmtModify && a.gmtModify.localeCompare(b.gmtModify),
       },
       {
         title: '操作',
@@ -356,10 +290,10 @@ export default class WayBillMgtList extends PureComponent {
         fixed: 'right',
         render: (text, record) => (
           <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>
+            <a onClick={e => this.handleViewClick(record, e)}>查看</a>
+            <Divider type="vertical" />
             <a onClick={e => this.handleEditClick(record, e)}>修改</a>
             <Divider type="vertical" />
-            {record.status !== '0008' && <a onClick={e => this.handleOverClick(record, e)}>结束</a>}
-            {record.status !== '0008' && <Divider type="vertical" />}
             <Popconfirm
               title="确定要删除吗？"
               okText="确定"
@@ -373,25 +307,29 @@ export default class WayBillMgtList extends PureComponent {
       },
     ];
 
+    // 分页
     const paginationProps = {
       ...pagination,
     };
 
+    // 复选框
     const rowSelectionProps = {
       fixed: true,
       columnWidth: 30,
       selectedRowKeys,
-      onChange: (selectedKeys, sr) => {
-        this.handleSelectRows(selectedKeys, sr);
+      onChange: selectedKeys => {
+        this.handleSelectRows(selectedKeys);
       },
     };
 
     return (
       <div>
+        {/* 查询条件渲染 */}
         {this.renderSimpleForm()}
+        {/* 提示条幅 */}
         <div style={{ marginBottom: 10 }}>
           <Button icon="plus" type="primary" onClick={() => this.handleCreateClick()}>
-            创建运单
+            创建采购入库单
           </Button>
           {selectedRowKeys.length > 0 && (
             <span>
@@ -401,15 +339,10 @@ export default class WayBillMgtList extends PureComponent {
                 onConfirm={() => this.handleDeleteClick()}
               >
                 <Button style={{ marginLeft: 8 }} type="danger">
-                  删除运单
+                  删除采购入库单
                 </Button>
               </Popconfirm>
             </span>
-          )}
-          {selectedRowKeys.length > 0 && (
-            <Button style={{ marginLeft: 8 }} type="danger" onClick={() => this.handleOverClick()}>
-              批量结束
-            </Button>
           )}
         </div>
         <Alert
@@ -429,7 +362,6 @@ export default class WayBillMgtList extends PureComponent {
           loading={loading}
           bordered
           size="small"
-          scroll={{ x: 1024 }}
           rowKey={record => record.id}
           rowSelection={rowSelectionProps}
           rowClassName={record => (record.status === '0008' ? 'disabled' : 'enabled')}
