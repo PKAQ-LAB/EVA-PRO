@@ -1,7 +1,6 @@
 export const model = {
   state: {
     data: [],
-    loading: true,
   },
   reducers: {
     updateState(state, { payload }) {
@@ -21,10 +20,9 @@ export const model = {
 
 export const pageModel = {
   state: {
-    loading: true,
-    list: [],
+    listData: [],
     pagination: {
-      showSizeChanger: true,
+      showSizeChanger: false,
       showQuickJumper: true,
       showTotal: total => `共 ${total} 条`,
       current: 1,
