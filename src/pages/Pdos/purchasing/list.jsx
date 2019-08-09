@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Divider, Popconfirm, Table, Alert, Row, Col, Input, Button, Form, DatePicker } from 'antd';
 import moment from 'moment';
 import { getValue } from '@/utils/utils';
+import emitter from '@/utils/events';
 
 const { RangePicker } = DatePicker;
 
@@ -21,6 +22,7 @@ export default class PurchasingList extends PureComponent {
 
   // 新增
   handleCreateClick = () => {
+    emitter.emit('purchasingFormReset');
     this.props.dispatch({
       type: 'purchasing/updateState',
       payload: {
@@ -37,6 +39,8 @@ export default class PurchasingList extends PureComponent {
 
   // 编辑
   handleEditClick = r => {
+    emitter.emit('purchasingFormReset');
+
     this.props.dispatch({
       type: 'purchasing/getPurchasing',
       payload: {

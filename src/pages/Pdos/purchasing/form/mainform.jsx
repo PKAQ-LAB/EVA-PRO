@@ -1,9 +1,10 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
 import { Row, Col, Card, Input, DatePicker, Form, Button, Divider, Modal } from 'antd';
 
 import Selector from '@/components/Selector';
+import emitter from '@/utils/events';
 
 const FormItem = Form.Item;
 /* eslint-disable */
@@ -12,7 +13,13 @@ const FormItem = Form.Item;
   submitting: state.loading.effects['purchasing/save'],
   purchasing: state.purchasing,
 }))
-export default class MainAOEForm extends PureComponent {
+export default class MainAOEForm extends React.PureComponent {
+  componentDidMount() {
+    const form = this.props.form;
+    emitter.on('purchasingFormReset', param => {
+      form.resetFields();
+    });
+  }
   // 关闭
   handleCancelClick = () => {
     this.props.dispatch({
