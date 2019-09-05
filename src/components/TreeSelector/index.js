@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { TreeSelect  } from 'antd';
+import { TreeSelect } from 'antd';
 import request from '@/utils/request';
 /**
  * 远程获取树形结构下拉菜单选项
@@ -13,21 +13,21 @@ export default class TreeSelector extends PureComponent {
   }
 
   componentDidMount() {
-    const {url, showAll = true } = this.props.url;
+    const { url, showAll = true } = this.props;
     if (url) {
-      request(url).then( response => {
-        if(response && response.data){
-          const treeData = response.data;
-          if(showAll) {
+      request(url).then(response => {
+        if (response && response.success) {
+          const treeData = response.success;
+          if (showAll) {
             treeData.unshift({
               key: '',
               value: '',
-              title: '全部'
+              title: '全部',
             });
           }
           this.setState({
-            treeData: response.data
-          })
+            treeData: response.data,
+          });
         }
       });
     }
@@ -35,8 +35,6 @@ export default class TreeSelector extends PureComponent {
 
   render() {
     const { treeData } = this.state;
-    return (
-      <TreeSelect { ...this.props } treeData={ treeData } treeNodeLabelProp="pathName" />
-    )
+    return <TreeSelect {...this.props} treeData={treeData} treeNodeLabelProp="pathName" />;
   }
 }
