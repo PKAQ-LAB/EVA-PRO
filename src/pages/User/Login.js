@@ -86,6 +86,7 @@ class LoginPage extends Component {
             <UserName
               name="account"
               autoFocus
+              style={{ marginBottom: 15 }}
               placeholder={`${formatMessage({ id: 'app.login.userName' })}`}
               rules={[
                 {

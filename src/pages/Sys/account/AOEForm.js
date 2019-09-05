@@ -25,7 +25,7 @@ export default class AOEForm extends Component {
         payload: data,
       })
       .then(r => {
-        if (r.success) {
+        if (r && r.success) {
           return callback();
         }
         return callback('该账号已存在');

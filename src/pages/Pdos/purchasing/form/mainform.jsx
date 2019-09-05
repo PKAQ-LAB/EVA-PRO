@@ -16,7 +16,7 @@ const FormItem = Form.Item;
 export default class MainAOEForm extends React.PureComponent {
   componentDidMount() {
     const form = this.props.form;
-    emitter.on('purchasingFormReset', param => {
+    emitter.on('purchasingFormReset', () => {
       form.resetFields();
     });
   }
