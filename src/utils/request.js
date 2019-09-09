@@ -12,7 +12,7 @@ message.config({
 });
 
 const server = {
-  url: 'http://localhost:8080/hctms',
+  url: 'http://localhost:9009/api',
 };
 /**
  * 异常处理程序
