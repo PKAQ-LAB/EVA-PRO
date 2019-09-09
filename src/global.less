@@ -46,9 +46,51 @@ ol {
   }
 }
 
-// 兼容IE11
-@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
-  body .ant-design-pro > .ant-layout {
-    min-height: 100vh;
+:global {
+  // 内容区边距
+  .ant-pro-page-header-wrap-children-content {
+    margin: 5px 0 0 0;
   }
+  // 表头颜色
+  .ant-table-content {
+    border-top: 5px solid #1da9ff;
+  }
+  .ant-table-fixed-left {
+    border-top: 5px solid #1da9ff;
+  }
+  .ant-table-fixed-right {
+    border-top: 5px solid #1da9ff;
+  }
+  // 表头复选列
+  .ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
+    border-top: 5px solid #1da9ff;
+  }
+  // .ant-table {
+  //   min-height: 496px !important;
+  // }
+  // 表高度
+  .ant-table-row {
+    height: 36px;
+  }
+  .ant-table-tbody > tr > td {
+    padding: 12px;
+  }
+  .ant-tree.ant-tree-show-line li span.ant-tree-switcher {
+    background-color: transparent;
+    background-image: none;
+  }
+  // 让表单紧凑
+  .ant-form-item {
+    margin-bottom: 5px !important;
+  }
+
+  // 表格滚动条
+  .ant-table-body {
+    overflow: auto;
+  }
+}
+
+// 禁用颜色
+.disabled {
+  background-color: #fff5ee;
 }
