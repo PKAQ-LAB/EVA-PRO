@@ -1,7 +1,10 @@
+import { Reducer } from 'redux';
+import { routerRedux } from 'dva/router';
+import { Effect } from 'dva';
 import { stringify } from 'querystring';
-import { history, Reducer, Effect } from 'umi';
+import Cookies from 'universal-cookie';
 
-import { fakeAccountLogin } from '@/services/login';
+import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 
@@ -16,12 +19,18 @@ export interface LoginModelType {
   state: StateType;
   effects: {
     login: Effect;
+    getCaptcha: Effect;
     logout: Effect;
   };
   reducers: {
     changeLoginStatus: Reducer<StateType>;
   };
 }
+
+const cookies = new Cookies();
+
+const USER_KEY = 'user_info';
+const TOKEN_KEY = 'auth_token';
 
 const Model: LoginModelType = {
   namespace: 'login',
@@ -50,24 +59,33 @@ const Model: LoginModelType = {
               redirect = redirect.substr(redirect.indexOf('#') + 1);
             }
           } else {
-            window.location.href = '/';
+            window.location.href = redirect;
             return;
           }
         }
-        history.replace(redirect || '/');
+        yield put(routerRedux.replace(redirect || '/'));
       }
     },
 
-    logout() {
+    *getCaptcha({ payload }, { call }) {
+      yield call(getFakeCaptcha, payload);
+    },
+    *logout(_, { put }) {
       const { redirect } = getPageQuery();
-      // Note: There may be security issues, please note
+      // 删除token
+      cookies.remove(TOKEN_KEY, { maxAge: -1, path: '/' });
+      cookies.remove(USER_KEY, { maxAge: -1, path: '/' });
+
+      // redirect
       if (window.location.pathname !== '/user/login' && !redirect) {
-        history.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
+        yield put(
+          routerRedux.replace({
+            pathname: '/user/login',
+            search: stringify({
+              redirect: window.location.href,
+            }),
           }),
-        });
+        );
       }
     },
   },
