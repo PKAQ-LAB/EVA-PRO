@@ -5,8 +5,6 @@ export default [
     component: '../layouts/BasicLayout',
     routes: [
       { path: '/welcome', name: 'welcome', icon: 'smile', component: './Welcome' },
-      // dashboard
-      { path: '/', redirect: '/sys/organization' },
       // 系统管理
       {
         path: '/sys',

@@ -1,6 +1,7 @@
 import { Icon, Tooltip } from 'antd';
 import React from 'react';
 import { connect } from 'dva';
+import screenfull from 'screenfull';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { ConnectProps, ConnectState } from '@/models/connect';
 
@@ -14,35 +15,59 @@ export interface GlobalHeaderRightProps extends ConnectProps {
   layout: 'sidemenu' | 'topmenu';
 }
 
-const GlobalHeaderRight: React.SFC<GlobalHeaderRightProps> = props => {
-  const { theme, layout } = props;
-  let className = styles.right;
+export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
+  state = {
+    fullscreen: 0,
+  };
 
-  if (theme === 'dark' && layout === 'topmenu') {
-    className = `${styles.right}  ${styles.dark}`;
-  }
+  f11 = () => {
+    this.setState({
+      fullscreen: screenfull.isFullscreen ? 0 : 1,
+    });
+    screenfull.toggle();
+  };
 
-  return (
-    <div className={className}>
-      <Tooltip
-        title={formatMessage({
-          id: 'component.globalHeader.help',
-        })}
-      >
-        <a
-          target="_blank"
-          href="https://pro.ant.design/docs/getting-started"
-          rel="noopener noreferrer"
-          className={styles.action}
+  render() {
+    const fullscreenIcon = ['fullscreen', 'fullscreen-exit'];
+    const fullscreenText = ['全屏', '退出全屏'];
+    const { fullscreen } = this.state;
+
+    const { theme, layout } = this.props;
+    let className = styles.right;
+
+    if (theme === 'dark' && layout === 'topmenu') {
+      className = `${styles.right}  ${styles.dark}`;
+    }
+
+    return (
+      <div className={className}>
+        {/* 全屏 */}
+        <Tooltip title={fullscreenText[fullscreen]}>
+          <span className={styles.action} onClick={() => this.f11()}>
+            <Icon type={fullscreenIcon[fullscreen]} />
+          </span>
+        </Tooltip>
+
+        <Tooltip
+          title={formatMessage({
+            id: 'component.globalHeader.help',
+          })}
         >
-          <Icon type="question-circle-o" />
-        </a>
-      </Tooltip>
-      <Avatar />
-      <SelectLang className={styles.action} />
-    </div>
-  );
-};
+          <a
+            target="_blank"
+            href="https://pro.ant.design/docs/getting-started"
+            rel="noopener noreferrer"
+            className={styles.action}
+          >
+            <Icon type="question-circle-o" />
+          </a>
+        </Tooltip>
+        <Avatar />
+        <SelectLang className={styles.action} />
+      </div>
+    );
+  }
+}
 
 export default connect(({ settings }: ConnectState) => ({
   theme: settings.navTheme,
