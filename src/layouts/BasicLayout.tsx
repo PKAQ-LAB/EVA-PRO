@@ -9,7 +9,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'dva';
 import { formatMessage } from 'umi-plugin-react/locale';
 
-import Authorized from '@/utils/Authorized';
+// import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { isAntDesignPro } from '@/utils/utils';
@@ -30,15 +30,16 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 
 /**
  * use Authorized check all menu item
+ * 再过滤一次菜单以处理权限
  */
-const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
-  menuList.map(item => {
-    const localItem = {
-      ...item,
-      children: item.children ? menuDataRender(item.children) : [],
-    };
-    return Authorized.check(item.authority, localItem, null) as MenuDataItem;
-  });
+// const menuDataRender = (menuList: MenuDataItem[]): MenuDataItem[] =>
+// menuList.map(item => {
+//   const localItem = {
+//     ...item,
+//     children: item.children ? menuDataRender(item.children) : [],
+//   };
+//   return Authorized.check(item.authority, localItem, null) as MenuDataItem;
+// });
 
 const footerRender: BasicLayoutProps['footerRender'] = (_, defaultDom) => {
   if (!isAntDesignPro()) {
@@ -97,7 +98,6 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
     }
   };
 
-  console.info(menuData);
   return (
     <ProLayout
       logo={logo}
@@ -127,6 +127,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         );
       }}
       footerRender={footerRender}
+      menuDataRender={() => menuData}
       formatMessage={formatMessage}
       rightContentRender={rightProps => <RightContent {...rightProps} />}
       {...props}
