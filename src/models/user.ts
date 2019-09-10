@@ -12,7 +12,7 @@ export interface CurrentUser {
     key: string;
     label: string;
   }[];
-  userid?: string;
+  id?: string;
   unreadCount?: number;
 }
 
@@ -50,10 +50,12 @@ const UserModel: UserModelType = {
     },
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response,
-      });
+      if (response && response.success) {
+        yield put({
+          type: 'saveCurrentUser',
+          payload: response.data.user,
+        });
+      }
     },
   },
 

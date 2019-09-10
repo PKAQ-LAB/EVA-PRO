@@ -26,10 +26,12 @@ const MenuModel: MenuModelType = {
   effects: {
     *getMenuData({ callback }, { call, put }) {
       const response = yield call(getMenuData);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+      if (response && response.success) {
+        yield put({
+          type: 'save',
+          payload: response.data,
+        });
+      }
       if (callback) callback(response);
     },
   },

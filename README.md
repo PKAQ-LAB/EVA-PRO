@@ -21,7 +21,9 @@ An out-of-box UI solution for enterprise applications as a React boilerplate.
 - 支持 cookie
 - 移除单元测试
 - 请求工具优化
-- 国际化按钮配置
+- 国际化按钮显示配置
+- 登录页 title,subtitle,copyright 可配置
+- 去除其它登录方式以及注册
 
 ## 4.0 Released Now! 🎉🎉🎉
 
