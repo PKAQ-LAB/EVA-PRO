@@ -18,14 +18,15 @@ export default [
           { path: '/sys/dictionary', name: 'dictionary', component: './sys/dictionary' },
         ],
       },
+      // 登陆页
+      { name: 'login', path: '/user/login', component: './user/login' },
       // 个人中心
       {
         path: '/user',
-        component: '../layouts/UserLayout',
+        name: 'user',
         routes: [
-          { name: 'login', path: '/user/login', component: './user/login' },
-          { name: 'setting', path: '/user/setting', component: './user/setting' },
-          { name: 'center', path: '/user/center', component: './user/center' },
+          { name: 'setting', path: '/user/settings', component: './user/settings' },
+          { name: 'center', path: '/user/center', component: './user/center/' },
         ],
       },
       { component: '404' },

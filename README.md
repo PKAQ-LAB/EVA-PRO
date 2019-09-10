@@ -21,6 +21,7 @@ An out-of-box UI solution for enterprise applications as a React boilerplate.
 - 支持 cookie
 - 移除单元测试
 - 请求工具优化
+- 国际化按钮配置
 
 ## 4.0 Released Now! 🎉🎉🎉
 

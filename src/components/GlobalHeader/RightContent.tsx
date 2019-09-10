@@ -63,7 +63,7 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
             <Icon type="question-circle-o" />
           </a>
         </Tooltip>
-        <Avatar />
+        <Avatar menu />
         {setting.i18n && <SelectLang className={styles.action} />}
       </div>
     );
