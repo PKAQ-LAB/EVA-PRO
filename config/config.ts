@@ -1,9 +1,10 @@
 import { IConfig, IPlugin } from 'umi-types';
+import pageRoutes from './router.config';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
 
 import slash from 'slash2';
 import webpackPlugin from './plugin.config';
-const { pwa, primaryColor } = defaultSettings; // preview.pro.ant.design only do not use in your production ;
+const { pwa } = defaultSettings; // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
 
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
@@ -53,25 +54,12 @@ const plugins: IPlugin[] = [
       autoAddMenu: true,
     },
   ],
-]; // 针对 preview.pro.ant.design 的 GA 统计代码
-
-if (isAntDesignProPreview) {
-  plugins.push([
-    'umi-plugin-ga',
-    {
-      code: 'UA-72788897-6',
-    },
-  ]);
-  plugins.push([
-    'umi-plugin-pro',
-    {
-      serverUrl: 'https://ant-design-pro.netlify.com',
-    },
-  ]);
-}
+];
 
 export default {
   plugins,
+  base: '/eva/',
+  publicPath: '/eva/',
   block: {
     // 国内用户可以使用码云
     // defaultGitUrl: 'https://gitee.com/ant-design/pro-blocks',
@@ -83,62 +71,7 @@ export default {
   },
   devtool: isAntDesignProPreview ? 'source-map' : false,
   // umi routes: https://umijs.org/zh/guide/router.html
-  routes: [
-    {
-      path: '/user',
-      component: '../layouts/UserLayout',
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-        {
-          name: 'setting',
-          path: '/user/setting',
-          component: './user/setting',
-        },
-        {
-          name: 'center',
-          path: '/user/center',
-          component: './user/center',
-        },
-      ],
-    },
-    {
-      path: '/',
-      component: '../layouts/SecurityLayout',
-      routes: [
-        {
-          path: '/',
-          component: '../layouts/BasicLayout',
-          authority: ['admin', 'user'],
-          routes: [
-            {
-              path: '/',
-              redirect: '/welcome',
-            },
-            {
-              path: '/welcome',
-              name: 'welcome',
-              icon: 'smile',
-              component: './Welcome',
-            },
-            {
-              component: './404',
-            },
-          ],
-        },
-        {
-          component: './404',
-        },
-      ],
-    },
-    {
-      component: './404',
-    },
-  ],
-  // Theme for antd: https://ant.design/docs/react/customize-theme-cn
+  routes: pageRoutes,
   theme: './config/theme.ts',
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:

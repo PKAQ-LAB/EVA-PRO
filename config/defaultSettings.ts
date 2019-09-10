@@ -53,7 +53,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: 'Ant Design Pro',
+  title: 'Nerv Design Pro',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;
