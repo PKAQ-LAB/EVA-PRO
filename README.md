@@ -24,6 +24,7 @@ An out-of-box UI solution for enterprise applications as a React boilerplate.
 - 国际化按钮显示配置
 - 登录页 title,subtitle,copyright 可配置
 - 去除其它登录方式以及注册
+- 打包自动删除所有 console,最紧凑的输出,删除注释(plugin.config.ts)
 
 ## 4.0 Released Now! 🎉🎉🎉
 
