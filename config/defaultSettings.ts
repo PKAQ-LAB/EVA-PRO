@@ -3,6 +3,10 @@ import { MenuTheme } from 'antd/es/menu';
 export type ContentWidth = 'Fluid' | 'Fixed';
 
 export interface DefaultSettings {
+  /**是否开启国际化**/
+  i18n: false;
+
+  url: 'http://localhost:9009/api';
   /**
    * theme for nav menu
    */

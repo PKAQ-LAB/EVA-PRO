@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import screenfull from 'screenfull';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { ConnectProps, ConnectState } from '@/models/connect';
+import setting from '../../../config/defaultSettings';
 
 import Avatar from './AvatarDropdown';
 import SelectLang from '../SelectLang';
@@ -63,7 +64,7 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
           </a>
         </Tooltip>
         <Avatar />
-        <SelectLang className={styles.action} />
+        {setting.i18n && <SelectLang className={styles.action} />}
       </div>
     );
   }
