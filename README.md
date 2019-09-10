@@ -47,3 +47,5 @@ $ yarn start         # visit http://localhost:8000
 - 登录页 title,subtitle,copyright 可配置
 - 去除其它登录方式以及注册
 - 打包自动删除所有 console,最紧凑的输出,删除注释(plugin.config.ts)
+- 使用 antx 改进型表单
+- 添加 waterfall 等组件
