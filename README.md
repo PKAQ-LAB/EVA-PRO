@@ -14,12 +14,12 @@ An out-of-box UI solution for enterprise applications as a React boilerplate.
 
 </div>
 
-- Preview: http://preview.pro.ant.design
-- Home Page: http://pro.ant.design
-- Documentation: http://pro.ant.design/docs/getting-started
-- ChangeLog: http://pro.ant.design/docs/changelog
-- FAQ: http://pro.ant.design/docs/faq
-- Mirror Site in China: http://ant-design-pro.gitee.io
+- 支持全屏
+- 支持远程菜单获取
+- 样式调整
+- 添加系统管理基础模块
+- 支持 cookie
+- 移除单元测试
 
 ## 4.0 Released Now! 🎉🎉🎉
 
