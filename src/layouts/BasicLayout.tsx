@@ -10,9 +10,9 @@ import { connect } from 'dva';
 import { formatMessage } from 'umi-plugin-react/locale';
 
 // import Authorized from '@/utils/Authorized';
+import { Icon } from 'antd';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
-import { isAntDesignPro } from '@/utils/utils';
 import logo from '../assets/logo.svg';
 
 export interface BasicLayoutProps extends ProLayoutProps {
@@ -40,31 +40,20 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 //   };
 //   return Authorized.check(item.authority, localItem, null) as MenuDataItem;
 // });
-
-const footerRender: BasicLayoutProps['footerRender'] = (_, defaultDom) => {
-  if (!isAntDesignPro()) {
-    return defaultDom;
-  }
-  return (
-    <>
-      {defaultDom}
-      <div
-        style={{
-          padding: '0px 24px 24px',
-          textAlign: 'center',
-        }}
-      >
-        <a href="https://www.netlify.com" target="_blank" rel="noopener noreferrer">
-          <img
-            src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"
-            width="82px"
-            alt="netlify logo"
-          />
-        </a>
-      </div>
-    </>
-  );
-};
+const footerRender: BasicLayoutProps['footerRender'] = () => (
+  <>
+    <div
+      style={{
+        backgroundColor: '#fff',
+        borderTop: '1.5px solid #00abff ',
+        padding: '8px',
+        textAlign: 'center',
+      }}
+    >
+      Copyright <Icon type="copyright" /> 2019 By Nerv
+    </div>
+  </>
+);
 
 const BasicLayout: React.FC<BasicLayoutProps> = props => {
   const { dispatch, children, settings, menuData } = props;
