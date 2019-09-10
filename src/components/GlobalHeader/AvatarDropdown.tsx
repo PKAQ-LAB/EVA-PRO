@@ -21,7 +21,10 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
 
     if (key === 'logout') {
       const { dispatch } = this.props;
+
       if (dispatch) {
+        dispatch({ type: 'RESET' });
+
         dispatch({
           type: 'login/logout',
         });
@@ -29,7 +32,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
 
       return;
     }
-    router.push(`/user/${key}`);
+    router.push(`/config/${key}`);
   };
 
   render(): React.ReactNode {

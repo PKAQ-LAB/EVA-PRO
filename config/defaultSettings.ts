@@ -4,9 +4,9 @@ export type ContentWidth = 'Fluid' | 'Fixed';
 
 export interface DefaultSettings {
   /**是否开启国际化**/
-  i18n: false;
-
-  url: 'http://localhost:9009/api';
+  i18n: boolean;
+  /** 后台请求地址 **/
+  url: string;
   /**
    * theme for nav menu
    */
@@ -37,6 +37,7 @@ export interface DefaultSettings {
   fixSiderbar: boolean;
   menu: { locale: boolean };
   title: string;
+  subTile: string;
   pwa: boolean;
   // Your custom iconfont Symbol script Url
   // eg：//at.alicdn.com/t/font_1039637_btcrd5co4w.js
@@ -47,6 +48,8 @@ export interface DefaultSettings {
 }
 
 export default {
+  i18n: false,
+  url: 'http://localhost:9009/api',
   navTheme: 'dark',
   layout: 'sidemenu',
   contentWidth: 'Fluid',
@@ -58,6 +61,7 @@ export default {
     locale: true,
   },
   title: 'Nerv Design Pro',
+  subTile: '基于Ant Design Pro的后台管理方案',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;

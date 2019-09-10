@@ -1,19 +1,22 @@
 import { DefaultFooter, MenuDataItem, getMenuData, getPageTitle } from '@ant-design/pro-layout';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { Link, useIntl, ConnectProps, connect } from 'umi';
+import DocumentTitle from 'react-document-title';
+import Link from 'umi/link';
 import React from 'react';
+import { connect } from 'dva';
+import { formatMessage } from 'umi-plugin-react/locale';
+
 import SelectLang from '@/components/SelectLang';
-import { ConnectState } from '@/models/connect';
+import { ConnectProps, ConnectState } from '@/models/connect';
+import setting from '../../config/defaultSettings';
+
 import logo from '../assets/logo.svg';
 import styles from './UserLayout.less';
 
-export interface UserLayoutProps extends Partial<ConnectProps> {
-  breadcrumbNameMap: {
-    [path: string]: MenuDataItem;
-  };
+export interface UserLayoutProps extends ConnectProps {
+  breadcrumbNameMap: { [path: string]: MenuDataItem };
 }
 
-const UserLayout: React.FC<UserLayoutProps> = (props) => {
+const UserLayout: React.SFC<UserLayoutProps> = props => {
   const {
     route = {
       routes: [],
@@ -26,21 +29,17 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
       pathname: '',
     },
   } = props;
-  const { formatMessage } = useIntl();
   const { breadcrumb } = getMenuData(routes);
-  const title = getPageTitle({
-    pathname: location.pathname,
-    formatMessage,
-    breadcrumb,
-    ...props,
-  });
-  return (
-    <HelmetProvider>
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={title} />
-      </Helmet>
 
+  return (
+    <DocumentTitle
+      title={getPageTitle({
+        pathname: location.pathname,
+        breadcrumb,
+        formatMessage,
+        ...props,
+      })}
+    >
       <div className={styles.container}>
         <div className={styles.lang}>
           <SelectLang />
@@ -50,17 +49,19 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
+                <span className={styles.title}>{setting.title}</span>
               </Link>
             </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+            <div className={styles.desc}>{setting.subTile}</div>
           </div>
           {children}
         </div>
         <DefaultFooter />
       </div>
-    </HelmetProvider>
+    </DocumentTitle>
   );
 };
 
-export default connect(({ settings }: ConnectState) => ({ ...settings }))(UserLayout);
+export default connect(({ settings }: ConnectState) => ({
+  ...settings,
+}))(UserLayout);
