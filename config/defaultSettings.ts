@@ -38,6 +38,7 @@ export interface DefaultSettings {
   menu: { locale: boolean };
   title: string;
   subTile: string;
+  copyright: string;
   pwa: boolean;
   // Your custom iconfont Symbol script Url
   // eg：//at.alicdn.com/t/font_1039637_btcrd5co4w.js
@@ -62,6 +63,7 @@ export default {
   },
   title: 'Nerv Design Pro',
   subTile: '基于Ant Design Pro的后台管理方案',
+  copyright: 'Power by Nerv © 2019',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;

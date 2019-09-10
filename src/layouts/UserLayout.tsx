@@ -56,7 +56,7 @@ const UserLayout: React.SFC<UserLayoutProps> = props => {
           </div>
           {children}
         </div>
-        <DefaultFooter />
+        <DefaultFooter links={[]} copyright={setting.copyright} />
       </div>
     </DocumentTitle>
   );

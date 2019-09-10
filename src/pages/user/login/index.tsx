@@ -114,6 +114,7 @@ export default class Login extends Component<LoginProps, LoginState> {
               )}
             <UserName
               name="userName"
+              style={{ marginBottom: 18 }}
               placeholder={`${formatMessage({ id: 'user-login.login.userName' })}: admin or user`}
               rules={[
                 {
@@ -124,6 +125,7 @@ export default class Login extends Component<LoginProps, LoginState> {
             />
             <Password
               name="password"
+              style={{ marginBottom: 18 }}
               placeholder={`${formatMessage({ id: 'user-login.login.password' })}: ant.design`}
               rules={[
                 {
