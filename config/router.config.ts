@@ -38,15 +38,15 @@ export default [
                   { path: '/sys/dictionary', name: 'dictionary', component: './sys/dictionary' },
                 ],
               },
-            ],
-          },
-          // 个人中心
-          {
-            path: '/config',
-            name: 'user',
-            routes: [
-              { name: 'setting', path: '/config/settings', component: './user/settings' },
-              { name: 'center', path: '/config/center', component: './user/center/' },
+              // 个人中心
+              {
+                path: '/config',
+                name: 'user',
+                routes: [
+                  { name: 'setting', path: '/config/settings', component: './user/settings' },
+                  { name: 'center', path: '/config/center', component: './user/center/' },
+                ],
+              },
             ],
           },
           { component: '404' },
