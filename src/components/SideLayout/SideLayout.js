@@ -1,24 +1,14 @@
-import './style/index.less';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Layout } from 'antd';
+import { Layout, Icon } from 'antd';
 import cx from 'classnames';
-import Icon from '../Icon';
+import style from './style/index.less';
+
 const { Content, Sider } = Layout;
 
 class SideLayout extends Component {
-  static propTypes = {
-    prefix: PropTypes.string,
-    width: PropTypes.number,
-    title: PropTypes.string,
-    sideContent: PropTypes.node,
-    children: PropTypes.node,
-    fixed: PropTypes.bool,
-  };
-
   static defaultProps = {
-    prefixCls: 'antui-side-layout',
-    width: 180,
+    prefixCls: 'eva-side-layout',
+    width: 300,
   };
 
   state = {
@@ -29,32 +19,37 @@ class SideLayout extends Component {
     e.stopPropagation();
     e.preventDefault();
 
+    const { openSide } = this.state;
+
     this.setState({
-      openSide: !this.state.openSide,
+      openSide: !openSide,
     });
   };
 
   render() {
-    const { prefixCls, className, sideContent, children, title, width } = this.props;
+    const { prefixCls, className, children, title, width } = this.props;
     const { openSide } = this.state;
     return (
       <Layout className={cx(prefixCls, className)}>
-        <Sider trigger={null} collapsible collapsed={!openSide} collapsedWidth={0} width={width}>
-          <a className="side-handle" onClick={this.toggle} title={openSide ? '收起' : '展开'}>
-            <Icon antd type={openSide ? 'caret-left' : 'caret-right'} />
-          </a>
-          <div className="side-body" style={!openSide ? { width: 0 } : { width }}>
-            <div className="side-panel">
-              <div className="panel-header">
-                <Icon antd type="folder" />
-                &nbsp;
-                <strong>{title}</strong>
-              </div>
-              <div className="panel-body">{sideContent}</div>
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={!openSide}
+          collapsedWidth={45}
+          width={width}
+          className={style.layout}
+        >
+          <div className={style.title}>
+            <div>
+              <Icon antd type="folder" />
+              &nbsp; {title}
             </div>
+            <a className="side-handle" onClick={this.toggle} title={openSide ? '收起' : '展开'}>
+              <Icon antd type={openSide ? 'caret-left' : 'caret-right'} />
+            </a>
           </div>
         </Sider>
-        <Content>{children}</Content>
+        <Content className={style.content}>{children}</Content>
       </Layout>
     );
   }

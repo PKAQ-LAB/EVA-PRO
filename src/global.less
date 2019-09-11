@@ -69,9 +69,6 @@ ol {
   }
   // 侧边栏样式  结束  -------------------------------------------------
   // 内容区边距
-  .ant-pro-page-header-wrap-children-content {
-    margin: 5px 0 0 0;
-  }
   // 表头颜色
   .ant-table-content {
     border-top: 5px solid #1da9ff;
@@ -109,9 +106,25 @@ ol {
   .ant-table-body {
     overflow: auto;
   }
+  // 内容区样式
+  .ant-pro-basicLayout-content {
+    margin: 24px 24px 0 24px;
+    padding-top: 64px;
+  }
+
+  .ant-pro-page-header-wrap-children-content {
+    height: calc(100vh - 230px);
+    margin: 12px 0 -24px 0;
+    padding: 12px 24px;
+    background-color: #fff;
+  }
 }
 
 // 禁用颜色
 .disabled {
   background-color: #fff5ee;
+}
+
+.eva-side-layout {
+  min-height: calc(100vh - 225px);
 }
