@@ -1,7 +1,7 @@
 import { Alert, Checkbox } from 'antd';
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import React, { Component } from 'react';
-
+import md5 from 'md5';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Dispatch, AnyAction } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
@@ -46,6 +46,8 @@ export default class Login extends Component<LoginProps, LoginState> {
     const { type } = this.state;
     if (!err) {
       const { dispatch } = this.props;
+      values.password = md5(values.password);
+
       dispatch({
         type: 'login/login',
         payload: {
@@ -113,7 +115,7 @@ export default class Login extends Component<LoginProps, LoginState> {
                 formatMessage({ id: 'user-login.login.message-invalid-credentials' }),
               )}
             <UserName
-              name="userName"
+              name="account"
               style={{ marginBottom: 18 }}
               placeholder={`${formatMessage({ id: 'user-login.login.userName' })}: admin or user`}
               rules={[
