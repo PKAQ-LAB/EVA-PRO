@@ -27,10 +27,10 @@ class SideLayout extends Component {
   };
 
   render() {
-    const { prefixCls, className, children, title, width } = this.props;
+    const { prefixCls, className, children, title, width, layoutStyle, body } = this.props;
     const { openSide } = this.state;
     return (
-      <Layout className={cx(prefixCls, className)}>
+      <Layout className={cx(prefixCls, className)} style={layoutStyle}>
         <Sider
           trigger={null}
           collapsible
@@ -39,6 +39,7 @@ class SideLayout extends Component {
           width={width}
           className={style.layout}
         >
+          {/* 表头 */}
           <div className={style.title}>
             <div>
               <Icon antd type="folder" />
@@ -48,6 +49,8 @@ class SideLayout extends Component {
               <Icon antd type={openSide ? 'caret-left' : 'caret-right'} />
             </a>
           </div>
+          {/* 内容 */}
+          {openSide && <div className={style.body}>{body}</div>}
         </Sider>
         <Content className={style.content}>{children}</Content>
       </Layout>
