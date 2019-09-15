@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Form, Input, InputNumber, Modal, Switch, TreeSelect } from 'antd';
-
-const FormItem = Form.Item;
-const Area = Input.TextArea;
-const { TreeNode } = TreeSelect;
+import { Row, Col, Modal, Switch } from 'antd';
+import { Form, Input, TreeSelect } from 'antx';
 
 @Form.create()
 @connect(state => ({
@@ -47,38 +44,6 @@ export default class AOEForm extends Component {
       });
   };
 
-  // 渲染树节点 - 剔除状态为停用状态(0000)得节点
-  renderTreeNodes = data => {
-    const { currentItem } = this.props.module;
-    return data
-      .map(item => {
-        if (item.status === '0001' && item.id !== currentItem.id) {
-          if (item.children) {
-            return (
-              <TreeNode
-                title={item.name}
-                pathName={item.pathName ? item.pathName : item.name}
-                key={item.id}
-                value={item.id}
-              >
-                {this.renderTreeNodes(item.children)}
-              </TreeNode>
-            );
-          }
-          return (
-            <TreeNode
-              title={item.name}
-              pathName={item.pathName ? item.pathName : item.name}
-              key={item.id}
-              value={item.id}
-            />
-          );
-        }
-        return null;
-      })
-      .filter(item => item || false);
-  };
-
   // 保存
   handleSaveClick = () => {
     const { currentItem } = this.props.module;
@@ -92,8 +57,8 @@ export default class AOEForm extends Component {
         ...getFieldsValue(),
         id: currentItem.id,
       };
-      data.status = data.status ? '0001' : '0000';
-      this.dispatch({
+      data.status = data.status ? '0000' : '0001';
+      this.props.dispatch({
         type: 'module/save',
         payload: data,
       });
@@ -102,18 +67,18 @@ export default class AOEForm extends Component {
 
   // 渲染界面
   render() {
-    const { submitting } = this.props;
-    const { getFieldDecorator } = this.props.form;
+    const { submitting, form } = this.props;
     const { modalType, currentItem, data } = this.props.module;
     const title = { create: '新增', edit: '编辑' };
 
     const formItemLayout = {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 14 },
+      labelCol: { span: 5 },
+      wrapperCol: { span: 17 },
     };
+
     const formRowOne = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 19 },
+      labelCol: { span: 10 },
+      wrapperCol: { span: 12 },
     };
 
     return (
@@ -126,85 +91,65 @@ export default class AOEForm extends Component {
         onOk={() => this.handleSaveClick()}
         title={`${title[modalType] || '查看'}模块信息`}
       >
-        <Form>
-          {/* 第一行 */}
-          <FormItem label="名称" hasFeedback {...formRowOne}>
-            {getFieldDecorator('name', {
-              initialValue: currentItem.name,
-              rules: [{ required: true, message: '请输入模块名称' }],
-            })(<Input />)}
-          </FormItem>
-          <FormItem label="path" hasFeedback {...formRowOne}>
-            {getFieldDecorator('path', {
-              initialValue: currentItem.path,
-              validateTrigger: 'onBlur',
-              rules: [{ required: true, message: '请输入path' }, { validator: this.checkPath }],
-            })(<Input />)}
-          </FormItem>
-          <FormItem label="icon" hasFeedback {...formRowOne}>
-            {getFieldDecorator('icon', {
-              initialValue: currentItem.icon,
-              rules: [
-                {
-                  message: '模块图标',
-                },
-              ],
-            })(<Input />)}
-          </FormItem>
-          {/* 第二行 */}
-          <FormItem label="上级节点" hasFeedback {...formRowOne}>
-            {getFieldDecorator('parentId', {
-              initialValue: currentItem.parentId,
-            })(
-              <TreeSelect
-                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                showCheckedStrategy={TreeSelect.SHOW_ALL}
-                allowClear
-                showSearch
-                treeNodeFilterProp="title"
-                treeNodeLabelProp="pathName"
-                placeholder="请选择上级节点"
-              >
-                <TreeNode title="根节点" pathName="根节点" key="0" value="0" />
-                {this.renderTreeNodes(data)}
-              </TreeSelect>,
-            )}
-          </FormItem>
-          {/* 第三行 */}
+        <Form api={form} data={currentItem} {...formItemLayout} colon>
+          <Input label="模块名称" id="name" rules={['required']} max={30} msg="full" />
+
+          <Input
+            label="Path"
+            id="path"
+            rules={[
+              {
+                required: true,
+                message: '路径格式错误或已存在',
+                whitespace: true,
+                pattern: /^[0-9a-zA-Z_]{4,16}$/,
+                validator: this.checkPath,
+              },
+            ]}
+            validateTrigger="onBlur"
+            max={40}
+            msg="full"
+          />
+
+          <Input label="模块图标" id="icon" rules={['string']} max={16} msg="full" />
+
+          <TreeSelect
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+            data={data}
+            keys={['id', 'name', 'children']}
+            treeNodeFilterProp="name"
+            expandAll
+            allowClear
+            showSearch
+            id="parentId"
+            label="上级模块"
+            msg="full"
+          />
+
           <Row>
             <Col span={12}>
-              <FormItem label="排序" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('orders', {
-                  initialValue: currentItem.orders,
-                  rules: [
-                    {
-                      type: 'number',
-                      message: '显示顺序',
-                    },
-                  ],
-                })(<InputNumber />)}
-              </FormItem>
+              <Input
+                label="显示顺序"
+                id="orders"
+                rules={['number']}
+                max={5}
+                msg=""
+                {...formRowOne}
+              />
             </Col>
             <Col span={12}>
-              <FormItem label="是否启用" {...formItemLayout}>
-                {getFieldDecorator('status', {
-                  valuePropName: 'checked',
-                  initialValue: currentItem.status !== '0000',
-                })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
-              </FormItem>
+              <Switch
+                id="status"
+                checkedChildren="启用"
+                unCheckedChildren="停用"
+                checked={currentItem.status === '0000'}
+                label="是否启用"
+                {...formRowOne}
+              />
             </Col>
           </Row>
-          {/* 第四行 */}
-          <FormItem label="备注" hasFeedback {...formRowOne}>
-            {getFieldDecorator('remark', {
-              initialValue: currentItem.remark,
-              rules: [
-                {
-                  message: '请输入备注',
-                },
-              ],
-            })(<Area />)}
-          </FormItem>
+
+          <Input textarea label="备注" id="remark" rules={['max=200']} max={200} msg="full" />
         </Form>
       </Modal>
     );

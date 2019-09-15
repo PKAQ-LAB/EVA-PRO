@@ -35,7 +35,7 @@ export default class List extends Component {
 
   // 新增
   handleAdd = record => {
-    const parentId = record.status === '0001' ? { parentId: record.id } : {};
+    const parentId = record.status === '0000' ? { parentId: record.id } : {};
 
     this.props.dispatch({
       type: 'module/create',
@@ -71,7 +71,7 @@ export default class List extends Component {
       type: 'module/changeStatus',
       payload: {
         id: record.id,
-        status: checked ? '0001' : '0000',
+        status: checked ? '0000' : '0001',
         record,
       },
     });
@@ -215,14 +215,14 @@ export default class List extends Component {
             onChange={checked => this.handleEnable(record, checked)}
             checkedChildren={<Icon type="check" />}
             unCheckedChildren={<Icon type="close" />}
-            checked={text === '0001'}
+            checked={text === '0000'}
           />
         ),
       },
       {
         title: '操作',
         render: (text, record) =>
-          record.status === '0001' && (
+          record.status === '0000' && (
             <div>
               <a onClick={() => this.handleAdd(record)}>添加下级</a>
               <Divider type="vertical" />
@@ -297,7 +297,7 @@ export default class List extends Component {
           columns={column}
           dataSource={data}
           loading={loading}
-          rowClassName={record => cx({ disabled: record.locked === '0001' })}
+          rowClassName={record => cx({ disabled: record.status === '0001' })}
           pagination={false}
           rowKey={record => record.id}
           rowSelection={rowSelection}
