@@ -170,14 +170,14 @@ export default class DataTable extends Component {
     // 分页
     const paging = objectAssign(
       {
-        total: dataItems.total,
-        pageSize: dataItems.size,
+        total: dataItems ? dataItems.total : 0,
+        pageSize: dataItems ? dataItems.size : 10,
         showSizeChanger: true,
         showQuickJumper: true,
         showTotal: total => `共 ${total} 条`,
         onShowSizeChange: this.onShowSizeChange,
       },
-      dataItems.current && { current: dataItems.current },
+      dataItems && { current: dataItems ? dataItems.current : 1 },
       pagination,
     );
 
@@ -206,7 +206,7 @@ export default class DataTable extends Component {
           bodyStyle={{ overflowX: 'auto' }}
           columns={cols}
           pagination={pagination ? paging : false}
-          dataSource={dataItems.records}
+          dataSource={dataItems ? dataItems.records : []}
           onChange={this.handleTableChange}
           rowKey={this.rk}
           {...otherProps}
