@@ -1,16 +1,14 @@
 @import '~antd/lib/style/themes/default.less';
-
-@datatable-prefix-cls: antui-datatable;
-
 // DataTable styles
 // -----------------------------
-.@{datatable-prefix-cls} {
+&.antui-datatable {
+  background-color: #fff;
   &.table-row-alternate-color {
     table tbody {
       background: #fff;
       width: 100%;
       tr:nth-child(odd) {
-        background: #f6f6f6;
+        background: #f5f5f5;
       }
       tr:nth-child(even) {
         background: #fff;
