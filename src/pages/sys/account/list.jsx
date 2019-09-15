@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Divider, Popconfirm } from 'antd';
+import { Divider, Popconfirm, notification } from 'antd';
 import cx from 'classnames';
 
 import DataTable from '@/components/DataTable';
@@ -26,6 +26,21 @@ export default class AccountList extends React.PureComponent {
         param: [record.id],
       },
     });
+  };
+
+  // 编辑
+  handleEditClick = record => {
+    if (record.id) {
+      this.props.dispatch({
+        type: 'account/edit',
+        payload: {
+          modalType: 'edit',
+          id: record.id,
+        },
+      });
+    } else {
+      notification.error('没有选择记录');
+    }
   };
 
   // 翻页
@@ -67,7 +82,7 @@ export default class AccountList extends React.PureComponent {
       },
       {
         title: '手机',
-        name: 'mobile',
+        name: 'tel',
         tableItem: {},
       },
       {

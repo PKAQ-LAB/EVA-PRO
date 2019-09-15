@@ -46,7 +46,7 @@ export default class AccountForm extends React.PureComponent {
 
   // 保存
   handleSaveClick = () => {
-    const { dispatch, item } = this.props;
+    const { currentItem } = this.props.account;
     const { getFieldsValue, validateFields } = this.props.form;
     validateFields(errors => {
       if (errors) {
@@ -54,11 +54,14 @@ export default class AccountForm extends React.PureComponent {
       }
       const data = {
         ...getFieldsValue(),
-        id: item ? item.id : '',
+        id: currentItem ? currentItem.id : '',
       };
       // 加密密码
-      data.password = md5(data.password);
-      data.repassword = md5(data.repassword);
+      if (data.password) {
+        data.password = md5(data.password);
+        data.repassword = md5(data.repassword);
+      }
+
       if (data.password !== data.repassword) {
         Modal.error({
           title: '校验失败',
@@ -68,7 +71,7 @@ export default class AccountForm extends React.PureComponent {
 
       data.locked = data.locked ? '0001' : '0000';
 
-      dispatch({
+      this.props.dispatch({
         type: 'account/save',
         payload: data,
       });
@@ -77,8 +80,10 @@ export default class AccountForm extends React.PureComponent {
 
   render() {
     const { form } = this.props;
-    const { orgs, submitting, modalType } = this.props.account;
+    const { orgs, submitting, modalType, currentItem } = this.props.account;
     const title = { create: '新增', edit: '编辑' };
+
+    currentItem.locked = currentItem.locked === '0001';
 
     const formItemLayout = {
       labelCol: { span: 6 },
@@ -102,7 +107,7 @@ export default class AccountForm extends React.PureComponent {
         onOk={() => this.handleSaveClick()}
         title={`${title[modalType] || '查看'}用户信息`}
       >
-        <Form api={form} data={{ username: 'Emily' }} {...formItemLayout}>
+        <Form api={form} data={currentItem} {...formItemLayout}>
           <Row>
             <Col span={24}>
               <Upload
@@ -129,10 +134,16 @@ export default class AccountForm extends React.PureComponent {
                 label="账号"
                 id="account"
                 rules={[
-                  { required: true, message: '请输入用户帐号' },
+                  {
+                    required: true,
+                    message: '账号仅允许使用数字或字母（4-16位）',
+                    whitespace: true,
+                    pattern: /^[0-9a-zA-Z_]{4,16}$/,
+                  },
                   { validator: this.checkAccount },
                 ]}
-                max={10}
+                min={4}
+                max={16}
                 msg="full"
                 validateTrigger="onBlur"
               />
@@ -143,10 +154,16 @@ export default class AccountForm extends React.PureComponent {
               <PasswordInput
                 id="password"
                 autoComplete="new-password"
-                rules={['required', 'max=12']}
+                rules={[
+                  {
+                    required: !currentItem.id,
+                    whitespace: true,
+                    pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
+                    message: '请输入8-16位包含数字及字母的密码',
+                  },
+                ]}
                 required
                 max={12}
-                msg="密码不得为空"
                 label={
                   <span>
                     密码&nbsp;
@@ -161,8 +178,15 @@ export default class AccountForm extends React.PureComponent {
               <PasswordInput
                 id="repassword"
                 autoComplete="new-password"
-                msg="密码不得为空"
-                rules={['required', 'max=12']}
+                max={12}
+                rules={[
+                  {
+                    required: !currentItem.id,
+                    whitespace: true,
+                    pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
+                    message: '请输入8-16位包含数字及字母的密码',
+                  },
+                ]}
                 required
                 label="确认密码"
               />
@@ -172,16 +196,16 @@ export default class AccountForm extends React.PureComponent {
             <Col span={24}>
               <TreeSelect
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                data={orgs}
+                keys={['id', 'title', 'children']}
+                treeNodeFilterProp="title"
                 expandAll
                 allowClear
                 showSearch
-                treeNodeFilterProp="title"
-                treeNodeLabelProp="pathname"
                 id="deptId"
                 label="所属部门"
                 msg="full"
                 rules={['required']}
-                treeData={orgs}
                 {...formRowOne}
               />
             </Col>
@@ -198,7 +222,7 @@ export default class AccountForm extends React.PureComponent {
               />
             </Col>
             <Col span={12}>
-              <Input label="邮箱" id="email" rules={['email', 'max=10']} max={60} msg="full" />
+              <Input label="邮箱" id="email" rules={['email', 'max=50']} max={50} msg="full" />
             </Col>
           </Row>
           <Row>
@@ -207,6 +231,7 @@ export default class AccountForm extends React.PureComponent {
                 id="locked"
                 checkedChildren="是"
                 unCheckedChildren="否"
+                checked={currentItem.locked}
                 label="是否锁定"
                 {...formRowOne}
               />
