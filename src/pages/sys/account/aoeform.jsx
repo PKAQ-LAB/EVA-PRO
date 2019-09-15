@@ -131,20 +131,27 @@ export default class AccountForm extends React.PureComponent {
             </Col>
             <Col span={12}>
               <Input
-                label="账号"
+                label={
+                  <span>
+                    账号&nbsp;
+                    <Tooltip title="账号应为4-16位的数字字母组合(不含空格)">
+                      <Icon type="question-circle-o" />
+                    </Tooltip>
+                  </span>
+                }
                 id="account"
                 rules={[
                   {
                     required: true,
-                    message: '账号仅允许使用数字或字母（4-16位）',
+                    message: '账号格式错误或已存在',
                     whitespace: true,
                     pattern: /^[0-9a-zA-Z_]{4,16}$/,
+                    validator: this.checkAccount,
                   },
-                  { validator: this.checkAccount },
                 ]}
                 min={4}
                 max={16}
-                msg="full"
+                msg="请输入账号"
                 validateTrigger="onBlur"
               />
             </Col>
