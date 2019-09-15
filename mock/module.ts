@@ -1,0 +1,88 @@
+import { Request, Response } from 'express';
+
+const list = (req: Request, res: Response) => {
+  res.json({
+    code: 200,
+    data: [
+      {
+        children: [
+          {
+            code: 'CK',
+            deleted: '0001',
+            id: 'b3b42ba5a76b599911ae63dfc6e86d1c',
+            isleaf: false,
+            key: 'b3b42ba5a76b599911ae63dfc6e86d1c',
+            name: '仓库',
+            orders: 0,
+            parentId: '14',
+            parentName: '麻醉科',
+            path: '14/b3b42ba5a76b599911ae63dfc6e86d1c',
+            pathName: '麻醉科/仓库',
+            status: '0001',
+            title: '仓库',
+          },
+          {
+            code: 'SSS',
+            deleted: '0001',
+            id: '15',
+            isleaf: false,
+            key: '15',
+            name: '手术室',
+            orders: 1,
+            parentId: '14',
+            parentName: '麻醉科',
+            path: '14/15',
+            pathName: '麻醉科/手术室',
+            status: '0001',
+            title: '手术室',
+          },
+        ],
+        code: 'MZK',
+        deleted: '0001',
+        id: '14',
+        isleaf: false,
+        key: '14',
+        name: '麻醉科',
+        orders: 0,
+        parentId: '0',
+        path: '14',
+        pathName: '麻醉科',
+        status: '0001',
+        title: '麻醉科',
+      },
+      {
+        code: 'GDR',
+        deleted: '0001',
+        id: '6',
+        isleaf: false,
+        key: '6',
+        name: '信息科',
+        orders: 1,
+        parentId: '0',
+        path: '6',
+        pathName: '信息科',
+        status: '0001',
+        title: '信息科',
+      },
+      {
+        code: 'THB',
+        deleted: '0001',
+        id: '1',
+        isleaf: false,
+        key: '1',
+        name: '住院部',
+        orders: 2,
+        parentId: '0',
+        path: '1',
+        pathName: '住院部',
+        status: '0001',
+        title: '住院部',
+      },
+    ],
+    success: true,
+  });
+};
+
+export default {
+  'GET /organization/list': list,
+};

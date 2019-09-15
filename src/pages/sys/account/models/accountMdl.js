@@ -30,6 +30,7 @@ export default {
         payload: {
           users: userData.data,
           orgs: treeData.data,
+          selectedRowKeys: [],
         },
       });
     },
@@ -40,6 +41,7 @@ export default {
         type: 'updateState',
         payload: {
           users: response.data,
+          selectedRowKeys: [],
         },
       });
     },
@@ -98,6 +100,7 @@ export default {
           type: 'updateState',
           payload: {
             users: response.data,
+            selectedRowKeys: [],
           },
         });
       }

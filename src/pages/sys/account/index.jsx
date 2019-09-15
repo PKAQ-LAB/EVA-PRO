@@ -22,6 +22,20 @@ export default class extends React.PureComponent {
     });
   }
 
+  // 解锁/锁定
+  handleLockSwitch = status => {
+    const {
+      account: { selectedRowKeys },
+    } = this.props;
+    this.props.dispatch({
+      type: 'account/lockSwitch',
+      payload: {
+        param: selectedRowKeys,
+        status,
+      },
+    });
+  };
+
   // 搜索事件
   handleSearch = e => {
     e.preventDefault();
@@ -135,7 +149,7 @@ export default class extends React.PureComponent {
             <Button
               icon="lock"
               style={{ marginLeft: 8 }}
-              onClick={() => this.handleLockSwitch('0000')}
+              onClick={() => this.handleLockSwitch('0001')}
             >
               锁定
             </Button>
@@ -147,7 +161,7 @@ export default class extends React.PureComponent {
             <Button
               icon="unlock"
               style={{ marginLeft: 8 }}
-              onClick={() => this.handleLockSwitch('0001')}
+              onClick={() => this.handleLockSwitch('0000')}
             >
               解锁
             </Button>
