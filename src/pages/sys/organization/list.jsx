@@ -35,6 +35,7 @@ export default class List extends Component {
 
   handleAdd = record => {
     const id = typeof record === 'object' ? record.parent : '';
+
     this.props.dispatch({
       type: 'organization/create',
       payload: {
@@ -120,7 +121,9 @@ export default class List extends Component {
   handleSearch = val => {
     this.props.dispatch({
       type: 'organization/listOrg',
-      payload: val,
+      payload: {
+        name: val,
+      },
     });
   };
 
@@ -244,7 +247,7 @@ export default class List extends Component {
         <div className={css.ribbon}>
           <div>
             <Button icon="plus" type="primary" onClick={() => this.handleAdd('')}>
-              新增
+              新增部门
             </Button>
             {selectedRowKeys.length > 0 && (
               <span>
@@ -254,7 +257,7 @@ export default class List extends Component {
                   onConfirm={() => this.handleBatchDelete()}
                 >
                   <Button style={{ marginLeft: 8 }} type="danger">
-                    删除菜单
+                    删除部门
                   </Button>
                 </Popconfirm>
               </span>

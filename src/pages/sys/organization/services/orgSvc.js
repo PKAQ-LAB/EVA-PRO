@@ -7,7 +7,7 @@ export async function getOrg(params) {
 }
 // 加载组织列表
 export async function listOrg(params) {
-  return request(`/api/organization/list/${getNoUndefinedString(params)}`);
+  return request(`/api/organization/list/?${stringify(params)}`);
 }
 // 根据属性加载组织列表
 export async function listOrgByAttr(params) {

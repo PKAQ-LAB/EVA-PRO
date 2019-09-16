@@ -142,7 +142,8 @@ export default class AOEForm extends Component {
                 id="status"
                 checkedChildren="启用"
                 unCheckedChildren="停用"
-                checked={currentItem.status === '0000'}
+                initialValue={currentItem.status ? currentItem.status === '0000' : true}
+                defaultChecked={currentItem.status ? currentItem.status === '0000' : true}
                 label="是否启用"
                 {...formRowOne}
               />

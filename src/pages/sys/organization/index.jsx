@@ -7,11 +7,11 @@ import AOEForm from './aoeform';
  * 组织（部门）管理 主界面
  */
 @connect(state => ({
-  module: state.module,
+  organization: state.organization,
 }))
 export default class Module extends React.PureComponent {
   render() {
-    const { modalType } = this.props.module;
+    const { modalType } = this.props.organization;
 
     return (
       <PageHeaderWrapper>

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, InputNumber, Modal, Switch, TreeSelect } from 'antd';
-
-const FormItem = Form.Item;
-const Area = Input.TextArea;
-const { TreeNode } = TreeSelect;
+import { Row, Col, Modal, Switch } from 'antd';
+import { Form, Input, TreeSelect } from 'antx';
+import { connect } from 'dva';
 
 @Form.create()
+@connect(state => ({
+  organization: state.organization,
+  submitting: state.loading.effects['organization/save'],
+}))
 export default class AOEForm extends Component {
   // 关闭窗口
   handleCloseForm = () => {
@@ -25,7 +27,7 @@ export default class AOEForm extends Component {
     const { getFieldValue } = that.props.form;
 
     const code = getFieldValue('code');
-    const { currentItem } = this.props;
+    const { currentItem } = this.props.organization;
     if (currentItem && currentItem.id && value === currentItem.code) {
       return callback();
     }
@@ -47,7 +49,7 @@ export default class AOEForm extends Component {
   handleSaveClick = () => {
     const that = this;
 
-    const { dispatch, currentItem } = that.props;
+    const { currentItem } = that.props.organization;
     const { getFieldsValue, validateFields } = that.props.form;
     validateFields(errors => {
       if (errors) {
@@ -57,8 +59,10 @@ export default class AOEForm extends Component {
         ...getFieldsValue(),
         id: currentItem.id,
       };
-      data.status = data.status ? '0000' : '0001';
-      dispatch({
+      console.info(data);
+
+      data.status = data.enable ? '0000' : '0001';
+      this.props.dispatch({
         type: 'organization/save',
         payload: data,
       });
@@ -69,19 +73,18 @@ export default class AOEForm extends Component {
   render() {
     const that = this;
 
-    const { getFieldDecorator } = that.props.form;
-    const { modalType, currentItem, data, submitting } = that.props;
+    const { form } = that.props;
+    const { modalType, currentItem, data, submitting } = that.props.organization;
     const title = { create: '新增', edit: '编辑' };
 
-    const cmView = modalType === 'view';
-
     const formItemLayout = {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 14 },
+      labelCol: { span: 5 },
+      wrapperCol: { span: 17 },
     };
+
     const formRowOne = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 19 },
+      labelCol: { span: 10 },
+      wrapperCol: { span: 12 },
     };
 
     return (
@@ -92,116 +95,66 @@ export default class AOEForm extends Component {
         visible={modalType !== ''}
         width={600}
         onOk={() => this.handleSaveClick()}
-        title={`${title[modalType] || '查看'}模块信息`}
+        title={`${title[modalType] || '查看'}部门信息`}
       >
-        <Form>
-          {/* 第一行 */}
+        <Form api={form} data={currentItem} {...formItemLayout} colon>
+          <Input label="部门名称" id="name" rules={['required']} max={30} msg="full" />
+
+          <Input
+            label="部门编码"
+            id="code"
+            rules={[
+              {
+                required: true,
+                message: '编码格式错误或已存在',
+                whitespace: true,
+                pattern: /^[0-9a-zA-Z_]{2,16}$/,
+                validator: this.checkCode,
+              },
+            ]}
+            validateTrigger="onBlur"
+            max={40}
+            msg="full"
+          />
+
+          <TreeSelect
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+            data={data}
+            keys={['id', 'name', 'children']}
+            treeNodeFilterProp="name"
+            expandAll
+            allowClear
+            showSearch
+            id="parentId"
+            label="上级部门"
+            msg="full"
+          />
+
           <Row>
             <Col span={12}>
-              <FormItem label="名称" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('name', {
-                  initialValue: currentItem.name,
-                  rules: [{ required: true, message: '请输入组织名称' }],
-                })(<Input />)}
-              </FormItem>
+              <Input
+                label="显示顺序"
+                id="orders"
+                rules={['number']}
+                max={5}
+                msg=""
+                {...formRowOne}
+              />
             </Col>
             <Col span={12}>
-              <FormItem label="编码" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('code', {
-                  initialValue: currentItem.code,
-                  validateTrigger: 'onBlur',
-                  rules: [
-                    { required: true, pattern: /^[0-9a-zA-Z_]{1,}$/, message: '请输入编码' },
-                    { validator: this.checkCode },
-                  ],
-                })(<Input />)}
-              </FormItem>
+              <Switch
+                id="enable"
+                checkedChildren="启用"
+                unCheckedChildren="停用"
+                initialValue={currentItem.status ? currentItem.status === '0000' : true}
+                defaultChecked={currentItem.status ? currentItem.status === '0000' : true}
+                label="是否启用"
+                {...formRowOne}
+              />
             </Col>
           </Row>
-          {/* 第二行 */}
-          <FormItem label="上级节点" hasFeedback {...formRowOne}>
-            {getFieldDecorator('parentId', {
-              initialValue: currentItem.parentId,
-            })(
-              <TreeSelect
-                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                showCheckedStrategy={TreeSelect.SHOW_ALL}
-                allowClear
-                showSearch
-                treeNodeFilterProp="name"
-                treeNodeLabelProp="pathName"
-                placeholder="请选择上级节点"
-              >
-                <TreeNode title="根节点" pathName="根节点" key="0" value="0" />
-                {this.renderTreeNodes(data)}
-              </TreeSelect>,
-            )}
-          </FormItem>
-          {/* 第三行 */}
-          <Row>
-            <Col span={12}>
-              <FormItem label="排序" hasFeedback {...formItemLayout}>
-                {getFieldDecorator('orders', {
-                  initialValue: currentItem.orders,
-                  rules: [
-                    {
-                      type: 'number',
-                      message: '请输入编码',
-                    },
-                  ],
-                })(<InputNumber />)}
-              </FormItem>
-            </Col>
-            <Col span={12}>
-              <FormItem label="是否启用" {...formItemLayout}>
-                {getFieldDecorator('status', {
-                  valuePropName: 'checked',
-                  initialValue: currentItem.status !== '0000',
-                })(<Switch checkedChildren="启用" unCheckedChildren="停用" />)}
-              </FormItem>
-            </Col>
-          </Row>
-          {/* 第四行 */}
-          <FormItem label="备注" hasFeedback {...formRowOne}>
-            {getFieldDecorator('remark', {
-              initialValue: currentItem.remark,
-              rules: [
-                {
-                  message: '请输入备注',
-                },
-              ],
-            })(<Area />)}
-          </FormItem>
-          {/* 第五行 */}
-          {cmView && (
-            <Row>
-              <Col span={12}>
-                <FormItem label="创建人" {...formItemLayout}>
-                  <Input disabled defaultValue={currentItem.description} />
-                </FormItem>
-              </Col>
-              <Col span={12}>
-                <FormItem label="创建时间" {...formItemLayout}>
-                  <Input disabled defaultValue={currentItem.description} />
-                </FormItem>
-              </Col>
-            </Row>
-          )}
-          {/* 第六行 */}
-          {cmView && (
-            <Row>
-              <Col span={12}>
-                <FormItem label="修改人" {...formItemLayout}>
-                  <Input disabled defaultValue={currentItem.description} />
-                </FormItem>
-              </Col>
-              <Col span={12}>
-                <FormItem label="修改时间" {...formItemLayout}>
-                  <Input disabled defaultValue={currentItem.description} />
-                </FormItem>
-              </Col>
-            </Row>
-          )}
+
+          <Input textarea label="备注" id="remark" rules={['max=200']} max={200} msg="full" />
         </Form>
       </Modal>
     );
