@@ -24,7 +24,7 @@ export default {
     *listModule({ payload }, { call, put }) {
       // 查询数据
       const response = yield call(listModule, payload);
-      if (response && response.data) {
+      if (response && response.success) {
         yield put({
           type: 'updateState',
           payload: {
@@ -47,7 +47,7 @@ export default {
     *edit({ payload }, { call, put }) {
       const response = yield call(getModule, payload);
 
-      if (response && response.data) {
+      if (response && response.success) {
         yield put({
           type: 'updateState',
           payload: {
@@ -60,7 +60,7 @@ export default {
     // 排序
     *sortModule({ payload }, { call, put }) {
       const response = yield call(sortModule, payload);
-      if (response && response.data) {
+      if (response && response.success) {
         yield put({
           type: 'updateState',
           payload: {

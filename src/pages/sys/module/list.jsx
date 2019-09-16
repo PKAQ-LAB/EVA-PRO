@@ -20,10 +20,10 @@ import BizIcon from '@/components/BizIcon';
 
 const { Search } = { ...Input };
 
-// 部门管理列表
+// 菜单管理列表
 @connect(state => ({
   module: state.module,
-  loading: state.loading.effects['account/listModule'],
+  loading: state.loading.module,
 }))
 export default class List extends Component {
   // 加载模块列表
@@ -79,20 +79,17 @@ export default class List extends Component {
 
   // 删除
   handleDelete = record => {
-    const { dispatch, selectedRowKeys, data } = this.props;
+    const { selectedRowKeys, data } = this.props.module;
     // 存在子节点的不允许删除
     const blockItem = hasChildren(data, selectedRowKeys);
 
     if (!!record.isLeaf || blockItem) {
       message.error(`错误： [${record.name}] 存在子节点,无法删除.`);
     } else {
-      dispatch({
+      this.props.dispatch({
         type: 'module/delete',
         payload: {
           param: [record.id],
-        },
-        callback: () => {
-          message.success('操作成功.');
         },
       });
     }
@@ -100,13 +97,14 @@ export default class List extends Component {
 
   // 批量删除
   handleBatchDelete = () => {
-    const { dispatch, selectedRowKeys, data } = this.props;
+    const { selectedRowKeys, data } = this.props.module;
+
     // 存在子节点的不允许删除
     const blockItem = hasChildren(data, selectedRowKeys);
     if (blockItem) {
       message.error(`错误： [${blockItem}] 存在子节点,无法删除.`);
     } else {
-      dispatch({
+      this.props.dispatch({
         type: 'module/delete',
         payload: {
           param: selectedRowKeys,
@@ -269,7 +267,7 @@ export default class List extends Component {
               </span>
             )}
           </div>
-          <div xl={6} lg={6} md={6} sm={6} xs={6} offset={12}>
+          <div>
             <Search
               placeholder="输入模块名称以搜索"
               onSearch={value => this.handleSearch(value)}
@@ -278,19 +276,21 @@ export default class List extends Component {
           </div>
         </div>
         {/* 已选提示 */}
-        <Alert
-          style={{ marginTop: 8, marginBottom: 8 }}
-          message={
-            <div>
-              已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-              <a style={{ marginLeft: 24 }} onClick={() => this.handleSelectRows([])}>
-                清空选择
-              </a>
-            </div>
-          }
-          type="info"
-          showIcon
-        />
+        {selectedRowKeys.length > 0 && (
+          <Alert
+            style={{ marginTop: 8, marginBottom: 8 }}
+            message={
+              <div>
+                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+                <a style={{ marginLeft: 24 }} onClick={() => this.handleSelectRows([])}>
+                  清空选择
+                </a>
+              </div>
+            }
+            type="info"
+            showIcon
+          />
+        )}
         {/* 列表 */}
         <Table
           size="small"

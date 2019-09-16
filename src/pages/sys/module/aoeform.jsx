@@ -6,7 +6,7 @@ import { Form, Input, TreeSelect } from 'antx';
 @Form.create()
 @connect(state => ({
   module: state.module,
-  submitting: state.loading.effects['account/save'],
+  submitting: state.loading.effects['module/save'],
 }))
 export default class AOEForm extends Component {
   // 关闭窗口
