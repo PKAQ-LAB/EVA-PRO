@@ -45,7 +45,7 @@ export default class LineList extends React.PureComponent {
   };
 
   render() {
-    const { modalType, lineData } = this.props.dict;
+    const { modalType, lineData, operate } = this.props.dict;
 
     const columns = [
       {
@@ -100,7 +100,7 @@ export default class LineList extends React.PureComponent {
         <div className={css.ribbon}>
           <div>字典明细</div>
           <div>
-            <Button type="primary" onClick={() => this.handleLineAdd()}>
+            <Button type="primary" onClick={() => this.handleLineAdd()} disabled={operate === ''}>
               新增明细
             </Button>
           </div>

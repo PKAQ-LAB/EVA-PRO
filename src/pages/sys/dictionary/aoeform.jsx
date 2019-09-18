@@ -11,8 +11,35 @@ import LineList from './linelist';
   submitting: state.loading.effects['dict/save'],
 }))
 export default class DictForm extends React.PureComponent {
+  // 保存事件
+  handleSaveClick = () => {
+    const { lineData, currentItem } = this.props.dict;
+    const { getFieldsValue, validateFields } = this.props.form;
+
+    validateFields(errors => {
+      if (errors) {
+        return;
+      }
+      const data = {
+        ...getFieldsValue(),
+        id: currentItem.id,
+      };
+      data.lines = lineData;
+
+      this.props.dispatch({
+        type: 'dict/editDict',
+        payload: data,
+      });
+    });
+  };
+
   render() {
     const { form } = this.props;
+    const { operate, dicts, currentItem } = this.props.dict;
+
+    const options = dicts ? dicts.filter(i => i.parentId === '0' || !i.parentId) : [];
+
+    const title = { create: '新增', edit: '编辑', view: '查看' };
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -26,15 +53,52 @@ export default class DictForm extends React.PureComponent {
 
     return (
       <>
-        <Form api={form} {...formItemLayout} colon>
+        <Form api={form} {...formItemLayout} colon data={currentItem}>
           {/* 主表 */}
-          <Card title="新增字典" extra={<Button type="primary">保存</Button>}>
+          <Card
+            title={`${title[operate] || ''}字典信息`}
+            extra={
+              <Button
+                type="primary"
+                onClick={() => this.handleSaveClick()}
+                disabled={operate === '' || operate === 'view'}
+              >
+                保存
+              </Button>
+            }
+          >
             <Row>
               <Col span={12}>
-                <Input label="字典编码" id="name" rules={['required']} max={30} msg="full" />
+                <Select
+                  label="所属分类"
+                  keys={['id', 'name']}
+                  data={options}
+                  id="parentId"
+                  rules={['required']}
+                  disabled={operate === '' || operate === 'view'}
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col span={12}>
+                <Input
+                  label="字典编码"
+                  id="code"
+                  rules={['required']}
+                  max={30}
+                  msg="full"
+                  disabled={operate === '' || operate === 'view'}
+                />
               </Col>
               <Col span={12}>
-                <Select label="所属分类" id="name" rules={['required']} />
+                <Input
+                  label="字典描述"
+                  id="name"
+                  rules={['required']}
+                  max={30}
+                  msg="full"
+                  disabled={operate === '' || operate === 'view'}
+                />
               </Col>
             </Row>
             <Row>
@@ -47,6 +111,7 @@ export default class DictForm extends React.PureComponent {
                   max={200}
                   msg="full"
                   {...formRowOne}
+                  disabled={operate === '' || operate === 'view'}
                   rows={5}
                 />
               </Col>

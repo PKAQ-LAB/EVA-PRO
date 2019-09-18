@@ -14,7 +14,7 @@ export default class Dict extends React.PureComponent {
     return (
       <PageHeaderWrapper>
         <div style={{ padding: 15 }}>
-          <SideLayout title="字典管理" width={450} bodyStyle={{ padding: 0 }} body={<List />}>
+          <SideLayout title="字典管理" width={400} bodyStyle={{ padding: 0 }} body={<List />}>
             <AOEForm />
           </SideLayout>
         </div>
