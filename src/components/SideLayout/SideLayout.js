@@ -27,7 +27,16 @@ class SideLayout extends Component {
   };
 
   render() {
-    const { prefixCls, className, children, title, width, layoutStyle, body } = this.props;
+    const {
+      prefixCls,
+      className,
+      children,
+      title,
+      width,
+      layoutStyle,
+      body,
+      bodyStyle,
+    } = this.props;
     const { openSide } = this.state;
     return (
       <Layout className={cx(prefixCls, className)} style={layoutStyle}>
@@ -42,15 +51,19 @@ class SideLayout extends Component {
           {/* 表头 */}
           <div className={style.title}>
             <div>
-              <Icon antd type="folder" />
+              <Icon type="folder" />
               &nbsp; {title}
             </div>
             <a className="side-handle" onClick={this.toggle} title={openSide ? '收起' : '展开'}>
-              <Icon antd type={openSide ? 'caret-left' : 'caret-right'} />
+              <Icon type={openSide ? 'caret-left' : 'caret-right'} />
             </a>
           </div>
           {/* 内容 */}
-          {openSide && <div className={style.body}>{body}</div>}
+          {openSide && (
+            <div className={style.body} style={bodyStyle}>
+              {body}
+            </div>
+          )}
         </Sider>
         <Content className={style.content}>{children}</Content>
       </Layout>

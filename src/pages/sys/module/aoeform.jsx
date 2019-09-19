@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Modal, Switch } from 'antd';
+import { Row, Col, Switch, Drawer, Button, Divider } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';
 
 @Form.create()
@@ -82,13 +82,12 @@ export default class AOEForm extends Component {
     };
 
     return (
-      <Modal
-        maskClosable={false}
-        onCancel={() => this.handleCloseForm()}
-        visible={modalType !== ''}
+      <Drawer
         width={600}
+        maskClosable={false}
+        onClose={() => this.handleCloseForm()}
+        visible={modalType !== ''}
         confirmLoading={submitting}
-        onOk={() => this.handleSaveClick()}
         title={`${title[modalType] || '查看'}模块信息`}
       >
         <Form api={form} data={currentItem} {...formItemLayout} colon>
@@ -152,7 +151,27 @@ export default class AOEForm extends Component {
 
           <Input textarea label="备注" id="remark" rules={['max=200']} max={200} msg="full" />
         </Form>
-      </Modal>
+        <Divider>资源信息</Divider>
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            bottom: 0,
+            width: '100%',
+            borderTop: '1px solid #e9e9e9',
+            padding: '10px 16px',
+            background: '#fff',
+            textAlign: 'right',
+          }}
+        >
+          <Button onClick={this.handleCloseForm} style={{ marginRight: 8 }}>
+            取消
+          </Button>
+          <Button onClick={this.handleSaveClick} type="primary">
+            保存
+          </Button>
+        </div>
+      </Drawer>
     );
   }
 }

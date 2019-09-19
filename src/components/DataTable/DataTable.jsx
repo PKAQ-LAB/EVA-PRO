@@ -69,9 +69,10 @@ export default class DataTable extends Component {
     // 并在每一行加一个rowKey字段
     selectedRows = selectedRows.filter(item => selectedRowKeys.indexOf(item[this.rk]) !== -1);
 
-    this.setState({ selectedRowKeys, selectedRows }, () => {
-      return this.props.onSelect && this.props.onSelect(selectedRowKeys, selectedRows);
-    });
+    this.setState(
+      { selectedRowKeys, selectedRows },
+      () => this.props.onSelect && this.props.onSelect(selectedRowKeys, selectedRows),
+    );
   };
 
   handleTableChange = (pagination, filters, sorter) => {
@@ -85,9 +86,8 @@ export default class DataTable extends Component {
     return this.props.onChange && this.props.onChange({ pageNum, filters, sorter: sortMap });
   };
 
-  onShowSizeChange = (pageNum, pageSize) => {
-    return this.props.onChange && this.props.onChange({ pageNum, pageSize });
-  };
+  onShowSizeChange = (pageNum, pageSize) =>
+    this.props.onChange && this.props.onChange({ pageNum, pageSize });
 
   render() {
     const {
@@ -99,6 +99,7 @@ export default class DataTable extends Component {
       alternateColor,
       onChange,
       selectType,
+      onRow,
       rowSelection,
       isScroll,
       pagination,
@@ -130,9 +131,8 @@ export default class DataTable extends Component {
         // 如果指定了type字段，则使用指定类型渲染这个列
         const myRender = item.render;
         if (item.type) {
-          item.render = (text, record, index) => {
-            return $$.isFunction(myRender) ? myRender(text, record, index) : text;
-          };
+          item.render = (text, record, index) =>
+            $$.isFunction(myRender) ? myRender(text, record, index) : text;
         }
         return {
           title: col.title,
@@ -200,7 +200,7 @@ export default class DataTable extends Component {
               ? (record, index) => ({
                   onClick: () => this.tableOnRow(record, index),
                 })
-              : () => {}
+              : onRow
           }
           scroll={isScroll ? objectAssign({ x: true }) : {}}
           bodyStyle={{ overflowX: 'auto' }}
