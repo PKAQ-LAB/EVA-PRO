@@ -8,7 +8,7 @@ import LineList from './linelist';
 @Form.create()
 @connect(state => ({
   dict: state.dict,
-  submitting: state.loading.effects['dict/save'],
+  submitting: state.loading.effects['dict/editDict'],
 }))
 export default class DictForm extends React.PureComponent {
   // 保存事件
@@ -34,7 +34,7 @@ export default class DictForm extends React.PureComponent {
   };
 
   render() {
-    const { form } = this.props;
+    const { form, submitting } = this.props;
     const { operate, dicts, currentItem } = this.props.dict;
 
     const options = dicts ? dicts.filter(i => i.parentId === '0' || !i.parentId) : [];
@@ -59,6 +59,7 @@ export default class DictForm extends React.PureComponent {
             title={`${title[operate] || ''}字典信息`}
             extra={
               <Button
+                loading={submitting}
                 type="primary"
                 onClick={() => this.handleSaveClick()}
                 disabled={operate === '' || operate === 'view'}

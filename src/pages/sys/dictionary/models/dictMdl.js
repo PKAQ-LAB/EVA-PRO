@@ -1,4 +1,4 @@
-import { listDict, editDict, getDict } from '../services/dictSvc';
+import { listDict, editDict, getDict, deleteDict } from '../services/dictSvc';
 
 export default {
   namespace: 'dict',
@@ -30,12 +30,26 @@ export default {
     // 加载字典项
     *getDict({ payload }, { call, put }) {
       const response = yield call(getDict, payload);
+      const { operate } = payload;
       if (response && response.success) {
         yield put({
           type: 'updateState',
           payload: {
+            operate,
             currentItem: response.data || {},
             lineData: response.data.lines || [],
+          },
+        });
+      }
+    },
+    // 删除一条字典项
+    *deleteDict({ payload }, { call, put }) {
+      const response = yield call(deleteDict, payload);
+      if (response && response.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            dicts: response.data || [],
           },
         });
       }
@@ -50,7 +64,6 @@ export default {
             dicts: response.data || [],
             operate: '',
             editIndex: '',
-            lineData: [],
             currentItem: {},
           },
         });

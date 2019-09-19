@@ -21,7 +21,7 @@ export default class List extends React.PureComponent {
   // 行选事件
   handleOnRowClick = record => {
     // 根节点不加载
-    if (record.parentId === '' || !record.parentId) {
+    if (record.parentId === '0' || !record.parentId) {
       return;
     }
     this.props.dispatch({
@@ -44,11 +44,30 @@ export default class List extends React.PureComponent {
     });
   };
 
-  // 搜索事件
-  handleEditClick = e => {};
+  // 编辑事件
+  handleEditClick = record => {
+    // 根节点不加载
+    if (record.parentId === '0' || !record.parentId) {
+      return;
+    }
+    this.props.dispatch({
+      type: 'dict/getDict',
+      payload: {
+        id: record.id,
+        operate: 'edit',
+      },
+    });
+  };
 
-  // 搜索事件
-  handleDeleteClick = e => {};
+  // 删除事件
+  handleDeleteClick = record => {
+    this.props.dispatch({
+      type: 'dict/deleteDict',
+      payload: {
+        id: record.id,
+      },
+    });
+  };
 
   render() {
     const { loading, dicts } = this.props.dict;

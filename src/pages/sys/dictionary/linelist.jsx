@@ -66,21 +66,23 @@ export default class LineList extends React.PureComponent {
       {
         title: '操作',
         tableItem: {
-          render: (text, record, index) => (
-            <DataTable.Oper>
-              <Divider type="vertical" />
-              <a onClick={() => this.handleEditClick(index)}>编辑</a>
-              <Divider type="vertical" />
-              <Popconfirm
-                title="确定要删除吗？"
-                okText="确定"
-                cancelText="取消"
-                onConfirm={() => this.handleDeleteClick(record)}
-              >
-                <a>删除</a>
-              </Popconfirm>
-            </DataTable.Oper>
-          ),
+          render: (text, record, index) =>
+            !!operate &&
+            operate !== 'view' && (
+              <DataTable.Oper>
+                <Divider type="vertical" />
+                <a onClick={() => this.handleEditClick(index)}>编辑</a>
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="确定要删除吗？"
+                  okText="确定"
+                  cancelText="取消"
+                  onConfirm={() => this.handleDeleteClick(index)}
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              </DataTable.Oper>
+            ),
         },
       },
     ];
@@ -91,7 +93,6 @@ export default class LineList extends React.PureComponent {
       showNum: true,
       isScroll: true,
       alternateColor: true,
-      selectType: 'checkbox',
       dataItems: { records: lineData },
     };
 
@@ -100,7 +101,11 @@ export default class LineList extends React.PureComponent {
         <div className={css.ribbon}>
           <div>字典明细</div>
           <div>
-            <Button type="primary" onClick={() => this.handleLineAdd()} disabled={operate === ''}>
+            <Button
+              type="primary"
+              onClick={() => this.handleLineAdd()}
+              disabled={operate === '' || operate === 'view'}
+            >
               新增明细
             </Button>
           </div>

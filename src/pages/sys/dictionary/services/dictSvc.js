@@ -20,3 +20,8 @@ export async function editDict(params) {
 export async function getDict(params) {
   return request(`/api/dict/get/${getNoUndefinedString(params.id)}`);
 }
+
+// 删除字典
+export async function deleteDict(params) {
+  return request(`/api/dict/del/${getNoUndefinedString(params.id)}`);
+}
