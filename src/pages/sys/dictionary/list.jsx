@@ -3,6 +3,7 @@ import { Input, Divider, Popconfirm, Button, Row, Col } from 'antd';
 import { connect } from 'dva';
 import DataTable from '@/components/DataTable';
 import css from './list.less';
+import { dictFilter } from '@/utils/DataHelper';
 
 const { Search } = Input;
 
@@ -69,8 +70,18 @@ export default class List extends React.PureComponent {
     });
   };
 
+  // 搜索
+  handleOnSearch = v => {
+    this.props.dispatch({
+      type: 'dict/updateState',
+      payload: {
+        search: v,
+      },
+    });
+  };
+
   render() {
-    const { loading, dicts } = this.props.dict;
+    const { loading, dicts, search } = this.props.dict;
 
     const columns = [
       {
@@ -113,7 +124,7 @@ export default class List extends React.PureComponent {
       loading,
       isScroll: true,
       alternateColor: true,
-      dataItems: { records: dicts },
+      dataItems: { records: dictFilter(dicts, search) },
       onRow: (record, index) => ({
         onClick: () => this.handleOnRowClick(record, index),
       }),
@@ -130,7 +141,11 @@ export default class List extends React.PureComponent {
             </Button>
           </Col>
           <Col span={20}>
-            <Search placeholder="输入编码或名称进行搜索" className={css.search} />
+            <Search
+              placeholder="输入编码或名称进行搜索"
+              className={css.search}
+              onSearch={v => this.handleOnSearch(v)}
+            />
           </Col>
         </Row>
 

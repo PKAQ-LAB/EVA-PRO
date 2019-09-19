@@ -1,3 +1,4 @@
+import loadsh from 'loadsh';
 // 判断是否存在子节点
 import { isUrl } from './utils';
 
@@ -61,5 +62,29 @@ export function moudleFormatter(data, parentPath = '/') {
       result.children = moudleFormatter(item.children, `${parentPath}${item.path}/`);
     }
     return result;
+  });
+}
+
+/**
+ * 格式化菜单数据
+ * @param data
+ * @param parentPath
+ */
+export function dictFilter(data, searchText) {
+  const tempData = loadsh.cloneDeep(data);
+
+  return tempData.filter(i => {
+    if (searchText && searchText.length > 0) {
+      if (i.children) {
+        i.children = dictFilter(i.children, searchText);
+      }
+
+      return (
+        i.name.search(searchText) !== -1 ||
+        i.code.search(searchText) !== -1 ||
+        (i.children && i.children.length > 0)
+      );
+    }
+    return true;
   });
 }

@@ -61,6 +61,7 @@
     "dva": "^2.4.1",
     "dva-model-extend": "^0.1.2",
     "dynamic-icon": "^0.1.4",
+    "loadsh": "^0.0.4",
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
