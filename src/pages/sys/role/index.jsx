@@ -15,6 +15,17 @@ import AOEForm from './aoeform';
   loading: state.loading.role,
 }))
 export default class Role extends React.PureComponent {
+  // 新增窗口
+  handlAddClick = () => {
+    this.props.dispatch({
+      type: 'role/updateState',
+      payload: {
+        modalType: 'create',
+        currentItem: {},
+      },
+    });
+  };
+
   // 重置事件
   handleFormReset = () => {
     const { form, dispatch } = this.props;
@@ -46,11 +57,7 @@ export default class Role extends React.PureComponent {
     const { loading } = this.props.role;
     return (
       <>
-        <Button
-          type="primary"
-          onClick={() => this.handleModalVisible(true, 'create')}
-          loading={loading}
-        >
+        <Button type="primary" onClick={() => this.handlAddClick('create')} loading={loading}>
           新增角色
         </Button>
         {selectedRowKeys.length > 0 && (
@@ -138,20 +145,22 @@ export default class Role extends React.PureComponent {
         </div>
         {/* 删除条幅 */}
         <div className={css.alert}>
-          <Alert
-            message={
-              <div>
-                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-                {selectedRowKeys.length > 0 && (
-                  <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
-                    清空选择
-                  </a>
-                )}
-              </div>
-            }
-            type="info"
-            showIcon
-          />
+          {selectedRowKeys.length > 0 && (
+            <Alert
+              message={
+                <div>
+                  已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+                  {selectedRowKeys.length > 0 && (
+                    <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
+                      清空选择
+                    </a>
+                  )}
+                </div>
+              }
+              type="info"
+              showIcon
+            />
+          )}
         </div>
         <div className={css.body}>
           <List />

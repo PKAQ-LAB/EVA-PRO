@@ -1,4 +1,4 @@
-import { fetchRoles } from '../services/roleSvc';
+import { fetchRoles, delRole } from '../services/roleSvc';
 
 export default {
   namespace: 'role',
@@ -17,6 +17,19 @@ export default {
           type: 'updateState',
           payload: {
             roles: response.data,
+          },
+        });
+      }
+    },
+    // 删除
+    *remove({ payload }, { call, put }) {
+      const response = yield call(delRole, payload);
+      if (response && response.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            roles: response.data,
+            selectedRowKeys: [],
           },
         });
       }

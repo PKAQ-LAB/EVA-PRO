@@ -15,6 +15,16 @@ export default class List extends React.PureComponent {
     });
   }
 
+  // 单条删除
+  handleDeleteClick = record => {
+    this.props.dispatch({
+      type: 'role/remove',
+      payload: {
+        param: [record.id],
+      },
+    });
+  };
+
   render() {
     const { loading } = this.props;
 
