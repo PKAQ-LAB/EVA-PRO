@@ -15,6 +15,32 @@ import AOEForm from './aoeform';
   loading: state.loading.role,
 }))
 export default class Role extends React.PureComponent {
+  // 重置事件
+  handleFormReset = () => {
+    const { form, dispatch } = this.props;
+    form.resetFields();
+    dispatch({
+      type: 'role/fetchRoles',
+    });
+  };
+
+  // 搜索事件
+  handleSearch = () => {
+    const { dispatch, form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+
+      const values = {
+        ...fieldsValue,
+      };
+
+      dispatch({
+        type: 'role/fetchRoles',
+        payload: values,
+      });
+    });
+  };
+
   // 操作按钮
   renderButton(selectedRowKeys) {
     const { loading } = this.props.role;
@@ -84,7 +110,7 @@ export default class Role extends React.PureComponent {
     };
 
     return (
-      <Form api={form} {...formItemLayout} colon layout="inline">
+      <Form api={form} {...formItemLayout} colon layout="inline" onSubmit={this.handleSearch}>
         <Input label="角色名称" id="name" />
 
         <Input label="角色编码" id="code" />
@@ -92,7 +118,7 @@ export default class Role extends React.PureComponent {
           查询
         </Button>
         <Divider type="vertical" />
-        <Button htmlType="reset" onClick={() => this.handleFormReset()}>
+        <Button htmlType="reset" onClick={() => this.handleFormReset()} loading={loading}>
           重置
         </Button>
       </Form>

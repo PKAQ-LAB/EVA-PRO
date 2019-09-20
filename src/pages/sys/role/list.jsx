@@ -16,7 +16,9 @@ export default class List extends React.PureComponent {
   }
 
   render() {
-    const { loading, roles } = this.props.role;
+    const { loading } = this.props;
+
+    const { roles } = this.props.role;
 
     const columns = [
       {
@@ -45,30 +47,33 @@ export default class List extends React.PureComponent {
       },
       {
         title: '模块授权',
+        align: 'center',
         tableItem: {
           render: (text, record) => (
             <DataTable.Oper>
-              <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
+              <a onClick={e => this.handleEditClick(record, e)}>模块授权</a>
             </DataTable.Oper>
           ),
         },
       },
       {
         title: '用户授权',
+        align: 'center',
         tableItem: {
           render: (text, record) => (
             <DataTable.Oper>
-              <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
+              <a onClick={e => this.handleEditClick(record, e)}>用户授权</a>
             </DataTable.Oper>
           ),
         },
       },
       {
         title: '配置授权',
+        align: 'center',
         tableItem: {
           render: (text, record) => (
             <DataTable.Oper>
-              <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
+              <a onClick={e => this.handleEditClick(record, e)}>配置授权</a>
             </DataTable.Oper>
           ),
         },
