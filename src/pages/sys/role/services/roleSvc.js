@@ -16,3 +16,23 @@ export async function delRole(params) {
     },
   });
 }
+
+// 保存角色信息
+export async function saveRole(params) {
+  return request('/api/role/save', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
+
+// 校验编码唯一性
+export async function checkUnique(params) {
+  return request('/api/role/checkUnique', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}

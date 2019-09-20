@@ -15,9 +15,9 @@ export default class AOEForm extends Component {
   checkCode = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
     const code = getFieldValue('code');
-    const { item } = this.props;
+    const { currentItem } = this.props.role;
 
-    if (item && item.id && value === item.code) {
+    if (currentItem && currentItem.id && value === currentItem.code) {
       return callback();
     }
     const data = { code };
@@ -46,7 +46,7 @@ export default class AOEForm extends Component {
 
   // 保存
   handleSaveClick = () => {
-    const { dispatch, item } = this.props;
+    const { currentItem } = this.props;
     const { getFieldsValue, validateFields } = this.props.form;
     validateFields(errors => {
       if (errors) {
@@ -54,9 +54,13 @@ export default class AOEForm extends Component {
       }
       const data = {
         ...getFieldsValue(),
-        id: item.id,
       };
-      dispatch({
+
+      if (currentItem && currentItem.id) {
+        data.id = currentItem.id;
+      }
+
+      this.props.dispatch({
         type: 'role/save',
         payload: data,
       });
@@ -65,7 +69,7 @@ export default class AOEForm extends Component {
 
   // 渲染界面
   render() {
-    const { modalType, operate } = this.props.role;
+    const { modalType, operate, currentItem } = this.props.role;
     const { loading, form } = this.props;
 
     const title = { create: '新增', edit: '编辑', view: '查看' };
@@ -79,6 +83,9 @@ export default class AOEForm extends Component {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
     };
+
+    currentItem.permission = currentItem.permission || '0000';
+
     return (
       <Modal
         maskClosable={false}
@@ -89,7 +96,7 @@ export default class AOEForm extends Component {
         onOk={() => this.handleSaveClick()}
         title={`${title[operate] || ''}角色`}
       >
-        <Form api={form} {...formItemLayout} colon>
+        <Form api={form} {...formItemLayout} colon data={currentItem}>
           {/* 第一行 */}
           <Row>
             <Col span={12}>
@@ -109,7 +116,7 @@ export default class AOEForm extends Component {
                 rules={[
                   {
                     required: true,
-                    message: '路径格式错误或已存在',
+                    message: '编码格式错误或已存在',
                     whitespace: true,
                     pattern: /^[0-9a-zA-Z_]{4,16}$/,
                     validator: this.checkCode,
@@ -138,7 +145,6 @@ export default class AOEForm extends Component {
             id="permission"
             showAll={false}
             {...formRowOne}
-            defaultValue="0000"
           />
         </Form>
       </Modal>

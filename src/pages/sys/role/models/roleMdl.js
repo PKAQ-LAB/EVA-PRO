@@ -1,4 +1,4 @@
-import { fetchRoles, delRole } from '../services/roleSvc';
+import { fetchRoles, delRole, saveRole, checkUnique } from '../services/roleSvc';
 
 export default {
   namespace: 'role',
@@ -9,6 +9,10 @@ export default {
     formValues: {},
   },
   effects: {
+    // 校验编码唯一性
+    *checkUnique({ payload }, { call }) {
+      return yield call(checkUnique, payload);
+    },
     // 加载权限列表
     *fetchRoles({ payload }, { call, put }) {
       const response = yield call(fetchRoles, payload);
@@ -30,6 +34,20 @@ export default {
           payload: {
             roles: response.data,
             selectedRowKeys: [],
+          },
+        });
+      }
+    },
+    // 保存提交
+    *save({ payload }, { call, put }) {
+      const response = yield call(saveRole, payload);
+      if (response && response.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            modalType: '',
+            currentItem: {},
+            roles: response.data,
           },
         });
       }
