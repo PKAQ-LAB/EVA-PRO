@@ -16,7 +16,7 @@ export default class List extends React.PureComponent {
   }
 
   render() {
-    const { loading } = this.props.role;
+    const { loading, roles } = this.props.role;
 
     const columns = [
       {
@@ -100,7 +100,7 @@ export default class List extends React.PureComponent {
       loading,
       isScroll: true,
       alternateColor: true,
-      dataItems: [],
+      dataItems: roles,
     };
 
     return <DataTable {...dataTableProps} bordered />;

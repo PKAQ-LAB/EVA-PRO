@@ -1,4 +1,4 @@
-import { listModule } from '../services/roleSvc';
+import { fetchRoles } from '../services/roleSvc';
 
 export default {
   namespace: 'role',
@@ -9,15 +9,14 @@ export default {
     formValues: {},
   },
   effects: {
-    // 查询
-    *listModule({ payload }, { call, put }) {
-      // 查询数据
-      const response = yield call(listModule, payload);
+    // 加载权限列表
+    *fetchRoles({ payload }, { call, put }) {
+      const response = yield call(fetchRoles, payload);
       if (response && response.success) {
         yield put({
           type: 'updateState',
           payload: {
-            data: response.data,
+            roles: response.data,
           },
         });
       }
