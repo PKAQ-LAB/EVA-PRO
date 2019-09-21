@@ -1,4 +1,4 @@
-import { fetchRoles, delRole, saveRole, checkUnique } from '../services/roleSvc';
+import { fetchRoles, delRole, saveRole, checkUnique, lockRole } from '../services/roleSvc';
 
 export default {
   namespace: 'role',
@@ -13,6 +13,11 @@ export default {
     *checkUnique({ payload }, { call }) {
       return yield call(checkUnique, payload);
     },
+    // 切换锁定状态
+    *lockSwitch({ payload }, { call, put }) {
+      yield call(lockRole, payload);
+      yield put({ type: 'fetchRoles' });
+    },
     // 加载权限列表
     *fetchRoles({ payload }, { call, put }) {
       const response = yield call(fetchRoles, payload);
@@ -20,6 +25,7 @@ export default {
         yield put({
           type: 'updateState',
           payload: {
+            selectedRowKeys: [],
             roles: response.data,
           },
         });

@@ -52,6 +52,32 @@ export default class Role extends React.PureComponent {
     });
   };
 
+  // 解锁/锁定
+  handleLockSwitch = status => {
+    const { selectedRowKeys } = this.props.role;
+    this.props.dispatch({
+      type: 'role/lockSwitch',
+      payload: {
+        param: selectedRowKeys,
+        status,
+      },
+    });
+  };
+
+  // 批量删除
+  handleRemoveClick = () => {
+    const { selectedRowKeys } = this.props.role;
+
+    if (!selectedRowKeys) return;
+
+    this.props.dispatch({
+      type: 'role/remove',
+      payload: {
+        param: selectedRowKeys,
+      },
+    });
+  };
+
   // 操作按钮
   renderButton(selectedRowKeys) {
     const { loading } = this.props.role;
@@ -85,7 +111,7 @@ export default class Role extends React.PureComponent {
               onClick={() => this.handleLockSwitch('0001')}
               loading={loading}
             >
-              停用
+              停用角色
             </Button>
           </>
         )}
@@ -98,7 +124,7 @@ export default class Role extends React.PureComponent {
               onClick={() => this.handleLockSwitch('0000')}
               loading={loading}
             >
-              启用
+              启用角色
             </Button>
           </>
         )}
@@ -133,6 +159,7 @@ export default class Role extends React.PureComponent {
   }
 
   render() {
+    const { form } = this.props;
     const { modalType, selectedRowKeys } = this.props.role;
     return (
       <PageHeaderWrapper>
@@ -163,7 +190,7 @@ export default class Role extends React.PureComponent {
           )}
         </div>
         <div className={css.body}>
-          <List />
+          <List searchForm={form} />
         </div>
         {modalType !== '' && <AOEForm />}
       </PageHeaderWrapper>

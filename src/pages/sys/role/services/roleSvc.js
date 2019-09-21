@@ -36,3 +36,13 @@ export async function checkUnique(params) {
     },
   });
 }
+
+// 切换锁定状态
+export async function lockRole(params) {
+  return request('/api/role/lock', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}

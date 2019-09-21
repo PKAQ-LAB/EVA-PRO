@@ -99,14 +99,11 @@ export default class extends React.PureComponent {
 
   // 批量删除
   handleRemoveClick = () => {
-    const {
-      dispatch,
-      account: { selectedRowKeys },
-    } = this.props;
+    const { selectedRowKeys } = this.props.account;
 
     if (!selectedRowKeys) return;
 
-    dispatch({
+    this.props.dispatch({
       type: 'account/remove',
       payload: {
         param: selectedRowKeys,
