@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Popconfirm } from 'antd';
+import { Divider, Popconfirm, Switch, Icon, notification } from 'antd';
 import { connect } from 'dva';
 import cx from 'classnames';
 import DataTable from '@/components/DataTable';
@@ -62,6 +62,21 @@ export default class List extends React.PureComponent {
     });
   };
 
+  // 启用/停用
+  handleEnable = (record, checked) => {
+    if (!record.id) {
+      notification.error('没有选择记录');
+      return;
+    }
+    this.props.dispatch({
+      type: 'role/lockSwitch',
+      payload: {
+        param: [record.id],
+        status: checked ? '0000' : '0001',
+      },
+    });
+  };
+
   render() {
     const { loading } = this.props;
 
@@ -82,9 +97,14 @@ export default class List extends React.PureComponent {
         title: '状态',
         tableItem: {
           render: (text, record) =>
-            record.locked === '0000' && (
+            record.locked !== '9999' && (
               <DataTable.Oper>
-                <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
+                <Switch
+                  onChange={checked => this.handleEnable(record, checked)}
+                  checkedChildren={<Icon type="check" />}
+                  unCheckedChildren={<Icon type="close" />}
+                  checked={record.locked === '0000'}
+                />
               </DataTable.Oper>
             ),
         },
