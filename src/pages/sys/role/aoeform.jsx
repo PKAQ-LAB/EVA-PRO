@@ -46,7 +46,7 @@ export default class AOEForm extends Component {
 
   // 保存
   handleSaveClick = () => {
-    const { currentItem } = this.props;
+    const { currentItem } = this.props.role;
     const { getFieldsValue, validateFields } = this.props.form;
     validateFields(errors => {
       if (errors) {
@@ -69,7 +69,7 @@ export default class AOEForm extends Component {
 
   // 渲染界面
   render() {
-    const { modalType, operate, currentItem } = this.props.role;
+    const { modalType, currentItem } = this.props.role;
     const { loading, form } = this.props;
 
     const title = { create: '新增', edit: '编辑', view: '查看' };
@@ -94,7 +94,7 @@ export default class AOEForm extends Component {
         visible={modalType !== ''}
         width={600}
         onOk={() => this.handleSaveClick()}
-        title={`${title[operate] || ''}角色`}
+        title={`${title[modalType] || ''}角色`}
       >
         <Form api={form} {...formItemLayout} colon data={currentItem}>
           {/* 第一行 */}
@@ -106,7 +106,7 @@ export default class AOEForm extends Component {
                 rules={['required']}
                 max={30}
                 msg="full"
-                disabled={operate === 'view'}
+                disabled={modalType === 'view'}
               />
             </Col>
             <Col span={12}>

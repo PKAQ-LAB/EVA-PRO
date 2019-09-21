@@ -34,6 +34,17 @@ export default class List extends React.PureComponent {
     });
   };
 
+  // 编辑
+  handleEditClick = record => {
+    this.props.dispatch({
+      type: 'role/edit',
+      payload: {
+        modalType: 'edit',
+        id: record.id,
+      },
+    });
+  };
+
   // 翻页
   pageChange = pg => {
     const { dispatch, searchForm } = this.props;

@@ -1,4 +1,4 @@
-import { fetchRoles, delRole, saveRole, checkUnique, lockRole } from '../services/roleSvc';
+import { fetchRoles, delRole, saveRole, checkUnique, lockRole, getRole } from '../services/roleSvc';
 
 export default {
   namespace: 'role',
@@ -27,6 +27,19 @@ export default {
           payload: {
             selectedRowKeys: [],
             roles: response.data,
+          },
+        });
+      }
+    },
+    // 编辑按钮
+    *edit({ payload }, { call, put }) {
+      const response = yield call(getRole, payload);
+      if (response && response.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            modalType: 'edit',
+            currentItem: response.data,
           },
         });
       }

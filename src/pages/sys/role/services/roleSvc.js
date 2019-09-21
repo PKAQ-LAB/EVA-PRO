@@ -1,6 +1,11 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
-// import { getNoUndefinedString } from '@/utils/utils';
+import { getNoUndefinedString } from '@/utils/utils';
+
+// 根据id获取角色信息
+export async function getRole(params) {
+  return request(`/api/role/get/${getNoUndefinedString(params.id)}`);
+}
 
 // 查询权限列表
 export async function fetchRoles(params) {
