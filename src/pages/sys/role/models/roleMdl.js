@@ -1,10 +1,23 @@
-import { fetchRoles, delRole, saveRole, checkUnique, lockRole, getRole } from '../services/roleSvc';
+import {
+  fetchRoles,
+  delRole,
+  saveRole,
+  checkUnique,
+  lockRole,
+  getRole,
+  listUser,
+  listOrg,
+} from '../services/roleSvc';
 
 export default {
   namespace: 'role',
   state: {
+    roleId: '',
     currentItem: {},
+    // 新增、查看、编辑
     modalType: '',
+    // 授权操作类型
+    operateType: '',
     selectedRowKeys: [],
     formValues: {},
   },
@@ -70,6 +83,36 @@ export default {
           },
         });
       }
+    },
+    // 获取所有用户
+    *listUser({ payload }, { call, put }) {
+      const userData = yield call(listUser, payload);
+      const orgsData = yield call(listOrg, { status: '0000' });
+      yield put({
+        type: 'updateState',
+        payload: {
+          roleId: payload.roleId,
+          operateType: payload.operateType,
+          orgs: orgsData.data,
+          users: {
+            records: userData.data.users,
+            checked: userData.data.checked,
+          },
+        },
+      });
+    },
+    // 根据部门获取用户
+    *listUserByDept({ payload }, { call, put }) {
+      const userData = yield call(listUser, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          users: {
+            records: userData.data.users,
+            checked: userData.data.checked,
+          },
+        },
+      });
     },
     // 新增/新增子节点
     // 编辑按钮

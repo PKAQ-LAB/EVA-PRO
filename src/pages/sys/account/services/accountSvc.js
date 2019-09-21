@@ -6,7 +6,7 @@ import { getNoUndefinedString } from '@/utils/utils';
 export async function listUser(params) {
   return request(`/api/account/list?${stringify(params)}`);
 }
-// 查询用户列表
+// 查询部门列表
 export async function listOrg(params) {
   return request(`/api/organization/list?${stringify(params)}`);
 }

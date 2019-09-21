@@ -45,6 +45,17 @@ export default class List extends React.PureComponent {
     });
   };
 
+  // 用户授权
+  handleUserClick = (record, operate) => {
+    this.props.dispatch({
+      type: `role/list${operate}`,
+      payload: {
+        roleId: record.id,
+        operateType: operate,
+      },
+    });
+  };
+
   // 翻页
   pageChange = pg => {
     const { dispatch, searchForm } = this.props;
@@ -96,9 +107,10 @@ export default class List extends React.PureComponent {
       {
         title: '状态',
         tableItem: {
+          align: 'center',
           render: (text, record) =>
             record.locked !== '9999' && (
-              <DataTable.Oper>
+              <DataTable.Oper style={{ textAlign: 'center' }}>
                 <Switch
                   onChange={checked => this.handleEnable(record, checked)}
                   checkedChildren={<Icon type="check" />}
@@ -132,7 +144,7 @@ export default class List extends React.PureComponent {
           render: (text, record) =>
             record.locked === '0000' && (
               <DataTable.Oper>
-                <a onClick={e => this.handleEditClick(record, e)}>用户授权</a>
+                <a onClick={() => this.handleUserClick(record, 'User')}>用户授权</a>
               </DataTable.Oper>
             ),
         },

@@ -6,6 +6,7 @@ import { Form, Input } from 'antx';
 import css from './index.less';
 import List from './list';
 import AOEForm from './aoeform';
+import RoleUser from './component/roleuser';
 /**
  * 角色（权限）管理 主界面
  */
@@ -160,7 +161,7 @@ export default class Role extends React.PureComponent {
 
   render() {
     const { form } = this.props;
-    const { modalType, selectedRowKeys } = this.props.role;
+    const { modalType, selectedRowKeys, operateType } = this.props.role;
     return (
       <PageHeaderWrapper>
         {/* 工具条 */}
@@ -193,6 +194,7 @@ export default class Role extends React.PureComponent {
           <List searchForm={form} />
         </div>
         {modalType !== '' && <AOEForm />}
+        {operateType === 'User' && <RoleUser />}
       </PageHeaderWrapper>
     );
   }

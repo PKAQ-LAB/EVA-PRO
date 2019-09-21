@@ -2,6 +2,14 @@ import { stringify } from 'qs';
 import request from '@/utils/request';
 import { getNoUndefinedString } from '@/utils/utils';
 
+// 获取授权角色列表
+export async function listUser(params) {
+  return request(`/api/role/listUser?${stringify(params)}`);
+}
+// 查询部门列表
+export async function listOrg(params) {
+  return request(`/api/organization/list?${stringify(params)}`);
+}
 // 根据id获取角色信息
 export async function getRole(params) {
   return request(`/api/role/get/${getNoUndefinedString(params.id)}`);
