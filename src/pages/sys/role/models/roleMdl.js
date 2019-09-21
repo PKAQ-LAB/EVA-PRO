@@ -7,6 +7,7 @@ import {
   getRole,
   listUser,
   listOrg,
+  saveUser,
 } from '../services/roleSvc';
 
 export default {
@@ -84,6 +85,19 @@ export default {
         });
       }
     },
+    // 保存模块关系表
+    *saveUser({ payload }, { call, put }) {
+      const response = yield call(saveUser, payload);
+      if (response && response.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            operateType: '',
+          },
+        });
+      }
+    },
+
     // 获取所有用户
     *listUser({ payload }, { call, put }) {
       const userData = yield call(listUser, payload);

@@ -59,3 +59,13 @@ export async function lockRole(params) {
     },
   });
 }
+
+// 保存用户关系
+export async function saveUser(params) {
+  return request('/api/role/saveUser', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}

@@ -35,8 +35,8 @@ export default class RoleUser extends PureComponent {
 
   // 保存模块关系
   handleSubmit = () => {
-    const { roleId } = this.props;
-    const { checked } = { ...this.props.data };
+    const { roleId } = this.props.role;
+    const { checked } = { ...this.props.role.users };
 
     let users = [];
     if (checked && checked.length > 0) {
@@ -51,22 +51,13 @@ export default class RoleUser extends PureComponent {
     });
   };
 
-  // 行选事件
-  handleSelectRows = rows => {
-    this.props.dispatch({
-      type: 'role/updateState',
-      payload: { selectedRowKeys: rows },
-    });
-  };
-
   // 保存已选
   handleSelectRows = checkedKeys => {
-    const { data } = { ...this.props.data };
     this.props.dispatch({
       type: 'role/updateState',
       payload: {
-        userData: {
-          data,
+        users: {
+          ...this.props.role.users,
           checked: checkedKeys,
         },
       },
@@ -108,6 +99,7 @@ export default class RoleUser extends PureComponent {
       isScroll: true,
       alternateColor: true,
       selectType: 'checkbox',
+      selectedRowKeys: users.checked,
       dataItems: users.records,
       onChange: this.pageChange,
       onSelect: this.handleSelectRows,
