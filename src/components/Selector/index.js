@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Select } from 'antd';
 import request from '@/utils/request';
 
-const Option = Select.Option;
+const { Option } = Select;
 
 /**
  * 远程获取下拉菜单选项
@@ -16,9 +16,9 @@ export default class Selector extends PureComponent {
   }
 
   componentDidMount() {
-    const code = this.props.code;
+    const { code } = this.props;
     if (code) {
-      request(`/dict/query/${code}`).then(response => {
+      request(`/api/dict/query/${code}`).then(response => {
         if (response && response.data) {
           const data = Object.keys(response.data);
           const options = data.map(v => (
@@ -35,12 +35,7 @@ export default class Selector extends PureComponent {
   }
 
   render() {
-    const { options, showAll = true } = this.state;
-    return (
-      <Select {...this.props}>
-        {showAll && <Option value="">全部</Option>}
-        {options}
-      </Select>
-    );
+    const { options } = this.state;
+    return <Select {...this.props}>{options}</Select>;
   }
 }
