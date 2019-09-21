@@ -107,7 +107,6 @@ export default class List extends React.PureComponent {
       {
         title: '状态',
         tableItem: {
-          align: 'center',
           render: (text, record) =>
             record.locked !== '9999' && (
               <DataTable.Oper style={{ textAlign: 'center' }}>
@@ -127,11 +126,11 @@ export default class List extends React.PureComponent {
       },
       {
         title: '模块授权',
-        align: 'center',
         tableItem: {
+          align: 'center',
           render: (text, record) =>
             record.locked === '0000' && (
-              <DataTable.Oper>
+              <DataTable.Oper style={{ textAlign: 'center' }}>
                 <a onClick={e => this.handleEditClick(record, e)}>模块授权</a>
               </DataTable.Oper>
             ),
@@ -139,11 +138,11 @@ export default class List extends React.PureComponent {
       },
       {
         title: '用户授权',
-        align: 'center',
         tableItem: {
+          align: 'center',
           render: (text, record) =>
             record.locked === '0000' && (
-              <DataTable.Oper>
+              <DataTable.Oper style={{ textAlign: 'center' }}>
                 <a onClick={() => this.handleUserClick(record, 'User')}>用户授权</a>
               </DataTable.Oper>
             ),
@@ -151,22 +150,21 @@ export default class List extends React.PureComponent {
       },
       {
         title: '配置授权',
-        align: 'center',
         tableItem: {
+          align: 'center',
           render: (text, record) =>
             record.locked === '0000' && (
-              <DataTable.Oper>
+              <DataTable.Oper style={{ textAlign: 'center' }}>
                 <a onClick={e => this.handleEditClick(record, e)}>配置授权</a>
               </DataTable.Oper>
             ),
         },
       },
       {
-        title: '操作',
         tableItem: {
           render: (text, record) =>
             record.locked === '0000' && (
-              <DataTable.Oper>
+              <DataTable.Oper style={{ textAlign: 'center' }}>
                 <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
                 <Divider type="vertical" />
                 <Popconfirm
