@@ -47,7 +47,13 @@ export default class DataTable extends Component {
   }
 
   tableOnRow = (record, index) => {
-    const { selectType } = this.props;
+    const { selectType, disabled } = this.props;
+    // 判断禁用条件
+    if (disabled) {
+      const disabledKeys = Object.keys(disabled);
+      const unselect = disabledKeys.find(v => disabled[v].includes(record[v]));
+      if (unselect) return;
+    }
 
     const keys = selectType === 'radio' ? [] : this.state.selectedRowKeys || [];
     const rows = selectType === 'radio' ? [] : this.state.selectedRows || [];
