@@ -45,6 +45,17 @@ export default class List extends React.PureComponent {
     });
   };
 
+  // 模块授权
+  handleModuleClick = (record, operate) => {
+    this.props.dispatch({
+      type: `role/list${operate}`,
+      payload: {
+        roleId: record.id,
+        operateType: operate,
+      },
+    });
+  };
+
   // 用户授权
   handleUserClick = (record, operate) => {
     this.props.dispatch({
@@ -141,7 +152,7 @@ export default class List extends React.PureComponent {
           render: (text, record) =>
             record.locked === '0000' && (
               <DataTable.Oper style={{ textAlign: 'center' }}>
-                <a onClick={e => this.handleEditClick(record, e)}>模块授权</a>
+                <a onClick={() => this.handleModuleClick(record, 'Module')}>模块授权</a>
               </DataTable.Oper>
             ),
         },

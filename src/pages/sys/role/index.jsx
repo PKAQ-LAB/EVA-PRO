@@ -8,6 +8,7 @@ import List from './list';
 import AOEForm from './aoeform';
 import RoleUser from './component/roleuser';
 import RoleConfig from './component/roleconfig';
+import RoleModule from './component/rolemodule';
 /**
  * 角色（权限）管理 主界面
  */
@@ -200,6 +201,8 @@ export default class Role extends React.PureComponent {
         {operateType === 'User' && <RoleUser />}
         {/* 配置授权 */}
         {operateType === 'Config' && <RoleConfig />}
+        {/* 模块授权 */}
+        {operateType === 'Module' && <RoleModule />}
       </PageHeaderWrapper>
     );
   }

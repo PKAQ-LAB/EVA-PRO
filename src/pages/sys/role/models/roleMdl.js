@@ -8,6 +8,8 @@ import {
   listUser,
   listOrg,
   saveUser,
+  listModule,
+  saveModule,
 } from '../services/roleSvc';
 
 export default {
@@ -124,6 +126,33 @@ export default {
           users: {
             records: userData.data.users,
             checked: userData.data.checked,
+          },
+        },
+      });
+    },
+    // 保存模块关系表
+    *saveModule({ payload }, { call, put }) {
+      const response = yield call(saveModule, payload);
+      if (response) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            operateType: '',
+          },
+        });
+      }
+    },
+    // 加载模块授权列表
+    *listModule({ payload }, { call, put }) {
+      const response = yield call(listModule, payload);
+      yield put({
+        type: 'updateState',
+        payload: {
+          roleId: payload.roleId,
+          operateType: payload.operateType,
+          modules: {
+            records: response.data.modules,
+            checked: response.data.checked,
           },
         },
       });
