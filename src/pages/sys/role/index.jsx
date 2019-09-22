@@ -7,6 +7,7 @@ import css from './index.less';
 import List from './list';
 import AOEForm from './aoeform';
 import RoleUser from './component/roleuser';
+import RoleConfig from './component/roleconfig';
 /**
  * 角色（权限）管理 主界面
  */
@@ -193,8 +194,12 @@ export default class Role extends React.PureComponent {
         <div className={css.body}>
           <List searchForm={form} />
         </div>
+        {/* 新增窗口 */}
         {modalType !== '' && <AOEForm />}
+        {/* 用户授权 */}
         {operateType === 'User' && <RoleUser />}
+        {/* 配置授权 */}
+        {operateType === 'Config' && <RoleConfig />}
       </PageHeaderWrapper>
     );
   }

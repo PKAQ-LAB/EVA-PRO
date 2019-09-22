@@ -56,6 +56,16 @@ export default class List extends React.PureComponent {
     });
   };
 
+  // 配置授权
+  handleConfigClick = (record, operate) => {
+    this.props.dispatch({
+      type: 'role/updateState',
+      payload: {
+        operateType: operate,
+      },
+    });
+  };
+
   // 翻页
   pageChange = pg => {
     const { dispatch, searchForm } = this.props;
@@ -155,7 +165,7 @@ export default class List extends React.PureComponent {
           render: (text, record) =>
             record.locked === '0000' && (
               <DataTable.Oper style={{ textAlign: 'center' }}>
-                <a onClick={e => this.handleEditClick(record, e)}>配置授权</a>
+                <a onClick={() => this.handleConfigClick(record, 'Config')}>配置授权</a>
               </DataTable.Oper>
             ),
         },
