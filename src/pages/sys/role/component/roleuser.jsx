@@ -100,7 +100,7 @@ export default class RoleUser extends PureComponent {
       alternateColor: true,
       selectType: 'checkbox',
       selectedRowKeys: users.checked,
-      dataItems: users.records,
+      dataItems: { records: users.records },
       onChange: this.pageChange,
       onSelect: this.handleSelectRows,
     };
@@ -125,17 +125,12 @@ export default class RoleUser extends PureComponent {
                 blockNode
                 onSelect={this.handleTreeSelect}
                 treeData={orgs}
-                style={{ height: 456, overflowY: 'auto' }}
+                style={{ height: 456, maxHeight: 456, overflowY: 'auto' }}
               />
             </Card>
           </Col>
           <Col span={18}>
-            <DataTable
-              pagination
-              {...dataTableProps}
-              style={{ height: 456 }}
-              className={cs.table}
-            />
+            <DataTable {...dataTableProps} scroll={{ y: 466 }} className={cs.table} />
           </Col>
         </Row>
       </Modal>
