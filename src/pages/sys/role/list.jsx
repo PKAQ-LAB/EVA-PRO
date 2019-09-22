@@ -83,7 +83,7 @@ export default class List extends React.PureComponent {
     const { pageNum, pageSize } = pg;
 
     const params = {
-      pageNo: pageNum,
+      page: pageNum,
       pageSize,
       ...searchForm.getFieldsValue(),
     };
@@ -225,6 +225,6 @@ export default class List extends React.PureComponent {
       },
     };
 
-    return <DataTable {...dataTableProps} bordered />;
+    return <DataTable {...dataTableProps} bordered pagination />;
   }
 }
