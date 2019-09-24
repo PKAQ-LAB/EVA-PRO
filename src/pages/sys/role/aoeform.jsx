@@ -34,10 +34,10 @@ export default class AOEForm extends Component {
         payload: data,
       })
       .then(r => {
-        if (r.success) {
+        if (r.code === 0) {
           return callback();
         }
-        return callback('编码已存在');
+        return callback(r.message);
       });
   };
 
@@ -103,43 +103,6 @@ export default class AOEForm extends Component {
 
     currentItem.permission = currentItem.permission || '0000';
 
-    const treeData = [
-      {
-        title: 'Node1',
-        value: '0-0',
-        key: '0-0',
-        children: [
-          {
-            title: 'Child Node1',
-            value: '0-0-0',
-            key: '0-0-0',
-          },
-        ],
-      },
-      {
-        title: 'Node2',
-        value: '0-1',
-        key: '0-1',
-        children: [
-          {
-            title: 'Child Node3',
-            value: '0-1-0',
-            key: '0-1-0',
-          },
-          {
-            title: 'Child Node4',
-            value: '0-1-1',
-            key: '0-1-1',
-          },
-          {
-            title: 'Child Node5',
-            value: '0-1-2',
-            key: '0-1-2',
-          },
-        ],
-      },
-    ];
-
     return (
       <Modal
         maskClosable={false}
@@ -151,7 +114,6 @@ export default class AOEForm extends Component {
         title={`${title[modalType] || ''}角色`}
       >
         <Form api={form} {...formItemLayout} colon data={currentItem}>
-          {/* 第一行 */}
           <Row>
             <Col span={12}>
               <Input
@@ -170,9 +132,11 @@ export default class AOEForm extends Component {
                 rules={[
                   {
                     required: true,
-                    message: '编码格式错误或已存在',
+                    message: '编码格式错误',
                     whitespace: true,
                     pattern: /^[0-9a-zA-Z_]{4,16}$/,
+                  },
+                  {
                     validator: this.checkCode,
                   },
                 ]}
