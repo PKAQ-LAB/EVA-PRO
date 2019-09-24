@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Modal } from 'antd';
+import { Row, Col, Modal, TreeSelect } from 'antd';
 import { Form, Input } from 'antx';
 import Selector from '@/components/Selector';
 
@@ -10,6 +10,13 @@ import Selector from '@/components/Selector';
   submitting: state.loading.effects['role/save'],
 }))
 export default class AOEForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showDept: false,
+    };
+  }
+
   // 校验角色编码唯一性
   // eslint-disable-next-line consistent-return
   checkCode = (rule, value, callback) => {
@@ -44,6 +51,16 @@ export default class AOEForm extends Component {
     });
   };
 
+  // 数据权限
+  handleDataPermissionChange = v => {
+    this.setState({
+      showDept: v === '0003',
+    });
+    this.props.dispatch({
+      type: 'role/listDepts',
+    });
+  };
+
   // 保存
   handleSaveClick = () => {
     const { currentItem } = this.props.role;
@@ -55,7 +72,6 @@ export default class AOEForm extends Component {
       const data = {
         ...getFieldsValue(),
       };
-
       if (currentItem && currentItem.id) {
         data.id = currentItem.id;
       }
@@ -69,7 +85,8 @@ export default class AOEForm extends Component {
 
   // 渲染界面
   render() {
-    const { modalType, currentItem } = this.props.role;
+    const { showDept } = this.state;
+    const { modalType, currentItem, orgs } = this.props.role;
     const { loading, form } = this.props;
 
     const title = { create: '新增', edit: '编辑', view: '查看' };
@@ -85,6 +102,43 @@ export default class AOEForm extends Component {
     };
 
     currentItem.permission = currentItem.permission || '0000';
+
+    const treeData = [
+      {
+        title: 'Node1',
+        value: '0-0',
+        key: '0-0',
+        children: [
+          {
+            title: 'Child Node1',
+            value: '0-0-0',
+            key: '0-0-0',
+          },
+        ],
+      },
+      {
+        title: 'Node2',
+        value: '0-1',
+        key: '0-1',
+        children: [
+          {
+            title: 'Child Node3',
+            value: '0-1-0',
+            key: '0-1-0',
+          },
+          {
+            title: 'Child Node4',
+            value: '0-1-1',
+            key: '0-1-1',
+          },
+          {
+            title: 'Child Node5',
+            value: '0-1-2',
+            key: '0-1-2',
+          },
+        ],
+      },
+    ];
 
     return (
       <Modal
@@ -143,9 +197,22 @@ export default class AOEForm extends Component {
             label="数据权限"
             code="data_permission"
             id="permission"
+            onChange={this.handleDataPermissionChange}
             showAll={false}
             {...formRowOne}
           />
+
+          {showDept && (
+            <TreeSelect
+              label="选择部门"
+              id="depts"
+              treeData={orgs}
+              treeCheckable
+              allowClear
+              multiple
+              {...formRowOne}
+            />
+          )}
         </Form>
       </Modal>
     );

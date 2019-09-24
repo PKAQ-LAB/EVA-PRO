@@ -99,7 +99,16 @@ export default {
         });
       }
     },
-
+    // 获取部门树
+    *listDepts({ payload }, { call, put }) {
+      const orgsData = yield call(listOrg, { status: '0000' });
+      yield put({
+        type: 'updateState',
+        payload: {
+          orgs: orgsData.data,
+        },
+      });
+    },
     // 获取所有用户
     *listUser({ payload }, { call, put }) {
       const userData = yield call(listUser, payload);
