@@ -23,6 +23,7 @@ export default {
     operateType: '',
     selectedRowKeys: [],
     formValues: {},
+    selectedResources: {},
   },
   effects: {
     // 校验编码唯一性

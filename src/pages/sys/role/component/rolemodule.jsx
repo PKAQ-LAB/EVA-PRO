@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Table } from 'antd';
+import { Modal, Table, Checkbox } from 'antd';
 import { connect } from 'dva';
 
 @connect(state => ({
@@ -32,7 +32,7 @@ export default class RoleModule extends Component {
     });
   };
 
-  // 保存已选
+  // 暂存已选
   handleSelectRows = checkedKeys => {
     this.props.dispatch({
       type: 'role/updateState',
@@ -45,6 +45,11 @@ export default class RoleModule extends Component {
     });
   };
 
+  handleResourceClick = (e, rid) => {
+    const { selectedResources } = this.props.role;
+    selectedResources[rid] = e;
+  };
+
   render() {
     const { loading } = this.props;
     const { operateType, modules } = this.props.role;
@@ -55,8 +60,19 @@ export default class RoleModule extends Component {
         dataIndex: 'name',
       },
       {
-        title: '模块权限',
+        title: '资源权限',
         align: 'left',
+        dataIndex: 'resources',
+        render: (item, record) => {
+          const options = item && item.map(r => ({ label: r.resourceDesc, value: r.id }));
+          // eslint-disable-next-line max-len
+          return (
+            <Checkbox.Group
+              options={options}
+              onChange={e => this.handleResourceClick(e, record.id)}
+            />
+          );
+        },
       },
     ];
 
@@ -76,7 +92,7 @@ export default class RoleModule extends Component {
         width="45%"
         onOk={() => this.handleSubmit()}
         onCancel={() => this.handleCancel()}
-        bodyStyle={{ height: 456, maxHeight: 456, padding: 0 }}
+        bodyStyle={{ height: 456, maxHeight: 456, padding: 0, overflowY: 'auto' }}
       >
         <Table
           size="small"
