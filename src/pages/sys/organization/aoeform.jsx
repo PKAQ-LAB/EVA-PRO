@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Modal, Switch } from 'antd';
+import { Row, Col, Modal, Switch, Tooltip, Icon } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';
 import { connect } from 'dva';
 
@@ -59,7 +59,6 @@ export default class AOEForm extends Component {
         ...getFieldsValue(),
         id: currentItem.id,
       };
-      console.info(data);
 
       data.status = data.enable ? '0000' : '0001';
       this.props.dispatch({
@@ -126,8 +125,15 @@ export default class AOEForm extends Component {
             allowClear
             showSearch
             id="parentId"
-            label="上级部门"
-            msg="full"
+            label={
+              <span>
+                上级部门&nbsp;
+                <Tooltip title="留空为添加顶级部门">
+                  <Icon type="question-circle-o" />
+                </Tooltip>
+              </span>
+            }
+            msg="请选择上级部门（留空为添加顶级部门）"
           />
 
           <Row>

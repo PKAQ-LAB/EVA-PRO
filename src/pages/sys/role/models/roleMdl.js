@@ -163,6 +163,7 @@ export default {
           modules: {
             records: response.data.modules,
             checked: response.data.checked,
+            checkedResource: response.data.checkedResource,
           },
         },
       });

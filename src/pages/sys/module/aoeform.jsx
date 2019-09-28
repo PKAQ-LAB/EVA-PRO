@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Switch, Drawer, Button, Divider } from 'antd';
+import { Row, Col, Switch, Drawer, Button, Divider, Tooltip, Icon } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';
 
 @Form.create()
@@ -121,8 +121,15 @@ export default class AOEForm extends Component {
             allowClear
             showSearch
             id="parentId"
-            label="上级模块"
-            msg="full"
+            label={
+              <span>
+                上级模块&nbsp;
+                <Tooltip title="留空为添加顶级模块">
+                  <Icon type="question-circle-o" />
+                </Tooltip>
+              </span>
+            }
+            msg="请选择上级模块（留空为添加顶级模块）"
           />
 
           <Row>
