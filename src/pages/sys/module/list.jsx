@@ -247,7 +247,7 @@ export default class List extends Component {
     };
 
     return (
-      <div style={{ padding: 30 }}>
+      <div style={{ padding: 15 }}>
         <div className={css.ribbon}>
           <div>
             <Button icon="plus" type="primary" onClick={() => this.handleAdd('')}>

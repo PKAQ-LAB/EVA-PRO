@@ -86,7 +86,12 @@ export default class Role extends React.PureComponent {
     const { loading } = this.props.role;
     return (
       <>
-        <Button type="primary" onClick={() => this.handlAddClick('create')} loading={loading}>
+        <Button
+          type="primary"
+          icon="plus"
+          onClick={() => this.handlAddClick('create')}
+          loading={loading}
+        >
           新增角色
         </Button>
         {selectedRowKeys.length > 0 && (
