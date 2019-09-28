@@ -20,14 +20,15 @@ export default class RoleModule extends Component {
   // 保存模块关系
   handleSubmit = () => {
     const { roleId } = this.props.role;
-    const { checked } = { ...this.props.role.modules };
-    const modules = checked.map(item => ({ moduleId: item }));
+    const { checked, checkedResource } = { ...this.props.role.modules };
+    const modules = checked && checked.map(item => ({ moduleId: item }));
 
     this.props.dispatch({
       type: 'role/saveModule',
       payload: {
         id: roleId,
         modules,
+        resources: checkedResource,
       },
     });
   };
@@ -45,9 +46,33 @@ export default class RoleModule extends Component {
     });
   };
 
+  // 保存已选资源
   handleResourceClick = (e, rid) => {
-    const { selectedResources } = this.props.role;
-    selectedResources[rid] = e;
+    const { checked, checkedResource } = { ...this.props.role.modules };
+
+    if (e.length < 1) {
+      Modal.warning({
+        title: '警告',
+        content: '至少选择一个资源',
+      });
+      return;
+    }
+    checkedResource[rid] = e;
+    // 勾选资源自动选择菜单
+    if (e.length > 0 && checked.indexOf(rid) < 0) {
+      checked.push(rid);
+    }
+
+    this.props.dispatch({
+      type: 'role/updateState',
+      payload: {
+        modules: {
+          ...this.props.role.modules,
+          checked,
+          checkedResource,
+        },
+      },
+    });
   };
 
   render() {
@@ -65,10 +90,14 @@ export default class RoleModule extends Component {
         dataIndex: 'resources',
         render: (item, record) => {
           const options = item && item.map(r => ({ label: r.resourceDesc, value: r.id }));
+
+          const checkedResource = modules && modules.checkedResource;
+          const rsr = checkedResource[record.id];
           // eslint-disable-next-line max-len
           return (
             <Checkbox.Group
               options={options}
+              value={rsr}
               onChange={e => this.handleResourceClick(e, record.id)}
             />
           );
