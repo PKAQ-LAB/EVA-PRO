@@ -3,7 +3,6 @@ import { connect } from 'dva';
 import { Alert, Button, Divider, Popconfirm } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Form, Input } from 'antx';
-import css from './index.less';
 import List from './list';
 import AOEForm from './aoeform';
 import RoleUser from './component/roleuser';
@@ -172,14 +171,14 @@ export default class Role extends React.PureComponent {
     return (
       <PageHeaderWrapper>
         {/* 工具条 */}
-        <div className={css.ribbon}>
+        <div className="eva-ribbon">
           {/* 操作按钮 */}
           <div>{this.renderButton(selectedRowKeys)}</div>
           {/* 查询条件 */}
           <div>{this.renderSearchForm()}</div>
         </div>
         {/* 删除条幅 */}
-        <div className={css.alert}>
+        <div className="eva-alert">
           {selectedRowKeys.length > 0 && (
             <Alert
               message={
@@ -197,7 +196,7 @@ export default class Role extends React.PureComponent {
             />
           )}
         </div>
-        <div className={css.body}>
+        <div className="eva-body">
           <List searchForm={form} />
         </div>
         {/* 新增窗口 */}

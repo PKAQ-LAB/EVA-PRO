@@ -7,8 +7,6 @@ import SideLayout from '@/components/SideLayout';
 import List from './list';
 import AOEForm from './aoeform';
 
-import css from './index.less';
-
 @Form.create()
 @connect(state => ({
   account: state.account,
@@ -205,13 +203,14 @@ export default class extends React.PureComponent {
 
     return (
       <PageHeaderWrapper>
-        <div className={css.ribbon}>
+        <div className="eva-ribbon">
           {/* 操作按钮 */}
           <div>{this.renderButton(selectedRowKeys)}</div>
           {/* 查询条件 */}
           <div>{this.renderSearchForm()}</div>
         </div>
-        <div className={css.alert}>
+        {/* 删除条幅 */}
+        <div className="eva-alert">
           <Alert
             message={
               <div>
@@ -227,8 +226,8 @@ export default class extends React.PureComponent {
             showIcon
           />
         </div>
-        {/* 删除条幅 */}
-        <div className={css.body}>
+
+        <div className="eva-body">
           <SideLayout
             title="所属部门"
             layoutStyle={{ minHeight: 'calc(100vh - 372px)' }}
