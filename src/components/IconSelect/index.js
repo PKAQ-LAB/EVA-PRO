@@ -58,7 +58,7 @@ export default class IconSelect extends Component {
 
     return (
       <div>
-        <Popover content={iconBox}>
+        <Popover content={iconBox} trigger="click">
           <Input
             type="primary"
             placeholder="请选择图标"

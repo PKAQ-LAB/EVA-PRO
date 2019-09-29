@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Switch, Drawer, Button, Divider, Tooltip, Icon } from 'antd';
+import { Row, Col, Switch, Drawer, Button, Tooltip, Icon } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';
+import IconSelect from '@/components/IconSelect';
 
 import LineList from './linelist';
 
@@ -85,7 +86,7 @@ export default class AOEForm extends Component {
 
     return (
       <Drawer
-        width="39%"
+        width={640}
         maskClosable={false}
         onClose={() => this.handleCloseForm()}
         visible={modalType !== ''}
@@ -112,7 +113,7 @@ export default class AOEForm extends Component {
             msg="full"
           />
 
-          <Input label="模块图标" id="icon" rules={['string']} max={16} msg="full" />
+          <IconSelect label="模块图标" id="icon" width={480} />
 
           <TreeSelect
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
