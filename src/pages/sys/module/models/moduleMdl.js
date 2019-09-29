@@ -14,6 +14,9 @@ export default {
     modalType: '',
     selectedRowKeys: [],
     formValues: {},
+    lineData: [],
+    operate: '',
+    editIndex: '',
   },
   effects: {
     // 校验路径唯一性

@@ -3,6 +3,8 @@ import { connect } from 'dva';
 import { Row, Col, Switch, Drawer, Button, Divider, Tooltip, Icon } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';
 
+import LineList from './linelist';
+
 @Form.create()
 @connect(state => ({
   module: state.module,
@@ -73,17 +75,17 @@ export default class AOEForm extends Component {
 
     const formItemLayout = {
       labelCol: { span: 5 },
-      wrapperCol: { span: 17 },
+      wrapperCol: { span: 19 },
     };
 
     const formRowOne = {
       labelCol: { span: 10 },
-      wrapperCol: { span: 12 },
+      wrapperCol: { span: 14 },
     };
 
     return (
       <Drawer
-        width={600}
+        width="39%"
         maskClosable={false}
         onClose={() => this.handleCloseForm()}
         visible={modalType !== ''}
@@ -158,7 +160,9 @@ export default class AOEForm extends Component {
 
           <Input textarea label="备注" id="remark" rules={['max=200']} max={200} msg="full" />
         </Form>
-        <Divider>资源信息</Divider>
+
+        <LineList />
+
         <div
           style={{
             position: 'absolute',

@@ -251,7 +251,7 @@ export default class List extends Component {
         <div className={css.ribbon}>
           <div>
             <Button icon="plus" type="primary" onClick={() => this.handleAdd('')}>
-              新增
+              新增模块
             </Button>
             {selectedRowKeys.length > 0 && (
               <span>
