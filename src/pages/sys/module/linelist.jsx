@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Divider, Popconfirm } from 'antd';
-
+import cx from 'classnames';
 import { connect } from 'dva';
 import LineAoeForm from './lineaoeform';
 import DataTable from '@/components/DataTable';
@@ -45,6 +45,13 @@ export default class LineList extends React.PureComponent {
 
   render() {
     const { lineData, operate } = this.props.module;
+    if (lineData.length < 1) {
+      lineData.push({
+        resourceDesc: '全部资源',
+        resourceUrl: '/**',
+        resourceType: '9999',
+      });
+    }
 
     const columns = [
       {
@@ -60,21 +67,22 @@ export default class LineList extends React.PureComponent {
       {
         title: '操作',
         tableItem: {
-          render: (text, record, index) => (
-            <DataTable.Oper>
-              <Divider type="vertical" />
-              <a onClick={() => this.handleEditClick(index)}>编辑</a>
-              <Divider type="vertical" />
-              <Popconfirm
-                title="确定要删除吗？"
-                okText="确定"
-                cancelText="取消"
-                onConfirm={() => this.handleDeleteClick(index)}
-              >
-                <a>删除</a>
-              </Popconfirm>
-            </DataTable.Oper>
-          ),
+          render: (text, record, index) =>
+            record.resourceType !== '9999' && (
+              <DataTable.Oper>
+                <Divider type="vertical" />
+                <a onClick={() => this.handleEditClick(index)}>编辑</a>
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="确定要删除吗？"
+                  okText="确定"
+                  cancelText="取消"
+                  onConfirm={() => this.handleDeleteClick(index)}
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              </DataTable.Oper>
+            ),
         },
       },
     ];
@@ -85,6 +93,7 @@ export default class LineList extends React.PureComponent {
       showNum: true,
       isScroll: true,
       alternateColor: true,
+      rowClassName: record => cx({ disabled: record.resourceType === '9999' }),
       dataItems: { records: lineData },
     };
 

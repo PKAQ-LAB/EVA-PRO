@@ -43,6 +43,7 @@ export default {
         type: 'updateState',
         payload: {
           ...payload,
+          lineData: [],
         },
       });
     },
