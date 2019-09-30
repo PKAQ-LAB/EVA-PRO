@@ -56,6 +56,7 @@ export default {
           payload: {
             modalType: 'edit',
             currentItem: response.data,
+            lineData: response.data.resources,
           },
         });
       }
@@ -81,7 +82,10 @@ export default {
           type: 'updateState',
           payload: {
             modalType: '',
+            operate: '',
+            editIndex: '',
             currentItem: {},
+            lineData: [],
             data: response.data,
           },
         });

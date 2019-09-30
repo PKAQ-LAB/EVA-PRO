@@ -29,11 +29,8 @@ export default class AOEForm extends Component {
     const that = this;
     const path = getFieldValue('path');
     const parentId = getFieldValue('parentId');
-    const { currentItem } = this.props;
-    if (currentItem && currentItem.id && value === currentItem.path) {
-      return callback();
-    }
-    const data = { path, parentId };
+    const { currentItem } = this.props.module;
+    const data = { id: currentItem.id, path, parentId };
     that.props
       .dispatch({
         type: 'module/checkUnique',
@@ -49,7 +46,7 @@ export default class AOEForm extends Component {
 
   // 保存
   handleSaveClick = () => {
-    const { currentItem } = this.props.module;
+    const { currentItem, lineData } = this.props.module;
     const { getFieldsValue, validateFields } = this.props.form;
     // 对校验过的表单域 再进行一次强制表单校验
     validateFields({ force: true }, errors => {
@@ -60,6 +57,8 @@ export default class AOEForm extends Component {
         ...getFieldsValue(),
         id: currentItem.id,
       };
+
+      data.resources = lineData;
       data.status = data.status ? '0000' : '0001';
       this.props.dispatch({
         type: 'module/save',
@@ -90,7 +89,6 @@ export default class AOEForm extends Component {
         maskClosable={false}
         onClose={() => this.handleCloseForm()}
         visible={modalType !== ''}
-        confirmLoading={submitting}
         title={`${title[modalType] || '查看'}模块信息`}
       >
         <Form api={form} data={currentItem} {...formItemLayout} colon>
@@ -176,10 +174,10 @@ export default class AOEForm extends Component {
             textAlign: 'right',
           }}
         >
-          <Button onClick={this.handleCloseForm} style={{ marginRight: 8 }}>
+          <Button onClick={this.handleCloseForm} style={{ marginRight: 8 }} loading={submitting}>
             取消
           </Button>
-          <Button onClick={this.handleSaveClick} type="primary">
+          <Button onClick={this.handleSaveClick} type="primary" loading={submitting}>
             保存
           </Button>
         </div>
