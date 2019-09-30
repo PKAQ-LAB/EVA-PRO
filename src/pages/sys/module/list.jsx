@@ -153,7 +153,8 @@ export default class List extends Component {
   };
 
   render() {
-    const { data, selectedRowKeys, loading } = this.props.module;
+    const { loading } = this.props;
+    const { data, selectedRowKeys } = this.props.module;
 
     const column = [
       {
