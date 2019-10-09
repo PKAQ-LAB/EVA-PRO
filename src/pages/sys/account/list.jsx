@@ -129,7 +129,8 @@ export default class AccountList extends React.PureComponent {
       alternateColor: true,
       selectType: 'checkbox',
       dataItems: users,
-      rowClassName: record => cx({ disabled: record.locked === '0001' }),
+      rowClassName: record =>
+        cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' }),
       selectedRowKeys,
       onChange: this.pageChange,
       onSelect: this.handleSelectRows,

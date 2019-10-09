@@ -93,7 +93,8 @@ export default class LineList extends React.PureComponent {
       showNum: true,
       isScroll: true,
       alternateColor: true,
-      rowClassName: record => cx({ disabled: record.resourceType === '9999' }),
+      rowClassName: record =>
+        cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' }),
       dataItems: { records: lineData },
     };
 

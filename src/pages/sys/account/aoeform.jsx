@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Row, Col, Switch, Tooltip, Icon, Upload } from 'antd';
+import { Modal, Row, Col, Switch, Tooltip, Icon, Upload, Avatar } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
 import md5 from 'md5';
 import { Form, Input, TreeSelect } from 'antx';
+import setting from '../../../../config/defaultSettings';
 
 @Form.create()
 @connect(state => ({
@@ -11,10 +12,24 @@ import { Form, Input, TreeSelect } from 'antx';
   submitting: state.loading.effects['account/save'],
 }))
 export default class AccountForm extends React.PureComponent {
-  state = {
-    avatar: [],
-    pname: '',
-  };
+  constructor(props) {
+    super(props);
+    const { currentItem } = this.props.account;
+    let avatar = [];
+    if (currentItem && currentItem.avatar) {
+      avatar = [
+        {
+          uid: currentItem.avatar,
+          url: `${setting.imgUrl}${currentItem.avatar}`,
+        },
+      ];
+    }
+
+    this.state = {
+      avatar,
+      pname: '',
+    };
+  }
 
   // 关闭窗口
   handleCloseForm = () => {
@@ -56,14 +71,18 @@ export default class AccountForm extends React.PureComponent {
 
   // 文件操作回调
   handleFileUpload = info => {
+    let pname = '';
     // 上传完成
     if (info.file.status === 'done' && info.file.response.success) {
-      const { pname } = info.file.response.data;
-      this.setState({
-        avatar: info.fileList,
-        pname,
-      });
+      pname = info.file.response.data;
     }
+
+    console.info(info);
+
+    this.setState({
+      avatar: info.fileList,
+      pname: pname || '',
+    });
   };
 
   // 保存
@@ -142,6 +161,7 @@ export default class AccountForm extends React.PureComponent {
                 onChange={this.handleFileUpload}
                 {...formRowOne}
                 name="file"
+                fileList={avatar}
                 listType="picture-card"
                 className="avatar-uploader"
                 action="/api/upload/image"

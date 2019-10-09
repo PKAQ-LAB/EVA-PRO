@@ -7,6 +7,8 @@ export interface DefaultSettings {
   i18n: boolean;
   /** 后台请求地址 **/
   url: string;
+  /** 图片地址 **/
+  imgUrl: string;
   /**
    * theme for nav menu
    */
@@ -50,7 +52,8 @@ export interface DefaultSettings {
 
 export default {
   i18n: false,
-  url: 'http://localhost:9009/api',
+  url: 'http://localhost:9009/api/',
+  imgUrl: 'http://localhost:9009/img/',
   navTheme: 'dark',
   layout: 'sidemenu',
   contentWidth: 'Fluid',

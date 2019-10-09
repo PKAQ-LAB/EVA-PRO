@@ -211,7 +211,7 @@ export default class List extends React.PureComponent {
       dataItems: roles,
       selectType: 'checkbox',
       rowClassName: record =>
-        cx({ locked: record.locked === '0001', disabled: record.locked === '9999' }),
+        cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' }),
       selectedRowKeys,
       onChange: this.pageChange,
       onSelect: this.handleSelectRows,

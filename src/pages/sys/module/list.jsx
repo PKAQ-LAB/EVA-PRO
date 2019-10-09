@@ -298,7 +298,9 @@ export default class List extends Component {
           columns={column}
           dataSource={data}
           loading={loading}
-          rowClassName={record => cx({ disabled: record.status === '0001' })}
+          rowClassName={record =>
+            cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' })
+          }
           pagination={false}
           rowKey={record => record.id}
           rowSelection={rowSelection}
