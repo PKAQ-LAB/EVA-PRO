@@ -11,6 +11,11 @@ import { Form, Input, TreeSelect } from 'antx';
   submitting: state.loading.effects['account/save'],
 }))
 export default class AccountForm extends React.PureComponent {
+  state = {
+    avatar: [],
+    pname: '',
+  };
+
   // 关闭窗口
   handleCloseForm = () => {
     this.props.dispatch({
@@ -24,13 +29,18 @@ export default class AccountForm extends React.PureComponent {
   // 校验账号唯一性
   // eslint-disable-next-line consistent-return
   checkAccount = (rule, value, callback) => {
+    const { currentItem } = this.props.account;
     const { getFieldValue } = this.props.form;
     const account = getFieldValue('account');
     const { item } = this.props;
     if (item && item.id && value === item.account) {
       return callback();
     }
-    const data = { account };
+    const data = {
+      account,
+      id: currentItem ? currentItem.id : '',
+    };
+
     this.props
       .dispatch({
         type: 'account/checkUnique',
@@ -44,6 +54,18 @@ export default class AccountForm extends React.PureComponent {
       });
   };
 
+  // 文件操作回调
+  handleFileUpload = info => {
+    // 上传完成
+    if (info.file.status === 'done' && info.file.response.success) {
+      const { pname } = info.file.response.data;
+      this.setState({
+        avatar: info.fileList,
+        pname,
+      });
+    }
+  };
+
   // 保存
   handleSaveClick = () => {
     const { currentItem } = this.props.account;
@@ -52,10 +74,14 @@ export default class AccountForm extends React.PureComponent {
       if (errors) {
         return;
       }
+      const { pname } = this.state;
+
       const data = {
         ...getFieldsValue(),
+        avatar: pname || '',
         id: currentItem ? currentItem.id : '',
       };
+
       // 加密密码
       if (data.password) {
         data.password = md5(data.password);
@@ -79,6 +105,7 @@ export default class AccountForm extends React.PureComponent {
   };
 
   render() {
+    const { avatar } = this.state;
     const { form } = this.props;
     const { orgs, submitting, modalType, currentItem } = this.props.account;
     const title = { create: '新增', edit: '编辑' };
@@ -112,16 +139,20 @@ export default class AccountForm extends React.PureComponent {
             <Col span={24}>
               <Upload
                 label="　"
+                onChange={this.handleFileUpload}
                 {...formRowOne}
-                name="avatar"
+                name="file"
                 listType="picture-card"
                 className="avatar-uploader"
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                action="/api/upload/image"
+                accept=".jpg,.png,.jpeg"
               >
-                <div>
-                  <Icon type="plus" />
-                  <div className="ant-upload-text">选择头像</div>
-                </div>
+                {avatar.length < 1 && (
+                  <div>
+                    <Icon type="plus" />
+                    <div className="ant-upload-text">选择头像</div>
+                  </div>
+                )}
               </Upload>
             </Col>
           </Row>
@@ -238,7 +269,7 @@ export default class AccountForm extends React.PureComponent {
                 id="locked"
                 checkedChildren="是"
                 unCheckedChildren="否"
-                checked={currentItem.locked}
+                // checked={currentItem.locked}
                 label="是否锁定"
                 {...formRowOne}
               />
