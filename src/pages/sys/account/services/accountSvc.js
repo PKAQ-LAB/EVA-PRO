@@ -10,6 +10,10 @@ export async function listUser(params) {
 export async function listOrg(params) {
   return request(`/api/organization/list?${stringify(params)}`);
 }
+// 查询角色列表
+export async function listRole(params) {
+  return request(`/api/role/listAll?${stringify(params)}`);
+}
 // 根据id获取用户信息
 export async function getUser(params) {
   return request(`/api/account/get/${getNoUndefinedString(params.id)}`);

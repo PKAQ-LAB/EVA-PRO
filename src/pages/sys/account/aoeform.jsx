@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Row, Col, Switch, Tooltip, Icon, Upload, Avatar } from 'antd';
+import { Modal, Row, Col, Switch, Tooltip, Icon, Upload } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
 import md5 from 'md5';
-import { Form, Input, TreeSelect } from 'antx';
+import { Form, Input, TreeSelect, Select } from 'antx';
 import setting from '../../../../config/defaultSettings';
 
 @Form.create()
@@ -77,8 +77,6 @@ export default class AccountForm extends React.PureComponent {
       pname = info.file.response.data;
     }
 
-    console.info(info);
-
     this.setState({
       avatar: info.fileList,
       pname: pname || '',
@@ -115,6 +113,10 @@ export default class AccountForm extends React.PureComponent {
       }
 
       data.locked = data.locked ? '0001' : '0000';
+      data.roles = data.roles.map(item => {
+        const obj = { id: item };
+        return obj;
+      });
 
       this.props.dispatch({
         type: 'account/save',
@@ -126,7 +128,7 @@ export default class AccountForm extends React.PureComponent {
   render() {
     const { avatar } = this.state;
     const { form } = this.props;
-    const { orgs, submitting, modalType, currentItem } = this.props.account;
+    const { roles, orgs, submitting, modalType, currentItem } = this.props.account;
     const title = { create: '新增', edit: '编辑' };
 
     currentItem.locked = currentItem.locked === '0001';
@@ -264,6 +266,22 @@ export default class AccountForm extends React.PureComponent {
                 label="所属部门"
                 msg="full"
                 rules={['required']}
+                {...formRowOne}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Select
+                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                data={roles || []}
+                keys={['id', 'name']}
+                clear
+                showSearch
+                mode="multiple"
+                id="roles"
+                label="所属角色"
+                msg="full"
                 {...formRowOne}
               />
             </Col>

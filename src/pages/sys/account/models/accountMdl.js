@@ -1,6 +1,7 @@
 import {
   listUser,
   listOrg,
+  listRole,
   delUser,
   lockUser,
   saveUser,
@@ -13,6 +14,8 @@ export default {
   state: {
     currentUser: {},
     orgs: [],
+    // 角色列表
+    roles: [],
     users: [],
     currentItem: {},
     modalType: '',
@@ -25,11 +28,14 @@ export default {
       // 查询数据
       const userData = yield call(listUser, payload);
       const treeData = yield call(listOrg, { status: '0001' });
+      const roleData = yield call(listRole, payload);
+
       yield put({
         type: 'updateState',
         payload: {
           users: userData.data,
           orgs: treeData.data,
+          roles: roleData.data,
           selectedRowKeys: [],
         },
       });
@@ -60,12 +66,17 @@ export default {
     // 编辑按钮
     *edit({ payload }, { call, put }) {
       const response = yield call(getUser, payload);
-      if (response && response.data) {
+      const { data } = response;
+
+      if (response && response.success) {
+        data.roles = data.roles.map(item => item.id);
+
+        console.info(data);
         yield put({
           type: 'updateState',
           payload: {
             modalType: 'edit',
-            currentItem: response.data,
+            currentItem: data,
           },
         });
       }
@@ -73,7 +84,7 @@ export default {
     // 保存提交
     *save({ payload }, { call, put }) {
       const response = yield call(saveUser, payload);
-      if (response && response.data) {
+      if (response && response.success) {
         yield put({
           type: 'updateState',
           payload: {
