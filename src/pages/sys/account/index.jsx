@@ -3,7 +3,7 @@ import { Divider, Popconfirm, Form, Input, Button, Alert, Tree } from 'antd';
 import { connect } from 'dva';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import SideLayout from '@/components/SideLayout';
-
+import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';
 
@@ -199,7 +199,7 @@ export default class extends React.PureComponent {
 
   render() {
     const { form } = this.props;
-    const { selectedRowKeys, modalType } = this.props.account;
+    const { selectedRowKeys, modalType, roleModal } = this.props.account;
 
     return (
       <PageHeaderWrapper>
@@ -239,6 +239,7 @@ export default class extends React.PureComponent {
         </div>
         {/* 新增窗口 */}
         {modalType !== '' && <AOEForm />}
+        {roleModal !== '' && <RoleModal />}
       </PageHeaderWrapper>
     );
   }

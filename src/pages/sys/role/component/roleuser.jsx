@@ -108,6 +108,7 @@ export default class RoleUser extends PureComponent {
     return (
       <Modal
         confirmLoading={loading}
+        maskClosable={false}
         visible={operateType === 'User'}
         title="选择授权用户"
         okText="保存"

@@ -22,6 +22,7 @@ export default class RoleConfig extends Component {
     return (
       <Modal
         visible={operateType === 'Config'}
+        maskClosable={false}
         title="选择授权配置"
         okText="确定"
         cancelText="关闭"

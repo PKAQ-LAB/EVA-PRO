@@ -115,6 +115,7 @@ export default class RoleModule extends Component {
     return (
       <Modal
         visible={operateType === 'Module'}
+        maskClosable={false}
         title="选择授权模块"
         okText="确定"
         cancelText="关闭"

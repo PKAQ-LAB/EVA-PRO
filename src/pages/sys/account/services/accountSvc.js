@@ -36,6 +36,15 @@ export async function saveUser(params) {
     },
   });
 }
+// 保存用户权限信息
+export async function grantUser(params) {
+  return request('/api/account/grant', {
+    method: 'POST',
+    data: {
+      ...params,
+    },
+  });
+}
 // 根据ID删除用户
 export async function delUser(params) {
   return request('/api/account/del', {

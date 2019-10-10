@@ -43,6 +43,17 @@ export default class AccountList extends React.PureComponent {
     }
   };
 
+  // 权限选择
+  handleRoleClick = record => {
+    this.props.dispatch({
+      type: 'account/edit',
+      payload: {
+        roleModal: 'edit',
+        id: record.id,
+      },
+    });
+  };
+
   // 翻页
   pageChange = pg => {
     const { dispatch, searchForm } = this.props;
@@ -102,7 +113,7 @@ export default class AccountList extends React.PureComponent {
           render: (text, record) =>
             record.locked !== '0009' && (
               <DataTable.Oper>
-                <a onClick={e => this.handleEditClick(record, e)}>角色授权</a>
+                <a onClick={e => this.handleRoleClick(record, e)}>角色授权</a>
                 <Divider type="vertical" />
                 <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
                 <Divider type="vertical" />

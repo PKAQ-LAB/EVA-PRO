@@ -6,6 +6,7 @@ import {
   lockUser,
   saveUser,
   getUser,
+  grantUser,
   checkUnique,
 } from '../services/accountSvc';
 
@@ -19,6 +20,7 @@ export default {
     users: [],
     currentItem: {},
     modalType: '',
+    roleModal: '',
     selectedRowKeys: [],
     formValues: {},
   },
@@ -56,7 +58,9 @@ export default {
       const response = yield call(getUser, payload);
       yield put({
         type: 'saveCurrentUser',
-        payload: response.data,
+        payload: {
+          currentUser: response.data,
+        },
       });
     },
     // 校验编码唯一性
@@ -70,12 +74,10 @@ export default {
 
       if (response && response.success) {
         data.roles = data.roles.map(item => item.id);
-
-        console.info(data);
         yield put({
           type: 'updateState',
           payload: {
-            modalType: 'edit',
+            ...payload,
             currentItem: data,
           },
         });
@@ -93,12 +95,16 @@ export default {
             users: response.data,
           },
         });
-      } else {
+      }
+    },
+    // 保存提交
+    *grant({ payload }, { call, put }) {
+      const response = yield call(grantUser, payload);
+      if (response && response.success) {
         yield put({
           type: 'updateState',
           payload: {
-            modalType: '',
-            currentItem: {},
+            roleModal: '',
           },
         });
       }
