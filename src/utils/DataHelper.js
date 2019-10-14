@@ -34,7 +34,7 @@ export function getNodeBorther(data, targetPid) {
   } else if (data && data.length > 1) {
     data.forEach(item => {
       if (item.id === targetPid) {
-        dude = [...item.children];
+        dude = item.children && [...item.children];
       } else if (item.children) {
         getNodeBorther(item.children, targetPid);
       }

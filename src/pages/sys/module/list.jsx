@@ -179,7 +179,8 @@ export default class List extends Component {
         dataIndex: 'orders',
         render: (text, record, index) => {
           const brother = getNodeBorther(data, record.parentId);
-          const size = brother.length;
+
+          const size = brother && brother.length;
           return (
             <div>
               {text}
