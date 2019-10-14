@@ -160,7 +160,7 @@ export default class AOEForm extends Component {
           <Selector
             label="数据权限"
             code="data_permission"
-            id="permission"
+            id="dataPermissionType"
             onChange={this.handleDataPermissionChange}
             showAll={false}
             {...formRowOne}
@@ -169,7 +169,7 @@ export default class AOEForm extends Component {
           {showDept && (
             <TreeSelect
               label="选择部门"
-              id="depts"
+              id="dataPermissionDeptid"
               treeData={orgs}
               treeCheckable
               allowClear

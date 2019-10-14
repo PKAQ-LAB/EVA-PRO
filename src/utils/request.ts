@@ -4,6 +4,7 @@
  */
 import { extend } from 'umi-request';
 import { message } from 'antd';
+import router from 'umi/router';
 
 message.config({
   maxCount: 1,
@@ -12,14 +13,35 @@ message.config({
 /**
  * 异常处理程序
  */
-const errorHandler = (error: { response: Response }): Response => {
+const errorHandler = (error: { response: any }): any => {
   const { response } = error;
+  if (response && response.status) {
+    const { status } = response;
+    if (status === 401) {
+      // @HACK
+      /* eslint-disable no-underscore-dangle */
+      (<any>window).g_app._store.dispatch({
+        type: 'login/logout',
+      });
+      return;
+    }
 
-  if (!response) {
-    message.error({
-      description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
-    });
+    if (status === 403) {
+      router.push('/exception/403');
+    } else if (status <= 504 && status >= 500) {
+      router.push('/exception/500');
+    } else if (status >= 404 && status < 422) {
+      router.push('/exception/404');
+    } else {
+      router.push('/user/login');
+    }
+
+    if (!response) {
+      message.error({
+        description: '您的网络发生异常，无法连接服务器',
+        message: '网络异常',
+      });
+    }
   }
   return response;
 };
