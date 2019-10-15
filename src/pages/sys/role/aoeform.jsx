@@ -17,6 +17,18 @@ export default class AOEForm extends Component {
     };
   }
 
+  componentWillMount() {
+    const { currentItem } = this.props.role;
+    if (currentItem.dataPermissionType) {
+      currentItem.dataPermissionType = currentItem.dataPermissionType || '0000';
+      this.handleDataPermissionChange(currentItem.dataPermissionType);
+    }
+
+    if (currentItem.dataPermissionDeptid && typeof currentItem.dataPermissionDeptid === 'string') {
+      currentItem.dataPermissionDeptid = currentItem.dataPermissionDeptid.split(',');
+    }
+  }
+
   // 校验角色编码唯一性
   // eslint-disable-next-line consistent-return
   checkCode = (rule, value, callback) => {
@@ -75,6 +87,9 @@ export default class AOEForm extends Component {
       if (currentItem && currentItem.id) {
         data.id = currentItem.id;
       }
+      if (data.dataPermissionDeptid) {
+        data.dataPermissionDeptid = data.dataPermissionDeptid.join(',');
+      }
 
       this.props.dispatch({
         type: 'role/save',
@@ -100,8 +115,6 @@ export default class AOEForm extends Component {
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
     };
-
-    currentItem.permission = currentItem.permission || '0000';
 
     return (
       <Modal
@@ -161,12 +174,13 @@ export default class AOEForm extends Component {
             label="数据权限"
             code="data_permission"
             id="dataPermissionType"
+            rules={['required']}
             onChange={this.handleDataPermissionChange}
             showAll={false}
             {...formRowOne}
           />
 
-          {showDept && (
+          {(showDept || currentItem.dataPermissionType === '0003') && (
             <TreeSelect
               label="选择部门"
               id="dataPermissionDeptid"

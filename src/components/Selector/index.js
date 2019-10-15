@@ -21,11 +21,7 @@ export default class Selector extends PureComponent {
       request(`/api/dict/query/${code}`).then(response => {
         if (response && response.data) {
           const data = Object.keys(response.data);
-          const options = data.map(v => (
-            <Option key={v} value={v}>
-              {response.data[v]}
-            </Option>
-          ));
+          const options = data.map(v => <Option key={v}>{response.data[v]}</Option>);
           this.setState({
             options,
           });
