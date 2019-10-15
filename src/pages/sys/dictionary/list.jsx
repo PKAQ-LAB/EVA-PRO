@@ -41,6 +41,7 @@ export default class List extends React.PureComponent {
       payload: {
         operate: 'create',
         currentItem: {},
+        lineData: [],
       },
     });
   };
