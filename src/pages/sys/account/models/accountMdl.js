@@ -29,7 +29,7 @@ export default {
     *fetch({ payload }, { call, put }) {
       // 查询数据
       const userData = yield call(listUser, payload);
-      const treeData = yield call(listOrg, { status: '0001' });
+      const treeData = yield call(listOrg, { status: '0000' });
       const roleData = yield call(listRole, payload);
 
       yield put({
