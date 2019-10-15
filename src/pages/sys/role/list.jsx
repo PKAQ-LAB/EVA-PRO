@@ -205,6 +205,7 @@ export default class List extends React.PureComponent {
     const dataTableProps = {
       columns,
       rowKey: 'id',
+      showNum: true,
       loading,
       isScroll: true,
       alternateColor: true,

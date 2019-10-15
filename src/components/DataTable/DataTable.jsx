@@ -161,6 +161,7 @@ export default class DataTable extends Component {
       cols.unshift({
         title: '序号',
         width: 50,
+        align: 'center',
         dataIndex: '_num',
         render(text, record, index) {
           const { pageNum, pageSize } = dataItems;
