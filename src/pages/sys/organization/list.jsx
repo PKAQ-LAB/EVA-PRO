@@ -173,45 +173,49 @@ export default class List extends Component {
         title: '排序',
         dataIndex: 'orders',
         render: (text, record, index) => {
-          const brother = getNodeBorther(this.props.organization.data, record.parentId);
-          const size = brother.length;
-          return (
-            <div>
-              {text}
-              <Divider type="vertical" />
-              {size !== 0 && index !== size - 1 ? (
-                <BizIcon
-                  onClick={() => this.handleSort(brother, index, 'down')}
-                  type="descending"
-                  style={{ color: '#098FFF', cursor: 'pointer' }}
-                />
-              ) : (
-                <BizIcon type="descending" />
-              )}
-              {size !== 0 && index !== 0 ? (
-                <BizIcon
-                  onClick={() => this.handleSort(brother, index, 'up')}
-                  style={{ color: '#098FFF', cursor: 'pointer' }}
-                  type="ascending"
-                />
-              ) : (
-                <BizIcon type="ascending" />
-              )}
-            </div>
-          );
+          if (record.status === '0000') {
+            const brother = getNodeBorther(this.props.organization.data, record.parentId);
+            const size = brother.length;
+            return (
+              <div>
+                {text}
+                <Divider type="vertical" />
+                {size !== 0 && index !== size - 1 ? (
+                  <BizIcon
+                    onClick={() => this.handleSort(brother, index, 'down')}
+                    type="descending"
+                    style={{ color: '#098FFF', cursor: 'pointer' }}
+                  />
+                ) : (
+                  <BizIcon type="descending" />
+                )}
+                {size !== 0 && index !== 0 ? (
+                  <BizIcon
+                    onClick={() => this.handleSort(brother, index, 'up')}
+                    style={{ color: '#098FFF', cursor: 'pointer' }}
+                    type="ascending"
+                  />
+                ) : (
+                  <BizIcon type="ascending" />
+                )}
+              </div>
+            );
+          }
+          return '';
         },
       },
       {
         title: '状态',
         dataIndex: 'status',
-        render: (text, record) => (
-          <Switch
-            onChange={checked => this.handleEnable(record, checked)}
-            checkedChildren={<Icon type="check" />}
-            unCheckedChildren={<Icon type="close" />}
-            checked={text === '0000'}
-          />
-        ),
+        render: (text, record) =>
+          record.status !== '9999' && (
+            <Switch
+              onChange={checked => this.handleEnable(record, checked)}
+              checkedChildren={<Icon type="check" />}
+              unCheckedChildren={<Icon type="close" />}
+              checked={text === '0000'}
+            />
+          ),
       },
       {
         title: '操作',
@@ -295,7 +299,7 @@ export default class List extends Component {
           dataSource={data}
           loading={loading}
           rowClassName={record =>
-            cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' })
+            cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
           }
           pagination={false}
           rowKey={record => record.id}
