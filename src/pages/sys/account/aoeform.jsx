@@ -71,15 +71,14 @@ export default class AccountForm extends React.PureComponent {
 
   // 文件操作回调
   handleFileUpload = info => {
-    let pname = '';
+    let file = {};
     // 上传完成
     if (info.file.status === 'done' && info.file.response.success) {
-      pname = info.file.response.data;
+      file = info.file.response.data;
     }
-
     this.setState({
       avatar: info.fileList,
-      pname: pname || '',
+      pname: file.pname || '',
     });
   };
 
@@ -93,9 +92,11 @@ export default class AccountForm extends React.PureComponent {
       }
       const { pname } = this.state;
 
+      console.info(currentItem);
+
       const data = {
         ...getFieldsValue(),
-        avatar: pname || '',
+        avatar: pname || currentItem.avatar || '',
         id: currentItem ? currentItem.id : '',
       };
 
