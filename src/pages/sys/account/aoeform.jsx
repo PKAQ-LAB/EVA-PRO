@@ -92,8 +92,6 @@ export default class AccountForm extends React.PureComponent {
       }
       const { pname } = this.state;
 
-      console.info(currentItem);
-
       const data = {
         ...getFieldsValue(),
         avatar: pname || currentItem.avatar || '',
@@ -114,10 +112,13 @@ export default class AccountForm extends React.PureComponent {
       }
 
       data.locked = data.locked ? '0001' : '0000';
-      data.roles = data.roles.map(item => {
-        const obj = { id: item };
-        return obj;
-      });
+
+      if (data.roles) {
+        data.roles = data.roles.map(item => {
+          const obj = { id: item };
+          return obj;
+        });
+      }
 
       this.props.dispatch({
         type: 'account/save',
