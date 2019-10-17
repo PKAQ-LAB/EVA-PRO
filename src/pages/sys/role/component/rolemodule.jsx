@@ -33,8 +33,8 @@ export default class RoleModule extends Component {
     });
   };
 
-  // 暂存已选
-  handleSelectRows = checkedKeys => {
+  // 勾选角色 暂存已选
+  handleChangeRows = checkedKeys => {
     this.props.dispatch({
       type: 'role/updateState',
       payload: {
@@ -44,6 +44,24 @@ export default class RoleModule extends Component {
         },
       },
     });
+  };
+
+  // 行选
+  handleSelectRows = (record, isSelected) => {
+    const { checkedResource } = { ...this.props.role.modules };
+    // 选择角色自动勾选一个资源
+    if (
+      isSelected &&
+      record.resources &&
+      (!checkedResource[record.id] || checkedResource[record.id].length < 1)
+    ) {
+      checkedResource[record.id] = [];
+      checkedResource[record.id].push(record.resources[0].id);
+    }
+    // 去除角色 清空资源选择
+    if (checkedResource[record.id] && !isSelected) {
+      checkedResource[record.id] = [];
+    }
   };
 
   // 保存已选资源
@@ -107,9 +125,8 @@ export default class RoleModule extends Component {
 
     const rowSelection = {
       selectedRowKeys: modules.checked,
-      onChange: selectedKeys => {
-        this.handleSelectRows(selectedKeys);
-      },
+      onSelect: (record, isSelected) => this.handleSelectRows(record, isSelected),
+      onChange: selectedKeys => this.handleChangeRows(selectedKeys),
     };
 
     return (
