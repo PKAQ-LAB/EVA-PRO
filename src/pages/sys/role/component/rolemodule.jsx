@@ -56,7 +56,9 @@ export default class RoleModule extends Component {
       (!checkedResource[record.id] || checkedResource[record.id].length < 1)
     ) {
       checkedResource[record.id] = [];
-      checkedResource[record.id].push(record.resources[0].id);
+      if (record.resources[0] && record.resources[0].length > 0) {
+        checkedResource[record.id].push(record.resources[0].id);
+      }
     }
     // 去除角色 清空资源选择
     if (checkedResource[record.id] && !isSelected) {

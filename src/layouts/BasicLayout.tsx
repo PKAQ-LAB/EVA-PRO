@@ -64,13 +64,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   useEffect(() => {
     if (dispatch) {
       dispatch({
-        type: 'user/fetchCurrent',
-      });
-      dispatch({
-        type: 'settings/getSetting',
-      });
-      dispatch({
-        type: 'menu/getMenuData',
+        type: 'user/fetch',
       });
     }
   }, []);

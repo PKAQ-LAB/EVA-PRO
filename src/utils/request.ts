@@ -65,6 +65,8 @@ request.interceptors.request.use((url, options) => {
     ...options.headers,
     Accept: 'application/json',
     'Content-Type': 'application/json; charset=utf-8',
+    Pragma: 'no-cache',
+    'Cache-Control': 'no-cache',
   };
   return {
     url,

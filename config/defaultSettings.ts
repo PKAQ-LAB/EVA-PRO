@@ -9,6 +9,10 @@ export interface DefaultSettings {
   url: string;
   /** 图片地址 **/
   imgUrl: string;
+  /** token_key **/
+  token_key: string;
+  /** user_key **/
+  user_key: string;
   /**
    * theme for nav menu
    */
@@ -54,6 +58,8 @@ export default {
   i18n: false,
   url: 'http://localhost:9009/api/',
   imgUrl: 'http://localhost:9009/img/',
+  token_key: 'auth_token',
+  user_key: 'user_info',
   navTheme: 'dark',
   layout: 'sidemenu',
   contentWidth: 'Fluid',
