@@ -50,6 +50,12 @@ const UserModel: UserModelType = {
         type: 'menu/save',
         payload: response.data.menus,
       });
+      yield put({
+        type: 'global/updateState',
+        payload: {
+          dict: response.data.dict,
+        },
+      });
     },
   },
 

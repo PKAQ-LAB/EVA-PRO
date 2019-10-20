@@ -6,6 +6,7 @@ import Selector from '@/components/Selector';
 
 @Form.create()
 @connect(state => ({
+  global: state.global,
   role: state.role,
   submitting: state.loading.effects['role/save'],
 }))
@@ -100,6 +101,7 @@ export default class AOEForm extends Component {
 
   // 渲染界面
   render() {
+    const { dict } = this.props.global;
     const { showDept } = this.state;
     const { modalType, currentItem, orgs } = this.props.role;
     const { loading, form } = this.props;
@@ -172,7 +174,7 @@ export default class AOEForm extends Component {
 
           <Selector
             label="数据权限"
-            code="data_permission"
+            data={dict.data_permission}
             id="dataPermissionType"
             rules={['required']}
             onChange={this.handleDataPermissionChange}
