@@ -39,6 +39,15 @@ export default [
               { name: 'center', path: '/config/center', component: './user/center/' },
             ],
           },
+          // 系统日志
+          {
+            path: '/monitor',
+            name: 'log',
+            routes: [
+              { name: 'biz', path: '/monitor/log/biz', component: './log/biz' },
+              { name: 'error', path: '/monitor/log/error', component: './log/error' },
+            ],
+          },
         ],
       },
       { component: '404' },
