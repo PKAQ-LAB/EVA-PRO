@@ -19,11 +19,13 @@ export default class WorkList extends PureComponent {
   }
 
   // 分页
-  handlePageChange = pagination => {
+  handlePageChange = pg => {
+    const { pageNum, pageSize } = pg;
     this.props.dispatch({
       type: 'bizlog/fetch',
       payload: {
-        pageNo: pagination.current,
+        pageNo: pageNum,
+        size: pageSize,
       },
     });
   };
@@ -88,7 +90,6 @@ export default class WorkList extends PureComponent {
       showNum: true,
       isScroll: true,
       alternateColor: true,
-      selectType: 'checkbox',
       dataItems: logs || [],
     };
     return <DataTable pagination {...dataTableProps} />;
