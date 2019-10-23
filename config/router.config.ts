@@ -48,6 +48,12 @@ export default [
               { name: 'error', path: '/monitor/log/error', component: './log/error' },
             ],
           },
+          // 代码生成器
+          {
+            path: '/dev',
+            name: 'dev',
+            routes: [{ name: 'generator', path: '/dev/generator', component: './dev/generator' }],
+          },
         ],
       },
       { component: '404' },
