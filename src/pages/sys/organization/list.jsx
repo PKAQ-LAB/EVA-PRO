@@ -15,8 +15,8 @@ import { connect } from 'dva';
 import cx from 'classnames';
 import css from './list.less';
 
-import { hasChildren, getNodeBorther } from '@/utils/DataHelper';
-import BizIcon from '@/components/BizIcon';
+import { hasChildren, getNodeBorther } from '@src/utils/DataHelper';
+import BizIcon from '@src/components/BizIcon';
 
 const { Search } = { ...Input };
 

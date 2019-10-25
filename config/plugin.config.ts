@@ -25,6 +25,9 @@ function getModulePackageName(module: { context: string }) {
 }
 
 export default (config: any) => {
+  // 设置 alias
+  config.resolve.alias.set('@src', path.resolve(__dirname, '../src'));
+  config.resolve.alias.set('@config', path.resolve(__dirname, '../config'));
   // preview.pro.ant.design only do not use in your production;
   if (
     process.env.ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site' ||

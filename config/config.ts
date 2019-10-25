@@ -1,7 +1,7 @@
 import { IConfig, IPlugin } from 'umi-types';
 import pageRoutes from './router.config';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
-
+import path from 'path';
 import slash from 'slash2';
 import webpackPlugin from './plugin.config';
 const { pwa } = defaultSettings; // preview.pro.ant.design only do not use in your production ;
@@ -37,12 +37,14 @@ const plugins: IPlugin[] = [
               importWorkboxFrom: 'local',
             },
           }
-        : false, // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
+        : false,
+      // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
       // dll features https://webpack.js.org/plugins/dll-plugin/
       // dll: {
       //   include: ['dva', 'dva/router', 'dva/saga', 'dva/fetch'],
       //   exclude: ['@babel/runtime', 'netlify-lambda'],
       // },
+      dll: false,
     },
   ],
   [
@@ -55,7 +57,6 @@ const plugins: IPlugin[] = [
     },
   ],
 ];
-
 export default {
   plugins,
   base: '/eva/',
@@ -121,7 +122,10 @@ export default {
     '/api/': {
       target: 'http://localhost:9009/api/',
       changeOrigin: true,
-      pathRewrite: { '^/api': '' },
+      pathRewrite: {
+        '^/api': '',
+      },
     },
   },
+  treeShaking: true,
 } as IConfig;

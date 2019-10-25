@@ -2,7 +2,7 @@ import React from 'react';
 import { Divider, Popconfirm, Form, Input, Button, Alert, Tree } from 'antd';
 import { connect } from 'dva';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import SideLayout from '@/components/SideLayout';
+import SideLayout from '@src/components/SideLayout';
 import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';

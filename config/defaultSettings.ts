@@ -1,5 +1,4 @@
-import { MenuTheme } from 'antd/es/menu';
-
+import { MenuTheme } from 'antd/es/menu/MenuContext';
 export type ContentWidth = 'Fluid' | 'Fixed';
 
 export interface DefaultSettings {

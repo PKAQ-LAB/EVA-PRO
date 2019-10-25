@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Modal, TreeSelect } from 'antd';
 import { Form, Input } from 'antx';
-import Selector from '@/components/Selector';
+import Selector from '@src/components/Selector';
 
 @Form.create()
 @connect(state => ({

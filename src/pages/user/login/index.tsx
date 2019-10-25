@@ -6,11 +6,11 @@ import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Dispatch, AnyAction } from 'redux';
 import { FormComponentProps } from 'antd/es/form';
 import { connect } from 'dva';
-import { StateType } from '@/models/login';
+import { StateType } from '@src/models/login';
 import LoginComponents from './components/Login';
 import styles from './style.less';
-import { LoginParamsType } from '@/services/login';
-import { ConnectState } from '@/models/connect';
+import { LoginParamsType } from '@src/services/login';
+import { ConnectState } from '@src/models/connect';
 
 const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginComponents;
 

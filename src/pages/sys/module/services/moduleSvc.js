@@ -1,5 +1,5 @@
-import request from '@/utils/request';
-import { getNoUndefinedString } from '@/utils/utils';
+import request from '@src/utils/request';
+import { getNoUndefinedString } from '@src/utils/utils';
 // 获取组织信息
 export async function getModule(params) {
   return request(`/api/sys/module/get/${getNoUndefinedString(params.id)}`);

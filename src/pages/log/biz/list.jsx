@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Form } from 'antd';
 import { connect } from 'dva';
 
-import DataTable from '@/components/DataTable';
+import DataTable from '@src/components/DataTable';
 
 @Form.create()
 @connect(state => ({

@@ -1,6 +1,6 @@
 import { stringify } from 'qs';
-import request from '@/utils/request';
-import { getNoUndefinedString } from '@/utils/utils';
+import request from '@src/utils/request';
+import { getNoUndefinedString } from '@src/utils/utils';
 // 查询授权菜单列表
 export async function listModule(params) {
   return request(`/api/sys/role/listModule?${stringify(params)}`);

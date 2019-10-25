@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'dva';
 import screenfull from 'screenfull';
 import { formatMessage } from 'umi-plugin-react/locale';
-import { ConnectProps, ConnectState } from '@/models/connect';
+import { ConnectProps, ConnectState } from '@src/models/connect';
 import setting from '../../../config/defaultSettings';
 
 import Avatar from './AvatarDropdown';

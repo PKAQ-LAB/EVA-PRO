@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Modal, Tree, Card, Row, Col } from 'antd';
 import { connect } from 'dva';
-import DataTable from '@/components/DataTable';
+import DataTable from '@src/components/DataTable';
 import cs from './roleuser.less';
 
 // 授权用户窗口

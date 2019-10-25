@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Row, Col, Switch, Drawer, Button, Tooltip, Icon } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';
-import IconSelect from '@/components/IconSelect';
+import IconSelect from '@src/components/IconSelect';
 
 import LineList from './linelist';
 

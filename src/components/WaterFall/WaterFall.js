@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Masonry from 'masonry-layout';
 import cx from 'classnames';
-import resizeMe from '@/decorator/resizeMe';
+import resizeMe from '@src/decorator/resizeMe';
 import isEqual from 'react-fast-compare';
 import './style/index.less';
 

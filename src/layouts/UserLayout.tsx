@@ -4,8 +4,8 @@ import Link from 'umi/link';
 import React from 'react';
 import { connect } from 'dva';
 
-import SelectLang from '@/components/SelectLang';
-import { ConnectProps, ConnectState } from '@/models/connect';
+import SelectLang from '@src/components/SelectLang';
+import { ConnectProps, ConnectState } from '@src/models/connect';
 import setting from '../../config/defaultSettings';
 
 import logo from '../assets/logo.svg';

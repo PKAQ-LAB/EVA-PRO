@@ -3,7 +3,7 @@ import { Button, Divider, Popconfirm } from 'antd';
 import cx from 'classnames';
 import { connect } from 'dva';
 import LineAoeForm from './lineaoeform';
-import DataTable from '@/components/DataTable';
+import DataTable from '@src/components/DataTable';
 
 /** 资源明细 */
 @connect(state => ({

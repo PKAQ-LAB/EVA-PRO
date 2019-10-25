@@ -1,4 +1,4 @@
-import { getMenuData } from '@/services/menu';
+import { getMenuData } from '@src/services/menu';
 import { Effect } from 'dva';
 import { Reducer } from 'redux';
 import { MenuDataItem } from '@ant-design/pro-layout';

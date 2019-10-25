@@ -1,6 +1,6 @@
 import { stringify } from 'qs';
-import request from '@/utils/request';
-import { getNoUndefinedString } from '@/utils/utils';
+import request from '@src/utils/request';
+import { getNoUndefinedString } from '@src/utils/utils';
 
 // 获取表单的数据
 export async function list(params) {

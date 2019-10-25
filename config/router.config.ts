@@ -54,6 +54,12 @@ export default [
             name: 'dev',
             routes: [{ name: 'generator', path: '/dev/generator', component: './dev/generator' }],
           },
+          // pdos
+          {
+            path: '/pdos/purchasing',
+            name: 'purchasing',
+            component: './pdos/purchasing',
+          },
         ],
       },
       { component: '404' },

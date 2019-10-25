@@ -4,9 +4,9 @@ import { Effect } from 'dva';
 import { stringify } from 'querystring';
 import Cookies from 'universal-cookie';
 
-import { login } from '@/services/login';
-import { setAuthority } from '@/utils/authority';
-import { getPageQuery } from '@/utils/utils';
+import { login } from '@src/services/login';
+import { setAuthority } from '@src/utils/authority';
+import { getPageQuery } from '@src/utils/utils';
 
 export interface StateType {
   status?: 'ok' | 'error';

@@ -3,10 +3,10 @@ import { connect } from 'dva';
 import { Redirect } from 'umi';
 import { stringify } from 'querystring';
 import Cookies from 'universal-cookie';
-import { ConnectState, ConnectProps } from '@/models/connect';
-import { CurrentUser } from '@/models/user';
-import PageLoading from '@/components/PageLoading';
-import defaultSettings from '../../config/defaultSettings';
+import { ConnectState, ConnectProps } from '@src/models/connect';
+import { CurrentUser } from '@src/models/user';
+import PageLoading from '@src/components/PageLoading';
+import defaultSettings from '@config/defaultSettings';
 
 const cookies = new Cookies();
 

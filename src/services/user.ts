@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request from '@src/utils/request';
 
 export async function queryCurrent(): Promise<any> {
   return request('/api/auth/fetch');
