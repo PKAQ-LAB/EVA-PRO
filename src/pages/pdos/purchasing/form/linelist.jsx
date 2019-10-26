@@ -8,6 +8,7 @@ import DataTable from '@src/components/DataTable';
 import LineAOEForm from './lineform';
 
 @connect(state => ({
+  global: state.global,
   purchasing: state.purchasing,
   loading: state.loading.models.purchasing,
 }))
@@ -68,7 +69,6 @@ export default class PurchasingLineList extends PureComponent {
     const reader = new FileReader();
     reader.onload = e => {
       let data = e.target.result;
-      // eslint-disable-next-line
       if (!rABS) data = new Uint8Array(data);
       const workbook = XLSX.read(data, {
         type: rABS ? 'binary' : 'array',
@@ -103,10 +103,12 @@ export default class PurchasingLineList extends PureComponent {
           return {};
         }
         // 构建子表对象
-        const tempObj = {};
-        tempObj.code = item[0];
-        tempObj.categroy = item[1];
-        tempObj.model = item[2];
+        const tempObj = {
+          name: item[0],
+          categroy: item[1],
+          model: item[2],
+          barcode: item[3],
+        };
 
         return tempObj;
       });
@@ -185,6 +187,7 @@ export default class PurchasingLineList extends PureComponent {
   render() {
     const { viewLineData, selectedLineRowKeys, lineData, modalType } = this.props.purchasing;
     const { loading, view = false } = this.props;
+    const { dict } = this.props.global;
 
     const columns = [
       {
@@ -200,19 +203,15 @@ export default class PurchasingLineList extends PureComponent {
       },
       {
         title: '分类名称',
-        name: 'categoryName',
-        tableItem: {},
+        name: 'category',
+        tableItem: {
+          render: text => dict.goods_type[text],
+        },
       },
       {
         title: '产品型号',
         name: 'model',
         width: 130,
-        tableItem: {},
-      },
-      {
-        title: '单位',
-        align: 'center',
-        name: 'unitName',
         tableItem: {},
       },
       {

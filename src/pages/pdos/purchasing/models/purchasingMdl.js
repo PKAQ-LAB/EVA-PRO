@@ -37,7 +37,7 @@ export default {
           payload: {
             selectedRowKeys: [],
             selectedLineRowKeys: [],
-            listData: response.data.records,
+            listData: response.data,
           },
         });
       }
