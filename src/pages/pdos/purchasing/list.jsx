@@ -1,12 +1,11 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Divider, Popconfirm, Alert, Row, Col, Input, Button, Form, DatePicker } from 'antd';
-import moment from 'moment';
+import { Divider, Popconfirm, Alert, Row, Col, Button } from 'antd';
+import { Form, Input } from 'antx';
+
 import { getValue } from '@src/utils/utils';
 import emitter from '@src/utils/events';
 import DataTable from '@src/components/DataTable';
-
-const { RangePicker } = DatePicker;
 
 @Form.create()
 @connect(state => ({
@@ -153,36 +152,28 @@ export default class PurchasingList extends PureComponent {
 
   // 简单搜索条件
   renderSimpleForm() {
-    const { getFieldDecorator } = this.props.form;
     const { loading } = this.props;
+    const { form } = this.props;
 
     return (
-      <Form onSubmit={this.handleSearch} layout="inline" style={{ marginBottom: 10 }}>
+      <Form api={form} layout="inline" style={{ marginBottom: 10 }}>
         <Row type="flex" justify="space-between">
           <Col>
-            <Form.Item label="采购入库单号">
-              {getFieldDecorator('code')(
-                <Input id="account-search" placeholder="请输入采购入库单号" />,
-              )}
-            </Form.Item>
-            <Form.Item label="入库日期">
-              {getFieldDecorator('orderDate')(
-                <RangePicker
-                  ranges={{ 默认: [moment().startOf('day'), moment().add('days', 90)] }}
-                />,
-              )}
-            </Form.Item>
+            <Input
+              id="account-search"
+              placeholder="请输入采购入库单号"
+              msg="full"
+              label="采购入库单号"
+            />
           </Col>
           <Col>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                查询
-              </Button>
-              <Divider type="vertical" />
-              <Button onClick={this.handleFormReset} loading={loading}>
-                重置
-              </Button>
-            </Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              查询
+            </Button>
+            <Divider type="vertical" />
+            <Button onClick={this.handleFormReset} loading={loading}>
+              重置
+            </Button>
           </Col>
         </Row>
       </Form>

@@ -1,25 +1,25 @@
 import React from 'react';
 import { connect } from 'dva';
-import moment from 'moment';
-import { Row, Col, Card, Input, DatePicker, Form, Button, Divider, Modal } from 'antd';
+import { Row, Col, Card, DatePicker, Button, Divider, Modal } from 'antd';
+import { Form, Input } from 'antx';
 
 import Selector from '@src/components/Selector';
 import emitter from '@src/utils/events';
 
-const FormItem = Form.Item;
-/* eslint-disable */
 @Form.create()
 @connect(state => ({
   submitting: state.loading.effects['purchasing/save'],
   purchasing: state.purchasing,
+  global: state.global,
 }))
 export default class MainAOEForm extends React.PureComponent {
   componentDidMount() {
-    const form = this.props.form;
+    const { form } = this.props;
     emitter.on('purchasingFormReset', () => {
       form.resetFields();
     });
   }
+
   // 关闭
   handleCancelClick = () => {
     this.props.dispatch({
@@ -59,7 +59,7 @@ export default class MainAOEForm extends React.PureComponent {
     const { currentItem, lineData } = this.props.purchasing;
 
     if (!lineData || lineData.length < 1) {
-      Modal.error({ title: `明细数据不允许为空` });
+      Modal.error({ title: '明细数据不允许为空' });
       return;
     }
 
@@ -125,79 +125,83 @@ export default class MainAOEForm extends React.PureComponent {
   }
 
   render() {
-    const { view = false } = this.props;
-    const { getFieldDecorator } = this.props.form;
+    const { dict } = this.props.global;
+    const { view = false, form } = this.props;
     const { currentItem, viewItem } = this.props.purchasing;
 
     // 表单布局
     const formItemLayout = {
       labelCol: {
-        xs: { span: 8 },
-        sm: { span: 6 },
-        md: { span: 4 },
+        xs: { span: 10 },
+        sm: { span: 8 },
+        md: { span: 6 },
       },
       wrapperCol: {
-        xs: { span: 12 },
+        xs: { span: 14 },
         sm: { span: 16 },
         md: { span: 18 },
       },
     };
 
     return (
-      <Card title="采购入库单基本信息" extra={this.renderBtn()}>
-        <Form layout="horizontal" {...formItemLayout}>
+      <Card
+        title="基本信息"
+        extra={this.renderBtn()}
+        headStyle={{ padding: 0 }}
+        bodyStyle={{ padding: '10px 0' }}
+        bordered={false}
+      >
+        <Form
+          api={form}
+          data={view ? viewItem : currentItem}
+          labelAlign="left"
+          layout="horizontal"
+          {...formItemLayout}
+        >
           {/* 第 1 行 */}
           <Row gutter={24}>
             <Col span={8}>
-              <FormItem label="入库单号">
-                {getFieldDecorator('code', {
-                  initialValue: view ? viewItem.code : currentItem.code,
-                  validateTrigger: 'onBlur',
-                  rules: [
-                    { validator: this.checkCode },
-                    { message: '请输入入库单号', required: true },
-                  ],
-                })(<Input disabled={view} />)}
-              </FormItem>
+              <Input
+                label="入库单号"
+                id="code"
+                min={4}
+                max={16}
+                msg="请输入入库单号"
+                validateTrigger="onBlur"
+                rules={[
+                  {
+                    required: true,
+                    message: '账号格式错误或已存在',
+                    whitespace: true,
+                    pattern: /^[0-9a-zA-Z_]{4,16}$/,
+                    validator: this.checkCode,
+                  },
+                ]}
+              />
             </Col>
             <Col span={8}>
-              <FormItem label="入库日期">
-                {getFieldDecorator('orderDate', {
-                  initialValue: moment(view ? viewItem.orderDate : currentItem.orderDate),
-                  rules: [{ message: '请选择入库日期', required: true }],
-                })(<DatePicker disabled={view} format="YYYY-MM-DD HH:mm:ss" />)}
-              </FormItem>
+              <DatePicker
+                label="入库日期"
+                disabled={view}
+                format="YYYY-MM-DD HH:mm:ss"
+                id="orderDate"
+                rule={['required']}
+              />
             </Col>
             <Col span={8}>
-              <FormItem label="采购类型">
-                {getFieldDecorator('stock', {
-                  initialValue: view ? viewItem.stock : currentItem.stock,
-                })(<Selector code="purchasing_type" disabled={view} />)}
-              </FormItem>
+              <Selector label="采购类型" data={dict.purchasing_type} disabled={view} id="stock" />
             </Col>
           </Row>
           {/* 第 2 行 */}
           <Row gutter={24}>
             <Col span={8}>
-              <FormItem label="制单人">
-                {getFieldDecorator('operatorNm', {
-                  initialValue: view ? viewItem.operatorNm : currentItem.operatorNm,
-                })(<Input disabled={view} />)}
-              </FormItem>
+              <Input disabled={view} id="operatorNm" label="制单人" />
             </Col>
             <Col span={8}>
-              <FormItem label="采购人">
-                {getFieldDecorator('purchaserNm', {
-                  initialValue: view ? viewItem.purchaserNm : currentItem.purchaserNm,
-                })(<Input disabled={view} />)}
-              </FormItem>
+              <Input disabled={view} id="purchaserNm" label="采购人" />
             </Col>
             <Col span={8}>
-              <FormItem label="供应商">
-                {getFieldDecorator('supplierNm', {
-                  initialValue: view ? viewItem.supplierNm : currentItem.supplierNm,
-                })(<Input disabled={view} />)}
-              </FormItem>
+              <Input disabled={view} id="supplierNm" label="供应商" />
             </Col>
           </Row>
         </Form>

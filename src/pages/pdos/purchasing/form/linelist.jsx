@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Table, Card, Button, Divider, Popconfirm, Upload, Modal } from 'antd';
+import { Card, Button, Divider, Popconfirm, Upload, Modal } from 'antd';
 import * as XLSX from 'xlsx';
-import defaultSettings from '../../../../../config/defaultSettings';
+import defaultSettings from '@config/defaultSettings';
+import DataTable from '@src/components/DataTable';
+
 import LineAOEForm from './lineform';
 
 @connect(state => ({
@@ -192,100 +194,79 @@ export default class PurchasingLineList extends PureComponent {
       },
       {
         title: '品名',
-        dataIndex: 'name',
-        render: text => {
-          return (
-            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 90 }}>{text}</div>
-          );
-        },
+        name: 'name',
+        tableItem: {},
         sorter: (a, b) => a.carNum && a.carNum.localeCompare(b.carNum),
       },
       {
         title: '分类名称',
-        dataIndex: 'categoryName',
-        render: text => {
-          return (
-            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 150 }}>{text}</div>
-          );
-        },
+        name: 'categoryName',
+        tableItem: {},
       },
       {
         title: '产品型号',
-        dataIndex: 'model',
+        name: 'model',
         width: 130,
-        render: text => {
-          return (
-            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>{text}</div>
-          );
-        },
+        tableItem: {},
       },
       {
         title: '单位',
         align: 'center',
-        dataIndex: 'unitName',
-        render: (text, record) => {
-          return (
-            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 60 }}>
-              {record.unitName || record.unit}
-            </div>
-          );
-        },
+        name: 'unitName',
+        tableItem: {},
       },
       {
         title: '条码',
-        dataIndex: 'barcode',
-        render: text => {
-          return (
-            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>{text}</div>
-          );
-        },
+        name: 'barcode',
+        tableItem: {},
       },
       {
         fixed: 'right',
         width: 120,
-        render: (text, record, index) => (
-          <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>
-            {!view && <a onClick={() => this.handleEditClick(record, index)}>修改</a>}
-            {!view && <Divider type="vertical" />}
-            {!view && (
-              <Popconfirm
-                title="确定要删除吗？"
-                okText="确定"
-                cancelText="取消"
-                onConfirm={() => this.handleDeleteClick(index)}
-              >
-                <a>删除</a>
-              </Popconfirm>
-            )}
-          </div>
-        ),
+        tableItem: {
+          render: (text, record, index) => (
+            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>
+              {!view && <a onClick={() => this.handleEditClick(record, index)}>修改</a>}
+              {!view && <Divider type="vertical" />}
+              {!view && (
+                <Popconfirm
+                  title="确定要删除吗？"
+                  okText="确定"
+                  cancelText="取消"
+                  onConfirm={() => this.handleDeleteClick(index)}
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              )}
+            </div>
+          ),
+        },
       },
     ];
 
-    const rowSelectionProps = {
-      fixed: true,
-      columnWidth: 30,
+    const dataTableProps = {
+      columns,
+      rowKey: 'id',
+      loading,
+      showNum: true,
+      isScroll: true,
+      alternateColor: true,
+      selectType: 'checkbox',
+      dataItems: view ? viewLineData : { records: lineData } || [],
       selectedLineRowKeys,
-      onChange: selectedKeys => {
-        this.handleSelectRows(selectedKeys);
-      },
+      onChange: this.handleListChange,
+      onSelect: this.handleSelectRows,
     };
 
     return (
-      <Card title="采购入库单明细" extra={this.renderBtn()} bodyStyle={{ padding: 0 }}>
-        <Table
-          loading={loading}
-          bordered
-          size="small"
-          pagination={false}
-          rowKey={record => record.id}
-          rowSelection={rowSelectionProps}
-          onSelect={this.handleSelectRows}
-          onChange={this.handleListChange}
-          dataSource={view ? viewLineData : lineData}
-          columns={columns}
-        />
-        {modalType && <LineAOEForm />}
+      <Card
+        title="采购入库单明细"
+        extra={this.renderBtn()}
+        headStyle={{ padding: 0 }}
+        bodyStyle={{ padding: 0 }}
+        bordered={false}
+      >
+        <DataTable {...dataTableProps} />;{modalType && <LineAOEForm />}
       </Card>
     );
   }
