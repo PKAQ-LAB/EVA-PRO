@@ -43,7 +43,7 @@ export default {
       }
     },
     // 加载采购入库单信息
-    *getPurchasing({ payload }, { call, put }) {
+    *get({ payload }, { call, put }) {
       const response = yield call(get, payload);
       if (response && response.success) {
         yield put({
@@ -59,7 +59,7 @@ export default {
       }
     },
     // 查看采购入库单信息
-    *viewPurchasing({ payload }, { call, put }) {
+    *view({ payload }, { call, put }) {
       const response = yield call(get, payload);
       if (response && response.success) {
         yield put({

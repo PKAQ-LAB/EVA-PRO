@@ -42,7 +42,7 @@ export default class PurchasingList extends PureComponent {
     emitter.emit('purchasingFormReset');
 
     this.props.dispatch({
-      type: 'purchasing/getPurchasing',
+      type: 'purchasing/get',
       payload: {
         id: r.id,
       },
@@ -52,7 +52,7 @@ export default class PurchasingList extends PureComponent {
   // 查看
   handleViewClick = r => {
     this.props.dispatch({
-      type: 'purchasing/viewPurchasing',
+      type: 'purchasing/view',
       payload: {
         id: r.id,
       },
