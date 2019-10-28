@@ -111,7 +111,7 @@ export default class AccountList extends React.PureComponent {
         tableItem: {
           width: 180,
           render: (text, record) =>
-            record.locked !== '0009' && (
+            record.locked === '0000' && (
               <DataTable.Oper>
                 <a onClick={e => this.handleRoleClick(record, e)}>角色授权</a>
                 <Divider type="vertical" />
@@ -147,7 +147,7 @@ export default class AccountList extends React.PureComponent {
       onSelect: this.handleSelectRows,
       rowSelection: {
         getCheckboxProps: record => ({
-          disabled: record.locked === '0009',
+          disabled: record.locked === '9999' || record.locked === '0001',
           name: record.name,
         }),
       },
