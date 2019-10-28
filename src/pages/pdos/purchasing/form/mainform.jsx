@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
+import moment from 'moment';
 import { Row, Col, Card, DatePicker, Button, Divider, Modal } from 'antd';
 import { Form, Input } from 'antx';
 
@@ -128,6 +129,12 @@ export default class MainAOEForm extends React.PureComponent {
     const { dict } = this.props.global;
     const { view = false, form } = this.props;
     const { currentItem, viewItem } = this.props.purchasing;
+    if (view) {
+      viewItem.orderDate = moment(viewItem.orderDate);
+    } else {
+      currentItem.orderDate = moment(currentItem.orderDate);
+    }
+
 
     // 表单布局
     const formItemLayout = {
@@ -164,6 +171,7 @@ export default class MainAOEForm extends React.PureComponent {
               <Input
                 label="入库单号"
                 id="code"
+                disabled={view}
                 min={4}
                 max={16}
                 msg="请输入入库单号"

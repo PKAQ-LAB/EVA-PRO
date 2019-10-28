@@ -88,9 +88,7 @@ export default class PurchasingLineList extends PureComponent {
       // 删除表头
       jsonArr.shift();
       // 删除空行
-      jsonArr = jsonArr.filter(item => {
-        return item && item.length > 0;
-      });
+      jsonArr = jsonArr.filter(item => item && item.length > 0);
 
       errors.success = jsonArr.length;
 
@@ -113,9 +111,7 @@ export default class PurchasingLineList extends PureComponent {
         return tempObj;
       });
       // 过滤空对象
-      jsonArr = jsonArr.filter(item => {
-        return Object.keys(item).length > 0;
-      });
+      jsonArr = jsonArr.filter(item => Object.keys(item).length > 0);
 
       lineData = lineData.concat(jsonArr);
 
@@ -251,7 +247,7 @@ export default class PurchasingLineList extends PureComponent {
       isScroll: true,
       alternateColor: true,
       selectType: 'checkbox',
-      dataItems: view ? viewLineData : { records: lineData } || [],
+      dataItems: view ? { records: viewLineData } : { records: lineData } || [],
       selectedLineRowKeys,
       onChange: this.handleListChange,
       onSelect: this.handleSelectRows,

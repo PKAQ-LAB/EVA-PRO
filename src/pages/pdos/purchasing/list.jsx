@@ -63,11 +63,11 @@ export default class PurchasingList extends PureComponent {
   handleDeleteClick = r => {
     const { selectedRowKeys } = this.props.purchasing;
 
-    const keys = r ? [r.id] : selectedRowKeys;
+    let keys = r ? [r.id] : selectedRowKeys;
 
     if (keys.length < 1) return;
 
-    keys.map(item => {
+    keys = keys.map(item => {
       const obj = {};
       obj.id = item;
       return obj;
@@ -97,9 +97,7 @@ export default class PurchasingList extends PureComponent {
   };
 
   // 搜索事件
-  handleSearch = e => {
-    e.preventDefault();
-
+  handleSearch = () => {
     const { validateFields } = this.props.form;
 
     // 表单验证
@@ -107,12 +105,8 @@ export default class PurchasingList extends PureComponent {
       if (err) return;
 
       const values = {
-        beginDate: fieldsValue.orderDate && fieldsValue.orderDate[0].format('YYYY-MM-DD HH:mm:ss'),
-        endDate: fieldsValue.orderDate && fieldsValue.orderDate[1].format('YYYY-MM-DD HH:mm:ss'),
         ...fieldsValue,
       };
-      // 删除orderdate日期数组
-      delete values.orderDate;
 
       this.props.dispatch({
         type: 'purchasing/fetch',
@@ -162,11 +156,11 @@ export default class PurchasingList extends PureComponent {
     const { form } = this.props;
 
     return (
-      <Form api={form} layout="inline" style={{ marginBottom: 10 }}>
+      <Form api={form} layout="inline" style={{ marginBottom: 10 }} onSubmit={this.handleSearch}>
         <Row type="flex" justify="space-between">
           <Col>
             <Input
-              id="account-search"
+              id="code"
               placeholder="请输入采购入库单号"
               msg="full"
               label="采购入库单号"
