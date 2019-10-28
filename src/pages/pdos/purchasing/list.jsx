@@ -126,23 +126,14 @@ export default class PurchasingList extends PureComponent {
   };
 
   // 表格动作触发事件
-  handleListChange = (pagination, filtersArg, sorter) => {
+  handleListChange = pagination => {
     const { getFieldsValue } = this.props.form;
 
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
     const params = {
       pageNo: pagination.current,
       pageSize: pagination.pageSize,
       ...getFieldsValue(),
-      ...filters,
     };
-    if (sorter.field) {
-      return;
-    }
 
     this.props.dispatch({
       type: 'purchasing/fetch',
