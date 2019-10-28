@@ -13,6 +13,7 @@ import LineList from './linelist';
 export default class DictForm extends React.PureComponent {
   // 保存事件
   handleSaveClick = () => {
+    const { form } = this.props;
     const { lineData, currentItem } = this.props.dict;
     const { getFieldsValue, validateFields } = this.props.form;
 
@@ -29,6 +30,9 @@ export default class DictForm extends React.PureComponent {
       this.props.dispatch({
         type: 'dict/editDict',
         payload: data,
+      }).then(() => {
+        // fix 保存后清空表单
+        // form.resetFields();
       });
     });
   };

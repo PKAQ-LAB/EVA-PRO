@@ -67,6 +67,12 @@ export default class PurchasingList extends PureComponent {
 
     if (keys.length < 1) return;
 
+    keys.map(item => {
+      const obj = {};
+      obj.id = item;
+      return obj;
+    })
+
     this.props.dispatch({
       type: 'purchasing/remove',
       payload: {
@@ -184,15 +190,7 @@ export default class PurchasingList extends PureComponent {
     const { selectedRowKeys, listData } = this.props.purchasing;
     const { loading } = this.props;
 
-    const columns = [
-      {
-        render: (t, r, i) => i + 1,
-        width: 30,
-        tableItem: {
-          fixed: 'left',
-        },
-      },
-      {
+    const columns = [{
         title: '入库单号',
         name: 'code',
         tableItem: {},
@@ -236,24 +234,25 @@ export default class PurchasingList extends PureComponent {
       {
         title: '操作',
         align: 'center',
-        width: 120,
-        fixed: 'right',
-        render: (text, record) => (
-          <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>
-            <a onClick={e => this.handleViewClick(record, e)}>查看</a>
-            <Divider type="vertical" />
-            <a onClick={e => this.handleEditClick(record, e)}>修改</a>
-            <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => this.handleDeleteClick(record)}
-            >
-              <a>删除</a>
-            </Popconfirm>
-          </div>
-        ),
+        tableItem: {
+
+          render: (text, record) => (
+            <div style={{ wordWrap: 'break-word', wordBreak: 'break-all', width: 120 }}>
+              <a onClick={e => this.handleViewClick(record, e)}>查看</a>
+              <Divider type="vertical" />
+              <a onClick={e => this.handleEditClick(record, e)}>修改</a>
+              <Divider type="vertical" />
+              <Popconfirm
+                title="确定要删除吗？"
+                okText="确定"
+                cancelText="取消"
+                onConfirm={() => this.handleDeleteClick(record)}
+              >
+                <a>删除</a>
+              </Popconfirm>
+            </div>
+          ),
+        },
       },
     ];
 
