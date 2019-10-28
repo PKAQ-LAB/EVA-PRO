@@ -31,13 +31,10 @@ const errorHandler = (error: { response: any }): any => {
     } else if (status >= 404 && status < 422) {
       router.push('/exception/404');
     }
-
-    if (!response) {
-      message.error({
-        description: '您的网络发生异常，无法连接服务器',
-        message: '网络异常',
-      });
-    }
+  } else {
+    message.error({
+      content: '未知网络错误，无法连接服务器',
+    });
   }
   return response;
 };
