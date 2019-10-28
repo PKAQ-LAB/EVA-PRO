@@ -244,6 +244,9 @@ export default class List extends Component {
       onChange: selectedKeys => {
         this.handleSelectRows(selectedKeys);
       },
+      getCheckboxProps: record => ({
+        disabled: record.status === '9999',
+      }),
     };
 
     return (
