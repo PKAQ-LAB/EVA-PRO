@@ -299,6 +299,7 @@ export default class List extends Component {
         )}
         {/* 列表 */}
         <Table
+          defaultExpandAllRows
           size="small"
           columns={column}
           dataSource={data}
