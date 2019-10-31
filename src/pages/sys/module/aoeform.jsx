@@ -30,7 +30,8 @@ export default class AOEForm extends Component {
     const path = getFieldValue('path');
 
     // 路径正则校验
-    const regex = new RegExp(/^\/[a-zA-Z_]{1}([a-zA-Z_0-9]){2,40}$/);
+    const regex = new RegExp(/^\/[a-zA-Z_]*[/a-zA-Z_0-9]{2,40}$/);
+    console.info(path);
     if (!regex.test(path)) {
       return callback('路径格式错误, 必须以‘/’开头，仅允许使用字母或数字.');
     }

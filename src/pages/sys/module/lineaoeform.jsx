@@ -92,7 +92,7 @@ export default class ModuleLineForm extends React.PureComponent {
                   {
                     required: true,
                     whitespace: true,
-                    pattern: new RegExp(/^\/[a-zA-Z_]{1}([a-zA-Z_0-9]){2,40}$/),
+                    pattern: new RegExp(/^\/[a-zA-Z_]*[/a-zA-Z_0-9]{2,40}$/),
                     message: '路径格式错误, 必须以‘/’开头，仅允许使用字母或数字.',
                   },
                 ]}
