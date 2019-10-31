@@ -3,7 +3,6 @@ import { connect } from 'dva';
 import { Divider, Popconfirm, Alert, Row, Col, Button } from 'antd';
 import { Form, Input } from 'antx';
 
-import { getValue } from '@src/utils/utils';
 import emitter from '@src/utils/events';
 import DataTable from '@src/components/DataTable';
 

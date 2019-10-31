@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { Table, Alert, Divider, notification, message } from 'antd';
-import { getValue } from '@src/utils/utils';
 import styles from './List.less';
 import { connect } from 'dva';
 
