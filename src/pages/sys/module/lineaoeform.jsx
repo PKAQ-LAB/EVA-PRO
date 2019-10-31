@@ -86,7 +86,17 @@ export default class ModuleLineForm extends React.PureComponent {
       >
         <Form api={form} colon layout="horizontal" {...formItemLayout} data={lineData[editIndex]}>
           <Input label="资源描述" id="resourceDesc" rules={['required']} max={30} msg="full" />
-          <Input label="资源路径" id="resourceUrl" rules={['required']} max={300} msg="full" />
+          <Input label="资源路径"
+                 id="resourceUrl"
+                 rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    pattern: new RegExp(/^\/[a-zA-Z_]{1}([a-zA-Z_0-9]){2,40}$/),
+                    message: '路径格式错误, 必须以‘/’开头，仅允许使用字母或数字.',
+                  },
+                ]}
+                 max={300} msg="full" />
         </Form>
       </Modal>
     );
