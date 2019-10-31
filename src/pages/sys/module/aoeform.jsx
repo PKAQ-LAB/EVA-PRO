@@ -28,6 +28,13 @@ export default class AOEForm extends Component {
     const { getFieldValue } = this.props.form;
     const that = this;
     const path = getFieldValue('path');
+
+    // 路径正则校验
+    const regex = new RegExp(/^\/[a-zA-Z_]{1}([a-zA-Z_0-9]){2,40}$/);
+    if (!regex.test(path)) {
+      return callback('路径格式错误, 必须以‘/’开头，仅允许使用字母或数字.');
+    }
+
     const parentId = getFieldValue('parentId');
     const { currentItem } = this.props.module;
     const data = { id: currentItem.id, path, parentId };
@@ -100,9 +107,7 @@ export default class AOEForm extends Component {
             rules={[
               {
                 required: true,
-                message: '路径格式错误或已存在',
                 whitespace: true,
-                pattern: /^[0-9a-zA-Z_]{4,16}$/,
                 validator: this.checkPath,
               },
             ]}
