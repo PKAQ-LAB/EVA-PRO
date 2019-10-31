@@ -10,7 +10,6 @@ import { connect } from 'dva';
 import { formatMessage } from 'umi-plugin-react/locale';
 
 // import Authorized from '@src/utils/Authorized';
-import { Icon } from 'antd';
 import RightContent from '@src/components/GlobalHeader/RightContent';
 import { ConnectState } from '@src/models/connect';
 import logo from '../assets/logo.svg';
@@ -40,6 +39,7 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
 //   };
 //   return Authorized.check(item.authority, localItem, null) as MenuDataItem;
 // });
+
 const footerRender: BasicLayoutProps['footerRender'] = () => (
   <>
     <div
