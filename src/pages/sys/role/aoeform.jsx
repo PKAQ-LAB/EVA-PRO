@@ -35,6 +35,12 @@ export default class AOEForm extends Component {
   checkCode = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
     const code = getFieldValue('code');
+
+    const regex = new RegExp(/^\/[a-zA-Z_]*[/a-zA-Z_0-9]{2,16}$/);
+    if (!regex.test(code)) {
+      return callback('角色编码格式错误,仅允许使用字母或数字.');
+    }
+
     const { currentItem } = this.props.role;
 
     if (currentItem && currentItem.id && value === currentItem.code) {

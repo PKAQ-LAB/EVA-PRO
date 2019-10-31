@@ -150,7 +150,7 @@ export default class List extends React.PureComponent {
         tableItem: {
           align: 'center',
           render: (text, record) =>
-            record.locked !== '0000' && (
+            record.locked === '0000' && (
               <DataTable.Oper style={{ textAlign: 'center' }}>
                 <a onClick={() => this.handleModuleClick(record, 'Module')}>模块授权</a>
               </DataTable.Oper>
