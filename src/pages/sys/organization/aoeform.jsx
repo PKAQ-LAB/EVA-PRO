@@ -27,6 +27,13 @@ export default class AOEForm extends Component {
     const { getFieldValue } = that.props.form;
 
     const code = getFieldValue('code');
+
+    // 编码正则校验
+    const regex = new RegExp(/^[a-zA-Z_0-9]{2,40}$/);
+    if (!regex.test(code)) {
+      return callback('编码格式错误,仅允许使用字母或数字.');
+    }
+
     const { currentItem } = this.props.organization;
     if (currentItem && currentItem.id && value === currentItem.code) {
       return callback();
@@ -38,7 +45,7 @@ export default class AOEForm extends Component {
         payload: data,
       })
       .then(r => {
-        if (r.success) {
+        if (r && r.success) {
           return callback();
         }
         return callback('该编码已存在');
@@ -105,9 +112,7 @@ export default class AOEForm extends Component {
             rules={[
               {
                 required: true,
-                message: '编码格式错误或已存在',
                 whitespace: true,
-                pattern: /^[0-9a-zA-Z_]{2,16}$/,
                 validator: this.checkCode,
               },
             ]}
