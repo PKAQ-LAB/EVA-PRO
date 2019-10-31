@@ -36,11 +36,6 @@ export default class AOEForm extends Component {
     const { getFieldValue } = this.props.form;
     const code = getFieldValue('code');
 
-    const regex = new RegExp(/^\/[a-zA-Z_]*[/a-zA-Z_0-9]{2,16}$/);
-    if (!regex.test(code)) {
-      return callback('角色编码格式错误,仅允许使用字母或数字.');
-    }
-
     const { currentItem } = this.props.role;
 
     if (currentItem && currentItem.id && value === currentItem.code) {
@@ -153,7 +148,7 @@ export default class AOEForm extends Component {
                 rules={[
                   {
                     required: true,
-                    message: '编码格式错误',
+                    message: '角色编码格式错误,仅允许使用字母或数字.',
                     whitespace: true,
                     pattern: /^[0-9a-zA-Z_]{4,16}$/,
                   },

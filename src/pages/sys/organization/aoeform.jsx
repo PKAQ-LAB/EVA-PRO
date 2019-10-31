@@ -28,12 +28,6 @@ export default class AOEForm extends Component {
 
     const code = getFieldValue('code');
 
-    // 编码正则校验
-    const regex = new RegExp(/^[a-zA-Z_0-9]{2,40}$/);
-    if (!regex.test(code)) {
-      return callback('编码格式错误,仅允许使用字母或数字.');
-    }
-
     const { currentItem } = this.props.organization;
     if (currentItem && currentItem.id && value === currentItem.code) {
       return callback();
@@ -110,6 +104,10 @@ export default class AOEForm extends Component {
             label="部门编码"
             id="code"
             rules={[
+              {
+                message: '编码格式错误,仅允许使用字母或数字.',
+                pattern: new RegExp(/^[a-zA-Z_0-9]{2,40}$/)
+              },
               {
                 required: true,
                 whitespace: true,
