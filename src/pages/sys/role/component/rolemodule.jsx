@@ -56,7 +56,7 @@ export default class RoleModule extends Component {
       (!checkedResource[record.id] || checkedResource[record.id].length < 1)
     ) {
       checkedResource[record.id] = [];
-      if (record.resources[0] && record.resources[0].length > 0) {
+      if (record.resources[0]) {
         checkedResource[record.id].push(record.resources[0].id);
       }
     }
