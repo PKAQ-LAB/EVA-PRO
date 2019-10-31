@@ -300,6 +300,7 @@ export default class List extends Component {
           size="small"
           columns={column}
           dataSource={data}
+          defaultExpandAllRows
           loading={loading}
           rowClassName={record =>
             cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
