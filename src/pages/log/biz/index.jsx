@@ -72,7 +72,7 @@ export default class Workdaily extends PureComponent {
           <Col>
             <FormItem label="操作时间">
               {getFieldDecorator('operateDatetime', {
-                initialValue: [moment(), moment().add(7, 'days')],
+                initialValue: [moment().add(-7, 'days'), moment()],
               })(<RangePicker />)}
             </FormItem>
           </Col>
