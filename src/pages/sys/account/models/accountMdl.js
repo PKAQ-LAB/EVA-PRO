@@ -73,7 +73,10 @@ export default {
       const { data } = response;
 
       if (response && response.success) {
-        data.roles = data.roles.map(item => item.id);
+        if (data.roles) {
+          data.roles = data.roles.map(item => item.id);
+        }
+
         yield put({
           type: 'updateState',
           payload: {
