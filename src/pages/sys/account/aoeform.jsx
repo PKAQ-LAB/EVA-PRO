@@ -109,6 +109,7 @@ export default class AccountForm extends React.PureComponent {
           title: '校验失败',
           content: '两次输入的密码不一致...',
         });
+        return;
       }
 
       data.locked = data.locked ? '0001' : '0000';
