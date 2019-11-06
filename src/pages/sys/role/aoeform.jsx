@@ -148,16 +148,17 @@ export default class AOEForm extends Component {
                 rules={[
                   {
                     required: true,
-                    message: '角色编码格式错误,仅允许使用字母或数字.',
+                    message: '角色编码格式错误,仅允许使用(4-30位)字母或数字.',
                     whitespace: true,
-                    pattern: /^[0-9a-zA-Z_]{4,16}$/,
+                    pattern: /^[0-9a-zA-Z_]{4,30}$/,
                   },
                   {
                     validator: this.checkCode,
                   },
                 ]}
                 validateTrigger="onBlur"
-                max={12}
+                min={4}
+                max={30}
                 msg="full"
               />
             </Col>
