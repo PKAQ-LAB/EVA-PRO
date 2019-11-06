@@ -150,7 +150,7 @@ export default class List extends React.PureComponent {
           </Col>
         </Row>
 
-        <DataTable {...dataTableProps} className={css.grid} bordered />
+        <DataTable defaultExpandAllRows {...dataTableProps} className={css.grid} bordered />
       </div>
     );
   }
