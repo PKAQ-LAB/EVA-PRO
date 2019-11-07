@@ -1,0 +1,192 @@
+import { Request, Response } from 'express';
+
+const listOrg = (req: Request, res: Response) => {
+  res.json({
+    "code":0,
+    "data":[
+      {
+        "children":[
+          {
+            "code":"SD",
+            "deleted":"0000",
+            "id":"7",
+            "isleaf":false,
+            "key":"7hqoni",
+            "name":"三岛集团",
+            "orders":0,
+            "parentId":"6",
+            "parentName":"加达里",
+            "path":"6/7",
+            "pathName":"加达里/三岛集团",
+            "status":"0000",
+            "title":"三岛集团",
+            "value":"7"
+          },
+          {
+            "code":"GKL",
+            "deleted":"0000",
+            "id":"12",
+            "isleaf":false,
+            "key":"120bj8a",
+            "name":"卡拉吉塔集团",
+            "orders":1,
+            "parentId":"6",
+            "parentName":"加达里",
+            "path":"6/12",
+            "pathName":"加达里/卡拉吉塔集团",
+            "status":"0000",
+            "title":"卡拉吉塔集团",
+            "value":"12"
+          },
+          {
+            "code":"GKN",
+            "deleted":"0000",
+            "id":"13",
+            "isleaf":false,
+            "key":"13e7nrz",
+            "name":"应用知识学院",
+            "orders":4,
+            "parentId":"6",
+            "parentName":"加达里",
+            "path":"6/13",
+            "pathName":"加达里/应用知识学院",
+            "status":"0000",
+            "title":"应用知识学院",
+            "value":"13"
+          }
+        ],
+        "code":"GDRR",
+        "deleted":"0000",
+        "gmtModify":"2019-10-28 20:24:22",
+        "id":"6",
+        "isleaf":false,
+        "key":"64b468",
+        "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
+        "name":"加达里",
+        "orders":0,
+        "parentId":"0",
+        "path":"6",
+        "pathName":"加达里",
+        "status":"0000",
+        "title":"加达里",
+        "value":"6"
+      },
+      {
+        "children":[
+          {
+            "code":"CAD",
+            "deleted":"0000",
+            "id":"4",
+            "isleaf":false,
+            "key":"4ssfr4",
+            "name":"商业安全委员会",
+            "orders":0,
+            "parentId":"1",
+            "parentName":"统合部",
+            "path":"1/4",
+            "pathName":"统合部/商业安全委员会",
+            "status":"9999",
+            "title":"商业安全委员会",
+            "value":"4"
+          },
+          {
+            "code":"DED",
+            "deleted":"0000",
+            "id":"3",
+            "isleaf":false,
+            "key":"3xqmdq",
+            "name":"联合安全局",
+            "orders":1,
+            "parentId":"1",
+            "parentName":"统合部",
+            "path":"1/3",
+            "pathName":"统合部/联合安全局",
+            "status":"9999",
+            "title":"联合安全局",
+            "value":"3"
+          },
+          {
+            "code":"SLB",
+            "deleted":"0000",
+            "id":"5",
+            "isleaf":false,
+            "key":"5xuu1c",
+            "name":"统合关系司令部",
+            "orders":2,
+            "parentId":"1",
+            "parentName":"统合部",
+            "path":"1/5",
+            "pathName":"统合部/统合关系司令部",
+            "status":"9999",
+            "title":"统合关系司令部",
+            "value":"5"
+          },
+          {
+            "code":"LSH",
+            "deleted":"0000",
+            "id":"2",
+            "isleaf":false,
+            "key":"2x9k9h",
+            "name":"协约理事会",
+            "orders":3,
+            "parentId":"1",
+            "parentName":"统合部",
+            "path":"1/2",
+            "pathName":"统合部/协约理事会",
+            "status":"9999",
+            "title":"协约理事会",
+            "value":"2"
+          }
+        ],
+        "code":"THB",
+        "deleted":"0000",
+        "id":"1",
+        "isleaf":true,
+        "key":"15owdl",
+        "name":"统合部",
+        "orders":1,
+        "parentId":"0",
+        "path":"1",
+        "pathName":"统合部",
+        "status":"9999",
+        "title":"统合部",
+        "value":"1"
+      }
+    ],
+    "success":true
+  });
+};
+
+const getOrg = (req: Request, res: Response) => {
+  res.json({
+    "code":0,
+    "data":{
+      "code":"GDRR",
+      "deleted":"0000",
+      "gmtModify":"2019-10-28 20:24:22",
+      "id":"6",
+      "isleaf":false,
+      "key":"61p7uy",
+      "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
+      "name":"加达里",
+      "orders":0,
+      "parentId":"0",
+      "path":"6",
+      "pathName":"加达里",
+      "status":"0000",
+      "title":"加达里",
+      "value":"6"
+    },
+    "success":true
+  })
+}
+
+export default {
+  'GET /sys/organization/get': getOrg,
+  'GET /sys/organization/list': listOrg,
+  'POST /sys/organization/sort': listOrg,
+  'POST /sys/organization/edit': listOrg,
+  'POST /sys/organization/switchStatus': listOrg,
+  'POST /sys/organization/del': listOrg,
+  'POST /sys/organization/checkUnique': listOrg,
+};

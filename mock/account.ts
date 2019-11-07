@@ -1,122 +1,91 @@
 import { Request, Response } from 'express';
 
+const get = (req: Request, res: Response) => {
+  res.json({
+    "code":0,
+    "data":{
+      "account":"scott",
+      "avatar":"",
+      "createBy":"9199482d76b443ef9f13fefddcf0046c",
+      "deleted":"0000",
+      "deptId":"6",
+      "deptName":"加达里",
+      "gmtCreate":"2019-11-01 11:12:39",
+      "gmtModify":"2019-11-06 17:31:04",
+      "id":"1190104332380127233",
+      "locked":"0000",
+      "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
+      "modules":[],
+      "name":"操作员",
+      "roles":[
+        {
+          "code":"ROLE_OPERATOR",
+          "dataPermissionType":"0002",
+          "id":"1191916813788344321",
+          "name":"系统操作员"
+        }
+      ]
+    },
+    "success":true
+  });
+};
+
 const list = (req: Request, res: Response) => {
   res.json({
-    code: 200,
-    data: {
-      current: 1,
-      pages: 3,
-      size: 10,
-      total: 22,
-      records: [
+    "code":0,
+    "data":{
+      "current":1,
+      "orders":[],
+      "pages":1,
+      "records":[
         {
-          account: 'S25',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '060218ef03a64351e73248f44138d803',
-          locked: '0000',
-          name: '二十五号手术室',
+          "account":"scott",
+          "avatar":"",
+          "createBy":"9199482d76b443ef9f13fefddcf0046c",
+          "deleted":"0000",
+          "deptId":"6",
+          "deptName":"加达里",
+          "gmtCreate":"2019-11-01 11:12:39",
+          "gmtModify":"2019-11-06 17:31:04",
+          "id":"1190104332380127233",
+          "locked":"0000",
+          "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
+          "modules":[],
+          "name":"操作员",
+          "roles":[]
         },
         {
-          account: 'S23',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '15841d8ece872a0db30907df5a54f3db',
-          locked: '0001',
-          name: '二十三号手术室',
-        },
-        {
-          account: 'S30',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '1815ebbe5e8712ff65a5035a4c86c1f2',
-          locked: '0000',
-          name: '三十号手术室',
-        },
-        {
-          account: 'S16',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '2bea6858a0ff8f4fa8c2bc5b97ce3cbd',
-          locked: '0000',
-          name: '十六号手术室',
-        },
-        {
-          account: 'S24',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '403170ebcf11fc31a8af683e5e5b67bb',
-          locked: '0000',
-          name: '二十四号手术室',
-        },
-        {
-          account: 'S26',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '5d1b3fefd64267ba4e9107f053e841c7',
-          locked: '0000',
-          name: '二十六号手术室',
-        },
-        {
-          account: 'S28',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '7d8ed6d8270dc60c0d4381521b6bc7d1',
-          locked: '0000',
-          name: '二十八号手术室',
-        },
-        {
-          account: 'S17',
-          code: 'S17',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: '10101012@qq.com',
-          id: '7ec7f7cfab6b5d137a42477c59f4416c',
-          locked: '0000',
-          name: '十七号手术室',
-        },
-        {
-          account: 'S27',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '816751149f0d63741b0a10380ca89dbc',
-          locked: '0000',
-          name: '二十七号手术室',
-        },
-        {
-          account: 'S22',
-          deleted: '0001',
-          deptId: '15',
-          deptName: '手术室',
-          email: 'admin@qq.com',
-          id: '820549993df81217e5e360362559e2b7',
-          locked: '0000',
-          name: '二十二号手术室',
-        },
+          "account":"admin",
+          "avatar":"",
+          "code":"admin",
+          "deleted":"0000",
+          "deptId":"1",
+          "deptName":"统合部",
+          "email":"pkaq@msn.com",
+          "gmtModify":"2019-10-09 20:20:04",
+          "id":"9199482d76b443ef9f13fefddcf0046c",
+          "locked":"9999",
+          "modules":[],
+          "name":"超级管理员",
+          "nickName":"133",
+          "remark":"AAACCC",
+          "roles":[]
+        }
       ],
-      searchCount: true,
+      "searchCount":true,
+      "size":10,
+      "total":2
     },
-    success: true,
+    "success":true
   });
 };
 
 export default {
-  'GET /account/list': list,
+  'GET /sys/account/list': list,
+  'GET /sys/account/get': get,
+  'POST /sys/account/checkUnique': list,
+  'POST /sys/account/edit': list,
+  'POST /sys/account/grant': list,
+  'POST /sys/account/del': list,
+  'POST /sys/account/lock': list,
 };

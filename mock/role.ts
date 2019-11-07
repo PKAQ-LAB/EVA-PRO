@@ -1,28 +1,66 @@
 import { Request, Response } from 'express';
-// 代码中会兼容本地 service mock 以及部署站点的静态数据
-export default {
-  // 支持值为 Object 和 Array
-  'GET /auth/fetch': {
+
+const get = (req: Request, res: Response) => {
+  res.json({
     "code":0,
     "data":{
-      "dict":{
-        "purchasing_type":{
-          "0002":"市场采购",
-          "0001":"网络采购"
+      "code":"ROLE_OPERATOR",
+      "createBy":"9199482d76b443ef9f13fefddcf0046c",
+      "dataPermissionType":"0002",
+      "gmtCreate":"2019-11-06 11:14:48",
+      "gmtModify":"2019-11-06 14:36:19",
+      "id":"1191916813788344321",
+      "locked":"0000",
+      "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
+      "name":"系统操作员",
+      "remark":"系统操作员 仅可操作本人所属部门及下级部门数据"
+    },
+    "success":true
+  });
+};
+
+const list = (req: Request, res: Response) => {
+  res.json({
+    "code":0,
+    "data":{
+      "current":1,
+      "orders":[],
+      "pages":1,
+      "records":[
+        {
+          "code":"ROLE_ADMIN",
+          "dataPermissionType":"0000",
+          "id":"1",
+          "locked":"9999",
+          "name":"系统管理员"
         },
-        "goods_type":{
-          "0002":"饰品",
-          "0001":"玩具"
-        },
-        "data_permission":{
-          "0005":"仅本人创建",
-          "0002":"本部门及下属部门",
-          "0003":"指定部门",
-          "0000":"全部",
-          "0001":"仅本部门"
+        {
+          "code":"ROLE_OPERATOR",
+          "createBy":"9199482d76b443ef9f13fefddcf0046c",
+          "dataPermissionType":"0002",
+          "gmtCreate":"2019-11-06 11:14:48",
+          "gmtModify":"2019-11-06 14:36:19",
+          "id":"1191916813788344321",
+          "locked":"0000",
+          "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
+          "name":"系统操作员",
+          "remark":"系统操作员 仅可操作本人所属部门及下级部门数据"
         }
-      },
-      "menus":[
+      ],
+      "searchCount":true,
+      "size":10,
+      "total":2
+    },
+    "success":true
+  });
+};
+
+const listModule = (req: Request, res: Response) => {
+  res.json({
+    "code":0,
+    "data":{
+      "checked":["1186192979059789826","5","6","7","8","1186192719776305153","9","1186192847761297410","10"],
+      "modules":[
         {
           "children":[
             {
@@ -36,9 +74,19 @@ export default {
               "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
               "name":"组织管理",
               "orders":0,
+              "originChildren":[],
               "parentId":"5",
               "path":"/sys/organization",
               "pathId":"5,5",
+              "resources":[
+                {
+                  "id":"6",
+                  "moduleId":"6",
+                  "resourceDesc":"全部资源",
+                  "resourceType":"",
+                  "resourceUrl":"/**"
+                }
+              ],
               "status":"9999"
             },
             {
@@ -52,9 +100,19 @@ export default {
               "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
               "name":"用户管理",
               "orders":1,
+              "originChildren":[],
               "parentId":"5",
               "path":"/sys/account",
               "pathId":"5,5",
+              "resources":[
+                {
+                  "id":"8",
+                  "moduleId":"8",
+                  "resourceDesc":"全部资源",
+                  "resourceType":"",
+                  "resourceUrl":"**"
+                }
+              ],
               "status":"9999"
             },
             {
@@ -68,9 +126,19 @@ export default {
               "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
               "name":"权限管理",
               "orders":2,
+              "originChildren":[],
               "parentId":"5",
               "path":"/sys/role",
               "pathId":"5,5",
+              "resources":[
+                {
+                  "id":"9",
+                  "moduleId":"9",
+                  "resourceDesc":"全部资源",
+                  "resourceType":"",
+                  "resourceUrl":"**"
+                }
+              ],
               "status":"9999"
             },
             {
@@ -84,9 +152,19 @@ export default {
               "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
               "name":"模块管理",
               "orders":3,
+              "originChildren":[],
               "parentId":"5",
               "path":"/sys/module",
               "pathId":"5,5",
+              "resources":[
+                {
+                  "id":"7",
+                  "moduleId":"7",
+                  "resourceDesc":"全部资源",
+                  "resourceType":"",
+                  "resourceUrl":"**"
+                }
+              ],
               "status":"9999"
             },
             {
@@ -100,9 +178,19 @@ export default {
               "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
               "name":"字典管理",
               "orders":4,
+              "originChildren":[],
               "parentId":"5",
               "path":"/sys/dictionary",
               "pathId":"5,5",
+              "resources":[
+                {
+                  "id":"10",
+                  "moduleId":"10",
+                  "resourceDesc":"全部资源",
+                  "resourceType":"",
+                  "resourceUrl":"**"
+                }
+              ],
               "status":"9999"
             }
           ],
@@ -116,15 +204,16 @@ export default {
           "name":"系统管理",
           "orders":0,
           "originChildren":[
-            {"$ref":"$.data.menus[0].children[0]"},
-            {"$ref":"$.data.menus[0].children[1]"},
-            {"$ref":"$.data.menus[0].children[2]"},
-            {"$ref":"$.data.menus[0].children[3]"},
-            {"$ref":"$.data.menus[0].children[4]"}
+            {"$ref":"$.data.modules[0].children[0]"},
+            {"$ref":"$.data.modules[0].children[1]"},
+            {"$ref":"$.data.modules[0].children[2]"},
+            {"$ref":"$.data.modules[0].children[3]"},
+            {"$ref":"$.data.modules[0].children[4]"}
           ],
           "parentName":"系统管理",
           "path":"/sys",
           "pathId":"5",
+          "resources":[],
           "status":"9999"
         },
         {
@@ -142,11 +231,21 @@ export default {
               "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
               "name":"业务日志",
               "orders":1,
+              "originChildren":[],
               "parentId":"1186192719776305153",
               "parentName":"系统监控",
               "path":"/monitor/log/biz",
               "pathId":"1186192719776305153",
               "pathName":"系统监控/业务日志",
+              "resources":[
+                {
+                  "id":"1186193072919924737",
+                  "moduleId":"1186192847761297410",
+                  "resourceDesc":"全部资源",
+                  "resourceType":"9999",
+                  "resourceUrl":"/**"
+                }
+              ],
               "status":"9999"
             },
             {
@@ -162,11 +261,21 @@ export default {
               "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
               "name":"异常日志",
               "orders":2,
+              "originChildren":[],
               "parentId":"1186192719776305153",
               "parentName":"系统监控",
               "path":"/monitor/log/error",
               "pathId":"1186192719776305153",
               "pathName":"系统监控/异常日志",
+              "resources":[
+                {
+                  "id":"1186193037775851522",
+                  "moduleId":"1186192979059789826",
+                  "resourceDesc":"全部资源",
+                  "resourceType":"9999",
+                  "resourceUrl":"/**"
+                }
+              ],
               "status":"9999"
             }
           ],
@@ -183,10 +292,11 @@ export default {
           "name":"系统监控",
           "orders":5,
           "originChildren":[
-            {"$ref":"$.data.menus[1].children[0]"},
-            {"$ref":"$.data.menus[1].children[1]"}
+            {"$ref":"$.data.modules[1].children[0]"},
+            {"$ref":"$.data.modules[1].children[1]"}
           ],
           "path":"/monitor",
+          "resources":[],
           "status":"9999"
         },
         {
@@ -202,7 +312,9 @@ export default {
           "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
           "name":"代码生成",
           "orders":6,
+          "originChildren":[],
           "path":"/dev/generator",
+          "resources":[],
           "status":"9999"
         },
         {
@@ -219,11 +331,21 @@ export default {
               "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
               "name":"采购管理",
               "orders":1,
+              "originChildren":[],
               "parentId":"1187919802302926850",
               "parentName":"进销存",
               "path":"/pdos/purchasing",
               "pathId":"1187919802302926850",
               "pathName":"进销存/采购管理",
+              "resources":[
+                {
+                  "id":"1187936839473528833",
+                  "moduleId":"1187936839427391490",
+                  "resourceDesc":"全部资源",
+                  "resourceType":"9999",
+                  "resourceUrl":"/**"
+                }
+              ],
               "status":"9999"
             }
           ],
@@ -240,65 +362,84 @@ export default {
           "name":"进销存",
           "orders":7,
           "originChildren":[
-            {"$ref":"$.data.menus[3].children[0]"}
+            {"$ref":"$.data.modules[3].children[0]"}
           ],
           "path":"/pdos",
+          "resources":[],
           "status":"9999"
         }
       ],
-      "user":{
-        "account":"admin",
-        "avatar":"",
-        "code":"admin",
-        "deleted":"0000",
-        "deptId":"1",
-        "deptName":"统合部",
-        "email":"pkaq@msn.com",
-        "gmtModify":"2019-10-09 20:20:04",
-        "id":"9199482d76b443ef9f13fefddcf0046c",
-        "locked":"9999",
-        "modules":[],
-        "name":"超级管理员",
-        "nickName":"133",
-        "remark":"AAACCC",
-        "roles":[
-          {
-            "code":"ROLE_ADMIN",
-            "dataPermissionType":"0000",
-            "id":"1",
-            "name":"系统管理员"
-          }
+      "checkedResource":{
+        "1186192979059789826":[
+          "1186193037775851522"
+        ],
+        "5":[
+          null
+        ],
+        "6":[
+          "6"
+        ],
+        "7":[
+          "7"
+        ],
+        "8":[
+          "8"
+        ],
+        "1186192719776305153":[
+          null
+        ],
+        "9":[
+          "9"
+        ],
+        "1186192847761297410":[
+          "1186193072919924737"
+        ],
+        "10":[
+          "10"
         ]
       }
     },
     "success":true
-  },
-  // GET POST 可省略
-  'POST /auth/login': (req: Request, res: Response) => {
-    const { password, userName, type } = req.body;
-    if (password === userName) {
-      res.send({
-        success: true,
-        code: 200,
-        currentAuthority: 'admin',
-        data:
-          'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhZG1pbiIsImlhdCI6MTU2ODEyMjk2NSwiaXNzIjoiUEtBUSIsInN1YiI6ImFkbWluIiwiZXhwIjoxNTcwNzE0OTY1LCJuYmYiOjE1NjgxMjI5NjV9.nzBOnR5eDSbSd6h6aYG63dmYfcVaocweZ7x2TkvcBXQ',
-      });
-      return;
-    }
-    if (type === 'mobile') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'admin',
-      });
-      return;
-    }
+  });
+};
 
-    res.send({
-      success: false,
-      message: '用户名或密码错误',
-      currentAuthority: 'guest',
-    });
-  },
+const listUser = (req: Request, res: Response) => {
+  res.json({
+    "code":0,
+    "data":{
+      "checked":[
+        "1190104332380127233"
+      ],
+      "users":[
+        {
+          "account":"scott",
+          "avatar":"",
+          "createBy":"9199482d76b443ef9f13fefddcf0046c",
+          "deleted":"0000",
+          "deptId":"6",
+          "deptName":"加达里",
+          "gmtCreate":"2019-11-01 11:12:39",
+          "gmtModify":"2019-11-06 17:31:04",
+          "id":"1190104332380127233",
+          "locked":"0000",
+          "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
+          "modules":[],
+          "name":"操作员",
+          "roles":[]
+        }
+      ]
+    },
+    "success":true
+  });
+};
+
+export default {
+  'GET /sys/role/list': list,
+  'GET /sys/role/listModule': listModule,
+  'GET /sys/role/listUser': listUser,
+  'GET /sys/role/get': get,
+  'POST /sys/role/checkUnique': list,
+  'POST /sys/role/save': list,
+  'POST /sys/role/del': list,
+  'POST /sys/role/lock': list,
 };
