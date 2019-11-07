@@ -69,9 +69,9 @@ export default {
   menu: {
     locale: true,
   },
-  title: 'Nerv Design Pro',
+  title: 'PKAQ Design Pro',
   subTile: '基于Ant Design Pro的后台管理方案',
-  copyright: 'Power by Nerv © 2019',
+  copyright: 'Power by PKAQ © 2019',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;
