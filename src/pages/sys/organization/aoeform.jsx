@@ -106,7 +106,7 @@ export default class AOEForm extends Component {
             rules={[
               {
                 message: '编码格式错误,仅允许使用字母或数字.',
-                pattern: new RegExp(/^[a-zA-Z_0-9]{2,40}$/)
+                pattern: new RegExp(/^[a-zA-Z_0-9]{2,40}$/),
               },
               {
                 required: true,

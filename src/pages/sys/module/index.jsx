@@ -14,7 +14,7 @@ export default class Module extends React.PureComponent {
     const { modalType } = this.props.module;
 
     return (
-      <PageHeaderWrapper>
+      <PageHeaderWrapper title="模块管理" subTitle="系统模块（菜单）管理维护">
         <List />
         {modalType !== '' && <AOEForm />}
       </PageHeaderWrapper>

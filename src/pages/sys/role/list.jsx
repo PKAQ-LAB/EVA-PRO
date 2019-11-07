@@ -126,6 +126,13 @@ export default class List extends React.PureComponent {
         tableItem: {},
       },
       {
+        title: '角色描述',
+        name: 'remark',
+        tableItem: {
+          ellipsis: true,
+        },
+      },
+      {
         title: '状态',
         tableItem: {
           render: (text, record) =>

@@ -202,7 +202,7 @@ export default class extends React.PureComponent {
     const { selectedRowKeys, modalType, roleModal } = this.props.account;
 
     return (
-      <PageHeaderWrapper>
+      <PageHeaderWrapper title="用户管理" subTitle="系统用户账号管理维护">
         <div className="eva-ribbon">
           {/* 操作按钮 */}
           <div>{this.renderButton(selectedRowKeys)}</div>

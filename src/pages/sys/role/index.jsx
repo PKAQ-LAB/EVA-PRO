@@ -169,7 +169,7 @@ export default class Role extends React.PureComponent {
     const { form } = this.props;
     const { modalType, selectedRowKeys, operateType } = this.props.role;
     return (
-      <PageHeaderWrapper>
+      <PageHeaderWrapper title="角色管理" subTitle="系统用户角色权限管理维护">
         {/* 工具条 */}
         <div className="eva-ribbon">
           {/* 操作按钮 */}
