@@ -27,7 +27,7 @@ export default class Purchasing extends PureComponent {
 
     return (
       <PageHeaderWrapper title="采购入库单" content="用于管理采购入库单信息">
-        <Card>
+        <Card bordered={false}>
           <Tabs activeKey={activeKey} onChange={this.handleTabChange}>
             {/* 列表界面 */}
             <TabPane
