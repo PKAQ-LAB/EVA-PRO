@@ -50,7 +50,7 @@ const footerRender: BasicLayoutProps['footerRender'] = () => (
         textAlign: 'center',
       }}
     >
-      Copyright <Icon type="copyright" /> 2019 By Nerv
+      Copyright <Icon type="copyright" /> 2019 By PKAQ
     </div>
   </>
 );
