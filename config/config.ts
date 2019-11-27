@@ -1,7 +1,6 @@
 import { IConfig, IPlugin } from 'umi-types';
 import pageRoutes from './router.config';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
-import path from 'path';
 import slash from 'slash2';
 import webpackPlugin from './plugin.config';
 const { pwa } = defaultSettings; // preview.pro.ant.design only do not use in your production ;
