@@ -62,7 +62,7 @@ export default {
   navTheme: 'dark',
   layout: 'sidemenu',
   contentWidth: 'Fluid',
-  fixedHeader: false,
+  fixedHeader: true,
   autoHideHeader: false,
   fixSiderbar: false,
   colorWeak: false,

@@ -230,7 +230,7 @@ export default class extends React.PureComponent {
         <div className="eva-body">
           <SideLayout
             title="所属部门"
-            layoutStyle={{ minHeight: 'calc(100vh - 372px)' }}
+            layoutStyle={{ minHeight: 'calc(100vh - 332px)' }}
             body={this.renderTree()}
           >
             {/* 用户列表 */}
