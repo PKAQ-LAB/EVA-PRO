@@ -3,11 +3,12 @@ import pageRoutes from './router.config';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
 import slash from 'slash2';
 import webpackPlugin from './plugin.config';
-const { pwa } = defaultSettings; // preview.pro.ant.design only do not use in your production ;
-// preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
+const { pwa } = defaultSettings;
 
+// preview.pro.ant.design only do not use in your production ;
+// preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
-const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
+
 const plugins: IPlugin[] = [
   [
     'umi-plugin-react',
@@ -24,11 +25,11 @@ const plugins: IPlugin[] = [
         // default true, when it is true, will use `navigator.language` overwrite default
         baseNavigator: true,
       },
-      // dynamicImport: {
-      //   loadingComponent: './components/PageLoading/index',
-      //   webpackChunkName: true,
-      //   level: 3,
-      // },
+      dynamicImport: {
+        loadingComponent: './components/PageLoading/index',
+        webpackChunkName: true,
+        level: 3,
+      },
       pwa: pwa
         ? {
             workboxPluginMode: 'InjectManifest',
@@ -69,10 +70,9 @@ export default {
   targets: {
     ie: 11,
   },
-  devtool: isAntDesignProPreview ? 'source-map' : false,
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: pageRoutes,
-  theme: './config/theme.ts',
+  theme: {},
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
       ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || '', // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。

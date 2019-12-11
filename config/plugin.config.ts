@@ -1,8 +1,3 @@
-// Change theme plugin
-// eslint-disable-next-line eslint-comments/abdeils - enable - pair;
-/* eslint-disable import/no-extraneous-dependencies */
-import ThemeColorReplacer from 'webpack-theme-color-replacer';
-import generate from '@ant-design/colors/lib/generate';
 import path from 'path';
 
 import * as IWebpackChainConfig from 'webpack-chain';
@@ -26,63 +21,9 @@ function getModulePackageName(module: { context: string }) {
   return packageName;
 }
 
-export const webpackPlugin = (config: IWebpackChainConfig) => {
-  // 设置 alias
-  config.resolve.alias.set('@src', path.resolve(__dirname, '../src'));
-  config.resolve.alias.set('@config', path.resolve(__dirname, '../config'));
-  // preview.pro.ant.design only do not use in your production;
-  if (
-    process.env.ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site' ||
-    process.env.NODE_ENV !== 'production'
-  ) {
-    config.plugin('webpack-theme-color-replacer').use(ThemeColorReplacer, [
-      {
-        fileName: 'css/theme-colors-[contenthash:8].css',
-        matchColors: getAntdSerials('#1890ff'), // 主色系列
-        // 改变样式选择器，解决样式覆盖问题
-        changeSelector(selector: string): string {
-          switch (selector) {
-            case '.ant-calendar-today .ant-calendar-date':
-              return ':not(.ant-calendar-selected-date)' + selector;
-            case '.ant-btn:focus,.ant-btn:hover':
-              return '.ant-btn:focus:not(.ant-btn-primary),.ant-btn:hover:not(.ant-btn-primary)';
-            case '.ant-btn.active,.ant-btn:active':
-              return '.ant-btn.active:not(.ant-btn-primary),.ant-btn:active:not(.ant-btn-primary)';
-            default:
-              return selector;
-          }
-        },
-        // isJsUgly: true,
-      },
-    ]);
-  }
-  // 打包优化 uglifyjs-webpack-plugin 配置
-  if (process.env.NODE_ENV === 'production') {
-    config.merge({
-      plugin: {
-        install: {
-          plugin: require('uglifyjs-webpack-plugin'),
-          args: [
-            {
-              sourceMap: false,
-              uglifyOptions: {
-                compress: {
-                  // 删除所有的 `console` 语句
-                  drop_console: true,
-                },
-                output: {
-                  // 最紧凑的输出
-                  beautify: false,
-                  // 删除所有的注释
-                  comments: false,
-                },
-              },
-            },
-          ],
-        },
-      },
-    });
-  }
+export default(config: IWebpackChainConfig) => {
+  config.resolve.alias.set('@src', path.resolve(__dirname, '..','src'));
+  config.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
   // optimize chunks
   config.optimization
     // share the same chunks across different modules
@@ -120,16 +61,32 @@ export const webpackPlugin = (config: IWebpackChainConfig) => {
         },
       },
     });
-};
 
-const getAntdSerials = (color: string) => {
-  const lightNum = 9;
-  const devide10 = 10;
-  // 淡化（即less的tint）
-  const lightens = new Array(lightNum).fill(undefined).map((_, i: number) => {
-    return ThemeColorReplacer.varyColor.lighten(color, i / devide10);
-  });
-  const colorPalettes = generate(color);
-  const rgb = ThemeColorReplacer.varyColor.toNum3(color.replace('#', '')).join(',');
-  return lightens.concat(colorPalettes).concat(rgb);
+     // 打包优化 uglifyjs-webpack-plugin 配置
+  if (process.env.NODE_ENV === 'prod') {
+    config.merge({
+      plugin: {
+        install: {
+          plugin: require('uglifyjs-webpack-plugin'),
+          args: [
+            {
+              sourceMap: false,
+              uglifyOptions: {
+                compress: {
+                  // 删除所有的 `console` 语句
+                  drop_console: true,
+                },
+                output: {
+                  // 最紧凑的输出
+                  beautify: false,
+                  // 删除所有的注释
+                  comments: false,
+                },
+              },
+            },
+          ],
+        },
+      },
+    });
+  }
 };
