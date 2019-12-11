@@ -5,6 +5,8 @@ import ThemeColorReplacer from 'webpack-theme-color-replacer';
 import generate from '@ant-design/colors/lib/generate';
 import path from 'path';
 
+import * as IWebpackChainConfig from 'webpack-chain';
+
 function getModulePackageName(module: { context: string }) {
   if (!module.context) return null;
 
@@ -24,7 +26,7 @@ function getModulePackageName(module: { context: string }) {
   return packageName;
 }
 
-export default (config: any) => {
+export const webpackPlugin = (config: IWebpackChainConfig) => {
   // 设置 alias
   config.resolve.alias.set('@src', path.resolve(__dirname, '../src'));
   config.resolve.alias.set('@config', path.resolve(__dirname, '../config'));
@@ -128,5 +130,6 @@ const getAntdSerials = (color: string) => {
     return ThemeColorReplacer.varyColor.lighten(color, i / devide10);
   });
   const colorPalettes = generate(color);
-  return lightens.concat(colorPalettes);
+  const rgb = ThemeColorReplacer.varyColor.toNum3(color.replace('#', '')).join(',');
+  return lightens.concat(colorPalettes).concat(rgb);
 };
