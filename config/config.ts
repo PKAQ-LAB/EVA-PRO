@@ -25,11 +25,11 @@ const plugins: IPlugin[] = [
         // default true, when it is true, will use `navigator.language` overwrite default
         baseNavigator: true,
       },
-      dynamicImport: {
-        loadingComponent: './components/PageLoading/index',
-        webpackChunkName: true,
-        level: 3,
-      },
+      // dynamicImport: {
+      //   loadingComponent: './components/PageLoading/index',
+      //   webpackChunkName: true,
+      //   level: 3,
+      // },
       pwa: pwa
         ? {
             workboxPluginMode: 'InjectManifest',
@@ -63,8 +63,8 @@ export default {
   publicPath: '/eva/',
   block: {
     // 国内用户可以使用码云
-    // defaultGitUrl: 'https://gitee.com/ant-design/pro-blocks',
-    defaultGitUrl: 'https://github.com/ant-design/pro-blocks',
+    defaultGitUrl: 'https://gitee.com/ant-design/pro-blocks',
+    // defaultGitUrl: 'https://github.com/ant-design/pro-blocks',
   },
   hash: true,
   targets: {
@@ -72,7 +72,13 @@ export default {
   },
   // umi routes: https://umijs.org/zh/guide/router.html
   routes: pageRoutes,
-  theme: {},
+  theme: {
+    "@layout-sider-background": "#252525",
+    "@layout-header-background": "#1e1e1e;",
+    "@menu-bg": "#1e1e1e",
+    "@menu-dark-submenu-bg":"#1e1e1e",
+    "@menu-dark-item-active-bg":"#37373d"
+  },
   define: {
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
       ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || '', // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
