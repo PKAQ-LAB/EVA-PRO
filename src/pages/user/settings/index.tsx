@@ -133,30 +133,28 @@ class Setting extends Component<SettingProps, SettingState> {
     }
     const { mode, selectKey } = this.state;
     return (
-      <GridContent>
-        <div
-          className={styles.main}
-          ref={ref => {
-            if (ref) {
-              this.main = ref;
-            }
-          }}
-        >
-          <div className={styles.leftMenu}>
-            <Menu
-              mode={mode}
-              selectedKeys={[selectKey]}
-              onClick={({ key }) => this.selectKey(key as SettingStateKeys)}
-            >
-              {this.getMenu()}
-            </Menu>
-          </div>
-          <div className={styles.right}>
-            <div className={styles.title}>{this.getRightTitle()}</div>
-            {this.renderChildren()}
-          </div>
+      <div
+        className={styles.main}
+        ref={ref => {
+          if (ref) {
+            this.main = ref;
+          }
+        }}
+      >
+        <div className={styles.leftMenu}>
+          <Menu
+            mode={mode}
+            selectedKeys={[selectKey]}
+            onClick={({ key }) => this.selectKey(key as SettingStateKeys)}
+          >
+            {this.getMenu()}
+          </Menu>
         </div>
-      </GridContent>
+        <div className={styles.right}>
+          <div className={styles.title}>{this.getRightTitle()}</div>
+          {this.renderChildren()}
+        </div>
+      </div>
     );
   }
 }

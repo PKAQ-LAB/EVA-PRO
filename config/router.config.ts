@@ -36,7 +36,6 @@ export default [
             name: 'user',
             routes: [
               { name: 'setting', path: '/config/settings', component: './user/settings' },
-              { name: 'center', path: '/config/center', component: './user/center/' },
             ],
           },
           // 系统日志
