@@ -55,8 +55,8 @@ export interface DefaultSettings {
 
 export default {
   i18n: false,
-  url: 'http://localhost:9009/api/',
-  imgUrl: 'http://localhost:9009/img/',
+  url: 'http://localhost:9016/api/',
+  imgUrl: 'http://localhost:9016/img/',
   token_key: 'auth_token',
   user_key: 'user_info',
   navTheme: 'dark',

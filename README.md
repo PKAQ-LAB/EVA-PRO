@@ -7,7 +7,7 @@
 ## 使用方式
 
 ```bash
-$ git clone
+$ git cloneaddInterceptors
 $ yarn install
 $ yarn start         # visit http://localhost:8000
 ```

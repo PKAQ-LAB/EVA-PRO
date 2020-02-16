@@ -1,10 +1,9 @@
-import { Icon, Tooltip } from 'antd';
+import { Icon, Tooltip, Tag } from 'antd';
 import React from 'react';
 import { connect } from 'dva';
 import screenfull from 'screenfull';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { ConnectProps, ConnectState } from '@src/models/connect';
-import setting from '../../../config/defaultSettings';
 
 import Avatar from './AvatarDropdown';
 import SelectLang from '../SelectLang';
@@ -16,10 +15,16 @@ export interface GlobalHeaderRightProps extends ConnectProps {
   layout: 'sidemenu' | 'topmenu';
 }
 
+const ENVTagColor = {
+  dev: 'orange',
+  test: 'green',
+  pre: '#87d068',
+};
 export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
   state = {
     fullscreen: 0,
-  };
+  }
+
 
   f11 = () => {
     this.setState({
@@ -29,6 +34,8 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
   };
 
   render() {
+
+
     const fullscreenIcon = ['fullscreen', 'fullscreen-exit'];
     const fullscreenText = ['全屏', '退出全屏'];
     const { fullscreen } = this.state;
@@ -41,20 +48,20 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
     }
 
     return (
-      <div className={className}>
-        {/* 全屏 */}
-        <Tooltip title={fullscreenText[fullscreen]}>
-          <span className={styles.action} onClick={() => this.f11()}>
-            <Icon type={fullscreenIcon[fullscreen]} />
-          </span>
-        </Tooltip>
+        <div className={className}>
+      {/* 全屏 */}
+          <Tooltip title={fullscreenText[fullscreen]}>
+            <span className={styles.action} onClick={() => this.f11()}>
+              <Icon type={fullscreenIcon[fullscreen]} />
+            </span>
+          </Tooltip>
 
-        <Tooltip
-          title={formatMessage({
-            id: 'component.globalHeader.help',
-          })}
-        >
-          <a
+          <Tooltip
+            title={formatMessage({
+              id: 'component.globalHeader.help',
+            })}
+          >
+            <a
             target="_blank"
             href="https://pro.ant.design/docs/getting-started"
             rel="noopener noreferrer"
@@ -62,12 +69,14 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
           >
             <Icon type="question-circle-o" />
           </a>
+
         </Tooltip>
-        <Avatar menu />
-        {setting.i18n && <SelectLang className={styles.action} />}
+        <Avatar />
+        {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}
+        <SelectLang className={styles.action} />
       </div>
-    );
-  }
+    )
+  };
 }
 
 export default connect(({ settings }: ConnectState) => ({
