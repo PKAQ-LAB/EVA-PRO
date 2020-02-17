@@ -8,7 +8,7 @@
 export default {
   dev: {
     '/api/': {
-      target: 'http://localhost:9009/api/',
+      target: 'http://localhost:9016/api/',
       changeOrigin: true,
       pathRewrite: {
         '^/api': '',
@@ -17,7 +17,7 @@ export default {
   },
   test: {
     '/api/': {
-      target: 'http://localhost:9009/api/',
+      target: 'http://localhost:9016/api/',
       changeOrigin: true,
       pathRewrite: {
         '^/api': '',
@@ -26,7 +26,7 @@ export default {
   },
   pre: {
     '/api/': {
-      target: 'http://localhost:9009/api/',
+      target: 'http://localhost:9016/api/',
       changeOrigin: true,
       pathRewrite: {
         '^/api': '',
