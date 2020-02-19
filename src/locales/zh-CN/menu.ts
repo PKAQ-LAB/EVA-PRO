@@ -18,6 +18,11 @@ export default {
   'menu.sys.module': '模块管理',
   'menu.sys.role': '角色管理',
   'menu.sys.dictionary': '字典管理',
+  'menu.user': '个人中心',
+  'menu.user.setting': '个人设置',
+  'menu.log': '系统日志',
+  'menu.log.biz': '业务日志',
+  'menu.log.error': '错误日志',
   'menu.dev': '快速开发',
   'menu.dev.generator': '代码生成',
   'menu.monitor' : '系统监控',
@@ -27,3 +32,5 @@ export default {
   'menu.pdos': '进销存',
   'menu.pdos.purchasing': '采购管理'
 };
+
+

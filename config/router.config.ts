@@ -56,7 +56,7 @@ export default [
           // pdos
           {
             path: '/pdos/purchasing',
-            name: 'purchasing',
+            name: 'pdos',
             component: './pdos/purchasing',
           },
         ],
