@@ -105,6 +105,8 @@ export default class AOEForm extends Component {
     const { modalType, currentItem, data } = this.props;
     const cmView = modalType === 'view';
 
+    const title = { create: '新增', edit: '编辑' };
+
     const formItemLayout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
@@ -117,17 +119,12 @@ export default class AOEForm extends Component {
     return (
       <Modal
         maskClosable={false}
+        centered
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}
         onOk={() => this.handleSaveClick()}
-        title={
-          modalType === 'create'
-            ? '新增分类编码'
-            : modalType === 'edit'
-            ? '编辑分类编码'
-            : '查看分类编码'
-        }
+        title={`${title[modalType] || '查看'}分类编码`}
       >
         <Form>
           {/* 第一行 */}

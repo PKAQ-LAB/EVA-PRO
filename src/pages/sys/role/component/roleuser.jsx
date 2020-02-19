@@ -113,6 +113,7 @@ export default class RoleUser extends PureComponent {
         title="选择授权用户"
         okText="保存"
         cancelText="关闭"
+        centered
         onOk={() => this.handleSubmit()}
         onCancel={() => this.handleCancel()}
         width="60%"

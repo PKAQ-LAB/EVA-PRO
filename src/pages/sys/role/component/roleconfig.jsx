@@ -26,6 +26,7 @@ export default class RoleConfig extends Component {
         title="选择授权配置"
         okText="确定"
         cancelText="关闭"
+        centered
         onOk={() => this.handleCancel()}
         onCancel={() => this.handleCancel()}
         bodyStyle={{ backgroundColor: '#F9F9F9' }}

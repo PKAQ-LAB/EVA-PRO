@@ -139,6 +139,7 @@ export default class RoleModule extends Component {
         okText="确定"
         cancelText="关闭"
         width="45%"
+        centered
         onOk={() => this.handleSubmit()}
         onCancel={() => this.handleCancel()}
         bodyStyle={{ height: 456, maxHeight: 456, padding: 0, overflowY: 'auto' }}

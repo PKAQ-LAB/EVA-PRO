@@ -76,6 +76,7 @@ export default class DictLineForm extends React.PureComponent {
         maskClosable={false}
         cancelText="取消"
         okText="提交"
+        centered
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={500}

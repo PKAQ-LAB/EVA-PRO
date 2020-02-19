@@ -73,6 +73,7 @@ export default class RoleModal extends Component {
         cancelText="关闭"
         maskClosable={false}
         width="45%"
+        centered
         confirmLoading={loading}
         onOk={() => this.handleSubmit()}
         onCancel={() => this.handleCancel()}

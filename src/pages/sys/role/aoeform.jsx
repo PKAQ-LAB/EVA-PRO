@@ -126,6 +126,7 @@ export default class AOEForm extends Component {
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}
+        centered
         onOk={() => this.handleSaveClick()}
         title={`${title[modalType] || ''}角色`}
       >

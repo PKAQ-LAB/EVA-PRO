@@ -152,6 +152,7 @@ export default class AccountForm extends React.PureComponent {
         confirmLoading={submitting}
         cancelText="取消"
         okText="提交"
+        centered
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={660}

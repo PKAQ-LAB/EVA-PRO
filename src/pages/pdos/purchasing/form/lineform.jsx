@@ -75,6 +75,7 @@ export default class LineAOEForm extends PureComponent {
         maskClosable={false}
         cancelText="关闭"
         okText="提交"
+        centered
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}

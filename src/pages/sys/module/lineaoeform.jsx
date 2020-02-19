@@ -78,6 +78,7 @@ export default class ModuleLineForm extends React.PureComponent {
         maskClosable={false}
         cancelText="取消"
         okText="提交"
+        centered
         onCancel={() => this.handleCloseForm()}
         visible={operate !== ''}
         width={500}
