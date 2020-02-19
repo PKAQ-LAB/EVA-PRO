@@ -46,18 +46,18 @@ export default class DictForm extends React.PureComponent {
     const title = { create: '新增', edit: '编辑', view: '查看' };
 
     const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
+      labelCol: {  sm:{ span: 12 }, xs:{ span: 8 }, md:{ span: 8 }, lg:{ span: 6 } },
+      wrapperCol: {  sm:{ span: 12 }, xs:{ span: 16 }, md:{ span: 16 }, lg:{ span: 18 } },
     };
 
     const formRowOne = {
-      labelCol: { span: 2 },
-      wrapperCol: { span: 22 },
+      labelCol: { sm:{ span: 6 }, xs:{ span: 6 }, md:{ span: 3 } },
+      wrapperCol: { sm:{ span: 6 }, xs:{ span: 18 }, md:{ span: 21 } },
     };
 
     return (
       <>
-        <Form api={form} {...formItemLayout} colon data={currentItem}>
+        <Form api={form} {...formItemLayout} colon data={currentItem} labelAlign="left">
           {/* 主表 */}
           <Card
             title={`${title[operate] || ''}字典信息`}
