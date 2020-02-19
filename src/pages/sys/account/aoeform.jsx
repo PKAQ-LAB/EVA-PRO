@@ -170,7 +170,7 @@ export default class AccountForm extends React.PureComponent {
                 fileList={avatar}
                 listType="picture-card"
                 className="avatar-uploader"
-                action="/api/upload/image"
+                action="/api/upload/file"
                 accept=".jpg,.png,.jpeg"
               >
                 {avatar.length < 1 && (
