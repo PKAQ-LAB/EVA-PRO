@@ -6,7 +6,6 @@ import { formatMessage } from 'umi-plugin-react/locale';
 import { ConnectProps, ConnectState } from '@src/models/connect';
 
 import Avatar from './AvatarDropdown';
-import SelectLang from '../SelectLang';
 import styles from './index.less';
 
 export type SiderTheme = 'light' | 'dark';
@@ -71,7 +70,7 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
           </a>
 
         </Tooltip>
-        <Avatar />
+        <Avatar menu />
         {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}
       </div>
     )
