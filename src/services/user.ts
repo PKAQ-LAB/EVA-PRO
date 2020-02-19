@@ -10,7 +10,7 @@ export async function queryNotices(): Promise<any> {
 
 // 修改密码
 export async function repwd(params: any): Promise<any>  {
-  return request('/account/repwd', {
+  return request('/api/sys/account/repwd', {
     method: 'POST',
     data: {
       ...params,
