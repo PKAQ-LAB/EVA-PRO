@@ -24,7 +24,21 @@ const passwordStrength = {
   ),
 };
 
-class SecurityView extends Component {
+export default class SecurityView extends Component {
+
+  // 重置密码
+  handleResetPwd = () =>{
+
+    const { dispatch } = this.props;
+
+    dispatch({
+      type: 'global/updateState',
+      payload: {
+        repwd: true
+      },
+    });
+  }
+
   getData = () => [
     {
       title: formatMessage({ id: 'user-setting.security.password' }, {}),
@@ -35,7 +49,7 @@ class SecurityView extends Component {
         </Fragment>
       ),
       actions: [
-        <a key="Modify">
+        <a key="Modify" onClick={()=> this.handleResetPwd()}>
           <FormattedMessage id="user-setting.security.modify" defaultMessage="Modify" />
         </a>,
       ],
@@ -101,5 +115,3 @@ class SecurityView extends Component {
     );
   }
 }
-
-export default SecurityView;

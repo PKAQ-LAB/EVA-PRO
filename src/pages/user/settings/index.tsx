@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import { Dispatch } from 'redux';
 import { FormattedMessage } from 'umi-plugin-react/locale';
-import { GridContent } from '@ant-design/pro-layout';
 import { Menu } from 'antd';
 import { connect } from 'dva';
 import BaseView from './components/base';
@@ -11,6 +10,7 @@ import { CurrentUser } from './data.d';
 import NotificationView from './components/notification';
 import SecurityView from './components/security';
 import styles from './style.less';
+import RePwd from './resetpwd';
 
 const { Item } = Menu;
 
@@ -27,7 +27,10 @@ interface SettingState {
   };
   selectKey: SettingStateKeys;
 }
-@connect(({ userSetting }: { userSetting: { currentUser: CurrentUser } }) => ({
+@connect((
+  { userSetting, global }: { userSetting: { currentUser: CurrentUser }, global : { repwd: boolean } }
+  ) => ({
+  repwd: global.repwd,
   currentUser: userSetting.currentUser,
 }))
 class Setting extends Component<SettingProps, SettingState> {
@@ -114,7 +117,7 @@ class Setting extends Component<SettingProps, SettingState> {
       case 'base':
         return <BaseView />;
       case 'security':
-        return <SecurityView />;
+        return <SecurityView dispatch={this.props.dispatch} />;
       case 'binding':
         return <BindingView />;
       case 'notification':
@@ -127,12 +130,14 @@ class Setting extends Component<SettingProps, SettingState> {
   };
 
   render() {
-    const { currentUser } = this.props;
+    const { currentUser, repwd } = this.props;
+
     if (!currentUser.userid) {
       return '';
     }
     const { mode, selectKey } = this.state;
     return (
+      <>
       <div
         className={styles.main}
         ref={ref => {
@@ -155,6 +160,8 @@ class Setting extends Component<SettingProps, SettingState> {
           {this.renderChildren()}
         </div>
       </div>
+      {repwd && <RePwd />}
+      </>
     );
   }
 }
