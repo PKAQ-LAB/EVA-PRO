@@ -36,11 +36,13 @@ const footerRender: BasicLayoutProps['footerRender'] = () => (
   <>
     <footer
       style={{
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
         backgroundColor: '#fff',
         borderTop: '1.5px solid #00abff ',
         padding: '8px',
         textAlign: 'center',
-        margin: '0 -24px 0'
       }}
     >
       Copyright <Icon type="copyright" /> 2019 By PKAQ
