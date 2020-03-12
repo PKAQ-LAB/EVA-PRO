@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
 import { Divider } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -10,7 +9,6 @@ import List from './list';
 @connect(state => ({
   item: state.item,
 }))
-
 export default class Item extends PureComponent {
   componentDidMount() {
     // this.props.dispatch({

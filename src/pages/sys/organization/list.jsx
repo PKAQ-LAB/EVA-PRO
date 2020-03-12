@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import ProTable, { ProColumns } from '@ant-design/pro-table';
 import {
   Table,
   Switch,
@@ -168,10 +169,12 @@ export default class List extends Component {
       {
         title: '所属单位/部门',
         dataIndex: 'parentName',
+        hideInSearch: true
       },
       {
         title: '排序',
         dataIndex: 'orders',
+        hideInSearch: true,
         render: (text, record, index) => {
           if (record.status === '0000') {
             const brother = getNodeBorther(this.props.organization.data, record.parentId);
@@ -207,6 +210,7 @@ export default class List extends Component {
       {
         title: '状态',
         dataIndex: 'status',
+        hideInSearch: true,
         render: (text, record) =>
           record.status !== '9999' && (
             <Switch
@@ -221,7 +225,7 @@ export default class List extends Component {
         title: '操作',
         render: (text, record) =>
           record.status === '0000' && (
-            <div>
+            <>
               <a onClick={() => this.handleAdd(record)}>添加下级</a>
               <Divider type="vertical" />
               <a onClick={() => this.handleEdit(record)}>编辑</a>
@@ -234,7 +238,7 @@ export default class List extends Component {
               >
                 <a>删除</a>
               </Popconfirm>
-            </div>
+            </>
           ),
       },
     ];
@@ -249,59 +253,41 @@ export default class List extends Component {
       }),
     };
 
+
+    const renderToolBar =
+        <>
+          <Button icon={<PlusOutlined />} type="primary" onClick={() => this.handleAdd('')}>
+            新增部门
+          </Button>
+          {selectedRowKeys.length > 0 && (
+            <span>
+              <Popconfirm
+                title="确定要删除选中的条目吗?"
+                placement="top"
+                onConfirm={() => this.handleBatchDelete()}
+              >
+                <Button style={{ marginLeft: 8 }} type="danger">
+                  删除部门
+                </Button>
+              </Popconfirm>
+            </span>
+          )}
+        </>
+
     return (
       <div style={{ padding: 15 }}>
-        <div className={css.ribbon}>
-          <div>
-            <Button icon={<PlusOutlined />} type="primary" onClick={() => this.handleAdd('')}>
-              新增部门
-            </Button>
-            {selectedRowKeys.length > 0 && (
-              <span>
-                <Popconfirm
-                  title="确定要删除选中的条目吗?"
-                  placement="top"
-                  onConfirm={() => this.handleBatchDelete()}
-                >
-                  <Button style={{ marginLeft: 8 }} type="danger">
-                    删除部门
-                  </Button>
-                </Popconfirm>
-              </span>
-            )}
-          </div>
-          <div>
-            <Search
-              placeholder="输入组织名称以搜索"
-              onSearch={value => this.handleSearch(value)}
-              style={{ width: '100%' }}
-            />
-          </div>
-        </div>
-        {/* 已选提示 */}
-        {selectedRowKeys.length > 0 && (
-          <Alert
-            style={{ marginTop: 8, marginBottom: 8 }}
-            message={
-              <div>
-                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-                <a style={{ marginLeft: 24 }} onClick={() => this.handleSelectRows([])}>
-                  清空选择
-                </a>
-              </div>
-            }
-            type="info"
-            showIcon
-          />
-        )}
-
         {/* 列表 */}
-        <Table
+        <ProTable
           size="small"
+          headerTitle="单位/部门列表"
+          ellipsis
           columns={column}
           dataSource={data}
           defaultExpandAllRows
           loading={loading}
+          toolBarRender={() => [
+            renderToolBar
+          ]}
           rowClassName={record =>
             cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
           }

@@ -10,7 +10,7 @@ import styles from './index.less';
 const FormItem = Form.Item;
 const EditableContext = React.createContext();
 
-class EditableCell extends React.Component {
+export default class EditableCell extends React.Component {
   saveItem = (name, inputtype) => {
     const { form, items, dispatch } = this.props;
     const { getFieldsValue } = form;
@@ -51,7 +51,7 @@ class EditableCell extends React.Component {
     return <Input style={{ width: '100px' }} onBlur={() => this.saveItem(name, inputtype)} />;
   };
 
-  renderCell = ({ getFieldDecorator }) => {
+  renderCell = () => {
     const { tabkey, inputtype, record, dataindex, ...restProps } = this.props;
     // 多选框时，文本居中
     const style = { textAlign: inputtype === 'checkbox' ? 'center' : '' };
@@ -61,10 +61,8 @@ class EditableCell extends React.Component {
     return (
       <td {...restProps} className={styles.td} style={style}>
         {inputtype !== 'text' ? (
-          <FormItem style={{ margin: 0 }}>
-            {getFieldDecorator(itemName, {
-              initialValue: inputtype === 'checkbox' ? [data || false] : data || '',
-            })(this.getInput(itemName))}
+          <FormItem style={{ margin: 0 }} name={itemName} initialValue={inputtype === 'checkbox' ? [data || false] : data || ''}>
+            this.getInput(itemName)
           </FormItem>
         ) : (
           data || ''
@@ -187,5 +185,3 @@ class EditableList extends React.Component {
     );
   }
 }
-
-export default EditableList;

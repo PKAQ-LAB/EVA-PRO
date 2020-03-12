@@ -12,7 +12,6 @@ import EditableList from './EditableList';
 const FormItem = Form.Item;
 const { TabPane } = Tabs;
 
-
 @connect(state => ({
   item: state.item,
 }))
@@ -218,8 +217,6 @@ export default class Item extends PureComponent {
 
   // 子表头部渲染
   renderSubTableTopBtn(key) {
-    const { getFieldDecorator } = this.props.form;
-
     const formItemLayout = {
       labelCol: { span: 4 },
       wrapperCol: { span: 16 },
@@ -227,10 +224,8 @@ export default class Item extends PureComponent {
     return (
       <Row>
         <Col span={12}>
-          <FormItem label="表名:" labelAlign="left" {...formItemLayout}>
-            {getFieldDecorator(`subName${key}`, {
-              initialValue: '',
-            })(<Input placeholder="请输入子表表名" onBlur={() => this.getSubList(key)} />)}
+          <FormItem label="表名:" labelAlign="left" name={`subName${key}`}  initialValue="" {...formItemLayout}>
+            <Input placeholder="请输入子表表名" onBlur={() => this.getSubList(key)} />
           </FormItem>
         </Col>
         <Col span={2}>
@@ -244,10 +239,8 @@ export default class Item extends PureComponent {
           </Button>
         </Col>
         <Col span={8}>
-          <FormItem label="支持导入:" {...formItemLayout}>
-            {getFieldDecorator(`uploadAble${key}`, {
-              initialValue: false,
-            })(<Checkbox />)}
+          <FormItem label="支持导入:" {...formItemLayout} name={`uploadAble${key}`}  initialValue={false}>
+            <Checkbox />
           </FormItem>
         </Col>
       </Row>
@@ -256,7 +249,6 @@ export default class Item extends PureComponent {
 
   // 表格头部渲染
   renderTableTopBtn() {
-    const { getFieldDecorator } = this.props.form;
 
     const formItemLayout = {
       labelCol: { span: 4 },
@@ -265,10 +257,8 @@ export default class Item extends PureComponent {
     return (
       <Row>
         <Col span={12}>
-          <FormItem label="主表名:" labelAlign="left" {...formItemLayout}>
-            {getFieldDecorator('mainTableName', {
-              initialValue: '',
-            })(<Input placeholder="请输入主表表名" onBlur={() => this.getMainList()} />)}
+          <FormItem label="主表名:" name="mainTableName" initialValue="" labelAlign="left" {...formItemLayout}>
+            <Input placeholder="请输入主表表名" onBlur={() => this.getMainList()} />
           </FormItem>
         </Col>
         <Col span={3}>
