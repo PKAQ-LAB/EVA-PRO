@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Row, Col, Modal, Switch, Tooltip } from 'antd';
-import { Form, Input, TreeSelect } from 'antx';
+import { Row, Col, Modal, Switch, Tooltip, Form, Input, TreeSelect } from 'antd';
 import { connect } from 'dva';
 
 @connect(state => ({
@@ -73,9 +72,10 @@ export default class AOEForm extends Component {
   render() {
     const that = this;
 
-    const { form } = that.props;
     const { modalType, currentItem, data, submitting } = that.props.organization;
     const title = { create: '新增', edit: '编辑' };
+
+    currentItem.enable = currentItem.status === '0000'
 
     const formItemLayout = {
       labelCol: { span: 5 },
@@ -98,73 +98,72 @@ export default class AOEForm extends Component {
         onOk={() => this.handleSaveClick()}
         title={`${title[modalType] || '查看'}部门信息`}
       >
-        <Form api={form} data={currentItem} {...formItemLayout} colon>
-          <Input label="部门名称" id="name" rules={['required']} max={30} msg="full" />
-
-          <Input
-            label="部门编码"
-            id="code"
-            rules={[
-              {
-                message: '编码格式错误,仅允许使用字母或数字.',
-                pattern: new RegExp(/^[a-zA-Z_0-9]{2,40}$/),
-              },
-              {
-                required: true,
-                whitespace: true,
-                validator: this.checkCode,
-              },
-            ]}
-            validateTrigger="onBlur"
-            max={40}
-            msg="full"
-          />
-
-          <TreeSelect
-            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            data={data}
-            keys={['id', 'name', 'children']}
-            treeNodeFilterProp="name"
-            expandAll
-            allowClear
-            showSearch
-            id="parentId"
-            label={
-              <span>
-                上级部门&nbsp;
-                <Tooltip title="留空为添加顶级部门">
-                  <QuestionCircleOutlined />
-                </Tooltip>
-              </span>
-            }
-            msg="请选择上级部门（留空为添加顶级部门）"
-          />
-
+        <Form initialValues={currentItem} {...formItemLayout} colon>
+          <Form.Item name="name" label="部门名称" rules={[{required: true,}]}>
+            <Input max={30} />
+          </Form.Item>
+          <Form.Item name="code"
+                     label="部门编码"
+                     validateTrigger="onBlur"
+                     rules={[{
+                              message: '编码格式错误,仅允许使用字母或数字.',
+                              pattern: new RegExp(/^[a-zA-Z_0-9]{2,40}$/),
+                            },
+                            {
+                              required: true,
+                              whitespace: true,
+                              validator: this.checkCode,
+                            },
+                          ]}>
+            <Input max={40}/>
+          </Form.Item>
+          <Form.Item name="parentId"
+                     label={
+                      <span>
+                        上级部门&nbsp;
+                        <Tooltip title="留空为添加顶级部门">
+                          <QuestionCircleOutlined />
+                        </Tooltip>
+                      </span>
+                    }>
+            <TreeSelect
+              dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+              data={data}
+              keys={['id', 'name', 'children']}
+              treeNodeFilterProp="name"
+              treeDefaultExpandAll
+              allowClear
+              showSearch
+              placeholder="请选择上级部门（留空为添加顶级部门）"
+            />
+          </Form.Item>
           <Row>
             <Col span={12}>
-              <Input
-                label="显示顺序"
-                id="orders"
-                rules={['number']}
-                max={5}
-                msg=""
-                {...formRowOne}
-              />
+              <Form.Item label="显示顺序"
+                          name="orders"
+                          {...formRowOne}
+                          rules={[{
+                            type: 'number'
+                          }]}>
+                <Input max={5}/>
+              </Form.Item>
             </Col>
             <Col span={12}>
-              <Switch
-                id="enable"
-                checkedChildren="启用"
-                unCheckedChildren="停用"
-                initialValue={currentItem.status ? currentItem.status === '0000' : true}
-                defaultChecked={currentItem.status ? currentItem.status === '0000' : true}
-                label="是否启用"
-                {...formRowOne}
-              />
+              <Form.Item label="是否启用"
+                         name="enable"
+                         valuePropName="checked"
+                         {...formRowOne}>
+                <Switch
+                  checkedChildren="启用"
+                  unCheckedChildren="停用"
+                  defaultChecked={currentItem.status ? currentItem.status === '0000' : true}
+                />
+              </Form.Item>
             </Col>
           </Row>
-
-          <Input textarea label="备注" id="remark" rules={['max=200']} max={200} msg="full" />
+          <Form.Item label="备注" name="remark">
+            <Input.TextArea max={200} rows={4}/>
+          </Form.Item>
         </Form>
       </Modal>
     );
