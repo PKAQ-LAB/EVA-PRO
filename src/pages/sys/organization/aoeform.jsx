@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Row, Col, Modal, Switch, Tooltip, Icon } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Row, Col, Modal, Switch, Tooltip } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';
 import { connect } from 'dva';
 
-@Form.create()
 @connect(state => ({
   organization: state.organization,
   submitting: state.loading.effects['organization/save'],
@@ -133,7 +133,7 @@ export default class AOEForm extends Component {
               <span>
                 上级部门&nbsp;
                 <Tooltip title="留空为添加顶级部门">
-                  <Icon type="question-circle-o" />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </span>
             }

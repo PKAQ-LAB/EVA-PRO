@@ -22,6 +22,7 @@ export interface Loading {
 }
 
 export interface ConnectState {
+  menuData: MenuDataItem[];
   menu: MenuModelState;
   global: GlobalModelState;
   loading: Loading;

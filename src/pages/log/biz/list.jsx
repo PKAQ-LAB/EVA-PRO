@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Form } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
 import { connect } from 'dva';
 
 import DataTable from '@src/components/DataTable';
 
-@Form.create()
+
 @connect(state => ({
   bizlog: state.bizlog,
   loading: state.loading.models.bizlog,

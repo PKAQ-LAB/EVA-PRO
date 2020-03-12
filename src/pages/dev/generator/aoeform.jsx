@@ -1,10 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Form, Input, Select } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Row, Col, Input, Select } from 'antd';
 
 const FormItem = Form.Item;
 const { Option } = Select;
 
-@Form.create()
+
 export default class AOEForm extends PureComponent {
   // 渲染界面
   render() {

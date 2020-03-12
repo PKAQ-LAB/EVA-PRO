@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
+import { CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Table,
   Switch,
-  Icon,
   Alert,
   Popconfirm,
   Divider,
@@ -164,7 +165,7 @@ export default class List extends Component {
       {
         title: '图标',
         dataIndex: 'icon',
-        render: text => <Icon type={text} />,
+        render: text => <LegacyIcon type={text} />,
       },
       {
         title: 'Path',
@@ -217,8 +218,8 @@ export default class List extends Component {
           record.status !== '9999' && (
             <Switch
               onChange={checked => this.handleEnable(record, checked)}
-              checkedChildren={<Icon type="check" />}
-              unCheckedChildren={<Icon type="close" />}
+              checkedChildren={<CheckOutlined />}
+              unCheckedChildren={<CloseOutlined />}
               checked={text === '0000'}
             />
           ),
@@ -259,7 +260,7 @@ export default class List extends Component {
       <div style={{ padding: 15 }}>
         <div className={css.ribbon}>
           <div>
-            <Button icon="plus" type="primary" onClick={() => this.handleAdd('')}>
+            <Button icon={<PlusOutlined />} type="primary" onClick={() => this.handleAdd('')}>
               新增模块
             </Button>
             {selectedRowKeys.length > 0 && (

@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Tree, Row, Col, Card, Form, Input, Icon, Button, message, Popconfirm } from 'antd';
+import { PlusOutlined, TagsOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Tree, Row, Col, Card, Input, Button, message, Popconfirm } from 'antd';
 import List from './List';
 import Detail from './AOEForm';
 import Page from '@src/components/Page';
@@ -16,7 +19,7 @@ const { TreeNode } = { ...Tree };
   goods: state.goods,
   categorys: state.category,
 }))
-@Form.create()
+
 export default class Index extends PureComponent {
   // 组件加载完成后加载数据
   componentDidMount() {
@@ -119,7 +122,7 @@ export default class Index extends PureComponent {
         className={styles.leftTree}
         title={
           <div>
-            <Icon type="tags" />
+            <TagsOutlined />
             &nbsp;选择商品分类
           </div>
         }
@@ -199,7 +202,7 @@ export default class Index extends PureComponent {
                   <div className={styles.goodsInfoListForm}>{this.renderSimpleForm()}</div>
                   <div className={styles.goodsInfoListOperator}>
                     <Button
-                      icon="plus"
+                      icon={<PlusOutlined />}
                       type="primary"
                       onClick={() => this.handleModalVisible(true, 'create')}
                     >

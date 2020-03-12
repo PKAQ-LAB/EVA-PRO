@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Col, Form, Input, InputNumber, Modal, Switch, TreeSelect } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Row, Col, Input, InputNumber, Modal, Switch, TreeSelect } from 'antd';
 
 const FormItem = Form.Item;
 const Area = Input.TextArea;
 const TreeNode = TreeSelect.TreeNode;
 
-@Form.create()
+
 export default class AOEForm extends Component {
   componentDidMount() {
     // 加载树数据 - 只加载未停用状态的数据

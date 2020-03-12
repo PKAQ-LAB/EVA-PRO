@@ -4,7 +4,7 @@ import { Row, Col, Modal, TreeSelect } from 'antd';
 import { Form, Input } from 'antx';
 import Selector from '@src/components/Selector';
 
-@Form.create()
+
 @connect(state => ({
   global: state.global,
   role: state.role,

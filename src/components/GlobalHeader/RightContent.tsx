@@ -1,10 +1,10 @@
-import { Icon, Tooltip, Tag } from 'antd';
+import { Tooltip, Tag } from 'antd';
+import { QuestionCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import React from 'react';
 import { connect } from 'dva';
 import screenfull from 'screenfull';
 import { formatMessage } from 'umi-plugin-react/locale';
 import { ConnectProps, ConnectState } from '@src/models/connect';
-
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 
@@ -34,8 +34,6 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
 
   render() {
 
-
-    const fullscreenIcon = ['fullscreen', 'fullscreen-exit'];
     const fullscreenText = ['全屏', '退出全屏'];
     const { fullscreen } = this.state;
 
@@ -51,7 +49,7 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
       {/* 全屏 */}
           <Tooltip title={fullscreenText[fullscreen]}>
             <span className={styles.action} onClick={() => this.f11()}>
-              <Icon type={fullscreenIcon[fullscreen]} />
+              { fullscreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
             </span>
           </Tooltip>
 
@@ -66,7 +64,7 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
             rel="noopener noreferrer"
             className={styles.action}
           >
-            <Icon type="question-circle-o" />
+            <QuestionCircleOutlined />
           </a>
 
         </Tooltip>

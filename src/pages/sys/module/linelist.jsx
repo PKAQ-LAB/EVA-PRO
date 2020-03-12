@@ -1,4 +1,5 @@
 import React from 'react';
+import { PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Popconfirm } from 'antd';
 import cx from 'classnames';
 import { connect } from 'dva';
@@ -98,23 +99,21 @@ export default class LineList extends React.PureComponent {
       dataItems: { records: lineData },
     };
 
-    return (
-      <>
-        <Divider>资源信息</Divider>
-        {/* 子表新增 */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
-            style={{ marginBottom: 10 }}
-            type="primary"
-            icon="plus"
-            onClick={() => this.handleLineAdd()}
-          >
-            新增资源
-          </Button>
-        </div>
-        <DataTable {...dataTableProps} />
-        {operate !== '' && <LineAoeForm />}
-      </>
-    );
+    return <>
+      <Divider>资源信息</Divider>
+      {/* 子表新增 */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          style={{ marginBottom: 10 }}
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => this.handleLineAdd()}
+        >
+          新增资源
+        </Button>
+      </div>
+      <DataTable {...dataTableProps} />
+      {operate !== '' && <LineAoeForm />}
+    </>;
   }
 }

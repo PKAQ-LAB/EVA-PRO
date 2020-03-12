@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
+import { PlusOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Alert, Row, Col, Button } from 'antd';
 import { Form, Input } from 'antx';
 
 import emitter from '@src/utils/events';
 import DataTable from '@src/components/DataTable';
 
-@Form.create()
+
 @connect(state => ({
   purchasing: state.purchasing,
   loading: state.loading.models.purchasing,
@@ -260,7 +261,7 @@ export default class PurchasingList extends PureComponent {
         {this.renderSimpleForm()}
         {/* 提示条幅 */}
         <div style={{ marginBottom: 10 }}>
-          <Button icon="plus" type="primary" onClick={() => this.handleCreateClick()}>
+          <Button icon={<PlusOutlined />} type="primary" onClick={() => this.handleCreateClick()}>
             创建采购入库单
           </Button>
           {selectedRowKeys.length > 0 && (

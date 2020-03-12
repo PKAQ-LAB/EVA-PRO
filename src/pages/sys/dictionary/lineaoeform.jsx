@@ -3,7 +3,7 @@ import { Modal } from 'antd';
 import { Form, Input } from 'antx';
 import { connect } from 'dva';
 
-@Form.create()
+
 @connect(state => ({
   dict: state.dict,
 }))

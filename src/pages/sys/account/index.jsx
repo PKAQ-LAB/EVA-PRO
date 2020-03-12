@@ -1,4 +1,6 @@
 import React from 'react';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Form, Input, Button, Alert, Tree } from 'antd';
 import { connect } from 'dva';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
@@ -7,7 +9,7 @@ import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';
 
-@Form.create()
+
 @connect(state => ({
   account: state.account,
 }))
@@ -117,53 +119,51 @@ export default class extends React.PureComponent {
 
   // 操作按钮
   renderButton(selectedRowKeys) {
-    return (
-      <>
-        <Button type="primary" onClick={() => this.handleModalVisible(true, 'create')}>
-          新增用户
-        </Button>
-        {selectedRowKeys.length > 0 && (
-          <>
-            <Divider type="vertical" />
-            <span>
-              <Popconfirm
-                title="确定要删除所选用户吗?"
-                placement="top"
-                onConfirm={this.handleRemoveClick}
-              >
-                <Button style={{ marginLeft: 8 }} type="danger" icon="remove">
-                  删除用户
-                </Button>
-              </Popconfirm>
-            </span>
-          </>
-        )}
-        {selectedRowKeys.length > 0 && (
-          <>
-            <Divider type="vertical" />
-            <Button
-              icon="lock"
-              style={{ marginLeft: 8 }}
-              onClick={() => this.handleLockSwitch('0001')}
+    return <>
+      <Button type="primary" onClick={() => this.handleModalVisible(true, 'create')}>
+        新增用户
+      </Button>
+      {selectedRowKeys.length > 0 && (
+        <>
+          <Divider type="vertical" />
+          <span>
+            <Popconfirm
+              title="确定要删除所选用户吗?"
+              placement="top"
+              onConfirm={this.handleRemoveClick}
             >
-              锁定
-            </Button>
-          </>
-        )}
-        {selectedRowKeys.length > 0 && (
-          <>
-            <Divider type="vertical" />
-            <Button
-              icon="unlock"
-              style={{ marginLeft: 8 }}
-              onClick={() => this.handleLockSwitch('0000')}
-            >
-              解锁
-            </Button>
-          </>
-        )}
-      </>
-    );
+              <Button style={{ marginLeft: 8 }} type="danger" icon={<LegacyIcon type="remove" />}>
+                删除用户
+              </Button>
+            </Popconfirm>
+          </span>
+        </>
+      )}
+      {selectedRowKeys.length > 0 && (
+        <>
+          <Divider type="vertical" />
+          <Button
+            icon={<LockOutlined />}
+            style={{ marginLeft: 8 }}
+            onClick={() => this.handleLockSwitch('0001')}
+          >
+            锁定
+          </Button>
+        </>
+      )}
+      {selectedRowKeys.length > 0 && (
+        <>
+          <Divider type="vertical" />
+          <Button
+            icon={<UnlockOutlined />}
+            style={{ marginLeft: 8 }}
+            onClick={() => this.handleLockSwitch('0000')}
+          >
+            解锁
+          </Button>
+        </>
+      )}
+    </>;
   }
 
   // 简单搜索条件

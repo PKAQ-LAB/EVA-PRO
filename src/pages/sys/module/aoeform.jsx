@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Switch, Drawer, Button, Tooltip, Icon } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Row, Col, Switch, Drawer, Button, Tooltip } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';
 import IconSelect from '@src/components/IconSelect';
 
 import LineList from './linelist';
 
-@Form.create()
+
 @connect(state => ({
   module: state.module,
   submitting: state.loading.effects['module/save'],
@@ -129,7 +130,7 @@ export default class AOEForm extends Component {
               <span>
                 上级模块&nbsp;
                 <Tooltip title="留空为添加顶级模块">
-                  <Icon type="question-circle-o" />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </span>
             }

@@ -3,13 +3,14 @@ import ProLayout, {
   BasicLayoutProps as ProLayoutProps,
   Settings,
 } from '@ant-design/pro-layout';
+import { formatMessage } from 'umi-plugin-react/locale';
 import React, { useEffect } from 'react';
-import Link from 'umi/link';
+import { Link } from 'umi';
 import { Dispatch } from 'redux';
 import { connect } from 'dva';
-import { Icon } from 'antd';
-import { formatMessage } from 'umi-plugin-react/locale';
 
+
+import { CopyrightCircleOutlined, RocketFilled, ProfileFilled, RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled, BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
 // import Authorized from '@src/utils/Authorized';
 import RightContent from '@src/components/GlobalHeader/RightContent';
 import { ConnectState } from '@src/models/connect';
@@ -31,7 +32,6 @@ export type BasicLayoutContext = { [K in 'location']: BasicLayoutProps[K] } & {
   };
 };
 
-
 const footerRender: BasicLayoutProps['footerRender'] = () => (
   <>
     <footer
@@ -45,13 +45,39 @@ const footerRender: BasicLayoutProps['footerRender'] = () => (
         textAlign: 'center',
       }}
     >
-      Copyright <Icon type="copyright" /> 2019 By PKAQ
+      Copyright <CopyrightCircleOutlined /> 2019 By PKAQ
     </footer>
   </>
 );
 
+// 菜单图标映射
+const IconMap = {
+  profile: <ProfileFilled/>,
+  'radar-chart': <RadarChartOutlined/>,
+  file: <FileFilled/>,
+  home: <HomeFilled/>,
+  setting: <SettingFilled/>,
+  flag: <FlagFilled/>,
+  bars: <BarsOutlined/>,
+  'usergroup-add': <UsergroupAddOutlined/>,
+  form: <FormOutlined/>,
+  rocket: <RocketFilled />,
+};
+// 自定义菜单渲染
+const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] =>
+  menus.map(({ icon, children, ...item }) => ({
+    ...item,
+    icon: icon && IconMap[icon as string],
+    children: children && loopMenuItem(children),
+  }));
+
 const BasicLayout: React.FC<BasicLayoutProps> = props => {
-  const { dispatch, children, settings, menuData } = props;
+  const {
+    dispatch,
+    children,
+    settings,
+    menuData,
+  } = props;
   /**
    * constructor
    */
@@ -66,6 +92,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
   /**
    * init variables
    */
+
   const handleMenuCollapse = (payload: boolean): void => {
     if (dispatch) {
       dispatch({
@@ -73,11 +100,12 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         payload,
       });
     }
-  };
+  }; // get children authority
 
   return (
     <ProLayout
       logo={logo}
+      formatMessage={formatMessage}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}
@@ -86,18 +114,16 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       )}
       onCollapse={handleMenuCollapse}
       menuItemRender={(menuItemProps, defaultDom) => {
-        if (menuItemProps.isUrl || menuItemProps.children) {
+        if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
           return defaultDom;
         }
+
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
       breadcrumbRender={(routers = []) => [
         {
           path: '/',
-          breadcrumbName: formatMessage({
-            id: 'menu.home',
-            defaultMessage: 'Home',
-          }),
+          breadcrumbName: '首页',
         },
         ...routers,
       ]}
@@ -110,8 +136,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
         );
       }}
       footerRender={footerRender}
-      menuDataRender={() => menuData}
-      formatMessage={formatMessage}
+      menuDataRender={() =>loopMenuItem(menuData)}
       rightContentRender={rightProps => <RightContent {...rightProps} />}
       {...props}
       {...settings}

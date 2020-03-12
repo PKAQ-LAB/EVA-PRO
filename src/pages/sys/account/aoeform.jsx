@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Modal, Row, Col, Switch, Tooltip, Icon, Upload } from 'antd';
+import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { Modal, Row, Col, Switch, Tooltip, Upload } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
 import md5 from 'md5';
 import { Form, Input, TreeSelect, Select } from 'antx';
 import setting from '../../../../config/defaultSettings';
 
-@Form.create()
+
 @connect(state => ({
   account: state.account,
   submitting: state.loading.effects['account/save'],
@@ -175,7 +176,7 @@ export default class AccountForm extends React.PureComponent {
               >
                 {avatar.length < 1 && (
                   <div>
-                    <Icon type="plus" />
+                    <PlusOutlined />
                     <div className="ant-upload-text">选择头像</div>
                   </div>
                 )}
@@ -192,7 +193,7 @@ export default class AccountForm extends React.PureComponent {
                   <span>
                     账号&nbsp;
                     <Tooltip title="账号应为4-16位的数字字母组合(不含空格)">
-                      <Icon type="question-circle-o" />
+                      <QuestionCircleOutlined />
                     </Tooltip>
                   </span>
                 }
@@ -232,7 +233,7 @@ export default class AccountForm extends React.PureComponent {
                   <span>
                     密码&nbsp;
                     <Tooltip title="密码应为 8-12 位的数字字母组合(不含空格)">
-                      <Icon type="question-circle-o" />
+                      <QuestionCircleOutlined />
                     </Tooltip>
                   </span>
                 }

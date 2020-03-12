@@ -1,5 +1,6 @@
 import React from 'react';
-import { Divider, Popconfirm, Switch, Icon, notification } from 'antd';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Divider, Popconfirm, Switch, notification } from 'antd';
 import { connect } from 'dva';
 import cx from 'classnames';
 import DataTable from '@src/components/DataTable';
@@ -140,8 +141,8 @@ export default class List extends React.PureComponent {
               <DataTable.Oper style={{ textAlign: 'center' }}>
                 <Switch
                   onChange={checked => this.handleEnable(record, checked)}
-                  checkedChildren={<Icon type="check" />}
-                  unCheckedChildren={<Icon type="close" />}
+                  checkedChildren={<CheckOutlined />}
+                  unCheckedChildren={<CloseOutlined />}
                   checked={record.locked === '0000'}
                 />
               </DataTable.Oper>

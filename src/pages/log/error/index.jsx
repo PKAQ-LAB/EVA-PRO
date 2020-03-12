@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'dva';
-import { Button, Form, Row, Col, Divider, DatePicker } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Button, Row, Col, Divider, DatePicker } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
@@ -9,7 +11,7 @@ import AOEForm from './aoeform';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 
-@Form.create()
+
 @connect(({ loading, errorLog }) => ({
   loading: loading.models.errorLog,
   error: errorLog,

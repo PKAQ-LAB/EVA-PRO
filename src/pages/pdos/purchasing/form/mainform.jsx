@@ -7,7 +7,7 @@ import { Form, Input } from 'antx';
 import Selector from '@src/components/Selector';
 import emitter from '@src/utils/events';
 
-@Form.create()
+
 @connect(state => ({
   submitting: state.loading.effects['purchasing/save'],
   purchasing: state.purchasing,

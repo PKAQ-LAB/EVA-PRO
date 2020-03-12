@@ -8,7 +8,6 @@ import LoginItem, { LoginItemProps, LoginItemType } from './LoginItem';
 import LoginSubmit from './LoginSubmit';
 import LoginTab from './LoginTab';
 import styles from './index.less';
-import { LoginParamsType } from '@src/services/login';
 
 export interface LoginProps {
   defaultActiveKey?: string;

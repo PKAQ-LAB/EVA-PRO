@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Card, Tabs, Icon } from 'antd';
+import { EditOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { Card, Tabs } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import PurchasingList from './list';
 import PurchasingAOEForm from './aoeform';
@@ -33,7 +34,7 @@ export default class Purchasing extends PureComponent {
             <TabPane
               tab={
                 <span>
-                  <Icon type="unordered-list" />
+                  <UnorderedListOutlined />
                   采购入库单列表
                 </span>
               }
@@ -48,7 +49,7 @@ export default class Purchasing extends PureComponent {
                 closable
                 tab={
                   <span>
-                    <Icon type="edit" />
+                    <EditOutlined />
                     {operateType === 'create' ? '新增采购入库单' : '编辑采购入库单'}
                   </span>
                 }
@@ -64,7 +65,7 @@ export default class Purchasing extends PureComponent {
                 closable
                 tab={
                   <span>
-                    <Icon type="edit" />
+                    <EditOutlined />
                     查看采购入库单
                   </span>
                 }

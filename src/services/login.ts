@@ -1,7 +1,7 @@
 import request from '@src/utils/request';
 
 export interface LoginParamsType {
-  userName: string;
+  account: string;
   password: string;
   mobile: string;
   captcha: string;

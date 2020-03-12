@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Form, Divider } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Divider } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import AOEForm from './aoeform';
 import List from './list';
@@ -8,7 +10,7 @@ import List from './list';
 @connect(state => ({
   item: state.item,
 }))
-@Form.create()
+
 export default class Item extends PureComponent {
   componentDidMount() {
     // this.props.dispatch({

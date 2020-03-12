@@ -2,7 +2,9 @@
 /* eslint-disable no-restricted-syntax */
 import React from 'react';
 import { connect } from 'dva';
-import { Input, Table, Checkbox, Select, Form } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Table, Checkbox, Select } from 'antd';
 import styles from './index.less';
 
 const FormItem = Form.Item;

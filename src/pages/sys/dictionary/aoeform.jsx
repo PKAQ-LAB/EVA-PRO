@@ -5,7 +5,7 @@ import { Form, Input, Select } from 'antx';
 
 import LineList from './linelist';
 
-@Form.create()
+
 @connect(state => ({
   dict: state.dict,
   submitting: state.loading.effects['dict/editDict'],

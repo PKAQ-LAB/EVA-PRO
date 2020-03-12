@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import { CheckOutlined, CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Table,
   Switch,
-  Icon,
   Alert,
   Popconfirm,
   Divider,
@@ -157,8 +157,8 @@ export default class List extends Component {
         render: (text, record) => (
           <Switch
             onChange={checked => this.handleEnable(record, checked)}
-            checkedChildren={<Icon type="check" />}
-            unCheckedChildren={<Icon type="close" />}
+            checkedChildren={<CheckOutlined />}
+            unCheckedChildren={<CloseOutlined />}
             checked={'0001' === text}
           />
         ),
@@ -188,7 +188,7 @@ export default class List extends Component {
         <Row gutter={24} type="flex" justify="space-between" className={tableStyle.tableActionBtn}>
           <Col xl={6} lg={6} md={6} sm={6} xs={6}>
             <div>
-              <Button icon="plus" type="primary" onClick={() => this.handleAdd('')}>
+              <Button icon={<PlusOutlined />} type="primary" onClick={() => this.handleAdd('')}>
                 新增分类
               </Button>
               {selectedRowKeys.length > 0 && (
@@ -199,7 +199,7 @@ export default class List extends Component {
                     onConfirm={() => this.handleBatchDelete()}
                   >
                     <Divider type="vertical" />
-                    <Button icon="delete" type="danger">
+                    <Button icon={<DeleteOutlined />} type="danger">
                       删除分类
                     </Button>
                   </Popconfirm>

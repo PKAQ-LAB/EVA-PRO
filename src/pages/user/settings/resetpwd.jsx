@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import { Form, Input, Modal, Tooltip, Icon } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Modal, Tooltip } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
 import md5 from 'md5';
 import { connect } from 'dva';
 
 const FormItem = Form.Item;
 
-@Form.create()
+
 @connect(state => ({
   global: state.global,
   submitting: state.loading.effects['global/repwd'],
@@ -88,7 +91,7 @@ export default class AOEForm extends Component {
               <span>
                 密码&nbsp;
                 <Tooltip title="密码应为 8-12 位的数字字母组合(不含空格)">
-                  <Icon type="question-circle-o" />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </span>
             }
@@ -109,7 +112,7 @@ export default class AOEForm extends Component {
               <span>
                 确认密码&nbsp;
                 <Tooltip title="密码应为 8-12 位的数字字母组合(不含空格)">
-                  <Icon type="question-circle-o" />
+                  <QuestionCircleOutlined />
                 </Tooltip>
               </span>
             }

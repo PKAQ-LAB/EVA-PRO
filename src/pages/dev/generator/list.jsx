@@ -3,14 +3,16 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-param-reassign */
 import React, { PureComponent } from 'react';
-import { Form, Input, Button, Tabs, Row, Col, message, Checkbox } from 'antd';
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Input, Button, Tabs, Row, Col, message, Checkbox } from 'antd';
 import { connect } from 'dva';
 import EditableList from './EditableList';
 
 const FormItem = Form.Item;
 const { TabPane } = Tabs;
 
-@Form.create()
+
 @connect(state => ({
   item: state.item,
 }))

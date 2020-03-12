@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
+import { LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
+import { Icon as LegacyIcon } from '@ant-design/compatible';
 import { Alert, Button, Divider, Popconfirm } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Form, Input } from 'antx';
@@ -11,7 +13,7 @@ import RoleModule from './component/rolemodule';
 /**
  * 角色（权限）管理 主界面
  */
-@Form.create()
+
 @connect(state => ({
   role: state.role,
   loading: state.loading.role,
@@ -83,60 +85,58 @@ export default class Role extends React.PureComponent {
   // 操作按钮
   renderButton(selectedRowKeys) {
     const { loading } = this.props.role;
-    return (
-      <>
-        <Button
-          type="primary"
-          icon="plus"
-          onClick={() => this.handlAddClick('create')}
-          loading={loading}
-        >
-          新增角色
-        </Button>
-        {selectedRowKeys.length > 0 && (
-          <>
-            <Divider type="vertical" />
-            <span>
-              <Popconfirm
-                title="确定要删除所选角色吗?"
-                placement="top"
-                onConfirm={this.handleRemoveClick}
-              >
-                <Button style={{ marginLeft: 8 }} type="danger" icon="remove" loading={loading}>
-                  删除角色
-                </Button>
-              </Popconfirm>
-            </span>
-          </>
-        )}
-        {selectedRowKeys.length > 0 && (
-          <>
-            <Divider type="vertical" />
-            <Button
-              icon="lock"
-              style={{ marginLeft: 8 }}
-              onClick={() => this.handleLockSwitch('0001')}
-              loading={loading}
+    return <>
+      <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        onClick={() => this.handlAddClick('create')}
+        loading={loading}
+      >
+        新增角色
+      </Button>
+      {selectedRowKeys.length > 0 && (
+        <>
+          <Divider type="vertical" />
+          <span>
+            <Popconfirm
+              title="确定要删除所选角色吗?"
+              placement="top"
+              onConfirm={this.handleRemoveClick}
             >
-              停用角色
-            </Button>
-          </>
-        )}
-        {selectedRowKeys.length > 0 && (
-          <>
-            <Divider type="vertical" />
-            <Button
-              icon="unlock"
-              style={{ marginLeft: 8 }}
-              onClick={() => this.handleLockSwitch('0000')}
-              loading={loading}
-            >
-              启用角色
-            </Button>
-          </>
-        )}
-      </>
-    );
+              <Button style={{ marginLeft: 8 }} type="danger" icon={<LegacyIcon type="remove" />} loading={loading}>
+                删除角色
+              </Button>
+            </Popconfirm>
+          </span>
+        </>
+      )}
+      {selectedRowKeys.length > 0 && (
+        <>
+          <Divider type="vertical" />
+          <Button
+            icon={<LockOutlined />}
+            style={{ marginLeft: 8 }}
+            onClick={() => this.handleLockSwitch('0001')}
+            loading={loading}
+          >
+            停用角色
+          </Button>
+        </>
+      )}
+      {selectedRowKeys.length > 0 && (
+        <>
+          <Divider type="vertical" />
+          <Button
+            icon={<UnlockOutlined />}
+            style={{ marginLeft: 8 }}
+            onClick={() => this.handleLockSwitch('0000')}
+            loading={loading}
+          >
+            启用角色
+          </Button>
+        </>
+      )}
+    </>;
   }
 
   // 简单搜索条件

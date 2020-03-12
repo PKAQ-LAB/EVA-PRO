@@ -4,7 +4,7 @@ import { Form, Input } from 'antx';
 import { connect } from 'dva';
 import Selector from '@src/components/Selector';
 
-@Form.create()
+
 @connect(state => ({
   purchasing: state.purchasing,
   global: state.global,
