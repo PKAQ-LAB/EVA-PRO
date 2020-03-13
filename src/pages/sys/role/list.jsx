@@ -222,6 +222,7 @@ export default class List extends React.PureComponent {
     const that = this;
 
     const dataTableProps = {
+      headerTitle: '角色管理列表',
       columns,
       rowKey: 'id',
       loading,
