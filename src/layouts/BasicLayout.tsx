@@ -3,12 +3,8 @@ import ProLayout, {
   BasicLayoutProps as ProLayoutProps,
   Settings,
 } from '@ant-design/pro-layout';
-import { formatMessage } from 'umi-plugin-react/locale';
+import { Link, useIntl, connect, Dispatch } from 'umi';
 import React, { useEffect } from 'react';
-import { Link } from 'umi';
-import { Dispatch } from 'redux';
-import { connect } from 'dva';
-
 
 import { CopyrightCircleOutlined, RocketFilled, ProfileFilled, RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled, BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
 // import Authorized from '@src/utils/Authorized';
@@ -101,6 +97,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       });
     }
   }; // get children authority
+  const { formatMessage } = useIntl();
 
   return (
     <ProLayout
@@ -123,7 +120,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = props => {
       breadcrumbRender={(routers = []) => [
         {
           path: '/',
-          breadcrumbName: '首页',
+          breadcrumbName: formatMessage({ id: 'menu.home' }),
         },
         ...routers,
       ]}

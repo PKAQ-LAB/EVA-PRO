@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, Table, Checkbox } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 
 @connect(state => ({
   role: state.role,

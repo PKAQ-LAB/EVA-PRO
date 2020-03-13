@@ -2,7 +2,7 @@ import React from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Divider, Popconfirm } from 'antd';
 import cx from 'classnames';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import LineAoeForm from './lineaoeform';
 import DataTable from '@src/components/DataTable';
 

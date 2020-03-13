@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
 import { Button, Row, Col, Divider, DatePicker } from 'antd';

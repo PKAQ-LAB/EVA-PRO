@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from 'antd';
 import { Form, Input } from 'antx';
-import { connect } from 'dva';
+import { connect } from 'umi';
 
 
 @connect(state => ({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import SideLayout from '@src/components/SideLayout';
 import List from './list';

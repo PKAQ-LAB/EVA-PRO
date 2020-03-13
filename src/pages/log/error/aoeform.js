@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { PureComponent } from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { Drawer } from 'antd';
 import styles from './index.less';
 

@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
 import { Input, Button, Tabs, Row, Col, message, Checkbox } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import EditableList from './EditableList';
 
 const FormItem = Form.Item;

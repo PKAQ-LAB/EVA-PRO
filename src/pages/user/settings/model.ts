@@ -1,5 +1,5 @@
 import { AnyAction, Reducer } from 'redux';
-import { EffectsCommandMap } from 'dva';
+import { EffectsCommandMap } from 'umi';
 import { CurrentUser, GeographicItemType } from './data.d';
 import { queryCity, queryCurrent, queryProvince, query as queryUsers } from './service';
 

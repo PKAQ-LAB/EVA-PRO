@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { Card, Row, Col, Button } from 'antd';
 import { Form, Input, Select } from 'antx';
 

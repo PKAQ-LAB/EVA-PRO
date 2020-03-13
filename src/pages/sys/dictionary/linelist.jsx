@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Divider, Popconfirm } from 'antd';
 
-import { connect } from 'dva';
+import { connect } from 'umi';
 import LineAoeForm from './lineaoeform';
 import DataTable from '@src/components/DataTable';
 import css from './linelist.less';

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Row, Col, Modal, Switch, Tooltip, Form, Input, TreeSelect } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 
 @connect(state => ({
   organization: state.organization,

@@ -2,11 +2,11 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
 import { Button, Input, Select, Upload, message } from 'antd';
-import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
+import { FormattedMessage, formatMessage } from 'umi';
 import React, { Component, Fragment } from 'react';
 
 import { FormComponentProps } from '@ant-design/compatible/es/form';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { CurrentUser } from '../data.d';
 import GeographicView from './GeographicView';
 import PhoneView from './PhoneView';

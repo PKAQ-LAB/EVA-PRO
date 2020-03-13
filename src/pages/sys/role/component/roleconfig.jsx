@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Modal } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import building from '@src/assets/building.png';
 
 @connect(state => ({

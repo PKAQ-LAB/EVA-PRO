@@ -1,5 +1,5 @@
 import { getMenuData } from '@src/services/menu';
-import { Effect } from 'dva';
+import { Effect } from 'umi';
 import { Reducer } from 'redux';
 import { MenuDataItem } from '@ant-design/pro-layout';
 

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { connect } from 'dva';
+import { connect } from 'umi';
 
 import DataTable from '@src/components/DataTable';
 

@@ -1,6 +1,4 @@
-import { Reducer } from 'redux';
-import { routerRedux } from 'dva/router';
-import { Effect } from 'dva';
+import { history, Effect, Reducer } from 'umi';
 import { stringify } from 'querystring';
 import Cookies from 'universal-cookie';
 
@@ -65,7 +63,8 @@ const Model: LoginModelType = {
         window.location.href = "/";
       }
     },
-    *logout(_, { put }) {
+
+    logout() {
       const { redirect } = getPageQuery();
       // 删除token
       cookies.remove(TOKEN_KEY, { maxAge: -1, path: '/' });
@@ -73,14 +72,12 @@ const Model: LoginModelType = {
 
       // redirect
       if (window.location.pathname !== '/user/login' && !redirect) {
-        yield put(
-          routerRedux.replace({
-            pathname: '/user/login',
-            search: stringify({
-              redirect: window.location.href,
-            }),
+        router.replace({
+          pathname: '/user/login',
+          search: stringify({
+            redirect: window.location.href,
           }),
-        );
+        });
       }
     },
   },

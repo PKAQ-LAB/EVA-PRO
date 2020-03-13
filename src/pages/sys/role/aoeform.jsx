@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
 import Selector from '@src/components/Selector';
 

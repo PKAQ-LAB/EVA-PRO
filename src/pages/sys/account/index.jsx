@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon as LegacyIcon } from '@ant-design/compatible';
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Form, Input, Button, Alert, Tree } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import SideLayout from '@src/components/SideLayout';
 import RoleModal from './rolemodal';

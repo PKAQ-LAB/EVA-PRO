@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { Divider, Popconfirm, notification } from 'antd';
 import cx from 'classnames';
 

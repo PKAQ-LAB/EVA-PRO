@@ -5,7 +5,7 @@ import '@ant-design/compatible/assets/index.css';
 import { Input, Modal, Tooltip } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
 import md5 from 'md5';
-import { connect } from 'dva';
+import { connect } from 'umi';
 
 const FormItem = Form.Item;
 

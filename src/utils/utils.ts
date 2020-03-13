@@ -1,5 +1,5 @@
 import { parse } from 'querystring';
-import pathRegexp from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 import { Route } from '@src/models/connect';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
@@ -25,7 +25,7 @@ export const isAntDesignProOrDev = (): boolean => {
 
 // 获取非Undefined字符串
 export function getNoUndefinedString(obj: string) {
-  return obj ? obj : '';
+  return obj || '';
 }
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
@@ -41,7 +41,7 @@ export const getAuthorityFromRouter = <T extends Route>(
 ): T | undefined => {
   const authority = router.find(
     ({ routes, path = '/' }) =>
-      (path && pathRegexp(path).exec(pathname)) ||
+      (path && pathToRegexp(path).exec(pathname)) ||
       (routes && getAuthorityFromRouter(routes, pathname)),
   );
   if (authority) return authority;

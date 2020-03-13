@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { Component } from 'react';
 import { Drawer } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import moment from 'moment';
 import styles from './index.less';
 

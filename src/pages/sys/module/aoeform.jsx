@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Row, Col, Switch, Drawer, Button, Tooltip } from 'antd';
 import { Form, Input, TreeSelect } from 'antx';

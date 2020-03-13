@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Modal, Row, Col, Switch, Tooltip, Upload } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';

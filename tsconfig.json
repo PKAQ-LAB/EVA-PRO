@@ -18,7 +18,8 @@
     "strict": true,
     "paths": {
       "@src/*": ["./src/*"],
-      "@config/*": ["./config/*"]
+      "@config/*": ["./config/*"],
+      "@@/*": ["./src/.umi/*"]
     }
   },
   "exclude": [

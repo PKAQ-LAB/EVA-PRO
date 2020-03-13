@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 
 import DataTable from '@src/components/DataTable';
 

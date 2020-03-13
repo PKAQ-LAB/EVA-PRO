@@ -4,7 +4,7 @@
  */
 import { extend } from 'umi-request';
 import { message } from 'antd';
-import router from 'umi/router';
+import { history } from 'umi';
 
 message.config({
   maxCount: 1,
@@ -27,9 +27,9 @@ const errorHandler = (error: { response: any }): any => {
     }
 
     if (status === 403) {
-      router.push('/exception/403');
+      history.push('/exception/403');
     } else if (status >= 404 && status < 422) {
-      router.push('/exception/404');
+      history.push('/exception/404');
     }
   } else {
     message.error({

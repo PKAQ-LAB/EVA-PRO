@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Modal, Tree, Card, Row, Col } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import DataTable from '@src/components/DataTable';
 import cs from './roleuser.less';
 

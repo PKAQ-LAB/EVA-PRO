@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import '@ant-design/compatible/assets/index.css';
 import { Divider } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';

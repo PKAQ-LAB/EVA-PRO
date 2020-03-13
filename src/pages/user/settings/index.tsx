@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 import { Dispatch } from 'redux';
-import { FormattedMessage } from 'umi-plugin-react/locale';
+import { FormattedMessage } from 'umi';
 import { Menu } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import BaseView from './components/base';
 import BindingView from './components/binding';
 import { CurrentUser } from './data.d';

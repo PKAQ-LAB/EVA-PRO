@@ -1,7 +1,7 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable no-restricted-syntax */
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
 import { Input, Table, Checkbox, Select } from 'antd';

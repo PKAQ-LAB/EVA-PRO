@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { CheckOutlined, CloseOutlined, PlusOutlined, LockOutlined, UnlockOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Switch, notification, Button } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import cx from 'classnames';
 import ProTable from '@ant-design/pro-table';
 import { fetchRoles } from './services/roleSvc';

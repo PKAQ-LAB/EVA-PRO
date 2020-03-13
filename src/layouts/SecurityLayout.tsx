@@ -1,9 +1,8 @@
 import React from 'react';
-import { connect } from 'dva';
-import { Redirect } from 'umi';
+import { ConnectProps, connect, Redirect } from 'umi';
 import { stringify } from 'querystring';
 import Cookies from 'universal-cookie';
-import { ConnectState, ConnectProps } from '@src/models/connect';
+import { ConnectState } from '@src/models/connect';
 import { CurrentUser } from '@src/models/user';
 import PageLoading from '@src/components/PageLoading';
 import defaultSettings from '@config/defaultSettings';
@@ -41,13 +40,16 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
       redirect: window.location.href,
     });
 
+    console.info("1");
     if ((!isLogin && loading) || !isReady) {
+      console.info("2");
       return <PageLoading />;
     }
 
     if (!isLogin && window.location.pathname !== '/user/login') {
       return <Redirect to={`/user/login?${queryString}`} />;
     }
+    console.info("3");
     return children;
   }
 }
