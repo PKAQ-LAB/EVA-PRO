@@ -14,13 +14,24 @@ export default class Selector extends PureComponent {
     super(props);
     this.state = {
       options: [],
+      showAll: true,
     };
   }
 
   componentDidMount() {
-    const { code, data } = this.props;
+    let { data } = this.props;
+    const { code, showAll } = this.props;
+
+    this.setState({
+      showAll
+    });
+
     if (data) {
+      if(typeof data === 'string'){
+        data = JSON.parse(data);
+      }
       const k = Object.keys(data);
+
       const options = k.map(v => <Option key={v}>{data[v]}</Option>);
       this.setState({
         options,
@@ -39,7 +50,12 @@ export default class Selector extends PureComponent {
   }
 
   render() {
-    const { options } = this.state;
-    return <Select {...this.props}>{options}</Select>;
+    const { options, showAll } = this.state;
+    return (
+      <Select {...this.props}>
+        {showAll && <Option value="0000">全部</Option>}
+        {options}
+      </Select>
+    );
   }
 }
