@@ -1,10 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { LockOutlined, PlusOutlined, UnlockOutlined } from '@ant-design/icons';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
-import { Alert, Button, Divider, Popconfirm } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Form, Input } from 'antx';
 import List from './list';
 import AOEForm from './aoeform';
 import RoleUser from './component/roleuser';
@@ -19,185 +15,12 @@ import RoleModule from './component/rolemodule';
   loading: state.loading.role,
 }))
 export default class Role extends React.PureComponent {
-  // 新增窗口
-  handlAddClick = () => {
-    this.props.dispatch({
-      type: 'role/updateState',
-      payload: {
-        modalType: 'create',
-        currentItem: {},
-      },
-    });
-  };
-
-  // 重置事件
-  handleFormReset = () => {
-    const { form, dispatch } = this.props;
-    form.resetFields();
-    dispatch({
-      type: 'role/fetchRoles',
-    });
-  };
-
-  // 搜索事件
-  handleSearch = () => {
-    const { dispatch, form } = this.props;
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-
-      const values = {
-        ...fieldsValue,
-      };
-
-      dispatch({
-        type: 'role/fetchRoles',
-        payload: values,
-      });
-    });
-  };
-
-  // 解锁/锁定
-  handleLockSwitch = status => {
-    const { selectedRowKeys } = this.props.role;
-    this.props.dispatch({
-      type: 'role/lockSwitch',
-      payload: {
-        param: selectedRowKeys,
-        status,
-      },
-    });
-  };
-
-  // 批量删除
-  handleRemoveClick = () => {
-    const { selectedRowKeys } = this.props.role;
-
-    if (!selectedRowKeys) return;
-
-    this.props.dispatch({
-      type: 'role/remove',
-      payload: {
-        param: selectedRowKeys,
-      },
-    });
-  };
-
-  // 操作按钮
-  renderButton(selectedRowKeys) {
-    const { loading } = this.props.role;
-    return <>
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={() => this.handlAddClick('create')}
-        loading={loading}
-      >
-        新增角色
-      </Button>
-      {selectedRowKeys.length > 0 && (
-        <>
-          <Divider type="vertical" />
-          <span>
-            <Popconfirm
-              title="确定要删除所选角色吗?"
-              placement="top"
-              onConfirm={this.handleRemoveClick}
-            >
-              <Button style={{ marginLeft: 8 }} type="danger" icon={<LegacyIcon type="remove" />} loading={loading}>
-                删除角色
-              </Button>
-            </Popconfirm>
-          </span>
-        </>
-      )}
-      {selectedRowKeys.length > 0 && (
-        <>
-          <Divider type="vertical" />
-          <Button
-            icon={<LockOutlined />}
-            style={{ marginLeft: 8 }}
-            onClick={() => this.handleLockSwitch('0001')}
-            loading={loading}
-          >
-            停用角色
-          </Button>
-        </>
-      )}
-      {selectedRowKeys.length > 0 && (
-        <>
-          <Divider type="vertical" />
-          <Button
-            icon={<UnlockOutlined />}
-            style={{ marginLeft: 8 }}
-            onClick={() => this.handleLockSwitch('0000')}
-            loading={loading}
-          >
-            启用角色
-          </Button>
-        </>
-      )}
-    </>;
-  }
-
-  // 简单搜索条件
-  renderSearchForm() {
-    const { form } = this.props;
-    const { loading } = this.props.role;
-
-    const formItemLayout = {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 16 },
-    };
-
-    return (
-      <Form api={form} {...formItemLayout} colon layout="inline" onSubmit={this.handleSearch}>
-        <Input label="角色名称" id="name" />
-
-        <Input label="角色编码" id="code" />
-        <Button type="primary" htmlType="submit" loading={loading}>
-          查询
-        </Button>
-        <Divider type="vertical" />
-        <Button htmlType="reset" onClick={() => this.handleFormReset()} loading={loading}>
-          重置
-        </Button>
-      </Form>
-    );
-  }
-
   render() {
-    const { form } = this.props;
-    const { modalType, selectedRowKeys, operateType } = this.props.role;
+    const { modalType, operateType } = this.props.role;
     return (
       <PageHeaderWrapper title="角色管理" subTitle="系统用户角色权限管理维护">
-        {/* 工具条 */}
-        <div className="eva-ribbon">
-          {/* 操作按钮 */}
-          <div>{this.renderButton(selectedRowKeys)}</div>
-          {/* 查询条件 */}
-          <div>{this.renderSearchForm()}</div>
-        </div>
-        {/* 删除条幅 */}
-        <div className="eva-alert">
-          {selectedRowKeys.length > 0 && (
-            <Alert
-              message={
-                <div>
-                  已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-                  {selectedRowKeys.length > 0 && (
-                    <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
-                      清空选择
-                    </a>
-                  )}
-                </div>
-              }
-              type="info"
-              showIcon
-            />
-          )}
-        </div>
         <div className="eva-body">
-          <List searchForm={form} />
+          <List />
         </div>
         {/* 新增窗口 */}
         {modalType !== '' && <AOEForm />}

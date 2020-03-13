@@ -14,16 +14,16 @@ export default class Selector extends PureComponent {
     super(props);
     this.state = {
       options: [],
-      showAll: true,
+      showall: true,
     };
   }
 
   componentDidMount() {
     let { data } = this.props;
-    const { code, showAll } = this.props;
+    const { code, showall } = this.props;
 
     this.setState({
-      showAll
+      showall
     });
 
     if (data) {
@@ -50,10 +50,10 @@ export default class Selector extends PureComponent {
   }
 
   render() {
-    const { options, showAll } = this.state;
+    const { options, showall } = this.state;
     return (
       <Select {...this.props}>
-        {showAll && <Option value="0000">全部</Option>}
+        {showall && <Option value="0000">全部</Option>}
         {options}
       </Select>
     );

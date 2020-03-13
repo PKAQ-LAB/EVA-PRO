@@ -168,21 +168,16 @@ export default class extends React.PureComponent {
 
   // 简单搜索条件
   renderSearchForm() {
-    const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <Form.Item label="帐号">
-          {getFieldDecorator('account')(<Input id="account-search" placeholder="输入帐号搜索" />)}
+        <Form.Item label="帐号" name="account">
+          <Input id="account-search" placeholder="输入帐号搜索" />
         </Form.Item>
-        <Form.Item label="姓名">
-          {getFieldDecorator('name')(
-            <Input id="account-name-search" placeholder="输入用户名称搜索" />,
-          )}
+        <Form.Item label="姓名" name="name">
+          <Input id="account-name-search" placeholder="输入用户名称搜索" />
         </Form.Item>
-        <Form.Item label="手机">
-          {getFieldDecorator('tel')(
-            <Input id="account-phone-search" placeholder="输入手机号搜索" />,
-          )}
+        <Form.Item label="手机" name="tel">
+          <Input id="account-phone-search" placeholder="输入手机号搜索" />
         </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit">

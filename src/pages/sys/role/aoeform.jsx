@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Modal, TreeSelect } from 'antd';
-import { Form, Input } from 'antx';
+import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
 import Selector from '@src/components/Selector';
-
 
 @connect(state => ({
   global: state.global,
   role: state.role,
   submitting: state.loading.effects['role/save'],
 }))
-export default class AOEForm extends Component {
+export default class AOEForm extends React.PureComponent {
+  formRef = React.createRef();
+
   constructor(props) {
     super(props);
     this.state = {
@@ -32,26 +32,26 @@ export default class AOEForm extends Component {
 
   // 校验角色编码唯一性
   // eslint-disable-next-line consistent-return
-  checkCode = (rule, value, callback) => {
-    const { getFieldValue } = this.props.form;
-    const code = getFieldValue('code');
+  checkCode = async (rule, value) => {
 
     const { currentItem } = this.props.role;
 
     if (currentItem && currentItem.id && value === currentItem.code) {
-      return callback();
+      return Promise.resolve();
     }
-    const data = { code };
+
     this.props
       .dispatch({
         type: 'role/checkUnique',
-        payload: data,
+        payload: {
+          code: value
+        },
       })
       .then(r => {
         if (r.code === 0) {
-          return callback();
+          return Promise.resolve();
         }
-        return callback(r.message);
+        return Promise.reject(r.message);
       });
   };
 
@@ -78,14 +78,13 @@ export default class AOEForm extends Component {
   // 保存
   handleSaveClick = () => {
     const { currentItem } = this.props.role;
-    const { getFieldsValue, validateFields } = this.props.form;
-    validateFields(errors => {
-      if (errors) {
-        return;
-      }
+
+    const { validateFields } = this.formRef.current;
+    validateFields().then( values => {
       const data = {
-        ...getFieldsValue(),
+        ...values
       };
+
       if (currentItem && currentItem.id) {
         data.id = currentItem.id;
       }
@@ -97,7 +96,7 @@ export default class AOEForm extends Component {
         type: 'role/save',
         payload: data,
       });
-    });
+    })
   };
 
   // 渲染界面
@@ -105,7 +104,7 @@ export default class AOEForm extends Component {
     const { dict } = this.props.global;
     const { showDept } = this.state;
     const { modalType, currentItem, orgs } = this.props.role;
-    const { loading, form } = this.props;
+    const { loading } = this.props;
 
     const title = { create: '新增', edit: '编辑', view: '查看' };
 
@@ -130,71 +129,65 @@ export default class AOEForm extends Component {
         onOk={() => this.handleSaveClick()}
         title={`${title[modalType] || ''}角色`}
       >
-        <Form api={form} {...formItemLayout} colon data={currentItem}>
+        <Form {...formItemLayout} colon initialValues={currentItem} ref={this.formRef} >
           <Row>
             <Col span={12}>
-              <Input
-                label="角色名称"
-                id="name"
-                rules={['required']}
-                max={30}
-                msg="full"
-                disabled={modalType === 'view'}
-              />
+              <Form.Item
+                  label="角色名称"
+                  name="name"
+                  rules={[{required: true,}]}>
+                <Input max={30} disabled={modalType === 'view'}/>
+              </Form.Item>
             </Col>
             <Col span={12}>
-              <Input
-                label="角色编码"
-                id="code"
-                rules={[
-                  {
-                    required: true,
-                    message: '角色编码格式错误,仅允许使用(4-30位)字母或数字.',
-                    whitespace: true,
-                    pattern: /^[0-9a-zA-Z_]{4,30}$/,
-                  },
-                  {
-                    validator: this.checkCode,
-                  },
-                ]}
-                validateTrigger="onBlur"
-                min={4}
-                max={30}
-                msg="full"
-              />
+              <Form.Item
+                  label="角色编码"
+                  name="code"
+                  validateTrigger="onBlur"
+                  rules={[
+                    {
+                      required: true,
+                      message: '角色编码格式错误,仅允许使用(4-30位)字母或数字.',
+                      whitespace: true,
+                      pattern: /^[0-9a-zA-Z_]{4,30}$/,
+                    },
+                    {
+                      validator: this.checkCode,
+                    }
+                  ]}>
+                <Input min={4} max={30} />
+              </Form.Item>
             </Col>
           </Row>
 
-          <Input
-            textarea
-            label="角色描述"
-            id="remark"
-            rules={['max=200']}
-            max={60}
-            msg="full"
-            {...formRowOne}
-          />
+          <Form.Item label="角色描述"
+                     name="remark"
+                     {...formRowOne}>
+            <Input.TextArea max={60} />
+          </Form.Item>
 
-          <Selector
-            label="数据权限"
-            data={dict.data_permission}
-            id="dataPermissionType"
-            rules={['required']}
-            onChange={this.handleDataPermissionChange}
-            showAll={false}
-            {...formRowOne}
-          />
+          <Form.Item label="数据权限"
+                     name="dataPermissionType"
+                     rules={[{required: true,}]}
+                     {...formRowOne} >
+            <Selector
+              data={dict.data_permission}
+              onChange={this.handleDataPermissionChange}
+              showall={false}
+            />
+          </Form.Item>
 
           {(showDept || currentItem.dataPermissionType === '0003') && (
-            <TreeSelect
-              label="选择部门"
-              id="dataPermissionDeptid"
-              treeData={orgs}
-              treeCheckable
-              allowClear
-              multiple
-              {...formRowOne}
-            />
+             <Form.Item label="选择部门"
+                        name="dataPermissionDeptid"
+                        {...formRowOne}>
+              <TreeSelect
+                treeData={orgs}
+                treeCheckable
+                allowClear
+                multiple
+              />
+            </Form.Item>
           )}
         </Form>
       </Modal>

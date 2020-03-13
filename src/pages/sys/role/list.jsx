@@ -1,21 +1,16 @@
 import React from 'react';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { Divider, Popconfirm, Switch, notification } from 'antd';
+import { CheckOutlined, CloseOutlined, PlusOutlined, LockOutlined, UnlockOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Divider, Popconfirm, Switch, notification, Button } from 'antd';
 import { connect } from 'dva';
 import cx from 'classnames';
-import DataTable from '@src/components/DataTable';
+import ProTable from '@ant-design/pro-table';
+import { fetchRoles } from './services/roleSvc';
 
 @connect(state => ({
   role: state.role,
   loading: state.loading.effects['role/fetchRoles'],
 }))
 export default class List extends React.PureComponent {
-  // 组件加载完成后加载数据
-  componentDidMount() {
-    this.props.dispatch({
-      type: 'role/fetchRoles',
-    });
-  }
 
   // 行选事件
   handleSelectRows = rows => {
@@ -78,23 +73,6 @@ export default class List extends React.PureComponent {
     });
   };
 
-  // 翻页
-  pageChange = pg => {
-    const { dispatch, searchForm } = this.props;
-    const { pageNum, pageSize } = pg;
-
-    const params = {
-      page: pageNum,
-      pageSize,
-      ...searchForm.getFieldsValue(),
-    };
-
-    dispatch({
-      type: 'role/fetchRoles',
-      payload: params,
-    });
-  };
-
   // 启用/停用
   handleEnable = (record, checked) => {
     if (!record.id) {
@@ -110,130 +88,221 @@ export default class List extends React.PureComponent {
     });
   };
 
+
+  // 解锁/锁定
+  handleLockSwitch = status => {
+    const { selectedRowKeys } = this.props.role;
+    this.props.dispatch({
+      type: 'role/lockSwitch',
+      payload: {
+        param: selectedRowKeys,
+        status,
+      },
+    });
+  };
+
+  // 批量删除
+  handleRemoveClick = () => {
+    const { selectedRowKeys } = this.props.role;
+
+    if (!selectedRowKeys) return;
+
+    this.props.dispatch({
+      type: 'role/remove',
+      payload: {
+        param: selectedRowKeys,
+      },
+    });
+  };
+
+   // 新增窗口
+   handlAddClick = () => {
+    this.props.dispatch({
+      type: 'role/updateState',
+      payload: {
+        modalType: 'create',
+        currentItem: {},
+      },
+    });
+  };
+
   render() {
     const { loading } = this.props;
-
-    const { roles, selectedRowKeys } = this.props.role;
 
     const columns = [
       {
         title: '角色名称',
-        name: 'name',
-        tableItem: {},
+        width: 240,
+        ellipsis: true,
+        dataIndex: 'name',
       },
       {
         title: '角色编码',
-        name: 'code',
-        tableItem: {},
+        width: 240,
+        dataIndex: 'code',
       },
       {
         title: '角色描述',
-        name: 'remark',
-        tableItem: {
-          ellipsis: true,
-        },
+        width: 240,
+        dataIndex: 'remark',
+        hideInSearch: true,
+        ellipsis: true,
       },
       {
         title: '状态',
-        tableItem: {
-          render: (text, record) =>
-            record.locked !== '9999' && (
-              <DataTable.Oper style={{ textAlign: 'center' }}>
-                <Switch
-                  onChange={checked => this.handleEnable(record, checked)}
-                  checkedChildren={<CheckOutlined />}
-                  unCheckedChildren={<CloseOutlined />}
-                  checked={record.locked === '0000'}
-                />
-              </DataTable.Oper>
-            ),
-        },
+        width: 150,
+        render: (text, record) =>
+          record.locked !== '9999' && (
+            <Switch
+              onChange={checked => this.handleEnable(record, checked)}
+              checkedChildren={<CheckOutlined />}
+              unCheckedChildren={<CloseOutlined />}
+              checked={record.locked === '0000'}
+            />
+          ),
       },
       {
         title: '备注',
-        name: 'remark',
+        width: 360,
+        ellipsis: true,
+        hideInSearch: true,
+        dataIndex: 'remark',
       },
       {
         title: '模块授权',
-        tableItem: {
-          align: 'center',
-          render: (text, record) =>
-            record.locked === '0000' && (
-              <DataTable.Oper style={{ textAlign: 'center' }}>
-                <a onClick={() => this.handleModuleClick(record, 'Module')}>模块授权</a>
-              </DataTable.Oper>
-            ),
-        },
+        align: 'center',
+        fixed: 'right',
+        width: 120,
+        render: (text, record) =>
+          record.locked === '0000' && (
+            <a onClick={() => this.handleModuleClick(record, 'Module')}>模块授权</a>
+        ),
       },
       {
         title: '用户授权',
-        tableItem: {
-          align: 'center',
-          render: (text, record) =>
-            record.locked === '0000' && (
-              <DataTable.Oper style={{ textAlign: 'center' }}>
-                <a onClick={() => this.handleUserClick(record, 'User')}>用户授权</a>
-              </DataTable.Oper>
-            ),
-        },
-      },
+        align: 'center',
+        fixed: 'right',
+        width: 120,
+        render: (text, record) =>
+          record.locked === '0000' && (
+            <a onClick={() => this.handleUserClick(record, 'User')}>用户授权</a>
+          ),
+    },
       {
         title: '配置授权',
-        tableItem: {
-          align: 'center',
-          render: (text, record) =>
-            record.locked === '0000' && (
-              <DataTable.Oper style={{ textAlign: 'center' }}>
-                <a onClick={() => this.handleConfigClick(record, 'Config')}>配置授权</a>
-              </DataTable.Oper>
-            ),
-        },
+        align: 'center',
+        fixed: 'right',
+        width: 120,
+        render: (text, record) =>
+          record.locked === '0000' && (
+            <a onClick={() => this.handleConfigClick(record, 'Config')}>配置授权</a>
+          ),
       },
       {
-        tableItem: {
-          render: (text, record) =>
-            record.locked === '0000' && (
-              <DataTable.Oper style={{ textAlign: 'center' }}>
-                <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
-                <Divider type="vertical" />
-                <Popconfirm
-                  title="确定要删除吗？"
-                  okText="确定"
-                  cancelText="取消"
-                  onConfirm={() => this.handleDeleteClick(record)}
-                >
-                  <a>删除</a>
-                </Popconfirm>
-              </DataTable.Oper>
-            ),
-        },
+        width: 180,
+        fixed: 'right',
+        render: (text, record) =>
+          record.locked === '0000' && (
+            <>
+              <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
+              <Divider type="vertical" />
+              <Popconfirm
+                title="确定要删除吗？"
+                okText="确定"
+                cancelText="取消"
+                onConfirm={() => this.handleDeleteClick(record)}
+              >
+                <a>删除</a>
+              </Popconfirm>
+            </>
+          ),
       },
     ];
+
+    const that = this;
 
     const dataTableProps = {
       columns,
       rowKey: 'id',
-      showNum: true,
       loading,
-      isScroll: true,
-      alternateColor: true,
-      dataItems: roles,
-      selectType: 'checkbox',
+      bordered: true,
+      scroll: {
+        x: 'max-content'
+      },
+      request: async params => {
+        const res = await fetchRoles(params);
+        return res.data;
+      },
       rowClassName: record =>
         cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' }),
-      selectedRowKeys,
-      onChange: this.pageChange,
-      onSelect: this.handleSelectRows,
+      // onChange: this.pageChange,
       disabled: { locked: ['9999', '0001'] },
       rowSelection: {
+        onChange: selectedKeys => {
+          this.handleSelectRows(selectedKeys);
+        },
         // 系统内置分组不可选择
         getCheckboxProps: record => ({
           disabled: record.locked === '9999',
           name: record.name,
         }),
       },
+      toolBarRender: (action, {selectedRowKeys}) => [
+        <>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => that.handlAddClick('create')}
+          loading={loading}
+        >
+          新增角色
+        </Button>
+        {selectedRowKeys.length > 0 && (
+          <>
+            <Divider type="vertical" />
+            <span>
+              <Popconfirm
+                title="确定要删除所选角色吗?"
+                placement="top"
+                onConfirm={that.handleRemoveClick}
+              >
+                <Button style={{ marginLeft: 8 }} type="danger" icon={<DeleteOutlined />} loading={loading}>
+                  删除角色
+                </Button>
+              </Popconfirm>
+            </span>
+          </>
+        )}
+        {selectedRowKeys.length > 0 && (
+          <>
+            <Divider type="vertical" />
+            <Button
+              icon={<LockOutlined />}
+              style={{ marginLeft: 8 }}
+              onClick={() => that.handleLockSwitch('0001')}
+              loading={loading}
+            >
+              停用角色
+            </Button>
+          </>
+        )}
+        {selectedRowKeys.length > 0 && (
+          <>
+            <Divider type="vertical" />
+            <Button
+              icon={<UnlockOutlined />}
+              style={{ marginLeft: 8 }}
+              onClick={() => that.handleLockSwitch('0000')}
+              loading={loading}
+            >
+              启用角色
+            </Button>
+          </>
+        )}
+       </>
+      ]
     };
 
-    return <DataTable {...dataTableProps} bordered pagination />;
+    return <ProTable {...dataTableProps} />;
   }
 }
