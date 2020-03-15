@@ -82,15 +82,15 @@
     "react-fast-compare": "^3.0.1",
     "react-router": "^5.1.2",
     "umi": "^3.0.8",
-    "umi-request": "^1.0.8",
+    "umi-request": "^1.2.19",
     "@umijs/preset-react": "^1.4.3",
-    "@umijs/plugin-block-devtool": "^1.1.0",
-    "@umijs/preset-ui": "^2.0.0-beta.5",
+    "@umijs/plugin-block-devtool": "^1.1.1",
+    "@umijs/preset-ui": "^2.0.7",
     "umi-plugin-antd-icon-config": "^2.0.0",
     "use-merge-value": "^1.0.1",
     "screenfull": "^5.0.2",
     "universal-cookie": "^4.0.3",
-    "xlsx": "^0.15.5"
+    "xlsx": "^0.15.6"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^1.0.19",
@@ -103,7 +103,7 @@
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.5",
     "@types/react-helmet": "^5.0.15",
-    "@umijs/fabric": "^2.0.3",
+    "@umijs/fabric": "^2.0.4",
     "chalk": "^3.0.0",
     "cross-env": "^7.0.2",
     "cross-port-killer": "^1.2.1",
