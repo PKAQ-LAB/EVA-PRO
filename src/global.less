@@ -52,85 +52,88 @@ ol {
   }
 }
 
-:global {
-  // 菜单图标, 叶子节点图标样式
-  .ant-menu-item.ant-menu-item-only-child .anticon, .ant-menu-submenu-title.ant-menu-item-only-child .anticon{
-    margin-right: 8px;
-  }
-  // 侧边栏样式  开始  -------------------------------------------------
-  // 选中的菜单颜色
-  .ant-menu.ant-menu-dark .ant-menu-item-selected,
-  .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
-    background: #37373d;
-    border-right: 3.3px solid #1890ff;
-  }
-  // 侧边栏样式  结束  -------------------------------------------------
-  // 内容区边距
-  // 表头颜色
-  .ant-table-content {
-    border-top: 5px solid #1da9ff;
-  }
-  .ant-table-fixed-left {
-    border-top: 5px solid #1da9ff;
-  }
-  .ant-table-fixed-right {
-    border-top: 5px solid #1da9ff;
-  }
-  // 表头复选列
-  .ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
-    border-top: 5px solid #1da9ff;
-  }
-  // .ant-table {
-  //   min-height: 496px !important;
-  // }
-  //pro table的查询区域高度
-  .ant-pro-table-search{
-    padding-top: 12px;
-    margin-bottom: 12px;
-  }
-  // 使protable的表格与操作区等宽
-  .ant-table-wrapper{
-    padding: 0 24px 24px;
-  }
-  // 表高度
-  .ant-table-row {
-    height: 36px;
-  }
-  .ant-table-tbody > tr > td {
-    padding: 12px;
-  }
-  .ant-tree.ant-tree-show-line li span.ant-tree-switcher {
-    background-color: transparent;
-    background-image: none;
-  }
-  // 让表单紧凑
-  .ant-form-item {
-    margin-bottom: 5px !important;
-  }
+html,
+body,
+#root {
+  :global {
+    // 菜单图标, 叶子节点图标样式
+    .ant-menu-item.ant-menu-item-only-child .anticon, .ant-menu-submenu-title.ant-menu-item-only-child .anticon{
+      margin-right: 8px;
+    }
+    // 侧边栏样式  开始  -------------------------------------------------
+    // 选中的菜单颜色
+    .ant-menu.ant-menu-dark .ant-menu-item-selected,
+    .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
+      background: #37373d;
+      border-right: 3.3px solid #1890ff;
+    }
+    // 侧边栏样式  结束  -------------------------------------------------
+    // 内容区边距
+    // 表头颜色
+    .ant-table-content {
+      border-top: 5px solid #1da9ff;
+    }
+    .ant-table-fixed-left {
+      border-top: 5px solid #1da9ff;
+    }
+    .ant-table-fixed-right {
+      border-top: 5px solid #1da9ff;
+    }
+    // 表头复选列
+    .ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
+      border-top: 5px solid #1da9ff;
+    }
+    // .ant-table {
+    //   min-height: 496px !important;
+    // }
+    //pro table的查询区域高度
+    .ant-pro-table-search{
+      padding-top: 12px;
+      margin-bottom: 12px;
+    }
+    // 使protable的表格与操作区等宽
+    .ant-table-wrapper{
+      padding: 0 24px 24px;
+    }
+    // 表高度
+    .ant-table-row {
+      height: 36px;
+    }
+    .ant-table-tbody > tr > td {
+      padding: 12px;
+    }
+    .ant-tree.ant-tree-show-line li span.ant-tree-switcher {
+      background-color: transparent;
+      background-image: none;
+    }
+    // 让表单紧凑
+    .ant-form-item {
+      margin-bottom: 5px !important;
+    }
 
-  // 表格滚动条
-  .ant-table-body {
-    overflow: auto;
-  }
-  // 内容区样式
-  .ant-pro-basicLayout-content {
-    margin: 24px 24px -24px 24px;
-  }
-  // 页头边距
-  .ant-pro-page-header-wrap-page-header-warp {
-    padding-bottom: 0;
-  }
-  // 页头副标题样式
-  .ant-page-header-heading-sub-title {
-    margin: 10px 0 0 0;
-  }
-  .ant-pro-page-header-wrap-children-content {
-    height: calc(100vh - 200px);
-    margin: 0 0 -24px 0;
-    //background-color: #fff;
+    // 表格滚动条
+    .ant-table-body {
+      overflow: auto;
+    }
+    // 内容区样式
+    .ant-pro-basicLayout-content {
+      margin: 24px 24px -24px 24px;
+    }
+    // 页头边距
+    .ant-pro-page-header-wrap-page-header-warp {
+      padding-bottom: 0;
+    }
+    // 页头副标题样式
+    .ant-page-header-heading-sub-title {
+      margin: 10px 0 0 0;
+    }
+    .ant-pro-page-header-wrap-children-content {
+      height: calc(100vh - 200px);
+      margin: 0 0 -24px 0;
+      //background-color: #fff;
+    }
   }
 }
-
 // 禁用颜色
 .eva-locked {
   background-color: #fff5ee;
