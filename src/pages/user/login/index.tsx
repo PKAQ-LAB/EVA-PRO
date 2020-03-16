@@ -46,7 +46,7 @@ const Login: React.FC<LoginProps> = props => {
   return (
     <div className={styles.main}>
       <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-        <Tab key="account" tab="账户密码登录">
+        {/* <Tab key="account" tab="账户密码登录"> */}
           {status === 'error' && loginType === 'account' && !submitting && (
             <LoginMessage content="账户或密码错误（admin/ant.design）" />
           )}
@@ -71,8 +71,8 @@ const Login: React.FC<LoginProps> = props => {
               },
             ]}
           />
-        </Tab>
-        <Tab key="mobile" tab="手机号登录">
+        {/* </Tab> */}
+        {/* <Tab key="mobile" tab="手机号登录">
           {status === 'error' && loginType === 'mobile' && !submitting && (
             <LoginMessage content="验证码错误" />
           )}
@@ -103,7 +103,7 @@ const Login: React.FC<LoginProps> = props => {
               },
             ]}
           />
-        </Tab>
+        </Tab> */}
         <div>
           <Checkbox checked={autoLogin} onChange={e => setAutoLogin(e.target.checked)}>
             自动登录
