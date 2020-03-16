@@ -234,7 +234,7 @@ export default class List extends Component {
     ];
 
     return (
-      <div style={{ padding: 15 }}>
+      <div style={{ padding: "15px 0" }}>
         {/* 列表 */}
         <ProTable
           size="small"
