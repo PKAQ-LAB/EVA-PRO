@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Row, Col, Switch, Drawer, Button, Tooltip } from 'antd';
-import { Form, Input, TreeSelect } from 'antx';
+import { Form, Input, TreeSelect, Row, Col, Switch, Drawer, Button, Tooltip } from 'antd';
 import IconSelect from '@src/components/IconSelect';
 
 import LineList from './linelist';
-
 
 @connect(state => ({
   module: state.module,
   submitting: state.loading.effects['module/save'],
 }))
-export default class AOEForm extends Component {
+export default class AOEForm extends React.Component {
+
+  formRef = React.createRef();
+
   // 关闭窗口
   handleCloseForm = () => {
     this.props.dispatch({
@@ -26,7 +27,7 @@ export default class AOEForm extends Component {
   // 校验路径唯一性
   // eslint-disable-next-line consistent-return
   checkPath = (re, value, callback) => {
-    const { getFieldValue } = this.props.form;
+    const { getFieldValue } = this.formRef.current;
     const that = this;
     const path = getFieldValue('path');
 
@@ -49,14 +50,11 @@ export default class AOEForm extends Component {
   // 保存
   handleSaveClick = () => {
     const { currentItem, lineData } = this.props.module;
-    const { getFieldsValue, validateFields } = this.props.form;
+    const { validateFields } = this.formRef.current;
     // 对校验过的表单域 再进行一次强制表单校验
-    validateFields({ force: true }, errors => {
-      if (errors) {
-        return;
-      }
+    validateFields().then(values => {
       const data = {
-        ...getFieldsValue(),
+        ...values,
         id: currentItem.id,
       };
 
@@ -66,12 +64,12 @@ export default class AOEForm extends Component {
         type: 'module/save',
         payload: data,
       });
-    });
+    })
   };
 
   // 渲染界面
   render() {
-    const { submitting, form } = this.props;
+    const { submitting } = this.props;
     const { modalType, currentItem, data } = this.props.module;
     const title = { create: '新增', edit: '编辑' };
 
@@ -93,39 +91,37 @@ export default class AOEForm extends Component {
         visible={modalType !== ''}
         title={`${title[modalType] || '查看'}模块信息`}
       >
-        <Form api={form} data={currentItem} {...formItemLayout} colon>
-          <Input label="模块名称" id="name" rules={['required']} max={30} msg="full" />
+        <Form initialValues={currentItem} ref={this.formRef} {...formItemLayout} colon>
+          <Form.Item
+                  label="模块名称"
+                  name="name"
+                  rules={[{required: true,len: 30}]}>
+            <Input max={30} />
+          </Form.Item>
 
-          <Input
-            label="Path"
-            id="path"
-            rules={[
-              {
-                message: '路径格式错误, 必须以‘/’开头，仅允许使用字母或数字.',
-                pattern: new RegExp(/^\/[a-zA-Z_]*[/a-zA-Z_0-9]{2,40}$/),
-              },
-              {
-                required: true,
-                whitespace: true,
-                validator: this.checkPath,
-              },
-            ]}
-            validateTrigger="onBlur"
-            max={40}
-            msg="full"
-          />
+          <Form.Item
+                  label="Path"
+                  name="path"
+                  rules={[{
+                    len: 40,
+                    required: true,
+                    whitespace: true,
+                    validator: this.checkPath,
+                    validateTrigger: "onBlur",
+                    message: '路径格式错误, 必须以‘/’开头，仅允许使用字母或数字.',
+                    pattern: new RegExp(/^\/[a-zA-Z_]*[/a-zA-Z_0-9]{2,40}$/),
+                  }]}>
+            <Input max={40}/>
+          </Form.Item>
 
-          <IconSelect label="模块图标" id="icon" width={480} />
+          <Form.Item
+                  label="模块图标"
+                  name="icon"
+                  rules={[{required: true,len: 30}]}>
+           <IconSelect width={480} />
+          </Form.Item>
 
-          <TreeSelect
-            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            data={data}
-            keys={['id', 'name', 'children']}
-            treeNodeFilterProp="name"
-            expandAll
-            allowClear
-            showSearch
-            id="parentId"
+          <Form.Item
             label={
               <span>
                 上级模块&nbsp;
@@ -134,34 +130,51 @@ export default class AOEForm extends Component {
                 </Tooltip>
               </span>
             }
-            msg="请选择上级模块（留空为添加顶级模块）"
-          />
+            name="parentId"
+            rules={[{required: true,len: 30}]}>
+            <TreeSelect
+              dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+              data={data}
+              keys={['id', 'name', 'children']}
+              treeNodeFilterProp="name"
+              expandAll
+              allowClear
+              showSearch
+              placeholder="请选择上级模块（留空为添加顶级模块）"
+            />
+          </Form.Item>
 
           <Row>
             <Col span={12}>
-              <Input
-                label="显示顺序"
-                id="orders"
-                rules={['number']}
-                max={5}
-                msg=""
-                {...formRowOne}
-              />
+              <Form.Item
+                  label="显示顺序"
+                  name="orders"
+                  {...formRowOne}
+                  rules={[{required: true,len: 5, type: 'number'}]}>
+                <Input max={5} />
+              </Form.Item>
             </Col>
             <Col span={12}>
-              <Switch
-                id="status"
-                checkedChildren="启用"
-                unCheckedChildren="停用"
-                initialValue={currentItem.status ? currentItem.status === '0000' : true}
-                defaultChecked={currentItem.status ? currentItem.status === '0000' : true}
-                label="是否启用"
-                {...formRowOne}
-              />
+              <Form.Item
+                  label="是否启用"
+                  name="status"
+                  {...formRowOne}>
+                <Switch
+                  checkedChildren="启用"
+                  unCheckedChildren="停用"
+                  initialValue={currentItem.status ? currentItem.status === '0000' : true}
+                  defaultChecked={currentItem.status ? currentItem.status === '0000' : true}
+                />
+              </Form.Item>
             </Col>
           </Row>
 
-          <Input textarea label="备注" id="remark" rules={['max=200']} max={200} msg="full" />
+          <Form.Item
+                  label="备注"
+                  name="remark"
+                  rules={[{len: 200}]}>
+            <Input.TextArea max={200} />
+          </Form.Item>
         </Form>
 
         <LineList />

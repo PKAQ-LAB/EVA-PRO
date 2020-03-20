@@ -1,13 +1,13 @@
 import React from 'react';
-import { Modal } from 'antd';
-import { Form, Input } from 'antx';
+import { Form, Input, Modal } from 'antd';
 import { connect } from 'umi';
-
 
 @connect(state => ({
   module: state.module,
 }))
 export default class ModuleLineForm extends React.PureComponent {
+  formRef = React.createRef();
+
   // 关闭窗口
   handleCloseForm = () => {
     this.props.dispatch({
@@ -22,11 +22,9 @@ export default class ModuleLineForm extends React.PureComponent {
   handleSaveClick = () => {
     const { lineData, editIndex } = this.props.module;
 
-    const { validateFields } = this.props.form;
-    validateFields((errors, values) => {
-      if (errors) {
-        return;
-      }
+    const { validateFields } = this.formRef.current;
+
+    validateFields().then(values => {
       const data = {
         ...values,
       };
@@ -59,11 +57,10 @@ export default class ModuleLineForm extends React.PureComponent {
           editIndex: '',
         },
       });
-    });
+    })
   };
 
   render() {
-    const { form } = this.props;
     const { operate, lineData, editIndex } = this.props.module;
 
     const title = { create: '新增', edit: '编辑' };
@@ -85,19 +82,27 @@ export default class ModuleLineForm extends React.PureComponent {
         onOk={() => this.handleSaveClick()}
         title={`${title[operate] || '查看'}资源`}
       >
-        <Form api={form} colon layout="horizontal" {...formItemLayout} data={lineData[editIndex]}>
-          <Input label="资源描述" id="resourceDesc" rules={['required']} max={30} msg="full" />
-          <Input label="资源路径"
-                 id="resourceUrl"
-                 rules={[
-                  {
+        <Form initialValues={lineData[editIndex]} ref={this.formRef} colon layout="horizontal" {...formItemLayout} >
+          <Form.Item
+                  label="资源描述"
+                  name="resourceDesc"
+                  rules={[{required: true,len: 30}]}>
+            <Input/>
+          </Form.Item>
+
+          <Form.Item
+                  label="资源路径"
+                  name="resourceUrl"
+                  rules={[{
                     required: true,
+                    len: 300,
                     whitespace: true,
                     pattern: new RegExp(/^\/[a-zA-Z_]*[/a-zA-Z_0-9]{2,40}$/),
                     message: '路径格式错误, 必须以‘/’开头，仅允许使用字母或数字.',
                   },
-                ]}
-                 max={300} msg="full" />
+                ]}>
+            <Input />
+          </Form.Item>
         </Form>
       </Modal>
     );
