@@ -9,6 +9,7 @@ import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';
 
+const formRef = React.createRef();
 
 @connect(state => ({
   account: state.account,
@@ -40,26 +41,23 @@ export default class extends React.PureComponent {
   handleSearch = e => {
     e.preventDefault();
 
-    const { dispatch, form } = this.props;
+    const { dispatch } = this.props;
+    const { validateFields } = this.formRef.current;
     // 表单验证
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-
-      const values = {
-        ...fieldsValue,
-      };
-
+    validateFields().then(values => {
       dispatch({
         type: 'account/fetchUser',
-        payload: values,
+        payload: { ...values },
       });
     });
   };
 
   // 重置事件
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
-    form.resetFields();
+    const { dispatch } = this.props;
+    const { resetFields } = this.formRef.current;
+    resetFields();
+
     dispatch({
       type: 'account/fetchUser',
       payload: {},
@@ -169,7 +167,7 @@ export default class extends React.PureComponent {
   // 简单搜索条件
   renderSearchForm() {
     return (
-      <Form onSubmit={this.handleSearch} layout="inline">
+      <Form onSubmit={this.handleSearch} layout="inline" ref={this.formRef}>
         <Form.Item label="帐号" name="account">
           <Input id="account-search" placeholder="输入帐号搜索" />
         </Form.Item>
@@ -193,7 +191,6 @@ export default class extends React.PureComponent {
   }
 
   render() {
-    const { form } = this.props;
     const { selectedRowKeys, modalType, roleModal } = this.props.account;
 
     return (
@@ -229,7 +226,7 @@ export default class extends React.PureComponent {
             body={this.renderTree()}
           >
             {/* 用户列表 */}
-            <List searchForm={form} />
+            <List searchForm={formRef.current} />
           </SideLayout>
         </div>
         {/* 新增窗口 */}

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'umi';
 import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
 import Selector from '@src/components/Selector';
@@ -78,7 +78,6 @@ export default class AOEForm extends React.PureComponent {
   // 保存
   handleSaveClick = () => {
     const { currentItem } = this.props.role;
-
     const { validateFields } = this.formRef.current;
     validateFields().then( values => {
       const data = {
@@ -104,7 +103,8 @@ export default class AOEForm extends React.PureComponent {
     const { dict } = this.props.global;
     const { showDept } = this.state;
     const { modalType, currentItem, orgs } = this.props.role;
-    const { loading } = this.props;
+    const { submitting } = this.props;
+
 
     const title = { create: '新增', edit: '编辑', view: '查看' };
 
@@ -121,7 +121,7 @@ export default class AOEForm extends React.PureComponent {
     return (
       <Modal
         maskClosable={false}
-        confirmLoading={loading}
+        confirmLoading={submitting}
         onCancel={() => this.handleCloseForm()}
         visible={modalType !== ''}
         width={600}

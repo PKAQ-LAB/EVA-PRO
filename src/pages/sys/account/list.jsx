@@ -59,6 +59,7 @@ export default class AccountList extends React.PureComponent {
     const { dispatch, searchForm } = this.props;
     const { pageNum, pageSize } = pg;
 
+
     const params = {
       pageNo: pageNum,
       pageSize,
@@ -75,6 +76,7 @@ export default class AccountList extends React.PureComponent {
     const { loading } = this.props;
     const { users, selectedRowKeys } = this.props.account;
 
+    console.info(users);
     const columns = [
       {
         title: '姓名',
@@ -153,6 +155,6 @@ export default class AccountList extends React.PureComponent {
       },
     };
 
-    return <DataTable pagination {...dataTableProps} />;
+    return <DataTable pagination {...dataTableProps} bordered/>;
   }
 }

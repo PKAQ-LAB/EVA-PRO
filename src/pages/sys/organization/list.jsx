@@ -1,20 +1,24 @@
 import React, { Component } from 'react';
 import { CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
-import ProTable from '@ant-design/pro-table';
 import {
+  Table,
   Switch,
+  Alert,
   Popconfirm,
   Divider,
   Button,
+  Input,
   message,
   notification,
 } from 'antd';
-import { connect } from 'umi';
+import { connect } from 'dva';
 import cx from 'classnames';
 
 import { hasChildren, getNodeBorther } from '@src/utils/DataHelper';
 import BizIcon from '@src/components/BizIcon';
-import { listOrg } from './services/orgSvc';
+import css from './list.less';
+
+const { Search } = { ...Input };
 
 // 部门管理列表
 @connect(state => ({
@@ -22,6 +26,12 @@ import { listOrg } from './services/orgSvc';
   loading: state.loading.organization,
 }))
 export default class List extends Component {
+  // 加载组织列表
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'organization/listOrg',
+    });
+  }
 
   handleAdd = record => {
     const id = typeof record === 'object' ? record.parent : '';
@@ -68,20 +78,11 @@ export default class List extends Component {
     });
   };
 
-  // 行选
-  handleSelectRows = rows => {
-    this.props.dispatch({
-      type: 'organization/updateState',
-      payload: { selectedRowKeys: rows },
-    });
-  };
-
   // 删除
-  handleDelete = (record, e, action) => {
-    const { selectedRowKeys } = this.props.organization;
-    const { dataSource } = action;
+  handleDelete = record => {
+    const { selectedRowKeys, data } = this.props.organization;
     // 存在子节点的不允许删除
-    const blockItem = hasChildren(dataSource, selectedRowKeys);
+    const blockItem = hasChildren(data, selectedRowKeys);
 
     if (record.isLeaf || blockItem) {
       message.error(`错误： [${record.name}] 存在子节点,无法删除.`);
@@ -116,6 +117,24 @@ export default class List extends Component {
     // end if/else
   };
 
+  // 搜索
+  handleSearch = val => {
+    this.props.dispatch({
+      type: 'organization/listOrg',
+      payload: {
+        name: val,
+      },
+    });
+  };
+
+  // 行选
+  handleSelectRows = rows => {
+    this.props.dispatch({
+      type: 'organization/updateState',
+      payload: { selectedRowKeys: rows },
+    });
+  };
+
   // 排序操作
   handleSort = (nodes, index, upOrDown) => {
     const orginOrders = index;
@@ -141,16 +160,6 @@ export default class List extends Component {
     const { loading } = this.props;
     const { data, selectedRowKeys } = this.props.organization;
 
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: selectedKeys => {
-        this.handleSelectRows(selectedKeys);
-      },
-      getCheckboxProps: record => ({
-        disabled: record.status === '9999',
-      }),
-    };
-
     const column = [
       {
         title: '单位/部门名称',
@@ -159,15 +168,13 @@ export default class List extends Component {
       {
         title: '所属单位/部门',
         dataIndex: 'parentName',
-        hideInSearch: true
       },
       {
         title: '排序',
         dataIndex: 'orders',
-        hideInSearch: true,
-        render: (text, record, index, action) => {
+        render: (text, record, index) => {
           if (record.status === '0000') {
-            const brother = getNodeBorther(action.dataSource, record.parentId);
+            const brother = getNodeBorther(this.props.organization.data, record.parentId);
             const size = brother.length;
             return (
               <div>
@@ -200,7 +207,6 @@ export default class List extends Component {
       {
         title: '状态',
         dataIndex: 'status',
-        hideInSearch: true,
         render: (text, record) =>
           record.status !== '9999' && (
             <Switch
@@ -213,9 +219,9 @@ export default class List extends Component {
       },
       {
         title: '操作',
-        render: (text, record, index, action) =>
+        render: (text, record) =>
           record.status === '0000' && (
-            <>
+            <div>
               <a onClick={() => this.handleAdd(record)}>添加下级</a>
               <Divider type="vertical" />
               <a onClick={() => this.handleEdit(record)}>编辑</a>
@@ -224,45 +230,78 @@ export default class List extends Component {
                 title="确定要删除吗？"
                 okText="确定"
                 cancelText="取消"
-                onConfirm={e => this.handleDelete(record, e, action, rowSelection.selectedRowKeys)}
+                onConfirm={e => this.handleDelete(record, e)}
               >
                 <a>删除</a>
               </Popconfirm>
-            </>
+            </div>
           ),
       },
     ];
 
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: selectedKeys => {
+        this.handleSelectRows(selectedKeys);
+      },
+      getCheckboxProps: record => ({
+        disabled: record.status === '9999',
+      }),
+    };
+
     return (
-      <div style={{ padding: "15px 0" }}>
+      <div style={{ padding: 15 }}>
+        <div className={css.ribbon}>
+          <div>
+            <Button icon={<PlusOutlined />} type="primary" onClick={() => this.handleAdd('')}>
+              新增部门
+            </Button>
+            {selectedRowKeys.length > 0 && (
+              <span>
+                <Popconfirm
+                  title="确定要删除选中的条目吗?"
+                  placement="top"
+                  onConfirm={() => this.handleBatchDelete()}
+                >
+                  <Button style={{ marginLeft: 8 }} type="danger">
+                    删除部门
+                  </Button>
+                </Popconfirm>
+              </span>
+            )}
+          </div>
+          <div>
+            <Search
+              placeholder="输入组织名称以搜索"
+              onSearch={value => this.handleSearch(value)}
+              style={{ width: '100%' }}
+            />
+          </div>
+        </div>
+        {/* 已选提示 */}
+        {selectedRowKeys.length > 0 && (
+          <Alert
+            style={{ marginTop: 8, marginBottom: 8 }}
+            message={
+              <div>
+                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+                <a style={{ marginLeft: 24 }} onClick={() => this.handleSelectRows([])}>
+                  清空选择
+                </a>
+              </div>
+            }
+            type="info"
+            showIcon
+          />
+        )}
+
         {/* 列表 */}
-        <ProTable
+        <Table
           size="small"
-          headerTitle="单位/部门列表"
-          request={ params => listOrg(params) }
           columns={column}
+          dataSource={data}
           defaultExpandAllRows
           loading={loading}
-          toolBarRender={() => [
-            <>
-              <Button icon={<PlusOutlined />} type="primary" onClick={() => this.handleAdd('')}>
-                新增部门
-              </Button>
-              {selectedRowKeys && selectedRowKeys.length > 0 && (
-                <span>
-                  <Popconfirm
-                    title="确定要删除选中的条目吗?"
-                    placement="top"
-                    onConfirm={() => this.handleBatchDelete()}
-                  >
-                    <Button style={{ marginLeft: 8 }} type="danger">
-                      删除部门
-                    </Button>
-                  </Popconfirm>
-                </span>
-              )}
-            </>
-          ]}
           rowClassName={record =>
             cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
           }

@@ -17,7 +17,6 @@ export default {
     orgs: [],
     // 角色列表
     roles: [],
-    users: [],
     currentItem: {},
     modalType: '',
     roleModal: '',
