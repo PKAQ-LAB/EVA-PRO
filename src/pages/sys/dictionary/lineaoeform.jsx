@@ -1,6 +1,5 @@
 import React from 'react';
-import { Modal } from 'antd';
-import { Form, Input } from 'antx';
+import { Form, Input, Modal } from 'antd';
 import { connect } from 'umi';
 
 
@@ -8,6 +7,8 @@ import { connect } from 'umi';
   dict: state.dict,
 }))
 export default class DictLineForm extends React.PureComponent {
+  formRef = React.createRef();
+
   // 关闭窗口
   handleCloseForm = () => {
     this.props.dispatch({
@@ -21,12 +22,9 @@ export default class DictLineForm extends React.PureComponent {
   // 保存
   handleSaveClick = () => {
     const { lineData, editIndex } = this.props.dict;
+    const { validateFields } = this.formRef.current;
 
-    const { validateFields } = this.props.form;
-    validateFields((errors, values) => {
-      if (errors) {
-        return;
-      }
+    validateFields().then(values => {
       const data = {
         ...values,
       };
@@ -61,7 +59,6 @@ export default class DictLineForm extends React.PureComponent {
   };
 
   render() {
-    const { form } = this.props;
     const { modalType, lineData, editIndex } = this.props.dict;
 
     const title = { create: '新增', edit: '编辑' };
@@ -83,10 +80,27 @@ export default class DictLineForm extends React.PureComponent {
         onOk={() => this.handleSaveClick()}
         title={`${title[modalType] || '查看'}字典明细信息`}
       >
-        <Form api={form} colon layout="horizontal" {...formItemLayout} data={lineData[editIndex]}>
-          <Input label="编码" id="keyName" rules={['required']} max={30} msg="full" />
-          <Input label="描述" id="keyValue" rules={['required']} max={30} msg="full" />
-          <Input label="排序" id="orders" rules={['number']} max={5} msg="full" />
+        <Form colon layout="horizontal" {...formItemLayout} initialValues={lineData[editIndex]}>
+          <Form.Item
+                  label="编码"
+                  name="keyName"
+                  rules={[{required: true,}]}>
+            <Input max={30} />
+          </Form.Item>
+
+          <Form.Item
+                  label="描述"
+                  name="keyValue"
+                  rules={[{required: true,}]}>
+            <Input max={30} />
+          </Form.Item>
+
+          <Form.Item
+                  label="排序"
+                  name="orders"
+                  rules={[{type: 'number',}]}>
+            <Input max={5} />
+          </Form.Item>
         </Form>
       </Modal>
     );

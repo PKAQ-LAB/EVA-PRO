@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'umi';
-import { Card, Row, Col, Button } from 'antd';
-import { Form, Input, Select } from 'antx';
-
+import { Form, Input, Select, Card, Row, Col, Button } from 'antd';
 import LineList from './linelist';
 
 
@@ -11,18 +9,17 @@ import LineList from './linelist';
   submitting: state.loading.effects['dict/editDict'],
 }))
 export default class DictForm extends React.PureComponent {
+  formRef = React.createRef();
+
   // 保存事件
   handleSaveClick = () => {
-    const { form } = this.props;
     const { lineData, currentItem } = this.props.dict;
-    const { getFieldsValue, validateFields } = this.props.form;
 
-    validateFields(errors => {
-      if (errors) {
-        return;
-      }
+    const { validateFields } = this.formRef.current;
+
+    validateFields().then(values => {
       const data = {
-        ...getFieldsValue(),
+        ...values,
         id: currentItem.id,
       };
       data.lines = lineData;
@@ -34,11 +31,11 @@ export default class DictForm extends React.PureComponent {
         // fix 保存后清空表单
         // form.resetFields();
       });
-    });
+    })
   };
 
   render() {
-    const { form, submitting } = this.props;
+    const { submitting } = this.props;
     const { operate, dicts, currentItem } = this.props.dict;
 
     const options = dicts ? dicts.filter(i => i.parentId === '0' || !i.parentId) : [];
@@ -57,7 +54,7 @@ export default class DictForm extends React.PureComponent {
 
     return (
       <>
-        <Form api={form} {...formItemLayout} colon data={currentItem} labelAlign="left">
+        <Form  {...formItemLayout} colon initialValues={currentItem} ref={this.formRef}>
           {/* 主表 */}
           <Card
             title={`${title[operate] || ''}字典信息`}
@@ -74,51 +71,54 @@ export default class DictForm extends React.PureComponent {
           >
             <Row>
               <Col span={12}>
-                <Select
+              <Form.Item
                   label="所属分类"
-                  keys={['id', 'name']}
-                  data={options}
-                  id="parentId"
-                  rules={['required']}
-                  disabled={operate === '' || operate === 'view'}
-                />
+                  name="parentId"
+                  rules={[{required: true,}]}>
+                  <Select
+                    keys={['id', 'name']}
+                    data={options}
+                    disabled={operate === '' || operate === 'view'}
+                  />
+                </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={12}>
-                <Input
+                <Form.Item
                   label="字典编码"
-                  id="code"
-                  rules={['required']}
-                  max={30}
-                  msg="full"
-                  disabled={operate === '' || operate === 'view'}
-                />
+                  name="code"
+                  rules={[{required: true,}]}>
+                  <Input
+                    max={30}
+                    disabled={operate === '' || operate === 'view'}
+                  />
+                </Form.Item>
               </Col>
               <Col span={12}>
-                <Input
+                <Form.Item
                   label="字典描述"
-                  id="name"
-                  rules={['required']}
-                  max={30}
-                  msg="full"
-                  disabled={operate === '' || operate === 'view'}
-                />
+                  name="name"
+                  rules={[{required: true,}]}>
+                  <Input
+                    max={30}
+                    disabled={operate === '' || operate === 'view'}
+                  />
+                </Form.Item>
               </Col>
             </Row>
             <Row>
               <Col span={24}>
-                <Input
-                  textarea
-                  label="备注"
-                  id="remark"
-                  rules={['max=200']}
-                  max={200}
-                  msg="full"
-                  {...formRowOne}
-                  disabled={operate === '' || operate === 'view'}
-                  rows={5}
-                />
+                <Form.Item
+                    label="备注"
+                    {...formRowOne}
+                    name="remark">
+                  <Input.TextArea
+                    max={200}
+                    disabled={operate === '' || operate === 'view'}
+                    rows={5}
+                  />
+                  </Form.Item>
               </Col>
             </Row>
           </Card>
