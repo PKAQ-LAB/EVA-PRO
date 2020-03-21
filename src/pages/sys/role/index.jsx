@@ -11,12 +11,14 @@ import RoleModule from './component/rolemodule';
 /**
  * 角色（权限）管理 主界面
  */
-const formRef = React.createRef();
 @connect(state => ({
   role: state.role,
   loading: state.loading.role,
 }))
 export default class Role extends React.PureComponent {
+
+  formRef = React.createRef();
+
   // 新增窗口
   handlAddClick = () => {
     this.props.dispatch({
@@ -199,7 +201,7 @@ export default class Role extends React.PureComponent {
           )}
         </div>
         <div className="eva-body">
-          <List searchForm={formRef.current} />
+          <List searchForm={this.formRef.current} />
         </div>
         {/* 新增窗口 */}
         {modalType !== '' && <AOEForm />}

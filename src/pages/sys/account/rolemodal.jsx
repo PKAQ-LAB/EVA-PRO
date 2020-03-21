@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Modal } from 'antd';
-import { Transfer } from 'antx';
+import { Transfer, Modal } from 'antd';
 import { connect } from 'umi';
 
 @connect(state => ({

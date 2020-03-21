@@ -76,7 +76,6 @@ export default class AccountList extends React.PureComponent {
     const { loading } = this.props;
     const { users, selectedRowKeys } = this.props.account;
 
-    console.info(users);
     const columns = [
       {
         title: '姓名',

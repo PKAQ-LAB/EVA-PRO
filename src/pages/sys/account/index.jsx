@@ -9,12 +9,12 @@ import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';
 
-const formRef = React.createRef();
-
 @connect(state => ({
   account: state.account,
 }))
 export default class extends React.PureComponent {
+  formRef = React.createRef();
+
   // 组件加载完成后加载数据
   componentDidMount() {
     const { dispatch } = this.props;
@@ -192,7 +192,6 @@ export default class extends React.PureComponent {
 
   render() {
     const { selectedRowKeys, modalType, roleModal } = this.props.account;
-
     return (
       <PageHeaderWrapper title="用户管理" subTitle="系统用户账号管理维护">
         <div className="eva-ribbon">
@@ -226,7 +225,7 @@ export default class extends React.PureComponent {
             body={this.renderTree()}
           >
             {/* 用户列表 */}
-            <List searchForm={formRef.current} />
+            <List searchForm={this.formRef.current} />
           </SideLayout>
         </div>
         {/* 新增窗口 */}
