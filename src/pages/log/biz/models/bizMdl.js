@@ -3,7 +3,6 @@ import { list, get } from '../service/bizSvc';
 export default {
   namespace: 'bizlog',
   state: {
-    logs: [],
     drawerCheck: '',
     currentItemcheck: {},
   },

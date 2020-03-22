@@ -5,7 +5,6 @@ export default {
   state: {
     currentItem: {},
     modalType: '',
-    logs: [],
   },
   effects: {
     *fetch({ payload }, { call, put }) {

@@ -113,7 +113,7 @@ export default class ErrorList extends PureComponent {
       isScroll: true,
       alternateColor: true,
       onChange: this.handlePageChange,
-      dataItems: logs || [],
+      dataItems: logs,
     };
     return <DataTable pagination {...dataTableProps} />;
   }

@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { connect } from 'umi';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
-import { Button, Row, Col, Divider, DatePicker } from 'antd';
+import { Form, Button, Row, Col, Divider, DatePicker } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
@@ -11,29 +10,29 @@ import AOEForm from './aoeform';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 
-
 @connect(({ loading, errorLog }) => ({
   loading: loading.models.errorLog,
   error: errorLog,
 }))
 export default class Error extends PureComponent {
+
+  formRef = React.createRef();
+
   // 重置
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
-    form.resetFields();
-    dispatch({
+    this.formRef.current.resetFields();
+    this.props.dispatch({
       type: 'errorLog/fetch',
     });
   };
 
   // 查询
   handleSearch = () => {
-    const { form, dispatch } = this.props;
-    const { validateFields, getFieldsValue } = form;
-    validateFields(errors => {
-      if (errors) return;
+    const { dispatch } = this.props;
+    const { validateFields } = this.formRef.current;
+    validateFields().then(values => {
       const data = {
-        ...getFieldsValue(),
+        ...values,
       };
 
       const param = {};
@@ -47,37 +46,28 @@ export default class Error extends PureComponent {
     });
   };
 
-  // 按钮
-  renderRightBtn() {
-    const { loading } = this.props;
-    return (
-      <div>
-        <Button type="primary" onClick={this.handleSearch} loading={loading}>
-          查询
-        </Button>
-        <Divider type="vertical" />
-        <Button onClick={this.handleFormReset} loading={loading}>
-          重置
-        </Button>
-      </div>
-    );
-  }
-
   // 查询条件渲染
   renderSimpleForm() {
-    const { getFieldDecorator } = this.props.form;
+    const { loading } = this.props;
+
     return (
-      <Form layout="inline">
+      <Form layout="inline" initialValues={{"requestTime": [moment().add(-7, 'days'), moment()]}} ref={this.formRef}>
         <Row type="flex" justify="space-between">
           <Col>
-            <FormItem label="操作时间">
-              {getFieldDecorator('requestTime', {
-                initialValue: [moment().add(-7, 'days'), moment()],
-              })(<RangePicker />)}
+            <FormItem label="操作时间" name="requestTime">
+              <RangePicker />
             </FormItem>
           </Col>
           <Col>
-            <FormItem>{this.renderRightBtn()}</FormItem>
+            <FormItem>
+              <Button type="primary" onClick={this.handleSearch} loading={loading}>
+                查询
+              </Button>
+              <Divider type="vertical" />
+              <Button onClick={this.handleFormReset} loading={loading}>
+                重置
+              </Button>
+            </FormItem>
           </Col>
         </Row>
       </Form>

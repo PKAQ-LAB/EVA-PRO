@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { Form } from '@ant-design/compatible';
 import '@ant-design/compatible/assets/index.css';
 import { connect } from 'umi';
 
@@ -91,7 +90,7 @@ export default class WorkList extends PureComponent {
       showNum: true,
       isScroll: true,
       alternateColor: true,
-      dataItems: logs || [],
+      dataItems: logs,
     };
     return <DataTable pagination {...dataTableProps} />;
   }

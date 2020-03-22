@@ -10,6 +10,7 @@ import styles from './index.less';
   error: errorLog,
 }))
 export default class Error extends PureComponent {
+
   // 关闭窗口
   handleCloseForm = () => {
     this.props.dispatch({
