@@ -1,8 +1,8 @@
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, Menu, Spin } from 'antd';
 import { ClickParam } from 'antd/es/menu';
 import React from 'react';
-import { ConnectProps, history, connect } from 'umi';
+import { history, ConnectProps, connect } from 'umi';
 import { ConnectState } from '@src/models/connect';
 import { CurrentUser } from '@src/models/user';
 import HeaderDropdown from '../HeaderDropdown';
@@ -16,7 +16,6 @@ export interface GlobalHeaderRightProps extends ConnectProps {
 class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
   onMenuClick = (event: ClickParam) => {
     const { key } = event;
-
     if (key === 'logout') {
       const { dispatch } = this.props;
 
@@ -27,8 +26,6 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
           type: 'login/logout',
         });
       }
-
-      return;
     }
     history.push(`/config/${key}`);
   };

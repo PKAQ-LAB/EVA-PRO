@@ -1,5 +1,5 @@
-import { history, Effect, Reducer } from 'umi';
-import { stringify } from 'querystring';
+import { Effect, Reducer } from 'umi';
+// import { stringify } from 'querystring';
 import Cookies from 'universal-cookie';
 
 import { login } from '@src/services/login';
@@ -65,20 +65,20 @@ const Model: LoginModelType = {
     },
 
     logout() {
-      const { redirect } = getPageQuery();
+      // const { redirect } = getPageQuery();
       // 删除token
       cookies.remove(TOKEN_KEY, { maxAge: -1, path: '/' });
       cookies.remove(USER_KEY, { maxAge: -1, path: '/' });
 
       // redirect
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        router.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
-        });
-      }
+      // if (window.location.pathname !== '/user/login' && !redirect) {
+      //   history.replace({
+      //     pathname: '/user/login',
+      //     search: stringify({
+      //       redirect: window.location.href,
+      //     }),
+      //   });
+      // }
     },
   },
 
