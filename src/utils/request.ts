@@ -4,7 +4,8 @@
  */
 import { extend } from 'umi-request';
 import { message } from 'antd';
-import { history } from 'umi';
+import history from 'umi';
+import defaultSettings from '@config/defaultSettings';
 
 message.config({
   maxCount: 1,
@@ -36,7 +37,6 @@ const errorHandler = (error: { response: any }): any => {
       content: '未知网络错误，无法连接服务器',
     });
   }
-  return response;
 };
 
 /**
@@ -60,7 +60,10 @@ request.interceptors.request.use((url, options) => {
     'Content-Type': 'application/json; charset=utf-8',
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
+    'device': 'pc',
+    'version': defaultSettings.version
   };
+
   return {
     url,
     options: {

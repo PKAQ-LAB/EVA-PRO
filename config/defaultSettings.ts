@@ -4,6 +4,8 @@ export type ContentWidth = 'Fluid' | 'Fixed';
 export interface DefaultSettings {
   /**是否开启国际化**/
   i18n: boolean;
+  /**当前版本**/
+  version: string;
   /** 后台请求地址 **/
   url: string;
   /** 图片地址 **/
@@ -55,6 +57,7 @@ export interface DefaultSettings {
 
 export default {
   i18n: false,
+  version: '1.0.0',
   url: 'http://localhost:9016/api/',
   imgUrl: 'http://localhost:9016/img/',
   token_key: 'auth_token',
