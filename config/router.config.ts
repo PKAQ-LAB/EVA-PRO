@@ -45,6 +45,7 @@ export default [
             routes: [
               { name: 'biz', path: '/monitor/log/biz', component: './log/biz' },
               { name: 'error', path: '/monitor/log/error', component: './log/error' },
+              { name: 'online', path: '/monitor/log/online', component: './log/online' },
             ],
           },
           // 代码生成器
