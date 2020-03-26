@@ -3,6 +3,7 @@ import { connect } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Input, TreeSelect, Row, Col, Switch, Drawer, Button, Tooltip } from 'antd';
 import IconSelect from '@src/components/IconSelect';
+import TreeSelector from '@src/components/TreeSelector';
 
 import LineList from './linelist';
 
@@ -71,6 +72,7 @@ export default class AOEForm extends React.Component {
   render() {
     const { submitting } = this.props;
     const { modalType, currentItem, data } = this.props.module;
+
     const title = { create: '新增', edit: '编辑' };
 
     const formItemLayout = {
@@ -95,7 +97,7 @@ export default class AOEForm extends React.Component {
           <Form.Item
                   label="模块名称"
                   name="name"
-                  rules={[{required: true,len: 30}]}>
+                  rules={[{required: true,max: 30, min: 4}]}>
             <Input max={30} />
           </Form.Item>
 
@@ -103,7 +105,8 @@ export default class AOEForm extends React.Component {
                   label="Path"
                   name="path"
                   rules={[{
-                    len: 40,
+                    max: 40,
+                    min: 5,
                     required: true,
                     whitespace: true,
                     validator: this.checkPath,
@@ -117,7 +120,7 @@ export default class AOEForm extends React.Component {
           <Form.Item
                   label="模块图标"
                   name="icon"
-                  rules={[{required: true,len: 30}]}>
+                  rules={[{required: true}]}>
            <IconSelect width={480} />
           </Form.Item>
 
@@ -131,13 +134,12 @@ export default class AOEForm extends React.Component {
               </span>
             }
             name="parentId"
-            rules={[{required: true,len: 30}]}>
-            <TreeSelect
-              dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+            rules={[{required: true}]}>
+            <TreeSelector
               data={data}
               keys={['id', 'name', 'children']}
-              treeNodeFilterProp="name"
-              expandAll
+              search
+              treeDefaultExpandAll
               allowClear
               showSearch
               placeholder="请选择上级模块（留空为添加顶级模块）"
@@ -150,8 +152,8 @@ export default class AOEForm extends React.Component {
                   label="显示顺序"
                   name="orders"
                   {...formRowOne}
-                  rules={[{required: true,len: 5, type: 'number'}]}>
-                <Input max={5} />
+                  rules={[{required: true,max: 5}]}>
+                <Input max={5}  />
               </Form.Item>
             </Col>
             <Col span={12}>
