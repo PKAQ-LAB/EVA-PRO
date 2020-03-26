@@ -1,6 +1,10 @@
 import React from 'react';
+import { message } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
+import moment from 'moment';
+import copy from 'copy-to-clipboard';
+
 import { fetch } from './services/onlineSvc';
 
 const OnlineUsers = () => {
@@ -18,30 +22,44 @@ const OnlineUsers = () => {
       {
         title: '版本',
         dataIndex: 'version',
-        hideInForm: true,
+        hideInSearch: true,
       },
       {
         title: '登录时间',
         dataIndex: 'loginTime',
-        hideInForm: true,
+        hideInSearch: true,
+        render: val => moment(val).format("YYYY-MM-DD hh:mm:ss"),
       },
       {
         title: '签发时间',
         dataIndex: 'issuedAt',
         ellipsis: true,
+        render: val => moment(val).format("YYYY-MM-DD hh:mm:ss"),
       },
       {
         title: '过期时间',
         dataIndex: 'expireAt',
-        hideInForm: true,
+        hideInSearch: true,
+        render: val => moment(val).format("YYYY-MM-DD hh:mm:ss"),
       },
       {
         title: 'token',
         dataIndex: 'token',
-        hideInForm: true,
-        render: record => (
+        hideInSearch: true,
+        ellipsis: true,
+        width: 240,
+        render: (val, record) => (
           <div>
-            复制token
+            {val}
+              <a style={{padding: 0}} onClick={()=>{
+                if(copy(record.token)){
+                  message.success("token已成功复制到剪贴板");
+                } else {
+                  message.error("复制失败,请重新尝试")
+                }
+              }}>
+                复制到剪贴板
+              </a>
           </div>
         ),
       },
