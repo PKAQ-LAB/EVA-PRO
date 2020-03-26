@@ -63,6 +63,7 @@
     "antd-password-input-strength": "^1.1.1",
     "classnames": "^2.2.6",
     "cmn-utils": "^1.0.10",
+    "copy-to-clipboard": "^3.3.1",
     "dva-model-extend": "^0.1.2",
     "dynamic-icon": "^0.1.4",
     "events": "^3.1.0",

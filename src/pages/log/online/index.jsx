@@ -17,6 +17,7 @@ const OnlineUsers = () => {
       {
         title: '设备',
         dataIndex: 'device',
+        hideInSearch: true,
         ellipsis: true,
       },
       {
@@ -33,6 +34,7 @@ const OnlineUsers = () => {
       {
         title: '签发时间',
         dataIndex: 'issuedAt',
+        hideInSearch: true,
         ellipsis: true,
         render: val => moment(val).format("YYYY-MM-DD hh:mm:ss"),
       },
