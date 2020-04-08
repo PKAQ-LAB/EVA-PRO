@@ -21,6 +21,7 @@ export default {
   'menu.user': '个人中心',
   'menu.user.setting': '个人设置',
   'menu.log': '系统日志',
+  'menu.log.online': '在线人员',
   'menu.log.biz': '业务日志',
   'menu.log.error': '错误日志',
   'menu.dev': '快速开发',
@@ -30,7 +31,9 @@ export default {
   'menu.monitor.log.biz' : '操作日志',
   'menu.monitor.log.error' : '错误日志',
   'menu.pdos': '进销存',
-  'menu.pdos.purchasing': '采购管理'
+  'menu.pdos.purchasing': '采购管理',
+  'menu.pdos.sale': '零售管理',
+  'menu.pdos.sale.slip': '线上销售单'
 };
 
 
