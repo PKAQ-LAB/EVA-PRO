@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'umi';
-import { Form, Input, Select, Card, Row, Col, Button } from 'antd';
+import { Form, Input, Card, Row, Col, Button } from 'antd';
+import Selector from '@/components/Selector'
 import LineList from './linelist';
 
-
 @connect(state => ({
+  global: state.global,
   dict: state.dict,
   submitting: state.loading.effects['dict/editDict'],
 }))
@@ -36,10 +37,9 @@ export default class DictForm extends React.PureComponent {
 
   render() {
     const { submitting } = this.props;
-    const { operate, dicts, currentItem } = this.props.dict;
+    const { operate, currentItem } = this.props.dict;
 
-    const options = dicts ? dicts.filter(i => i.parentId === '0' || !i.parentId) : [];
-
+    const { dict } = this.props.global;
     const title = { create: '新增', edit: '编辑', view: '查看' };
 
     const formItemLayout = {
@@ -75,9 +75,9 @@ export default class DictForm extends React.PureComponent {
                   label="所属分类"
                   name="parentId"
                   rules={[{required: true,}]}>
-                  <Select
+                  <Selector
                     keys={['id', 'name']}
-                    data={options}
+                    data={dict.dict_type}
                     disabled={operate === '' || operate === 'view'}
                   />
                 </Form.Item>

@@ -51,6 +51,7 @@ export default class DictLineForm extends React.PureComponent {
       this.props.dispatch({
         type: 'dict/updateState',
         payload: {
+          lineData,
           modalType: '',
           editIndex: '',
         },
@@ -80,7 +81,7 @@ export default class DictLineForm extends React.PureComponent {
         onOk={() => this.handleSaveClick()}
         title={`${title[modalType] || '查看'}字典明细信息`}
       >
-        <Form colon layout="horizontal" {...formItemLayout} initialValues={lineData[editIndex]}>
+        <Form colon layout="horizontal" {...formItemLayout} initialValues={lineData[editIndex]} ref={this.formRef}>
           <Form.Item
                   label="编码"
                   name="keyName"

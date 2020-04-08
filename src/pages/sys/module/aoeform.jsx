@@ -97,7 +97,7 @@ export default class AOEForm extends React.Component {
           <Form.Item
                   label="模块名称"
                   name="name"
-                  rules={[{required: true,max: 30, min: 4}]}>
+                  rules={[{required: true,max: 30, min: 2}]}>
             <Input max={30} />
           </Form.Item>
 
