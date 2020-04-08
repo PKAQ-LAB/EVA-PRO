@@ -54,6 +54,12 @@ export default [
             name: 'dev',
             routes: [{ name: 'generator', path: '/dev/generator', component: './dev/generator' }],
           },
+           // 进销存
+           {
+            path: '/pdos',
+            name: 'pdos',
+            routes: [{ name: 'sale', path: '/pdos/sale/slip', component: './pdos/sale/slip' }],
+          },
         ],
       },
       { component: '404' },
