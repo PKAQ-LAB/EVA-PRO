@@ -4,7 +4,7 @@ import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Input, TreeSelect, Select, Modal, Row, Col, Switch, Tooltip, Upload } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
 import md5 from 'md5';
-import setting from '@config/defaultSettings';
+import setting from '../../../../config/defaultSettings';
 
 @connect(state => ({
   account: state.account,

@@ -1,6 +1,6 @@
 import { Effect, Reducer } from 'umi';
 
-import { queryCurrent } from '@src/services/user';
+import { queryCurrent } from '@/services/user';
 
 export interface CurrentUser {
   avatar?: string;

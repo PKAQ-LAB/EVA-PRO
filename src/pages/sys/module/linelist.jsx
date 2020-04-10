@@ -4,7 +4,7 @@ import { Button, Divider, Popconfirm } from 'antd';
 import cx from 'classnames';
 import { connect } from 'umi';
 import LineAoeForm from './lineaoeform';
-import DataTable from '@src/components/DataTable';
+import DataTable from '@/components/DataTable';
 
 /** 资源明细 */
 @connect(state => ({

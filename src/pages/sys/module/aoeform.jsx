@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Input, TreeSelect, Row, Col, Switch, Drawer, Button, Tooltip } from 'antd';
-import IconSelect from '@src/components/IconSelect';
-import TreeSelector from '@src/components/TreeSelector';
+import IconSelect from '@/components/IconSelect';
+import TreeSelector from '@/components/TreeSelector';
 
 import LineList from './linelist';
 

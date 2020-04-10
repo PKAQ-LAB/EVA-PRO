@@ -1,6 +1,6 @@
 import { stringify } from 'qs';
-import request from '@src/utils/request';
-import { getNoUndefinedString } from '@src/utils/utils';
+import request from '@/utils/request';
+import { getNoUndefinedString } from '@/utils/utils';
 // 获取组织信息
 export async function getOrg(params) {
   return request(`/api/sys/organization/get/${getNoUndefinedString(params.id)}`);

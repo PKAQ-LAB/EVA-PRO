@@ -3,8 +3,8 @@ import { Avatar, Menu, Spin } from 'antd';
 import { ClickParam } from 'antd/es/menu';
 import React from 'react';
 import { history, ConnectProps, connect } from 'umi';
-import { ConnectState } from '@src/models/connect';
-import { CurrentUser } from '@src/models/user';
+import { ConnectState } from '@/models/connect';
+import { CurrentUser } from '@/models/user';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 

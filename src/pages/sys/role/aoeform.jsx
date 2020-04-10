@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'umi';
 import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
-import Selector from '@src/components/Selector';
+import Selector from '@/components/Selector';
 
 @connect(state => ({
   global: state.global,

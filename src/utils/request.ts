@@ -5,7 +5,7 @@
 import { extend } from 'umi-request';
 import { message } from 'antd';
 import history from 'umi';
-import defaultSettings from '@config/defaultSettings';
+import defaultSettings from '../../config/defaultSettings';
 
 message.config({
   maxCount: 1,

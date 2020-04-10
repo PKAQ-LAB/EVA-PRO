@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import request from '@src/utils/request';
+import request from '@/utils/request';
 
 // 在线用户查询
 export async function fetch(params) {

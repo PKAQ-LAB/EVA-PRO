@@ -22,7 +22,7 @@ function getModulePackageName(module: { context: string }) {
 }
 
 export default(config: IWebpackChainConfig) => {
-  config.resolve.alias.set('@src', path.resolve(__dirname, '..','src'));
+  config.resolve.alias.set('@', path.resolve(__dirname, '..','src'));
   config.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
   // optimize chunks
   config.optimization

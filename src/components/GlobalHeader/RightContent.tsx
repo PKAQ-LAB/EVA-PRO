@@ -3,7 +3,7 @@ import { QuestionCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } fr
 import React from 'react';
 import screenfull from 'screenfull';
 import { ConnectProps, connect, formatMessage } from 'umi';
-import { ConnectState } from '@src/models/connect';
+import { ConnectState } from '@/models/connect';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 

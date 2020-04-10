@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import SideLayout from '@src/components/SideLayout';
+import SideLayout from '@/components/SideLayout';
 import List from './list';
 import AOEForm from './aoeform';
 

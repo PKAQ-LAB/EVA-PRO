@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Modal } from 'antd';
 import { connect } from 'umi';
-import building from '@src/assets/building.png';
+import building from '@/assets/building.png';
 
 @connect(state => ({
   role: state.role,

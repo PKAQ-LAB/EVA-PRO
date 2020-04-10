@@ -3,7 +3,7 @@ import { connect } from 'umi';
 import { Divider, Popconfirm, notification } from 'antd';
 import cx from 'classnames';
 
-import DataTable from '@src/components/DataTable';
+import DataTable from '@/components/DataTable';
 
 @connect(state => ({
   account: state.account,

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'umi';
 
-import DataTable from '@src/components/DataTable';
+import DataTable from '@/components/DataTable';
 
 @connect(({ loading, errorLog }) => ({
   loading: loading.models.errorLog,

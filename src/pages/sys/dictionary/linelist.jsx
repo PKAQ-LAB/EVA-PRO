@@ -3,7 +3,7 @@ import { Button, Divider, Popconfirm } from 'antd';
 
 import { connect } from 'umi';
 import LineAoeForm from './lineaoeform';
-import DataTable from '@src/components/DataTable';
+import DataTable from '@/components/DataTable';
 import css from './linelist.less';
 
 /** 字典明细 */

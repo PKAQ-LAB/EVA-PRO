@@ -4,7 +4,7 @@ import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Form, Input, Button, Alert, Tree } from 'antd';
 import { connect } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import SideLayout from '@src/components/SideLayout';
+import SideLayout from '@/components/SideLayout';
 import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';

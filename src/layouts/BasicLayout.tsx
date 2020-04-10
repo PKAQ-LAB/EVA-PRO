@@ -7,9 +7,9 @@ import { Link, useIntl, connect, Dispatch } from 'umi';
 import React, { useEffect } from 'react';
 
 import { SolutionOutlined, CopyrightCircleOutlined, RocketFilled, ProfileFilled, RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled, BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
-// import Authorized from '@src/utils/Authorized';
-import RightContent from '@src/components/GlobalHeader/RightContent';
-import { ConnectState } from '@src/models/connect';
+// import Authorized from '@/utils/Authorized';
+import RightContent from '@/components/GlobalHeader/RightContent';
+import { ConnectState } from '@/models/connect';
 import logo from '../assets/logo.svg';
 
 export interface BasicLayoutProps extends ProLayoutProps {

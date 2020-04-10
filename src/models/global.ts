@@ -1,7 +1,7 @@
 import { Reducer, Subscription, Effect } from 'umi';
 
-import { NoticeIconData } from '@src/components/NoticeIcon';
-import { queryNotices } from '@src/services/user';
+import { NoticeIconData } from '@/components/NoticeIcon';
+import { queryNotices } from '@/services/user';
 import { ConnectState } from './connect.d';
 import { repwd } from '../services/user';
 

@@ -2,9 +2,9 @@ import { Effect, Reducer } from 'umi';
 // import { stringify } from 'querystring';
 import Cookies from 'universal-cookie';
 
-import { login } from '@src/services/login';
-import { setAuthority } from '@src/utils/authority';
-import { getPageQuery } from '@src/utils/utils';
+import { login } from '@/services/login';
+import { setAuthority } from '@/utils/authority';
+import { getPageQuery } from '@/utils/utils';
 
 export interface StateType {
   status?: 'ok' | 'error';

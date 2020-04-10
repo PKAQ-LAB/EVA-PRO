@@ -1,9 +1,9 @@
 import React from 'react';
 import { Input, Divider, Popconfirm, Button, Row, Col } from 'antd';
 import { connect } from 'umi';
-import DataTable from '@src/components/DataTable';
+import DataTable from '@/components/DataTable';
 import css from './list.less';
-import { dictFilter } from '@src/utils/DataHelper';
+import { dictFilter } from '@/utils/DataHelper';
 
 const { Search } = Input;
 

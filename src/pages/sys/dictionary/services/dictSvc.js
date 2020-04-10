@@ -1,5 +1,5 @@
-import request from '@src/utils/request';
-import { getNoUndefinedString } from '@src/utils/utils';
+import request from '@/utils/request';
+import { getNoUndefinedString } from '@/utils/utils';
 
 // 查询字典列表
 export async function listDict() {

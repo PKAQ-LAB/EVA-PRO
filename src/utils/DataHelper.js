@@ -1,4 +1,4 @@
-import loadsh from 'loadsh';
+import loadsh from 'lodash';
 // 判断是否存在子节点
 import { isUrl } from './utils';
 

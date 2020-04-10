@@ -3,9 +3,9 @@ import { Tag, message } from 'antd';
 import { ConnectProps, connect } from 'umi';
 import groupBy from 'lodash/groupBy';
 import moment from 'moment';
-import { NoticeItem } from '@src/models/global';
-import { CurrentUser } from '@src/models/user';
-import { ConnectState } from '@src/models/connect';
+import { NoticeItem } from '@/models/global';
+import { CurrentUser } from '@/models/user';
+import { ConnectState } from '@/models/connect';
 import NoticeIcon from '../NoticeIcon';
 import styles from './index.less';
 

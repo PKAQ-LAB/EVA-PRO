@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Select } from 'antd';
-import request from '@src/utils/request';
+import request from '@/utils/request';
 
 const { Option } = Select;
 

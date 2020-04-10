@@ -3,7 +3,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Switch, notification } from 'antd';
 import { connect } from 'umi';
 import cx from 'classnames';
-import DataTable from '@src/components/DataTable';
+import DataTable from '@/components/DataTable';
 
 @connect(state => ({
   role: state.role,

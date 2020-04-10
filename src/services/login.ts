@@ -1,4 +1,4 @@
-import request from '@src/utils/request';
+import request from '@/utils/request';
 
 export interface LoginParamsType {
   account: string;

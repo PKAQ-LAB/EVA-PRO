@@ -2,9 +2,9 @@ import { Alert, Checkbox } from 'antd';
 import React, { useState } from 'react';
 import { connect, Dispatch } from 'umi';
 import md5 from 'md5';
-import { StateType } from '@src/models/login';
-import { LoginParamsType } from '@src/services/login';
-import { ConnectState } from '@src/models/connect';
+import { StateType } from '@/models/login';
+import { LoginParamsType } from '@/services/login';
+import { ConnectState } from '@/models/connect';
 import LoginFrom from './components/Login';
 
 import styles from './style.less';

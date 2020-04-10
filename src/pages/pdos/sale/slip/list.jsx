@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'umi';
 import { Divider, Popconfirm } from 'antd';
-import DataTable from '@src/components/DataTable';
+import DataTable from '@/components/DataTable';
 
 @connect(({ global, loading, saleSlip }) => ({
   loading: loading.models.saleSlip,
