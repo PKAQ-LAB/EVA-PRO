@@ -12,6 +12,10 @@ import LineList from './linelist';
 export default class DictForm extends React.PureComponent {
   formRef = React.createRef();
 
+  componentDidUpdate(){
+    this.formRef.current.resetFields();
+  }
+
   // 保存事件
   handleSaveClick = () => {
     const { lineData, currentItem } = this.props.dict;

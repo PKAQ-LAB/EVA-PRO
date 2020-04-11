@@ -2,8 +2,8 @@ import React from 'react';
 import { Input, Divider, Popconfirm, Button, Row, Col } from 'antd';
 import { connect } from 'umi';
 import DataTable from '@/components/DataTable';
-import css from './list.less';
 import { dictFilter } from '@/utils/DataHelper';
+import css from './list.less';
 
 const { Search } = Input;
 
