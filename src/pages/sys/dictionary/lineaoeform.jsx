@@ -51,7 +51,7 @@ export default class DictLineForm extends React.PureComponent {
       this.props.dispatch({
         type: 'dict/updateState',
         payload: {
-          lineData,
+          lineData: [...lineData],
           modalType: '',
           editIndex: '',
         },
@@ -98,8 +98,7 @@ export default class DictLineForm extends React.PureComponent {
 
           <Form.Item
                   label="排序"
-                  name="orders"
-                  rules={[{type: 'number',}]}>
+                  name="orders">
             <Input max={5} />
           </Form.Item>
         </Form>

@@ -2,8 +2,8 @@ import React from 'react';
 import { Button, Divider, Popconfirm } from 'antd';
 
 import { connect } from 'umi';
-import LineAoeForm from './lineaoeform';
 import DataTable from '@/components/DataTable';
+import LineAoeForm from './lineaoeform';
 import css from './linelist.less';
 
 /** 字典明细 */
@@ -24,8 +24,8 @@ export default class LineList extends React.PureComponent {
 
   // 删除明细
   handleDeleteClick = index => {
-    const { lineData } = this.props.dict;
-    lineData.splice(index, 1);
+    let { lineData = [] } = this.props.dict;
+    lineData = lineData.splice(index, 1);
 
     this.props.dispatch({
       type: 'dict/updateState',
@@ -45,7 +45,8 @@ export default class LineList extends React.PureComponent {
   };
 
   render() {
-    const { modalType, lineData, operate } = this.props.dict;
+    const { modalType, operate } = this.props.dict;
+    const { lineData = [] } = this.props.dict;
 
     const columns = [
       {
