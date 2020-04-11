@@ -1,5 +1,6 @@
 // https://umijs.org/config/
 import { defineConfig, utils } from 'umi';
+import path from 'path';
 import pageRoutes from './router.config';
 import proxy from './proxy';
 
@@ -66,6 +67,38 @@ export default defineConfig({
         return localName;
       },
     },
+  },
+  chainWebpack(memo, { env, webpack, createCSSRule }) {
+    memo.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
+
+    // 打包优化 uglifyjs-webpack-plugin 配置
+    if (REACT_APP_ENV === 'prod') {
+      memo.merge({
+        plugin: {
+          install: {
+            plugin: require('uglifyjs-webpack-plugin'),
+            args: [
+              {
+                sourceMap: false,
+                uglifyOptions: {
+                  compress: {
+                    // 删除所有的 `console` 语句
+                    drop_console: true,
+                  },
+                  output: {
+                    // 最紧凑的输出
+                    beautify: false,
+                    // 删除所有的注释
+                    comments: false,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      });
+    }
+
   },
   manifest: {
     basePath: '/',
