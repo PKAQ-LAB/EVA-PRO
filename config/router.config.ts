@@ -63,6 +63,7 @@ export default [
                 path: '/pdos/base',
                 routes: [
                   { name: 'category', path: '/pdos/base/category', component: './pdos/base/category' },
+                  { name: 'supplier', path: '/pdos/base/supplier', component: './pdos/base/supplier' },
                 ]
               },
               { name: 'sale', path: '/pdos/sale/slip', component: './pdos/sale/slip' }
