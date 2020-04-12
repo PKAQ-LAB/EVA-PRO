@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'umi';
 import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
-import Selector from '@/components/Selector';
+import DictSelector from '@/components/DictSelector';
 
 @connect(state => ({
   global: state.global,
@@ -170,7 +170,7 @@ export default class AOEForm extends React.PureComponent {
                      name="dataPermissionType"
                      rules={[{required: true,}]}
                      {...formRowOne} >
-            <Selector
+            <DictSelector
               data={dict.data_permission}
               onChange={this.handleDataPermissionChange}
               showall={false}

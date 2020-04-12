@@ -48,7 +48,7 @@ export default class SlipList extends React.PureComponent{
   render() {
     const { slips, selectedRowKeys } = this.props.saleSlip;
     const { loading } = this.props;
-    const { dict } = this.props. global;
+    const { dict } = this.props.global;
 
 
     const columns = [
@@ -60,7 +60,7 @@ export default class SlipList extends React.PureComponent{
         title: '来源平台',
         name: 'sourcePlatform',
         tableItem: {
-          render: text => dict.online_platform[`${text}`]
+          render: text => dict.online_platform && dict.online_platform[`${text}`]
         },
       }, {
         title: '订单号',

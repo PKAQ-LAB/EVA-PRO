@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Drawer, Button, Form, Input, Row, Col, DatePicker, Divider } from 'antd';
 import * as math from 'mathjs';
 import Selector from '@/components/Selector'
+import DictSelector from '@/components/DictSelector'
 
 @connect(({ loading, saleSlip, global }) => ({
   global,
@@ -45,7 +46,6 @@ export default class AOEForm extends React.PureComponent{
     });
   };
 
-
   // 表单渲染
   renderForm = () => {
     const { dict } = this.props.global;
@@ -54,14 +54,10 @@ export default class AOEForm extends React.PureComponent{
     currentItem.dealTime = moment(currentItem.dealTime) || moment();
 
     const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 18 },
+      labelCol: { flex: "0 0 110px" },
+      wrapperCol: { flex: "auto" },
     };
 
-    const formOneLayout = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 21 },
-    };
 
     return (
       <Form size="middle" {...formItemLayout} labelAlign="left" ref={this.formRef} initialValues={currentItem}>
@@ -91,8 +87,7 @@ export default class AOEForm extends React.PureComponent{
             </Col>
             <Col span={8}>
               <Form.Item label="来源平台" name="sourcePlatform">
-                <Selector
-                  keys={['id', 'name']}
+                <DictSelector
                   data={dict.online_platform}
                   disabled={operateType === 'view'} />
               </Form.Item>
@@ -122,7 +117,11 @@ export default class AOEForm extends React.PureComponent{
           <Row gutter={24}>
             <Col span={8}>
               <Form.Item label="供应商" name="supplierName">
-                <Input readOnly={operateType === 'view'} />
+                <Selector
+                  k="id"
+                  v="fullName"
+                  readOnly={operateType === 'view'}
+                  url="/api/pdos/base/supplier/listAll"/>
               </Form.Item>
             </Col>
             <Col span={8}>
@@ -156,7 +155,7 @@ export default class AOEForm extends React.PureComponent{
           </Row>
           <Row gutter={24}>
             <Col span={16}>
-              <Form.Item label="收货地址" {...formOneLayout} name="receiverAddr">
+              <Form.Item label="收货地址" name="receiverAddr">
                 <Input.TextArea rows={3} readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>
@@ -168,8 +167,7 @@ export default class AOEForm extends React.PureComponent{
           <Row gutter={24}>
             <Col span={8}>
               <Form.Item label="快递公司" name="shipCompany">
-                <Selector
-                  keys={['id', 'name']}
+                <DictSelector
                   data={dict.ship_company}
                   disabled={operateType === 'view'}
                 />

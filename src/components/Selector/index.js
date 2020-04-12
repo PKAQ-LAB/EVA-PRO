@@ -7,7 +7,7 @@ const { Option } = Select;
 /**
  * 远程获取下拉菜单选项
  * 优先使用 data 传递进来得数据
- * 如果data不存在使用code 获取远程数据
+ * 如果data不存在使用url获取远程数据
  */
 export default class Selector extends PureComponent {
   constructor(props) {
@@ -20,7 +20,7 @@ export default class Selector extends PureComponent {
 
   componentDidMount() {
     let { data } = this.props;
-    const { code, showall } = this.props;
+    const { showall, url, k, v } = this.props;
 
     this.setState({
       showall
@@ -30,17 +30,17 @@ export default class Selector extends PureComponent {
       if(typeof data === 'string'){
         data = JSON.parse(data);
       }
-      const k = Object.keys(data);
+      const options = data.map(it => <Option key={it[k]}>{it[v]}</Option>);
 
-      const options = k.map(v => <Option key={v}>{data[v]}</Option>);
       this.setState({
         options,
       });
-    } else if (code) {
-      request(`/api/sys/dict/query/${code}`).then(response => {
+    } else if (url) {
+      request(`${url}`).then(response => {
         if (response && response.data) {
-          const rdata = Object.keys(response.data);
-          const options = rdata.map(v => <Option key={v}>{response.data[v]}</Option>);
+          const rdata = response.data;
+
+          const options = rdata.map(it => <Option key={it[k]}>{it[v]}</Option>);
           this.setState({
             options,
           });
@@ -51,6 +51,7 @@ export default class Selector extends PureComponent {
 
   render() {
     const { options, showall } = this.state;
+
     return (
       <Select {...this.props}>
         {showall && <Option value="0000">全部</Option>}

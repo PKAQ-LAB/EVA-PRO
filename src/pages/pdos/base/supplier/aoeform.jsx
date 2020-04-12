@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'umi';
 import moment from 'moment';
 import { Modal, Form, Input, Row, Col } from 'antd';
-import Selector from '@/components/Selector'
+import DictSelector from '@/components/DictSelector'
 
 @connect(({ loading, supplier, global }) => ({
   global,
@@ -51,20 +51,15 @@ export default class AOEForm extends React.PureComponent{
     const { currentItem, operateType } = this.props.supplier;
 
     const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 18 },
-    };
-
-    const formOneLayout = {
-      labelCol: { span: 2 },
-      wrapperCol: { span: 22 },
+      labelCol: { flex: "0 0 90px" },
+      wrapperCol: { flex: "auto" },
     };
 
     return (
       <Form size="middle" {...formItemLayout} labelAlign="left" ref={this.formRef} initialValues={currentItem}>
           <Row gutter={24}>
             <Col span={24}>
-              <Form.Item label="全称" name="fullName" {...formOneLayout} rules={[{required: true}]}>
+              <Form.Item label="全称" name="fullName" rules={[{required: true}]}>
                 <Input readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>
@@ -78,8 +73,7 @@ export default class AOEForm extends React.PureComponent{
             </Col>
             <Col span={8}>
               <Form.Item label="类型" name="category" rules={[{required: true}]}>
-                <Selector
-                  keys={['id', 'name']}
+                <DictSelector
                   data={dict.supplier_type}
                   disabled={operateType === 'view'}
                 />
@@ -107,7 +101,7 @@ export default class AOEForm extends React.PureComponent{
 
           <Row gutter={24}>
             <Col span={24}>
-              <Form.Item label="地址" name="address" {...formOneLayout}>
+              <Form.Item label="地址" name="address" >
                 <Input.TextArea rows={3} readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>

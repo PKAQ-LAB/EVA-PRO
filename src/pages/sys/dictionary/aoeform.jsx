@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'umi';
 import { Form, Input, Card, Row, Col, Button } from 'antd';
-import Selector from '@/components/Selector'
+import DictSelector from '@/components/DictSelector'
 import LineList from './linelist';
 
 @connect(state => ({
@@ -79,8 +79,7 @@ export default class DictForm extends React.PureComponent {
                   label="所属分类"
                   name="parentId"
                   rules={[{required: true,}]}>
-                  <Selector
-                    keys={['id', 'name']}
+                  <DictSelector
                     data={dict.dict_type}
                     disabled={operate === '' || operate === 'view'}
                   />
