@@ -62,14 +62,14 @@ export default class TreeSelector extends PureComponent {
 
     let data = treeData;
 
-    if (treeData.length && keys) {
+    if (data && keys) {
         const [ valueKey, titleKey, childrenKey ] = keys;
 
         data = treeSelectTravelData(treeData, valueKey, titleKey, childrenKey);
     }
     return <TreeSelect
             treeData={data}
-            value={treeData.length > 0 ? value : undefined}
+            value={treeData ? value : undefined}
             {...(search === true && treeSelectSearchProps)}
             {...this.props}
             />;
