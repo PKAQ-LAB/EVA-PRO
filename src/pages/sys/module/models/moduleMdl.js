@@ -108,7 +108,7 @@ export default {
       }
     },
     // 删除数据
-    *delete({ payload, callback }, { call, put }) {
+    *delete({ payload }, { call, put }) {
       // 查询数据
       const response = yield call(deleteModule, payload);
       // 只有返回成功时才刷新
@@ -119,16 +119,6 @@ export default {
           payload: {
             data: response.data,
             selectedRowKeys: [],
-          },
-        });
-        if (callback) {
-          callback();
-        }
-      } else {
-        yield put({
-          type: 'updateState',
-          payload: {
-            loading: { global: false },
           },
         });
       }

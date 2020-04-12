@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'umi';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Form, Input, TreeSelect, Row, Col, Switch, Drawer, Button, Tooltip } from 'antd';
+import { Form, Input, Row, Col, Switch, Drawer, Button, Tooltip } from 'antd';
 import IconSelect from '@/components/IconSelect';
 import TreeSelector from '@/components/TreeSelector';
 
@@ -60,7 +60,7 @@ export default class AOEForm extends React.Component {
       };
 
       data.resources = lineData;
-      data.status = data.status ? '0000' : '0001';
+      data.status = data.status ? '0001' : '0000';
       this.props.dispatch({
         type: 'module/save',
         payload: data,

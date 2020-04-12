@@ -260,7 +260,7 @@ export default class List extends Component {
       <div style={{ padding: 15 }}>
         <div className={css.ribbon}>
           <div>
-            <Button icon={<PlusOutlined />} type="primary" onClick={() => this.handleAdd('')}>
+            <Button icon={<PlusOutlined />} loading={loading} type="primary" onClick={() => this.handleAdd('')}>
               新增模块
             </Button>
             {selectedRowKeys.length > 0 && (
@@ -270,7 +270,7 @@ export default class List extends Component {
                   placement="top"
                   onConfirm={() => this.handleBatchDelete()}
                 >
-                  <Button style={{ marginLeft: 8 }} type="danger">
+                  <Button style={{ marginLeft: 8 }} type="danger" loading={loading}>
                     删除菜单
                   </Button>
                 </Popconfirm>
