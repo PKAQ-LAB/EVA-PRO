@@ -1,97 +1,59 @@
-import { message } from 'antd';
-import { queryGoods, removeGoods, editGoods, checkUnique, getGoods } from '../services/goodsSvc';
+import { list, get, edit, del } from '../services/goodsSvc';
 
 export default {
   namespace: 'goods',
   state: {
     currentItem: {},
-    modalVisible: false,
-    data: {
-      records: [],
-    },
-    categorys: [],
-    modalType: '',
-    expandForm: false,
     selectedRowKeys: [],
-    formValues: {},
+    goods: [],
+    operateType: '',
   },
   effects: {
-    *checkUnique({ payload }, { call }) {
-      return yield call(checkUnique, payload);
-    },
-    // 查询
     *fetch({ payload }, { call, put }) {
-      // 查询数据
-      const response = yield call(queryGoods, payload);
-      yield put({
-        type: 'saveData',
-        payload: response.data,
-      });
-    },
-    // 编辑按钮
-    *edit({ payload }, { call, put }) {
-      const response = yield call(getGoods, payload);
-      if (response && response.data) {
+      const response = yield call(list, payload);
+      if (response && response.success) {
         yield put({
           type: 'updateState',
           payload: {
-            modalType: 'edit',
+            selectedRowKeys: [],
+            operateType: '',
+            currentItem: {},
+            goods: response.data,
+          },
+        });
+      }
+    },
+    *get({ payload }, { call, put }) {
+      const response = yield call(get, payload);
+      if (response && response.success) {
+        yield put({
+          type: 'updateState',
+          payload: {
+            operateType: payload.operateType,
             currentItem: response.data,
           },
         });
       }
     },
-    // 保存一条模块信息
     *save({ payload }, { call, put }) {
-      const response = yield call(editGoods, payload);
-      if (response && response.data) {
-        //  关闭窗口 - 提示成功 - 加载数据
-        yield put({
-          type: 'updateState',
-          payload: {
-            modalType: '',
-            currentItem: {},
-            data: response.data,
-          },
-        });
-        message.success('操作成功');
-      } else {
-        yield put({
-          type: 'updateState',
-          payload: {
-            modalType: '',
-            currentItem: {},
-          },
-        });
-        message.success('操作失败');
+      const response = yield call(edit, payload);
+      if (response && response.success ) {
+        yield put({ type: 'fetch' })
       }
     },
-    // 删除
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeGoods, payload);
-
-      // 只有返回成功时才刷新
-      if (response && response.success) {
-        // 从当前数据对象中找到响应ID记录删除值
-        yield put({
-          type: 'updateState',
-          payload: {
-            data: response.data,
-            selectedRowKeys: [],
-          },
-        });
-        if (callback) {
-          callback();
+    *remove({ payload }, { call, put }) {
+      const response = yield call(del, payload);
+      if (response && response.success ) {
+        yield put({ type: 'fetch' })
         }
-      } else {
-        message.error(`操作失败： ${response.message ? response.message : '请联系管理员'}.`);
-        yield put({
-          type: 'updateState',
-          payload: {
-            loading: { global: false },
-          },
-        });
-      }
+    },
+  },
+  reducers: {
+    updateState(state, { payload }) {
+      return {
+        ...state,
+        ...payload,
+      };
     },
   },
 };

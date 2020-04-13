@@ -69,7 +69,7 @@ export default class SlipList extends React.PureComponent{
         title: '类型',
         name: 'category',
         tableItem: {
-          render: text => dict.supplier_type[`${text}`]
+          render: text => dict.supplier_type && dict.supplier_type[`${text}`]
         },
       },  {
         title: '联系人',

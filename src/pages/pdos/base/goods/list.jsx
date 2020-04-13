@@ -1,156 +1,131 @@
-import React, { PureComponent } from 'react';
-import { Table, Alert, Divider, notification, message } from 'antd';
-import styles from './List.less';
-import { connect } from 'dva';
+import React from 'react';
+import { connect } from 'umi';
+import cx from 'classnames';
+import { Divider, Popconfirm } from 'antd';
+import DataTable from '@/components/DataTable';
 
-@connect(({ loading }) => ({
+@connect(({ global, loading, goods }) => ({
   loading: loading.models.goods,
+  goods,
+  global,
 }))
-class List extends PureComponent {
-  // 组件加载完成后加载数据
+export default class SlipList extends React.PureComponent{
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
+    this.props.dispatch({
       type: 'goods/fetch',
     });
   }
-  // 清除选择
-  cleanSelectedKeys = () => {
-    this.handleSelectRows([]);
-  };
 
-  // 行选事件
   handleSelectRows = rows => {
-    const { dispatch } = this.props;
-    dispatch({
+    this.props.dispatch({
       type: 'goods/updateState',
       payload: { selectedRowKeys: rows },
     });
-  };
+  }
 
-  // 删除事件
+  // 单条删除
   handleDeleteClick = record => {
-    const { dispatch } = this.props;
-    dispatch({
+    this.props.dispatch({
       type: 'goods/remove',
       payload: {
         param: [record.id],
       },
-      callback: () => {
-        message.success('操作成功.');
-      },
     });
   };
 
-  // 编辑事件
-  handleEditClick = record => {
-    if (!record.id) {
-      notification.error('没有选择记录');
-      return;
+  // 编辑/查看
+  handleEditClick = (record, operateType) => {
+    if (record.id) {
+      this.props.dispatch({
+        type: 'goods/get',
+        payload: {
+          operateType,
+          id: record.id,
+        },
+      });
     }
-    this.props.dispatch({
-      type: 'goods/edit',
-      payload: {
-        modalType: 'edit',
-        id: record.id,
-      },
-    });
   };
 
   render() {
-    const { selectedRowKeys, data, pagination, loading } = this.props;
+    const { goods, selectedRowKeys } = this.props.goods;
+    const { loading } = this.props;
+    const { dict } = this.props. global;
+
 
     const columns = [
       {
-        title: '商品名称',
-        dataIndex: 'name',
-        sorter: true,
-      },
-      {
+        title: '品名',
+        name: 'name',
+        tableItem: {},
+      }, {
         title: '品类',
-        dataIndex: 'category',
-        render: val => <div style={{ textAlign: 'center' }}>{val}</div>,
-      },
-      {
-        title: '型号',
-        dataIndex: 'model',
-        sorter: true,
-      },
-      {
+        name: 'name',
+        tableItem: {},
+      }, {
+        title: '货号',
+        name: 'itemNo',
+        tableItem: {},
+      }, {
         title: '助记码',
-        dataIndex: 'mnemonic',
-        sorter: true,
-      },
-      {
+        name: 'mnemonic',
+        tableItem: {},
+      }, {
         title: '单位',
-        dataIndex: 'unit',
-        sorter: true,
-        render: val => <div style={{ textAlign: 'center' }}>{val}</div>,
-      },
-      {
+        name: 'unit',
+        tableItem: {
+          render: text => dict.unit && dict.unit[`${text}`]
+        },
+      },  {
         title: '装箱规格',
-        dataIndex: 'boxunit',
-      },
-      {
+        name: 'boxunit',
+        tableItem: {},
+      }, {
+        title: '生产厂家',
+        name: 'factory',
+        tableItem: {},
+      },{
         title: '条码',
-        dataIndex: 'barcode',
-        sorter: true,
-      },
-      {
-        title: '操作',
-        align: 'center',
-        render: (text, record) => (
-          <div>
-            <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
-            <Divider type="vertical" />
-            <a onClick={e => this.handleDeleteClick(record, e)}>删除</a>
-          </div>
-        ),
+        name: 'barcode',
+        tableItem: {},
+      }, {
+        tableItem: {
+          width: 180,
+          render: (text, record) =>
+              <DataTable.Oper style={{ textAlign: 'center' }}>
+                <a onClick={() => this.handleEditClick(record, 'view')}>查看详情</a>
+                <Divider type="vertical" />
+                <a onClick={() => this.handleEditClick(record, 'edit')}>编辑</a>
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="确定要删除吗？"
+                  okText="确定"
+                  cancelText="取消"
+                  onConfirm={() => this.handleDeleteClick(record)}
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              </DataTable.Oper>
+        },
       },
     ];
 
-    const paginationProps = {
-      showSizeChanger: true,
-      showQuickJumper: true,
-      ...pagination,
+    const dataTableProps = {
+      columns,
+      rowKey: 'id',
+      showNum: true,
+      loading,
+      isScroll: true,
+      alternateColor: true,
+      dataItems: goods,
+      selectType: 'checkbox',
+      rowClassName: record =>
+        cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' }),
+      selectedRowKeys,
+      // onChange: this.pageChange,
+      onSelect: this.handleSelectRows,
+      disabled: { status: ['9999', '0001'] },
     };
 
-    const rowSelectionProps = {
-      fixed: true,
-      selectedRowKeys,
-      onChange: selectedKeys => {
-        this.handleSelectRows(selectedKeys);
-      },
-    };
-    return (
-      <div className={styles.standardTable}>
-        <div className={styles.tableAlert}>
-          <Alert
-            message={
-              <div>
-                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-                <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
-                  清空选择
-                </a>
-              </div>
-            }
-            type="info"
-            showIcon
-          />
-        </div>
-        <Table
-          loading={loading}
-          bordered
-          rowKey={record => record.id}
-          rowSelection={rowSelectionProps}
-          dataSource={data.records}
-          columns={columns}
-          pagination={paginationProps}
-          onSelectRow={this.handleSelectRows}
-        />
-      </div>
-    );
+    return <DataTable {...dataTableProps} bordered pagination />;
   }
 }
-
-export default List;

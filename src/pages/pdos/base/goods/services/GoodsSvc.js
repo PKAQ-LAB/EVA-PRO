@@ -2,40 +2,31 @@ import { stringify } from 'qs';
 import request from '@/utils/request';
 import { getNoUndefinedString } from '@/utils/utils';
 
-export async function checkUnique(params) {
-  return request('/pdos/base/goods/checkUnique', {
+// 列表
+export async function list(params) {
+  return request(`/api/pdos/base/goods/list?${stringify(params)}`);
+}
+
+// 获取详情
+export async function get(params) {
+  return request(`/api/pdos/base/goods/get/${getNoUndefinedString(params.id)}`);
+}
+
+// 新增/编辑
+export async function edit(params) {
+  return request('/api/pdos/base/goods/edit', {
     method: 'POST',
     data: {
       ...params,
     },
   });
 }
-
-export async function queryGoods(params) {
-  return request(`/pdos/base/goods/list?${stringify(params)}`);
-}
-
-export async function removeGoods(params) {
-  return request('/pdos/base/goods/del', {
-    method: 'POST',
-    data: {
-      ...params,
-      method: 'post',
-    },
-  });
-}
-
-// 新增/编辑信息
-export async function editGoods(params) {
-  return request('/pdos/base/goods/edit', {
+// 根据ID删除
+export async function del(params) {
+  return request('/api/pdos/base/goods/del', {
     method: 'POST',
     data: {
       ...params,
     },
   });
-}
-
-// 获取组织信息
-export async function getGoods(params) {
-  return request(`/pdos/base/goods/get/${getNoUndefinedString(params.id)}`);
 }
