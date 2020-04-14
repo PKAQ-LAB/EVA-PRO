@@ -3,6 +3,7 @@ import { connect } from 'umi';
 import moment from 'moment';
 import { Modal, Form, Input, Row, Col } from 'antd';
 import DictSelector from '@/components/DictSelector'
+import TreeSelector from '@/components/TreeSelector';
 
 @connect(({ loading, goods, global }) => ({
   global,
@@ -35,7 +36,6 @@ export default class AOEForm extends React.PureComponent{
         ...values,
         id: currentItem ? currentItem.id : '',
       };
-      data.dealTime = moment(data.dealTime).format("YYYY-MM-DD hh:mm:ss");
 
       this.props.dispatch({
         type: 'goods/save',
@@ -59,50 +59,67 @@ export default class AOEForm extends React.PureComponent{
       <Form size="middle" {...formItemLayout} labelAlign="left" ref={this.formRef} initialValues={currentItem}>
           <Row gutter={24}>
             <Col span={24}>
-              <Form.Item label="全称" name="fullName" rules={[{required: true}]}>
+              <Form.Item label="品名" name="name" rules={[{required: true}]}>
                 <Input readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>
           </Row>
 
           <Row gutter={24}>
-            <Col span={8}>
-              <Form.Item label="简称" name="name" rules={[{required: true}]}>
+            <Col span={12}>
+              <Form.Item label="品类" name="category" rules={[{required: true}]} >
+                <TreeSelector
+                    url="/api/pdos/base/category/list"
+                    keys={['id', 'name', 'children']}
+                    search
+                    showAll={false}
+                    disabled={operateType === 'view'}
+                    treeDefaultExpandAll
+                    allowClear
+                    showSearch
+                    placeholder="请选择所属分类"
+                  />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label="助记码" name="mnemonic" rules={[{required: true}]}>
                 <Input readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item label="类型" name="category" rules={[{required: true}]}>
+            <Col span={12}>
+              <Form.Item label="货号" name="itemNo" rules={[{required: true}]}>
+                <Input readOnly={operateType === 'view'} />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label="单位" name="unit">
                 <DictSelector
-                  data={dict.goods_type}
-                  disabled={operateType === 'view'}
-                />
+                  data={dict.data_permission}
+                  disabled={operateType === 'view'} />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item label="助记码" name="mnemonic">
+            <Col span={12}>
+              <Form.Item label="装箱数量" name="boxunit">
                 <Input readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>
           </Row>
 
           <Row gutter={24}>
-            <Col span={8}>
-              <Form.Item label="联系人" name="linkman">
+          <Col span={12}>
+              <Form.Item label="生产厂家" name="factory">
                 <Input readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item label="联系方式" name="mobile">
+            <Col span={12}>
+              <Form.Item label="条码" name="barcode">
                 <Input readOnly={operateType === 'view'} />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={24}>
-            <Col span={24}>
-              <Form.Item label="地址" name="address" >
-                <Input.TextArea rows={3} readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>
           </Row>

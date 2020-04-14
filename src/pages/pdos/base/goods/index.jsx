@@ -3,6 +3,7 @@ import { Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import {  PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { connect } from 'umi';
+import TreeSelector from '@/components/TreeSelector';
 import List from './list';
 import AOEForm from './aoeform';
 
@@ -113,7 +114,16 @@ renderSearchForm() {
       <Form.Item
         label="所属分类"
         name="category">
-        <Input />
+          <TreeSelector
+            url="/api/pdos/base/category/list"
+            keys={['id', 'name', 'children']}
+            search
+            showAll={false}
+            treeDefaultExpandAll
+            allowClear
+            showSearch
+            placeholder="请选择所属分类"
+          />
       </Form.Item>
 
       <Button type="primary" htmlType="submit" loading={loading} onClick={() => this.handleSearch()}>

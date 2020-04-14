@@ -59,7 +59,7 @@ export default class SlipList extends React.PureComponent{
         tableItem: {},
       }, {
         title: '品类',
-        name: 'name',
+        name: 'category',
         tableItem: {},
       }, {
         title: '货号',
