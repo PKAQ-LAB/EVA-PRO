@@ -11,7 +11,7 @@ import {
   message,
   notification,
 } from 'antd';
-import { connect } from 'dva';
+import { connect } from 'umi';
 import cx from 'classnames';
 
 import { hasChildren, getNodeBorther } from '@/utils/DataHelper';
