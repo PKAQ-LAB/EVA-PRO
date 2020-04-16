@@ -213,7 +213,7 @@ export default class DataTable extends Component {
           bodyStyle={{ overflowX: 'auto' }}
           columns={cols}
           pagination={pagination ? paging : false}
-          dataSource={dataItems ? dataItems.records : []}
+          dataSource={dataItems ? dataItems.records || dataItems.list: []}
           onChange={this.handleTableChange}
           rowKey={this.rk}
           {...otherProps}
