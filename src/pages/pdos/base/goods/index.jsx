@@ -1,24 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { connect } from 'umi';
+import { useSelector } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
+import { list } from './services/goodsSvc';
 
-@connect(({ loading, goods }) => ({
-  loading: loading.models.goods,
-  goods,
-}))
-export default class Goods extends React.PureComponent{
 
-  formRef = React.createRef();
+export default () => {
+  // 初始化数据
+  const [operateType, setOperateType] = useState("");
+  const [currentItem, setCurrentItem] = useState({});
+  const [listData, setListData] = useState({});
+  const dict = useSelector(state => state.global.dict);
 
-  render() {
-    const { operateType } = this.props.goods;
-    return (
+  // 加载列表数据
+  useEffect(() => {
+    list().then(res => {
+      setListData(res.data);
+    })
+  }, []);
+
+  // 状态更改
+  useEffect(() => {
+    setOperateType(operateType);
+  }, [operateType]);
+
+  // 列表属性
+  const listProps = {
+    dict,
+    setCurrentItem,
+    setOperateType,
+    listData,
+    setListData,
+  }
+
+  // 表单数据
+  const formPorps = {
+    dict,
+    operateType,
+    currentItem,
+    setListData,
+    setOperateType
+  }
+
+  return (
       <PageHeaderWrapper title="产品管理" subTitle="维护产品基础信息">
-        <List/>
-        { operateType !== '' && <AOEForm/> }
+        <List {...listProps} />
+        {operateType !== '' && <AOEForm {...formPorps} /> }
       </PageHeaderWrapper>
     );
-  }
 }
+
+
