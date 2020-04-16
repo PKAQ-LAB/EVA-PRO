@@ -4,19 +4,19 @@ import { Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import TreeSelector from '@/components/TreeSelector';
 import DataTable from '@/components/DataTable';
-import { get, del, list } from './services/goodsSvc';
+import { get, del } from './services/goodsSvc';
 
 export default (props) => {
 
-  const { listData, setListData, setOperateType, setCurrentItem, dict } = props;
+  const { listData, fetch, setOperateType, setCurrentItem, dict, loading } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
 
-  const fetch = (params) => {
-    list(params).then(res => {
-      setListData(res.data);
-  })
-  }
+  // const fetch = (params) => {
+  //   list(params).then(res => {
+  //     setListData(res.data);
+  // })
+  // }
    // 编辑/查看
   const handleEditClick = (record, operate) => {
     if (record.id) {
@@ -76,7 +76,7 @@ export default (props) => {
       type="primary"
       icon={<PlusOutlined />}
       onClick={() => handleCreateClick()}
-      // loading={loading}
+      loading={loading}
     >
       新增产品
     </Button>
@@ -89,9 +89,10 @@ export default (props) => {
             placement="top"
             onConfirm={()=> handleRemoveClick()}
           >
-            <Button style={{ marginLeft: 8 }} type="danger" icon={<DeleteOutlined />}
-            //loading={loading}
-            >
+            <Button style={{ marginLeft: 8 }}
+                    type="danger"
+                    icon={<DeleteOutlined />}
+                    loading={loading}>
               删除产品
             </Button>
           </Popconfirm>
@@ -198,7 +199,7 @@ export default (props) => {
     columns,
     rowKey: 'id',
     showNum: true,
-    // loading,
+    loading,
     isScroll: true,
     alternateColor: true,
     dataItems: listData,

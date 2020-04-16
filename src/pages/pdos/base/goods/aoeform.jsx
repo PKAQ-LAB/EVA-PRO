@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Form, Input, Row, Col } from 'antd';
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
-import { list, edit } from './services/goodsSvc';
+import { edit } from './services/goodsSvc';
 
 export default (props) => {
-  const { setListData, setOperateType, operateType, currentItem, dict } = props;
+  const { setOperateType, operateType, currentItem, dict, fetch } = props;
+  const [ loading, setLoading ] = useState(false);
 
   const [form] = Form.useForm();
   const title = { create: '新增', edit: '编辑' };
-
-  // React.useEffect(() => form.resetFields(), [currentItem]);
 
   // 关闭
   const handleOnClose = () => {
@@ -21,6 +20,7 @@ export default (props) => {
   const handleSaveClick = () => {
     const { validateFields } = form;
     validateFields().then(values => {
+      setLoading(true);
 
       const data = {
         ...values,
@@ -28,12 +28,11 @@ export default (props) => {
       };
 
       edit(data).then(() => {
+        setLoading(false);
         setOperateType("");
       });
 
-      list().then(res => {
-        setListData(res.data);
-      })
+      fetch();
     });
   };
 
@@ -130,7 +129,7 @@ export default (props) => {
   return (
     <Modal
       maskClosable={false}
-      // loading={loading}
+      loading={loading}
       centered
       onCancel={() => handleOnClose()}
       visible={operateType !== ''}
