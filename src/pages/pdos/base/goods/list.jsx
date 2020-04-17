@@ -226,9 +226,14 @@ export default (props) => {
       <div className="eva-body">
         <Table
           {...tableProps}
-          rowKey={record => record.id}
           columns={columns}
+          rowKey={record => record.id}
           rowSelection={rowSelection}
+          onRow = {
+            (record) => ({
+              onClick: () => handleEditClick(record, 'view'),
+            })
+          }
         />;
       </div>
     </>
