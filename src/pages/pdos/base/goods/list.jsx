@@ -11,6 +11,16 @@ export default (props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
 
+  const handleSelect = (rows) => {
+    setSelectedRowKeys(rows);
+  }
+
+  const rowSelection = {
+    selectedRowKeys,
+    onSelect: rows => handleSelect(rows),
+    onChange: rows => handleSelect(rows)
+  };
+
    // 编辑/查看
   const handleEditClick = (record, operate) => {
     if (record.id) {
@@ -24,8 +34,9 @@ export default (props) => {
   // 单条删除
   const handleDeleteClick = record => {
     if (record.id) {
-      del({ param: [record.id], });
-      fetch()
+      del({ param: [record.id], }).then(() => {
+        fetch();
+      });
     }
   };
 
@@ -134,6 +145,12 @@ export default (props) => {
 
   const columns = [
     {
+      title: '',
+      render: (_text, _record, index) => {
+        return index;
+      }
+    },
+    {
       title: '品名',
       dataIndex: 'name',
     }, {
@@ -160,7 +177,7 @@ export default (props) => {
       dataIndex: 'barcode',
     }, {
       width: 180,
-      render: (text, record) =>
+      render: (_text, record) =>
           <DataTable.Oper style={{ textAlign: 'center' }}>
             <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>
             <Divider type="vertical" />
@@ -207,7 +224,12 @@ export default (props) => {
         )}
       </div>
       <div className="eva-body">
-        <Table {...tableProps} rowKey={record => record.id} columns={columns}/>;
+        <Table
+          {...tableProps}
+          rowKey={record => record.id}
+          columns={columns}
+          rowSelection={rowSelection}
+        />;
       </div>
     </>
   )

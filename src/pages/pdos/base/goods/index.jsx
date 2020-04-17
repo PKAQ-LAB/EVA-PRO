@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { useSelector } from 'umi';
 import { useRequest } from '@umijs/hooks';
@@ -7,9 +7,11 @@ import AOEForm from './aoeform';
 import { list } from './services/goodsSvc';
 
 export default () => {
+
   // 初始化数据
   const [operateType, setOperateType] = useState("");
   const [currentItem, setCurrentItem] = useState({});
+
   const dict = useSelector(state => state.global.dict);
 
   const { run, tableProps } = useRequest(list, {
@@ -18,11 +20,6 @@ export default () => {
       return res.data;
     }
   })
-
-  // 状态更改
-  useEffect(() => {
-    setOperateType(operateType);
-  }, [operateType]);
 
   // 列表属性
   const listProps = {
