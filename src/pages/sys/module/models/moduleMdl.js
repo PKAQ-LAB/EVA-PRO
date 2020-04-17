@@ -97,7 +97,7 @@ export default {
       const response = yield call(editModule, payload);
       if (response && response.success) {
         const op = payload;
-        op.record.status = payload.status;
+        op.list.status = payload.status;
         yield put({
           type: 'updateState',
           payload: {

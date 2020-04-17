@@ -78,10 +78,10 @@ export default {
     *changeStatus({ payload }, { call, put }) {
       const response = yield call(switchCategory, payload);
       if (response) {
-        payload.record.status = payload.status;
+        payload.list.status = payload.status;
         yield put({
           type: 'updateState',
-          currentItem: payload.record,
+          currentItem: payload.list,
         });
       }
     },

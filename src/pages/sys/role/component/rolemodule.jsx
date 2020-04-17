@@ -149,7 +149,7 @@ export default class RoleModule extends Component {
           style={{ height: 456, maxHeight: 456 }}
           defaultExpandAllRows
           columns={columns}
-          dataSource={modules.records}
+          dataSource={modules.list}
           loading={loading}
           pagination={false}
           rowKey={record => record.id}

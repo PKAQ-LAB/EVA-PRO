@@ -100,7 +100,7 @@ export default class RoleUser extends PureComponent {
       alternateColor: true,
       selectType: 'checkbox',
       selectedRowKeys: users.checked,
-      dataItems: { records: users.records },
+      dataItems: { records: users.list },
       onChange: this.pageChange,
       onSelect: this.handleSelectRows,
     };
