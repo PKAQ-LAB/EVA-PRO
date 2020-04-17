@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import cx from 'classnames';
-import { Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
+import { Form, Alert, Button, Divider, Popconfirm, Input, Table } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import TreeSelector from '@/components/TreeSelector';
 import DataTable from '@/components/DataTable';
@@ -8,7 +7,7 @@ import { get, del } from './services/goodsSvc';
 
 export default (props) => {
 
-  const { listData, fetch, setOperateType, setCurrentItem, dict, loading } = props;
+  const { fetch, setOperateType, setCurrentItem, dict, loading, tableProps } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
 
@@ -136,77 +135,48 @@ export default (props) => {
   const columns = [
     {
       title: '品名',
-      name: 'name',
-      tableItem: {},
+      dataIndex: 'name',
     }, {
       title: '品类',
-      name: 'category',
-      tableItem: {},
+      dataIndex: 'category',
     }, {
       title: '货号',
-      name: 'itemNo',
-      tableItem: {},
+      dataIndex: 'itemNo',
     }, {
       title: '助记码',
-      name: 'mnemonic',
-      tableItem: {},
+      dataIndex: 'mnemonic',
     }, {
       title: '单位',
-      name: 'unit',
-      tableItem: {
-        render: text => dict.unit && dict.unit[`${text}`]
-      },
+      dataIndex: 'unit',
+      render: text => dict.unit && dict.unit[`${text}`]
     },  {
       title: '装箱规格',
-      name: 'boxunit',
-      tableItem: {},
+      dataIndex: 'boxunit',
     }, {
       title: '生产厂家',
-      name: 'factory',
-      tableItem: {},
+      dataIndex: 'factory',
     },{
       title: '条码',
-      name: 'barcode',
-      tableItem: {},
+      dataIndex: 'barcode',
     }, {
-      tableItem: {
-        width: 180,
-        render: (text, record) =>
-            <DataTable.Oper style={{ textAlign: 'center' }}>
-              <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>
-              <Divider type="vertical" />
-              <a onClick={() => handleEditClick(record, 'edit')}>编辑</a>
-              <Divider type="vertical" />
-              <Popconfirm
-                title="确定要删除吗？"
-                okText="确定"
-                cancelText="取消"
-                onConfirm={() => handleDeleteClick(record)}
-              >
-                <a>删除</a>
-              </Popconfirm>
-            </DataTable.Oper>
-      },
+      width: 180,
+      render: (text, record) =>
+          <DataTable.Oper style={{ textAlign: 'center' }}>
+            <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>
+            <Divider type="vertical" />
+            <a onClick={() => handleEditClick(record, 'edit')}>编辑</a>
+            <Divider type="vertical" />
+            <Popconfirm
+              title="确定要删除吗？"
+              okText="确定"
+              cancelText="取消"
+              onConfirm={() => handleDeleteClick(record)}
+            >
+              <a>删除</a>
+            </Popconfirm>
+          </DataTable.Oper>
     },
   ];
-
-  const dataTableProps = {
-    columns,
-    rowKey: 'id',
-    showNum: true,
-    dataProp: "list",
-    loading,
-    isScroll: true,
-    alternateColor: true,
-    dataItems: listData,
-    selectType: 'checkbox',
-    rowClassName: record =>
-      cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' }),
-    selectedRowKeys,
-    // onChange: this.pageChange,
-    onSelect: () => handleSelectRows,
-    disabled: { status: ['9999', '0001'] },
-  };
 
   return (
     <>
@@ -237,7 +207,7 @@ export default (props) => {
         )}
       </div>
       <div className="eva-body">
-        <DataTable {...dataTableProps} bordered pagination />;
+        <Table {...tableProps} rowKey={record => record.id} columns={columns}/>;
       </div>
     </>
   )

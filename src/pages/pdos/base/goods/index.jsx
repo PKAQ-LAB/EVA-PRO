@@ -10,13 +10,12 @@ export default () => {
   // 初始化数据
   const [operateType, setOperateType] = useState("");
   const [currentItem, setCurrentItem] = useState({});
-  const [listData, setListData] = useState({});
   const dict = useSelector(state => state.global.dict);
 
-  const { run, pagination } = useRequest(list, {
+  const { run, tableProps } = useRequest(list, {
     paginated: true,
-    onSuccess: (res) => {
-      setListData(res.data);
+    formatResult: (res) => {
+      return res.data;
     }
   })
 
@@ -31,8 +30,7 @@ export default () => {
     dict,
     setCurrentItem,
     setOperateType,
-    listData,
-    setListData,
+    tableProps,
   }
 
   // 表单数据
@@ -41,7 +39,6 @@ export default () => {
     dict,
     operateType,
     currentItem,
-    setListData,
     setOperateType
   }
 
