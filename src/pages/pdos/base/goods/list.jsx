@@ -12,11 +12,6 @@ export default (props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
 
-  // const fetch = (params) => {
-  //   list(params).then(res => {
-  //     setListData(res.data);
-  // })
-  // }
    // 编辑/查看
   const handleEditClick = (record, operate) => {
     if (record.id) {
@@ -199,6 +194,7 @@ export default (props) => {
     columns,
     rowKey: 'id',
     showNum: true,
+    dataProp: "list",
     loading,
     isScroll: true,
     alternateColor: true,
