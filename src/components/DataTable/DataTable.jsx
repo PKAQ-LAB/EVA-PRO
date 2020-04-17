@@ -101,6 +101,7 @@ export default class DataTable extends Component {
       className,
       columns,
       dataItems,
+      dataProp = 'list',
       showNum,
       alternateColor,
       onChange,
@@ -213,7 +214,7 @@ export default class DataTable extends Component {
           bodyStyle={{ overflowX: 'auto' }}
           columns={cols}
           pagination={pagination ? paging : false}
-          dataSource={dataItems ? dataItems.records || dataItems.list: []}
+          dataSource={dataItems ? dataItems[dataProp] : []}
           onChange={this.handleTableChange}
           rowKey={this.rk}
           {...otherProps}

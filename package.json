@@ -83,6 +83,7 @@
     "uglifyjs-webpack-plugin": "2.2.0",
     "umi": "^3.1.1",
     "umi-request": "^1.2.19",
+    "@umijs/hooks": "1.9.1",
     "universal-cookie": "^4.0.3",
     "use-merge-value": "^1.0.1",
     "xlsx": "^0.15.6"

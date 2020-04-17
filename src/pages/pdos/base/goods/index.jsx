@@ -13,7 +13,8 @@ export default () => {
   const [listData, setListData] = useState({});
   const dict = useSelector(state => state.global.dict);
 
-  const { run } = useRequest(list, {
+  const { run, pagination } = useRequest(list, {
+    paginated: true,
     onSuccess: (res) => {
       setListData(res.data);
     }
