@@ -86,6 +86,23 @@ body,
     .ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
       border-top: 5px solid #1da9ff;
     }
+
+    .alternate-table {
+      table tbody {
+        background: #fff;
+        width: 100%;
+        tr:nth-child(odd) {
+          background: #fff;
+        }
+        tr:nth-child(even) {
+          background: #f5f5f5;
+        }
+        tr:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
     // .ant-table {
     //   min-height: 496px !important;
     // }
@@ -98,9 +115,6 @@ body,
       height: 36px;
     }
 
-    .ant-table-row:hover {
-      cursor: pointer;
-    }
     .ant-table-tbody > tr > td {
       padding: 12px;
     }

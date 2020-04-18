@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Alert, Button, Divider, Popconfirm, Input, Table } from 'antd';
+import cx from 'classnames';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import TreeSelector from '@/components/TreeSelector';
 import DataTable from '@/components/DataTable';
@@ -223,7 +224,7 @@ export default (props) => {
           />
         )}
       </div>
-      <div className="eva-body">
+      <div className={cx("eva-body","alternate-table")}>
         <Table
           {...tableProps}
           columns={columns}
