@@ -29,25 +29,25 @@ export default class AOEForm extends Component {
   };
 
   // 校验编码唯一性
-  checkCode = (rule, value, callback) => {
-    const { getFieldValue } = this.props.form;
+  checkCode = async (rule, value) => {
+    const { getFieldValue } = this.formRef.current;
     const that = this;
     const code = getFieldValue('code');
     const { currentItem } = this.props;
     if (currentItem && currentItem.code && value === currentItem.code) {
-      return callback();
+      return Promise.resolve();
     }
     const data = { code };
-    that.props
+    await that.props
       .dispatch({
         type: 'category/checkUnique',
         payload: data,
       })
       .then(r => {
         if (r.success) {
-          return callback();
+          return Promise.resolve();
         }
-        return callback('该分类编码已存在');
+        return Promise.reject(r.message);
       });
   };
 
@@ -102,10 +102,10 @@ export default class AOEForm extends Component {
           {/* 第一行 */}
           <FormItem label="分类编码"
                     name="code"
+                    hasFeedback
+                    validateTrigger='onBlur'
                     rules={[{ required: true,
-                              message: '请输入分类编码',
-                              // validateTrigger: 'onBlur',
-                              // validator: this.checkCode
+                              validator: this.checkCode
                           }]}>
             <Input />
           </FormItem>
