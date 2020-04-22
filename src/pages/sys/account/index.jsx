@@ -1,124 +1,125 @@
-import React from 'react';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { useRequest } from '@umijs/hooks';
+import { LockOutlined, UnlockOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Form, Input, Button, Alert, Tree } from 'antd';
-import { connect } from 'umi';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import SideLayout from '@/components/SideLayout';
 import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';
+import { listUser, listOrg, listRole, lockUser, delUser } from './services/accountSvc';
 
-@connect(state => ({
-  account: state.account,
-}))
-export default class extends React.PureComponent {
-  formRef = React.createRef();
+export default () => {
 
-  // 组件加载完成后加载数据
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'account/fetch',
-    });
+  // 初始化数据
+  const [ operateType, setOperateType ] = useState("");
+  const [ roleModal, setRoleModal, ] = useState("");
+
+  const [currentItem, setCurrentItem] = useState({});
+  const [ orgs, setOrgs ] = useState([]);
+  const [ roles, setRoles ] = useState([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [form] = Form.useForm();
+
+  const { run, tableProps, loading } = useRequest(listUser, {
+    paginated: true,
+    formatResult: (res) => {
+      return res.data;
+    }
+  })
+
+  useEffect(() => {
+    listOrg().then((res) => {
+      setOrgs(res.data);
+    })
+    listRole().then((res) => {
+      setRoles(res.data);
+    })
+  }, []);
+
+
+  // 列表属性
+  const listProps = {
+    roles,
+    setRoleModal,
+    selectedRowKeys,
+    setSelectedRowKeys,
+    fetch: run,
+    setCurrentItem,
+    setOperateType,
+    tableProps,
   }
 
-  // 解锁/锁定
-  handleLockSwitch = status => {
-    const {
-      account: { selectedRowKeys },
-    } = this.props;
-    this.props.dispatch({
-      type: 'account/lockSwitch',
-      payload: {
-        param: selectedRowKeys,
-        status,
-      },
-    });
+  // 表单属性
+  const formPorps = {
+    roles,
+    orgs,
+    operateType,
+    fetch: run,
+    currentItem,
+    setOperateType
+  }
+
+  // 权限弹窗属性
+  const roleModalProps = {
+    roleModal,
+    setRoleModal,
+    roles,
+    currentItem
+  }
+
+    // 解锁/锁定
+  const handleLockSwitch = status => {
+    lockUser({
+      param: selectedRowKeys,
+      status,
+    })
   };
 
   // 搜索事件
-  handleSearch = e => {
-    e.preventDefault();
-
-    const { dispatch } = this.props;
-    const { validateFields } = this.formRef.current;
-    // 表单验证
+  const handleSearch = () => {
+    const { validateFields } = form;
     validateFields().then(values => {
-      dispatch({
-        type: 'account/fetchUser',
-        payload: { ...values },
-      });
+      run({...values})
     });
   };
 
   // 重置事件
-  handleFormReset = () => {
-    const { dispatch } = this.props;
-    const { resetFields } = this.formRef.current;
+  const handleFormReset = () => {
+    const { resetFields } = form;
     resetFields();
-
-    dispatch({
-      type: 'account/fetchUser',
-      payload: {},
-    });
-  };
-
-  // 清除选择
-  cleanSelectedKeys = () => {
-    this.props.dispatch({
-      type: 'account/updateState',
-      payload: { selectedRowKeys: [] },
-    });
+    run();
   };
 
   // 树节点选择
-  handleTreeSelect = selectedKeys => {
-    const { dispatch } = this.props;
+  const handleTreeSelect = selectedKeys => {
     const values = {
       deptId: selectedKeys[0],
     };
-    dispatch({
-      type: 'account/fetchUser',
-      payload: values,
-    });
+    run(values);
   };
 
   // 新增窗口
-  handleModalVisible = () => {
-    this.props.dispatch({
-      type: 'account/updateState',
-      payload: {
-        modalType: 'create',
-        currentItem: {},
-      },
-    });
+  const handleModalVisible = () => {
+    setCurrentItem({});
+    setOperateType("create");
   };
 
   // 批量删除
-  handleRemoveClick = () => {
-    const { selectedRowKeys } = this.props.account;
-
+  const handleRemoveClick = () => {
     if (!selectedRowKeys) return;
-
-    this.props.dispatch({
-      type: 'account/remove',
-      payload: {
-        param: selectedRowKeys,
-      },
-    });
+    delUser({ param: selectedRowKeys, })
   };
 
   // 渲染左侧树
-  renderTree() {
-    const { orgs } = this.props.account;
-    return <Tree showLine blockNode onSelect={this.handleTreeSelect} treeData={orgs} />;
+  const renderTree = () => {
+    return <Tree showLine blockNode onSelect={(selectedKeys) => handleTreeSelect(selectedKeys)} treeData={orgs} />;
   }
 
-  // 操作按钮
-  renderButton(selectedRowKeys) {
+    // 操作按钮
+  const renderButton = () => {
     return <>
-      <Button type="primary" onClick={() => this.handleModalVisible(true, 'create')}>
+      <Button type="primary" onClick={() => handleModalVisible(true, 'create')}>
         新增用户
       </Button>
       {selectedRowKeys.length > 0 && (
@@ -128,9 +129,9 @@ export default class extends React.PureComponent {
             <Popconfirm
               title="确定要删除所选用户吗?"
               placement="top"
-              onConfirm={this.handleRemoveClick}
+              onConfirm={() => handleRemoveClick()}
             >
-              <Button style={{ marginLeft: 8 }} type="danger" icon={<LegacyIcon type="remove" />}>
+              <Button style={{ marginLeft: 8 }} type="danger" icon={<DeleteOutlined />}>
                 删除用户
               </Button>
             </Popconfirm>
@@ -143,7 +144,7 @@ export default class extends React.PureComponent {
           <Button
             icon={<LockOutlined />}
             style={{ marginLeft: 8 }}
-            onClick={() => this.handleLockSwitch('0001')}
+            onClick={() => handleLockSwitch('0001')}
           >
             锁定
           </Button>
@@ -155,7 +156,7 @@ export default class extends React.PureComponent {
           <Button
             icon={<UnlockOutlined />}
             style={{ marginLeft: 8 }}
-            onClick={() => this.handleLockSwitch('0000')}
+            onClick={() => handleLockSwitch('0000')}
           >
             解锁
           </Button>
@@ -165,9 +166,9 @@ export default class extends React.PureComponent {
   }
 
   // 简单搜索条件
-  renderSearchForm() {
+  const renderSearchForm = () => {
     return (
-      <Form onSubmit={this.handleSearch} layout="inline" ref={this.formRef}>
+      <Form onFinish={() => handleSearch()} layout="inline" form={form}>
         <Form.Item label="帐号" name="account">
           <Input id="account-search" placeholder="输入帐号搜索" />
         </Form.Item>
@@ -178,11 +179,11 @@ export default class extends React.PureComponent {
           <Input id="account-phone-search" placeholder="输入手机号搜索" />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             查询
           </Button>
           <Divider type="vertical" />
-          <Button htmlType="reset" onClick={() => this.handleFormReset()}>
+          <Button htmlType="reset" onClick={() => handleFormReset()} loading={loading}>
             重置
           </Button>
         </Form.Item>
@@ -190,48 +191,46 @@ export default class extends React.PureComponent {
     );
   }
 
-  render() {
-    const { selectedRowKeys, modalType, roleModal } = this.props.account;
-    return (
-      <PageHeaderWrapper title="用户管理" subTitle="系统用户账号管理维护">
-        <div className="eva-ribbon">
-          {/* 操作按钮 */}
-          <div>{this.renderButton(selectedRowKeys)}</div>
-          {/* 查询条件 */}
-          <div>{this.renderSearchForm()}</div>
-        </div>
-        {/* 删除条幅 */}
-        <div className="eva-alert">
-          <Alert
-            message={
-              <div>
-                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-                {selectedRowKeys.length > 0 && (
-                  <a onClick={this.cleanSelectedKeys} style={{ marginLeft: 24 }}>
-                    清空选择
-                  </a>
-                )}
-              </div>
-            }
-            type="info"
-            showIcon
-          />
-        </div>
+  return (
+    <PageHeaderWrapper title="用户管理" subTitle="系统用户账号管理维护">
+      <div className="eva-ribbon">
+        {/* 操作按钮 */}
+        <div>{renderButton()}</div>
+        {/* 查询条件 */}
+        <div>{renderSearchForm()}</div>
+      </div>
+      {/* 删除条幅 */}
+      <div className="eva-alert">
+        <Alert
+          message={
+            <div>
+              已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+              {selectedRowKeys.length > 0 && (
+                <a onClick={setSelectedRowKeys([])} style={{ marginLeft: 24 }}>
+                  清空选择
+                </a>
+              )}
+            </div>
+          }
+          type="info"
+          showIcon
+        />
+      </div>
 
-        <div className="eva-body">
-          <SideLayout
-            title="所属部门"
-            layoutStyle={{ minHeight: 'calc(100vh - 332px)' }}
-            body={this.renderTree()}
-          >
-            {/* 用户列表 */}
-            <List searchForm={this.formRef.current} />
-          </SideLayout>
-        </div>
-        {/* 新增窗口 */}
-        {modalType !== '' && <AOEForm />}
-        {roleModal !== '' && <RoleModal />}
-      </PageHeaderWrapper>
-    );
-  }
+      <div className="eva-body">
+        <SideLayout
+          title="所属部门"
+          layoutStyle={{ minHeight: 'calc(100vh - 332px)' }}
+          body={renderTree()}
+        >
+          {/* 用户列表 */}
+          <List searchForm={form} {...listProps}/>
+        </SideLayout>
+      </div>
+      {/* 新增窗口 */}
+      {operateType !== '' && <AOEForm {...formPorps} />}
+      {roleModal !== '' && <RoleModal {...roleModalProps}/>}
+    </PageHeaderWrapper>
+  );
+
 }
