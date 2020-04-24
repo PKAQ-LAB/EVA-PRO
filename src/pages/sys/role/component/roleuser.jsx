@@ -1,108 +1,108 @@
-import React, { PureComponent } from 'react';
-import { Modal, Tree, Card, Row, Col } from 'antd';
-import { connect } from 'umi';
-import DataTable from '@/components/DataTable';
+import React, { useState, useEffect } from 'react';
+import { Modal, Tree, Card, Row, Col, Table } from 'antd';
 import cs from './roleuser.less';
+import { listUser, saveUser, listOrg } from '../services/roleSvc';
 
 // 授权用户窗口
-@connect(state => ({
-  role: state.role,
-  loading: state.loading.role,
-}))
-export default class RoleUser extends PureComponent {
+export default (props) => {
+  const [ checked, setChecked ] = useState([]);
+  const [ records, setRecords ] = useState([]);
+  const [ orgs, setOrgs ] = useState([]);
+  const [ loading, setLoading ] = useState(false);
+
+  const { fetch, operateType, setOperateType, roleId, setRoleId } = props;
+
+  useEffect( () => {
+    if(roleId){
+      listOrg().then(res => {
+        setOrgs(res.data);
+      })
+
+      listUser({roleId}).then((res) => {
+        setChecked(res.data.checked);
+        setRecords(res.data.users);
+      })
+    } else {
+      setChecked([]);
+      setRecords([]);
+    }
+  }, [roleId]);
+
+  const handleClose = () => {
+    setOperateType("");
+    setRoleId(null);
+  }
+
   // 树节点选择
-  handleTreeSelect = selectedKeys => {
-    const { roleId } = this.props.role;
+  const handleTreeSelect = selectedKeys => {
+    console.info(selectedKeys);
+
     const values = {
       roleId,
       deptId: selectedKeys[0],
     };
-    this.props.dispatch({
-      type: 'role/listUserByDept',
-      payload: values,
-    });
-  };
 
-  // 关闭窗口
-  handleCancel = () => {
-    this.props.dispatch({
-      type: 'role/updateState',
-      payload: {
-        operateType: '',
-      },
-    });
+    listUser(values).then((res) => {
+      setChecked(res.data.checked);
+      setRecords(res.data.users);
+    })
   };
 
   // 保存模块关系
-  handleSubmit = () => {
-    const { roleId } = this.props.role;
-    const { checked } = { ...this.props.role.users };
-
+  const handleSubmit = () => {
+    setLoading(true);
     let users = [];
     if (checked && checked.length > 0) {
       users = checked.map(item => ({ userId: item }));
     }
-    this.props.dispatch({
-      type: 'role/saveUser',
-      payload: {
-        id: roleId,
-        users,
-      },
-    });
+    saveUser({
+      id: roleId,
+      users,
+    }).then(() => {
+      setLoading(false);
+      setOperateType("");
+      fetch();
+    })
   };
 
   // 保存已选
-  handleSelectRows = checkedKeys => {
-    this.props.dispatch({
-      type: 'role/updateState',
-      payload: {
-        users: {
-          ...this.props.role.users,
-          checked: checkedKeys,
-        },
-      },
-    });
+ const handleSelectRows = checkedKeys => {
+    setChecked(checkedKeys);
   };
-
-  render() {
-    const { loading } = this.props;
-    const { operateType, users, orgs } = this.props.role;
 
     const columns = [
       {
         title: '姓名',
-        name: 'name',
-        tableItem: {},
+        dataIndex: 'name',
       },
       {
         title: '账号',
-        name: 'account',
-        tableItem: {},
+        dataIndex: 'account',
       },
       {
         title: '所属部门',
-        name: 'deptName',
-        tableItem: {},
+        dataIndex: 'deptName',
       },
       {
         title: '手机',
-        name: 'tel',
-        tableItem: {},
+        dataIndex: 'tel',
       },
     ];
+
+    const rowSelection = {
+      selectedRowKeys: checked,
+      onChange: (record) => handleSelectRows(record),
+    };
 
     const dataTableProps = {
       columns,
       rowKey: 'id',
-      loading,
       showNum: true,
       isScroll: true,
       alternateColor: true,
-      selectType: 'checkbox',
-      selectedRowKeys: users.checked,
-      dataItems: { records: users.list },
-      onChange: this.pageChange,
-      onSelect: this.handleSelectRows,
+      rowSelection,
+      selectedRowKeys: checked,
+      dataSource:records,
     };
 
     return (
@@ -114,8 +114,8 @@ export default class RoleUser extends PureComponent {
         okText="保存"
         cancelText="关闭"
         centered
-        onOk={() => this.handleSubmit()}
-        onCancel={() => this.handleCancel()}
+        onOk={() => handleSubmit()}
+        onCancel={() => handleClose()}
         width="60%"
         bodyStyle={{ overflowY: 'auto', overflowX: 'auto', padding: 0 }}
       >
@@ -125,17 +125,16 @@ export default class RoleUser extends PureComponent {
               <Tree
                 showLine
                 blockNode
-                onSelect={this.handleTreeSelect}
+                onSelect={(sr) => handleTreeSelect(sr)}
                 treeData={orgs}
                 style={{ height: 456, maxHeight: 456, overflowY: 'auto' }}
               />
             </Card>
           </Col>
           <Col span={18}>
-            <DataTable {...dataTableProps} scroll={{ y: 466 }} className={cs.table} />
+            <Table {...dataTableProps} scroll={{ y: 466 }} className={cs.table} />
           </Col>
         </Row>
       </Modal>
     );
-  }
 }

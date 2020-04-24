@@ -1,135 +1,110 @@
-import React from 'react';
-import { connect } from 'umi';
+import React, { useState } from 'react';
+import { useSelector } from 'umi';
 import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
 import DictSelector from '@/components/DictSelector';
+import { checkUnique, listOrg, saveRole } from './services/roleSvc';
 
-@connect(state => ({
-  global: state.global,
-  role: state.role,
-  submitting: state.loading.effects['role/save'],
-}))
-export default class AOEForm extends React.PureComponent {
-  formRef = React.createRef();
+export default (props) => {
+  const [ form ] = Form.useForm();
+  const dict = useSelector(state => state.global.dict);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      showDept: false,
-    };
-  }
+  const [ orgs, setOrgs ] = useState([]);
+  const [ showDepts, setShowDepts ] = useState(false);
+  const [ submitting, setSubmitting ] = useState(false);
 
-  componentWillMount() {
-    const { currentItem } = this.props.role;
+  const title = { create: '新增', edit: '编辑', view: '查看' };
+
+  // 渲染界面
+  const formItemLayout = {
+    labelCol: { flex: '0 0 120px' },
+    wrapperCol: { flex: 'auto' },
+  };
+
+  const { fetch, currentItem, modalType, setModalType } = props;
+
+  React.useEffect(() => {
     if (currentItem.dataPermissionType) {
       currentItem.dataPermissionType = currentItem.dataPermissionType || '0000';
-      this.handleDataPermissionChange(currentItem.dataPermissionType);
+      if(currentItem.dataPermissionType === "0003"){
+        listOrg().then((res) => {
+          if(res.success) {
+           setOrgs(res.data);
+          }
+        });
+      }
     }
 
     if (currentItem.dataPermissionDeptid && typeof currentItem.dataPermissionDeptid === 'string') {
       currentItem.dataPermissionDeptid = currentItem.dataPermissionDeptid.split(',');
     }
-  }
+  }, [currentItem]);
 
   // 校验角色编码唯一性
   // eslint-disable-next-line consistent-return
-  checkCode = async (rule, value) => {
+  const checkCode = async (rule, code) => {
 
-    const { currentItem } = this.props.role;
-
-    if (currentItem && currentItem.id && value === currentItem.code) {
+    if (currentItem && currentItem.id && code === currentItem.code) {
       return Promise.resolve();
     }
 
-    this.props
-      .dispatch({
-        type: 'role/checkUnique',
-        payload: {
-          code: value
-        },
-      })
-      .then(r => {
-        if (r.code === 0) {
-          return Promise.resolve();
-        }
-        return Promise.reject(r.message);
-      });
-  };
-
-  // 关闭窗口
-  handleCloseForm = () => {
-    this.props.dispatch({
-      type: 'role/updateState',
-      payload: {
-        modalType: '',
-      },
-    });
+    checkUnique({code}).then(r => {
+      if (r.success) {
+        return Promise.resolve();
+      }
+      return Promise.reject(r.message);
+    })
   };
 
   // 数据权限
-  handleDataPermissionChange = v => {
-    this.setState({
-      showDept: v === '0003',
-    });
-    this.props.dispatch({
-      type: 'role/listDepts',
+ const handleDataPermissionChange = v  => {
+   console.info(v);
+    if(v === "0003") {
+      setShowDepts(true);
+    }
+    listOrg().then((res) => {
+      if(res.success) {
+       setOrgs(res.data);
+      }
     });
   };
 
   // 保存
-  handleSaveClick = () => {
-    const { currentItem } = this.props.role;
-    const { validateFields } = this.formRef.current;
+  const handleSaveClick = () => {
+    const { validateFields } = form;
+
     validateFields().then( values => {
-      const data = {
-        ...values
-      };
+      const formData = { ...values };
 
       if (currentItem && currentItem.id) {
-        data.id = currentItem.id;
+        formData.id = currentItem.id;
       }
-      if (data.dataPermissionDeptid) {
-        data.dataPermissionDeptid = data.dataPermissionDeptid.join(',');
+      if (values.dataPermissionDeptid) {
+        formData.dataPermissionDeptid = values.dataPermissionDeptid.join(',');
       }
-
-      this.props.dispatch({
-        type: 'role/save',
-        payload: data,
-      });
+      setSubmitting(true);
+      saveRole(formData).then((res) => {
+        setSubmitting(false);
+        if(res.success){
+          setModalType("");
+          fetch();
+        }
+      })
     })
   };
 
-  // 渲染界面
-  render() {
-    const { dict } = this.props.global;
-    const { showDept } = this.state;
-    const { modalType, currentItem, orgs } = this.props.role;
-    const { submitting } = this.props;
-
-
-    const title = { create: '新增', edit: '编辑', view: '查看' };
-
-    const formItemLayout = {
-      labelCol: { span: 8 },
-      wrapperCol: { span: 16 },
-    };
-
-    const formRowOne = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
-    };
 
     return (
       <Modal
         maskClosable={false}
         confirmLoading={submitting}
-        onCancel={() => this.handleCloseForm()}
+        onCancel={() => setModalType("")}
         visible={modalType !== ''}
-        width={600}
+        width={700}
         centered
-        onOk={() => this.handleSaveClick()}
+        onOk={() => handleSaveClick()}
         title={`${title[modalType] || ''}角色`}
       >
-        <Form {...formItemLayout} colon initialValues={currentItem} ref={this.formRef} >
+        <Form {...formItemLayout} colon initialValues={currentItem} form={form}>
           <Row>
             <Col span={12}>
               <Form.Item
@@ -144,15 +119,16 @@ export default class AOEForm extends React.PureComponent {
                   label="角色编码"
                   name="code"
                   validateTrigger="onBlur"
+                  hasFeedback
                   rules={[
                     {
                       required: true,
-                      message: '角色编码格式错误,仅允许使用(4-30位)字母或数字.',
+                      message: '仅允许使用(4-30位)字母或数字.',
                       whitespace: true,
                       pattern: /^[0-9a-zA-Z_]{4,30}$/,
                     },
                     {
-                      validator: this.checkCode,
+                      validator: checkCode,
                     }
                   ]}>
                 <Input min={4} max={30} />
@@ -161,26 +137,22 @@ export default class AOEForm extends React.PureComponent {
           </Row>
 
           <Form.Item label="角色描述"
-                     name="remark"
-                     {...formRowOne}>
+                     name="remark">
             <Input.TextArea max={60} />
           </Form.Item>
 
           <Form.Item label="数据权限"
                      name="dataPermissionType"
-                     rules={[{required: true,}]}
-                     {...formRowOne} >
+                     rules={[{required: true,}]}>
             <DictSelector
               data={dict.data_permission}
-              onChange={this.handleDataPermissionChange}
-              showall={false}
+              onChange={(v) => handleDataPermissionChange(v)}
             />
           </Form.Item>
 
-          {(showDept || currentItem.dataPermissionType === '0003') && (
+          {(showDepts || currentItem.dataPermissionType === '0003') && (
              <Form.Item label="选择部门"
-                        name="dataPermissionDeptid"
-                        {...formRowOne}>
+                        name="dataPermissionDeptid">
               <TreeSelect
                 treeData={orgs}
                 treeCheckable
@@ -192,5 +164,4 @@ export default class AOEForm extends React.PureComponent {
         </Form>
       </Modal>
     );
-  }
 }
