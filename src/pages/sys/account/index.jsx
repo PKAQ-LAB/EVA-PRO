@@ -37,7 +37,6 @@ export default () => {
     })
   }, []);
 
-
   // 列表属性
   const listProps = {
     roles,

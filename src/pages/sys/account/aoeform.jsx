@@ -44,7 +44,7 @@ export default (props) => {
 
    // 校验账号唯一性
   // eslint-disable-next-line consistent-return
-  const checkAccount = (rule, value) => {
+  const checkAccount = async (rule, value) => {
     const { getFieldValue } = form;
     const account = getFieldValue('account');
     if (currentItem && currentItem.id && value === currentItem.account) {
@@ -55,9 +55,7 @@ export default (props) => {
       id: currentItem ? currentItem.id : '',
     };
 
-    checkUnique({
-      data
-    }).then((r) => {
+    await checkUnique(data).then((r) => {
       if (r.success) {
         return Promise.resolve();
       }
@@ -175,6 +173,7 @@ export default (props) => {
                 </span>
               }
               name="account"
+              hasFeedback
               rules={[{
                 required: true,
                 message: '账号格式错误或已存在',
