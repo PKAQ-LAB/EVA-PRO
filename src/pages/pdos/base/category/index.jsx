@@ -1,22 +1,42 @@
-import React from 'react';
-import { connect } from 'umi';
+import React, { useState } from 'react';
+import { useRequest } from '@umijs/hooks';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
+import { listCategory } from './services/categorySvc';
 
-@connect(state => ({
-  category: state.category,
-}))
-export default class Category extends React.PureComponent {
-  render() {
+export default () => {
 
-    const { modalType } = this.props.category;
+  const [operateType, setOperateType] = useState("");
+  const [currentItem, setCurrentItem] = useState({});
 
-    return (
-      <PageHeaderWrapper title="商品分类编码">
-          <List />
-          {modalType !== '' && <AOEForm key="category_aoeform" />}
-      </PageHeaderWrapper>
-    );
+  const { run, data, loading } = useRequest(listCategory, {
+    formatResult: (res) => {
+      return res.data;
+    }
+  })
+
+  // 列表属性
+  const listProps = {
+    fetch: run,
+    setCurrentItem,
+    setOperateType,
+    data,
+    loading
   }
+
+  const formProps = {
+    operateType,
+    setOperateType,
+    currentItem,
+    fetch,
+    data
+  }
+
+  return (
+    <PageHeaderWrapper title="商品分类编码">
+        <List {...listProps} />
+        {operateType !== '' && <AOEForm {...formProps} />}
+    </PageHeaderWrapper>
+  );
 }
