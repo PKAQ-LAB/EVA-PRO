@@ -11,11 +11,6 @@ export default (props) => {
   const [form] = Form.useForm();
   const title = { create: '新增', edit: '编辑' };
 
-  // 关闭
-  const handleOnClose = () => {
-    setOperateType("");
-  }
-
   // 保存
   const handleSaveClick = () => {
     const { validateFields } = form;
@@ -48,10 +43,7 @@ export default (props) => {
     ...formItemLayout,
      labelAlign:"left",
      form,
-     initialValues: {
-      id: currentItem.id,
-      name: currentItem.name
-     }
+     initialValues: {...currentItem}
   }
 
     return (
@@ -131,7 +123,7 @@ export default (props) => {
       maskClosable={false}
       loading={loading}
       centered
-      onCancel={() => handleOnClose()}
+      onCancel={() => setOperateType("")}
       visible={operateType !== ''}
       width="50%"
       onOk={() => handleSaveClick()}

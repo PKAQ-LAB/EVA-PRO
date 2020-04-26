@@ -21,15 +21,12 @@ export default (props) => {
     const { validateFields } = form;
 
     validateFields().then(values => {
-      const data = {
-        ...values,
-      };
 
       const param = {};
-      param.begin = data.operateDatetime
-        ? moment(data.operateDatetime[0]).format('YYYY-MM-DD')
+      param.begin = values.operateDatetime
+        ? moment(values.operateDatetime[0]).format('YYYY-MM-DD')
         : '';
-      param.end = data.operateDatetime ? moment(data.operateDatetime[1]).format('YYYY-MM-DD') : '';
+      param.end = values.operateDatetime ? moment(values.operateDatetime[1]).format('YYYY-MM-DD') : '';
 
       fetch(param);
     });

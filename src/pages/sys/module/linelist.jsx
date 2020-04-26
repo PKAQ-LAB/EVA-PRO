@@ -6,7 +6,7 @@ import LineAoeForm from './lineaoeform';
 
 /** 资源明细 */
 export default (props) => {
-  const { lineData = [], setLineData, currentItem } = props;
+  const { lineData = [], setLineData } = props;
   const [operate, setOperate] = useState("");
   const [editIndex, setEditIndex] = useState("");
 
@@ -31,7 +31,8 @@ export default (props) => {
 
   // 删除明细
   const handleDeleteClick = index => {
-    currentItem.resources.splice(index, 1);
+    lineData.splice(index, 1);
+    setLineData(lineData);
   };
 
   // 修改编辑
@@ -75,7 +76,7 @@ export default (props) => {
     alternateColor: true,
     rowClassName: record =>
       cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' }),
-    dataSource: lineData ,
+    dataSource: lineData,
   };
 
   return (

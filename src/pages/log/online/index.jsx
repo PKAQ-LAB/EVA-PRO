@@ -7,7 +7,7 @@ import copy from 'copy-to-clipboard';
 
 import { fetch } from './services/onlineSvc';
 
-const OnlineUsers = () => {
+export default () => {
     const columns = [
       {
         title: '用户名',
@@ -87,4 +87,3 @@ const OnlineUsers = () => {
     )
 }
 
-export default OnlineUsers;

@@ -35,8 +35,6 @@ export default (props) => {
 
   // 树节点选择
   const handleTreeSelect = selectedKeys => {
-    console.info(selectedKeys);
-
     const values = {
       roleId,
       deptId: selectedKeys[0],

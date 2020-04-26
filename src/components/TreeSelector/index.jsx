@@ -33,6 +33,7 @@ export default class TreeSelector extends PureComponent {
 
   componentDidMount() {
     const { url, showAll = true, data } = this.props;
+
     if (url) {
       request(url).then(response => {
         if (response && response.success) {
@@ -57,7 +58,7 @@ export default class TreeSelector extends PureComponent {
   }
 
   render() {
-    const { treeData } = this.state;
+    const { treeData = [] } = this.state;
     const { search = false, keys, value } = this.props;
 
     let data = treeData;
@@ -68,11 +69,11 @@ export default class TreeSelector extends PureComponent {
         data = treeSelectTravelData(treeData, valueKey, titleKey, childrenKey);
     }
 
-    return <TreeSelect
+    return treeData && treeData.length > 0? <TreeSelect
             treeData={data}
             value={treeData ? value : undefined}
             {...(search && treeSelectSearchProps)}
             {...this.props}
-            />;
+            />: null
   }
 }

@@ -3,23 +3,18 @@ import { Form, Alert, Button, Divider, Popconfirm, Input, Table } from 'antd';
 import cx from 'classnames';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import TreeSelector from '@/components/TreeSelector';
-import DataTable from '@/components/DataTable';
 import { get, del } from './services/goodsSvc';
 
 export default (props) => {
 
-  const { fetch, setOperateType, setCurrentItem, dict, loading, tableProps } = props;
+  const { setOperateType, setCurrentItem, dict, fetch, loading, tableProps } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
 
-  const handleSelect = (rows) => {
-    setSelectedRowKeys(rows);
-  }
-
   const rowSelection = {
     selectedRowKeys,
-    onSelect: rows => handleSelect(rows),
-    onChange: rows => handleSelect(rows)
+    onSelect: rows => setSelectedRowKeys(rows),
+    onChange: rows => setSelectedRowKeys(rows)
   };
 
    // 编辑/查看
@@ -40,11 +35,6 @@ export default (props) => {
       });
     }
   };
-
-  // 选择
-  const handleSelectRows = rows => {
-    setSelectedRowKeys(rows);
-  }
 
   // 新增
   const handleCreateClick = () => {
@@ -179,7 +169,7 @@ export default (props) => {
     }, {
       width: 180,
       render: (_text, record) =>
-          <DataTable.Oper style={{ textAlign: 'center' }}>
+          <>
             <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>
             <Divider type="vertical" />
             <a onClick={() => handleEditClick(record, 'edit')}>编辑</a>
@@ -192,7 +182,7 @@ export default (props) => {
             >
               <a>删除</a>
             </Popconfirm>
-          </DataTable.Oper>
+          </>
     },
   ];
 
@@ -213,7 +203,7 @@ export default (props) => {
               <div>
                 已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
                 {selectedRowKeys.length > 0 && (
-                  <a onClick={() => handleSelectRows([])} style={{ marginLeft: 24 }}>
+                  <a onClick={() => setSelectedRowKeys([])} style={{ marginLeft: 24 }}>
                     清空选择
                   </a>
                 )}

@@ -71,6 +71,9 @@ export function moudleFormatter(data, parentPath = '/') {
  * @param parentPath
  */
 export function dictFilter(data, searchText) {
+  if(!data){
+    return [];
+  }
   const tempData = loadsh.cloneDeep(data);
 
   return tempData.filter(i => {

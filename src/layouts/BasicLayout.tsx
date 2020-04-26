@@ -32,7 +32,7 @@ const footerRender: BasicLayoutProps['footerRender'] = () => (
   <>
     <footer
       style={{
-        position: 'absolute',
+        position: 'fixed',
         bottom: 0,
         width: '100%',
         backgroundColor: '#fff',
