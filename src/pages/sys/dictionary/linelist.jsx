@@ -1,119 +1,101 @@
-import React from 'react';
-import { Button, Divider, Popconfirm } from 'antd';
+import React, { useState } from 'react';
+import { Table, Button, Divider, Popconfirm } from 'antd';
 
-import { connect } from 'umi';
-import DataTable from '@/components/DataTable';
 import LineAoeForm from './lineaoeform';
 import css from './linelist.less';
 
 /** 字典明细 */
-@connect(state => ({
-  dict: state.dict,
-}))
-export default class LineList extends React.PureComponent {
+export default (props) => {
+  const [modalType, setModalType] = useState("");
+  const [editIndex, setEditIndex] = useState("");
+
+  const { lineData = [], setLineData, opertateType } = props;
+
+  console.info(lineData);
+
+  // 表单属性
+  const formPorps = {
+    modalType, setModalType, lineData, setLineData, editIndex, setEditIndex
+  }
+
   // 新增明细
-  handleLineAdd = () => {
-    this.props.dispatch({
-      type: 'dict/updateState',
-      payload: {
-        modalType: 'create',
-        editIndex: '',
-      },
-    });
+  const handleLineAdd = () => {
+    setModalType("create");
+    setEditIndex("");
   };
 
   // 删除明细
-  handleDeleteClick = index => {
-    let { lineData = [] } = this.props.dict;
-    lineData = lineData.splice(index, 1);
-
-    this.props.dispatch({
-      type: 'dict/updateState',
-      payload: { lineData },
-    });
+  const handleDeleteClick = index => {
+    lineData.splice(index, 1);
+    setLineData(lineData);
   };
 
   // 修改编辑
-  handleEditClick = index => {
-    this.props.dispatch({
-      type: 'dict/updateState',
-      payload: {
-        modalType: 'edit',
-        editIndex: index,
-      },
-    });
+  const handleEditClick = index => {
+    setModalType("edit");
+    setEditIndex(index);
   };
 
-  render() {
-    const { modalType, operate } = this.props.dict;
-    const { lineData = [] } = this.props.dict;
-
-    const columns = [
-      {
-        title: '编码',
-        name: 'keyName',
-        tableItem: {},
-      },
-      {
-        title: '描述',
-        name: 'keyValue',
-        tableItem: {},
-      },
-      {
-        title: '排序',
-        name: 'orders',
-        tableItem: {},
-      },
-      {
-        title: '操作',
-        tableItem: {
-          render: (text, record, index) =>
-            !!operate &&
-            operate !== 'view' && (
-              <DataTable.Oper>
-                <Divider type="vertical" />
-                <a onClick={() => this.handleEditClick(index)}>编辑</a>
-                <Divider type="vertical" />
-                <Popconfirm
-                  title="确定要删除吗？"
-                  okText="确定"
-                  cancelText="取消"
-                  onConfirm={() => this.handleDeleteClick(index)}
-                >
-                  <a>删除</a>
-                </Popconfirm>
-              </DataTable.Oper>
-            ),
-        },
-      },
-    ];
-
-    const dataTableProps = {
-      columns,
-      rowKey: 'id',
-      showNum: true,
-      isScroll: true,
-      alternateColor: true,
-      dataItems: { records: lineData },
-    };
-
-    return (
-      <>
-        <div className={css.ribbon}>
-          <div>字典明细</div>
-          <div>
-            <Button
-              type="primary"
-              onClick={() => this.handleLineAdd()}
-              disabled={operate === '' || operate === 'view'}
+  const columns = [
+    {
+      title: '编码',
+      dataIndex:  'keyName',
+    },
+    {
+      title: '描述',
+      dataIndex:  'keyValue',
+    },
+    {
+      title: '排序',
+      dataIndex:  'orders',
+    },
+    {
+      title: '操作',
+      render: (text, record, index) =>
+        !!opertateType &&
+        opertateType !== 'view' && (
+          <>
+            <Divider type="vertical" />
+            <a onClick={() => handleEditClick(index)}>编辑</a>
+            <Divider type="vertical" />
+            <Popconfirm
+              title="确定要删除吗？"
+              okText="确定"
+              cancelText="取消"
+              onConfirm={() => handleDeleteClick(index)}
             >
-              新增明细
-            </Button>
-          </div>
+              <a>删除</a>
+            </Popconfirm>
+          </>
+          ),
+    },
+  ];
+
+  const dataTableProps = {
+    columns,
+    rowKey: record => record.id,
+    showNum: true,
+    isScroll: true,
+    alternateColor: true,
+    dataSource: lineData,
+  };
+
+  return (
+    <>
+      <div className={css.ribbon}>
+        <div>字典明细</div>
+        <div>
+          <Button
+            type="primary"
+            onClick={() => handleLineAdd()}
+            disabled={opertateType === '' || opertateType === 'view'}
+          >
+            新增明细
+          </Button>
         </div>
-        <DataTable {...dataTableProps} style={{ padding: 15 }} />
-        {modalType !== '' && <LineAoeForm />}
-      </>
-    );
-  }
+      </div>
+      <Table {...dataTableProps} style={{ padding: 15 }} />
+      {modalType !== '' && <LineAoeForm {...formPorps}/>}
+    </>
+  );
 }

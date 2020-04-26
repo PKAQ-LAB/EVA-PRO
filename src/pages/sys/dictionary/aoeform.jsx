@@ -1,133 +1,125 @@
 import React from 'react';
-import { connect } from 'umi';
 import { Form, Input, Card, Row, Col, Button } from 'antd';
+import { useSelector } from 'umi';
 import DictSelector from '@/components/DictSelector'
 import LineList from './linelist';
+import { editDict } from './services/dictSvc';
 
-@connect(state => ({
-  global: state.global,
-  dict: state.dict,
-  submitting: state.loading.effects['dict/editDict'],
-}))
-export default class DictForm extends React.PureComponent {
-  formRef = React.createRef();
+export default (props) => {
+  const [form] = Form.useForm();
+  const { operateType, currentItem } = props;
 
-  componentDidUpdate(){
-    this.formRef.current.resetFields();
-  }
+  const [ submitting, setSubmitting ] = React.useState(false);
+  const [ lineData, setLineData ] = React.useState(currentItem? currentItem.lines : []);
+
+  const lineProps = { lineData, setLineData, operateType };
+
+  const dict = useSelector(state => state.global.dict);
+
+  const title = { create: '新增', edit: '编辑', view: '查看' };
+
+  const formItemLayout = {
+    labelCol: { flex: '0 0 100px' },
+    wrapperCol: { flex: 'auto' },
+  };
+
+  React.useEffect(() => {
+    setLineData(currentItem.lines);
+    form.resetFields();
+  }, [currentItem])
 
   // 保存事件
-  handleSaveClick = () => {
-    const { lineData, currentItem } = this.props.dict;
+  const handleSaveClick = () => {
 
-    const { validateFields } = this.formRef.current;
+    const { validateFields } = form;
 
+    setSubmitting(true)
     validateFields().then(values => {
-      const data = {
+      const fd = {
         ...values,
         id: currentItem.id,
       };
-      data.lines = lineData;
+      fd.lines = lineData;
 
-      this.props.dispatch({
-        type: 'dict/editDict',
-        payload: data,
-      }).then(() => {
+      editDict(fd).then(() => {
         // fix 保存后清空表单
         // form.resetFields();
+      }).finally(() => {
+        setSubmitting(false);
       });
     })
   };
 
-  render() {
-    const { submitting } = this.props;
-    const { operate, currentItem } = this.props.dict;
-
-    const { dict } = this.props.global;
-    const title = { create: '新增', edit: '编辑', view: '查看' };
-
-    const formItemLayout = {
-      labelCol: {  sm:{ span: 12 }, xs:{ span: 8 }, md:{ span: 8 }, lg:{ span: 6 } },
-      wrapperCol: {  sm:{ span: 12 }, xs:{ span: 16 }, md:{ span: 16 }, lg:{ span: 18 } },
-    };
-
-    const formRowOne = {
-      labelCol: { sm:{ span: 6 }, xs:{ span: 6 }, md:{ span: 3 } },
-      wrapperCol: { sm:{ span: 6 }, xs:{ span: 18 }, md:{ span: 21 } },
-    };
-
-    return (
-      <>
-        <Form  {...formItemLayout} colon initialValues={currentItem} ref={this.formRef}>
-          {/* 主表 */}
-          <Card
-            title={`${title[operate] || ''}字典信息`}
-            extra={
-              <Button
-                loading={submitting}
-                type="primary"
-                onClick={() => this.handleSaveClick()}
-                disabled={operate === '' || operate === 'view'}
-              >
-                保存
-              </Button>
-            }
-          >
-            <Row>
-              <Col span={12}>
+  return (
+    <>
+      <Form {...formItemLayout} colon initialValues={currentItem} form={form}>
+        {/* 主表 */}
+        <Card
+          title={`${title[operateType] || ''}字典信息`}
+          extra={
+            <Button
+              loading={submitting}
+              type="primary"
+              onClick={() => handleSaveClick()}
+              disabled={operateType === '' || operateType === 'view'}
+            >
+              保存
+            </Button>
+          }
+        >
+          <Row>
+            <Col span={12}>
+            <Form.Item
+                label="所属分类"
+                name="parentId"
+                rules={[{required: true,}]}>
+                <DictSelector
+                  data={dict.dict_type}
+                  disabled={operateType === '' || operateType === 'view'}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
               <Form.Item
-                  label="所属分类"
-                  name="parentId"
-                  rules={[{required: true,}]}>
-                  <DictSelector
-                    data={dict.dict_type}
-                    disabled={operate === '' || operate === 'view'}
-                  />
+                label="字典编码"
+                name="code"
+                rules={[{required: true,}]}>
+                <Input
+                  max={30}
+                  disabled={operateType === '' || operateType === 'view'}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="字典描述"
+                name="name"
+                rules={[{required: true,}]}>
+                <Input
+                  max={30}
+                  disabled={operateType === '' || operateType === 'view'}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Form.Item
+                  label="备注"
+                  name="remark">
+                <Input.TextArea
+                  max={200}
+                  disabled={operateType === '' || operateType === 'view'}
+                  rows={5}
+                />
                 </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={12}>
-                <Form.Item
-                  label="字典编码"
-                  name="code"
-                  rules={[{required: true,}]}>
-                  <Input
-                    max={30}
-                    disabled={operate === '' || operate === 'view'}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  label="字典描述"
-                  name="name"
-                  rules={[{required: true,}]}>
-                  <Input
-                    max={30}
-                    disabled={operate === '' || operate === 'view'}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={24}>
-                <Form.Item
-                    label="备注"
-                    {...formRowOne}
-                    name="remark">
-                  <Input.TextArea
-                    max={200}
-                    disabled={operate === '' || operate === 'view'}
-                    rows={5}
-                  />
-                  </Form.Item>
-              </Col>
-            </Row>
-          </Card>
-        </Form>
-        <LineList />
-      </>
-    );
-  }
+            </Col>
+          </Row>
+        </Card>
+      </Form>
+      <LineList {...lineProps} />
+    </>
+  );
 }

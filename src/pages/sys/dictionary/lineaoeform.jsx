@@ -1,28 +1,21 @@
 import React from 'react';
 import { Form, Input, Modal } from 'antd';
-import { connect } from 'umi';
 
+export default (props) => {
 
-@connect(state => ({
-  dict: state.dict,
-}))
-export default class DictLineForm extends React.PureComponent {
-  formRef = React.createRef();
+  const [ form ] = Form.useForm();
 
-  // 关闭窗口
-  handleCloseForm = () => {
-    this.props.dispatch({
-      type: 'dict/updateState',
-      payload: {
-        modalType: '',
-      },
-    });
+  const title = { create: '新增', edit: '编辑' };
+  const { modalType, setModalType, lineData, setLineData, editIndex, setEditIndex } = props;
+
+  const formItemLayout = {
+    labelCol: { flex: '0 0 100px' },
+    wrapperCol: { flex: 'auto' },
   };
 
   // 保存
-  handleSaveClick = () => {
-    const { lineData, editIndex } = this.props.dict;
-    const { validateFields } = this.formRef.current;
+  const handleSaveClick = () => {
+    const { validateFields } = form;
 
     validateFields().then(values => {
       const data = {
@@ -48,61 +41,45 @@ export default class DictLineForm extends React.PureComponent {
       }
 
       // 关闭当前新增页面
-      this.props.dispatch({
-        type: 'dict/updateState',
-        payload: {
-          lineData: [...lineData],
-          modalType: '',
-          editIndex: '',
-        },
-      });
+      setModalType("");
+      setEditIndex("");
+      setLineData([...lineData]);
     });
   };
 
-  render() {
-    const { modalType, lineData, editIndex } = this.props.dict;
+  return (
+    <Modal
+      maskClosable={false}
+      cancelText="取消"
+      okText="提交"
+      centered
+      onCancel={() => setModalType("")}
+      visible={modalType !== ''}
+      width={500}
+      onOk={() => handleSaveClick()}
+      title={`${title[modalType] || '查看'}字典明细信息`}
+    >
+      <Form colon layout="horizontal" {...formItemLayout} initialValues={lineData[editIndex]} form={form}>
+        <Form.Item
+                label="编码"
+                name="keyName"
+                rules={[{required: true,}]}>
+          <Input max={30} />
+        </Form.Item>
 
-    const title = { create: '新增', edit: '编辑' };
+        <Form.Item
+                label="描述"
+                name="keyValue"
+                rules={[{required: true,}]}>
+          <Input max={30} />
+        </Form.Item>
 
-    const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 18 },
-    };
-
-    return (
-      <Modal
-        maskClosable={false}
-        cancelText="取消"
-        okText="提交"
-        centered
-        onCancel={() => this.handleCloseForm()}
-        visible={modalType !== ''}
-        width={500}
-        onOk={() => this.handleSaveClick()}
-        title={`${title[modalType] || '查看'}字典明细信息`}
-      >
-        <Form colon layout="horizontal" {...formItemLayout} initialValues={lineData[editIndex]} ref={this.formRef}>
-          <Form.Item
-                  label="编码"
-                  name="keyName"
-                  rules={[{required: true,}]}>
-            <Input max={30} />
-          </Form.Item>
-
-          <Form.Item
-                  label="描述"
-                  name="keyValue"
-                  rules={[{required: true,}]}>
-            <Input max={30} />
-          </Form.Item>
-
-          <Form.Item
-                  label="排序"
-                  name="orders">
-            <Input max={5} />
-          </Form.Item>
-        </Form>
-      </Modal>
-    );
-  }
+        <Form.Item
+                label="排序"
+                name="orders">
+          <Input max={5} />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
 }

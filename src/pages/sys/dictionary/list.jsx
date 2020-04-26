@@ -1,157 +1,128 @@
-import React from 'react';
-import { Input, Divider, Popconfirm, Button, Row, Col } from 'antd';
-import { connect } from 'umi';
-import DataTable from '@/components/DataTable';
+import React, { useState } from 'react';
+import { Table, Input, Divider, Popconfirm, Button, Row, Col } from 'antd';
 import { dictFilter } from '@/utils/DataHelper';
 import css from './list.less';
+import { getDict, deleteDict } from './services/dictSvc';
 
 const { Search } = Input;
 
-@connect(state => ({
-  dict: state.dict,
-  loading: state.loading.effects['dict/listDict'],
-}))
-export default class List extends React.PureComponent {
-  // 组件加载完成后加载数据
-  componentDidMount() {
-    this.props.dispatch({
-      type: 'dict/listDict',
-    });
-  }
+export default (props) => {
 
+const [search, setSearch] = useState("");
+const { setOperateType, setCurrentItem, fetch, loading, data } = props;
   // 行选事件
-  handleOnRowClick = record => {
+ const handleOnRowClick = record => {
     // 根节点不加载
     if (record.parentId === '0' || !record.parentId) {
       return;
     }
-    this.props.dispatch({
-      type: 'dict/getDict',
-      payload: {
-        id: record.id,
-        operate: 'view',
-      },
-    });
+    getDict({
+      id: record.id,
+    }).then(res => {
+      setCurrentItem(res.data);
+      setOperateType("view");
+    })
   };
 
   // 新增事件
-  handleAddClick = () => {
-    this.props.dispatch({
-      type: 'dict/updateState',
-      payload: {
-        operate: 'create',
-        currentItem: {},
-        lineData: [],
-      },
-    });
+  const handleAddClick = () => {
+    setCurrentItem({});
+    setOperateType("create");
   };
 
   // 编辑事件
-  handleEditClick = record => {
+  const handleEditClick = record => {
     // 根节点不加载
     if (record.parentId === '0' || !record.parentId) {
       return;
     }
-    this.props.dispatch({
-      type: 'dict/getDict',
-      payload: {
-        id: record.id,
-        operate: 'edit',
-      },
-    });
+    getDict({
+      id: record.id,
+    }).then(res => {
+      setCurrentItem(res.data);
+      setOperateType("edit");
+    })
   };
 
   // 删除事件
-  handleDeleteClick = record => {
-    this.props.dispatch({
-      type: 'dict/deleteDict',
-      payload: {
-        id: record.id,
-      },
-    });
+  const handleDeleteClick = record => {
+    deleteDict({
+      id: record.id,
+    }).then(() => {
+      fetch();
+    })
   };
 
   // 搜索
-  handleOnSearch = v => {
-    this.props.dispatch({
-      type: 'dict/updateState',
-      payload: {
-        search: v,
-      },
-    });
+  const handleOnSearch = v => {
+    setSearch(v)
   };
 
-  render() {
-    const { loading, dicts, search } = this.props.dict;
+  const columns = [
+    {
+      title: '字典描述',
+      dataIndex:'name',
+    },
+    {
+      title: '字典编码',
+      dataIndex:'code',
+    },
+    {
+      title: '操作',
+      render: (text, record) =>
+        record.status !== '9999' &&
+        !record.parent &&
+        record.parent !== '0' && (
+          <>
+            <a onClick={e => handleEditClick(record, e)}>编辑</a>
+            <Divider type="vertical" />
+            <Popconfirm
+              title="删除后系统中部分数据可能无法正确显示,确定要删除吗？"
+              okText="确定"
+              cancelText="取消"
+              onConfirm={() => handleDeleteClick(record)}
+            >
+              <a>删除</a>
+            </Popconfirm>
+          </>
+        ),
+    },
+  ];
 
-    const columns = [
-      {
-        title: '字典描述',
-        name: 'name',
-        tableItem: {},
-      },
-      {
-        title: '字典编码',
-        name: 'code',
-        tableItem: {},
-      },
-      {
-        title: '操作',
-        tableItem: {
-          render: (text, record) =>
-            record.status !== '9999' &&
-            !record.parent &&
-            record.parent !== '0' && (
-              <DataTable.Oper>
-                <a onClick={e => this.handleEditClick(record, e)}>编辑</a>
-                <Divider type="vertical" />
-                <Popconfirm
-                  title="删除后系统中部分数据可能无法正确显示,确定要删除吗？"
-                  okText="确定"
-                  cancelText="取消"
-                  onConfirm={() => this.handleDeleteClick(record)}
-                >
-                  <a>删除</a>
-                </Popconfirm>
-              </DataTable.Oper>
-            ),
-        },
-      },
-    ];
+  const dataTableProps = {
+    columns,
+    bordered: true,
+    defaultExpandAllRows: true,
+    rowKey: record => record.id,
+    loading,
+    isScroll: true,
+    alternateColor: true,
+    dataSource: dictFilter(data, search),
+    onRow: (record, index) => ({
+      onClick: () => handleOnRowClick(record, index),
+    }),
+    pagination: false,
+  };
 
-    const dataTableProps = {
-      columns,
-      rowKey: 'id',
-      loading,
-      isScroll: true,
-      alternateColor: true,
-      dataItems: { records: dictFilter(dicts, search) },
-      onRow: (record, index) => ({
-        onClick: () => this.handleOnRowClick(record, index),
-      }),
-      pagination: false,
-    };
+  return (
+    <div>
+      {/* 工具条 */}
+      <Row style={{ padding: '10px 5px' }}>
+        <Col span={4}>
+          <Button type="primary" onClick={() => handleAddClick()}>
+            新增
+          </Button>
+        </Col>
+        <Col span={20}>
+          <Search
+            placeholder="输入编码或名称进行搜索"
+            className={css.search}
+            onSearch={v => handleOnSearch(v)}
+          />
+        </Col>
+      </Row>
 
-    return (
-      <div>
-        {/* 工具条 */}
-        <Row style={{ padding: '10px 5px' }}>
-          <Col span={4}>
-            <Button type="primary" onClick={() => this.handleAddClick()}>
-              新增
-            </Button>
-          </Col>
-          <Col span={20}>
-            <Search
-              placeholder="输入编码或名称进行搜索"
-              className={css.search}
-              onSearch={v => this.handleOnSearch(v)}
-            />
-          </Col>
-        </Row>
-
-        <DataTable defaultExpandAllRows {...dataTableProps} className={css.grid} bordered />
-      </div>
-    );
-  }
+      <Table {...dataTableProps} className={css.grid}  />
+    </div>
+  );
 }
