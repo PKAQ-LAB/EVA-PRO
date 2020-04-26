@@ -1,105 +1,85 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Divider, Popconfirm } from 'antd';
+import { Table, Button, Divider, Popconfirm } from 'antd';
 import cx from 'classnames';
-import { connect } from 'umi';
 import LineAoeForm from './lineaoeform';
-import DataTable from '@/components/DataTable';
 
 /** 资源明细 */
-@connect(state => ({
-  module: state.module,
-}))
-export default class LineList extends React.PureComponent {
-  // 新增明细
-  handleLineAdd = () => {
-    this.props.dispatch({
-      type: 'module/updateState',
-      payload: {
-        operate: 'create',
-        editIndex: '',
-      },
+export default (props) => {
+  const { lineData = [], setLineData, currentItem } = props;
+  const [operate, setOperate] = useState("");
+  const [editIndex, setEditIndex] = useState("");
+
+  if (lineData < 1) {
+    lineData.push({
+      resourceDesc: '全部资源',
+      resourceUrl: '/**',
+      resourceType: '9999',
     });
+  }
+
+  // 表单属性
+  const formPorps = {
+    operate, setOperate, lineData, setLineData, editIndex, setEditIndex
+  }
+
+  // 新增明细
+  const handleLineAdd = () => {
+    setOperate("create");
+    setEditIndex("");
   };
 
   // 删除明细
-  handleDeleteClick = index => {
-    const { lineData } = this.props.module;
-    lineData.splice(index, 1);
-
-    this.props.dispatch({
-      type: 'module/updateState',
-      payload: { lineData },
-    });
+  const handleDeleteClick = index => {
+    currentItem.resources.splice(index, 1);
   };
 
   // 修改编辑
-  handleEditClick = index => {
-    this.props.dispatch({
-      type: 'module/updateState',
-      payload: {
-        operate: 'edit',
-        editIndex: index,
-      },
-    });
+  const handleEditClick = index => {
+    setOperate("edit");
+    setEditIndex(index);
   };
 
-  render() {
-    const { lineData, operate } = this.props.module;
-    if (lineData.length < 1) {
-      lineData.push({
-        resourceDesc: '全部资源',
-        resourceUrl: '/**',
-        resourceType: '9999',
-      });
-    }
+  const columns = [{
+      title: '资源描述',
+      dataIndex: 'resourceDesc',
+    }, {
+      title: '资源路径',
+      dataIndex: 'resourceUrl',
+    }, {
+      title: '操作',
+      render: (text, record, index) =>
+        record.resourceType !== '9999' && (
+          <>
+            <Divider type="vertical" />
+            <a onClick={() => handleEditClick(index)}>编辑</a>
+            <Divider type="vertical" />
+            <Popconfirm
+              title="确定要删除吗？"
+              okText="确定"
+              cancelText="取消"
+              onConfirm={() => handleDeleteClick(index)}
+            >
+              <a>删除</a>
+            </Popconfirm>
+          </>
+        ),
+    },
+  ];
 
-    const columns = [
-      {
-        title: '资源描述',
-        name: 'resourceDesc',
-        tableItem: {},
-      },
-      {
-        title: '资源路径',
-        name: 'resourceUrl',
-        tableItem: {},
-      },
-      {
-        title: '操作',
-        tableItem: {
-          render: (text, record, index) =>
-            record.resourceType !== '9999' && (
-              <DataTable.Oper>
-                <Divider type="vertical" />
-                <a onClick={() => this.handleEditClick(index)}>编辑</a>
-                <Divider type="vertical" />
-                <Popconfirm
-                  title="确定要删除吗？"
-                  okText="确定"
-                  cancelText="取消"
-                  onConfirm={() => this.handleDeleteClick(index)}
-                >
-                  <a>删除</a>
-                </Popconfirm>
-              </DataTable.Oper>
-            ),
-        },
-      },
-    ];
+  const dataTableProps = {
+    columns,
+    rowKey: record => record.id,
+    showNum: true,
+    isScroll: true,
+    alternateColor: true,
+    rowClassName: record =>
+      cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' }),
+    dataSource: lineData ,
+  };
 
-    const dataTableProps = {
-      columns,
-      rowKey: 'id',
-      showNum: true,
-      isScroll: true,
-      alternateColor: true,
-      rowClassName: record =>
-        cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' }),
-      dataItems: { records: lineData },
-    };
-
-    return <>
+  return (
+    <>
       <Divider>资源信息</Divider>
       {/* 子表新增 */}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -107,13 +87,13 @@ export default class LineList extends React.PureComponent {
           style={{ marginBottom: 10 }}
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => this.handleLineAdd()}
+          onClick={() => handleLineAdd()}
         >
           新增资源
         </Button>
       </div>
-      <DataTable {...dataTableProps} />
-      {operate !== '' && <LineAoeForm />}
-    </>;
-  }
+      <Table {...dataTableProps} />
+      {operate !== '' && <LineAoeForm {...formPorps}/>}
+    </>
+  )
 }

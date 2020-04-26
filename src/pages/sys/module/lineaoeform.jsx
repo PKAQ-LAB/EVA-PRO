@@ -1,28 +1,19 @@
 import React from 'react';
 import { Form, Input, Modal } from 'antd';
-import { connect } from 'umi';
 
-@connect(state => ({
-  module: state.module,
-}))
-export default class ModuleLineForm extends React.PureComponent {
-  formRef = React.createRef();
+export default (props) => {
+  const [ form ] = Form.useForm();
+  const { operate, setOperate, lineData, setLineData, editIndex, setEditIndex } = props;
+  const title = { create: '新增', edit: '编辑' };
 
-  // 关闭窗口
-  handleCloseForm = () => {
-    this.props.dispatch({
-      type: 'module/updateState',
-      payload: {
-        operate: '',
-      },
-    });
+  const formItemLayout = {
+    labelCol: { flex: '0 0 100px' },
+    wrapperCol: { flex: 'auto' },
   };
 
   // 保存
-  handleSaveClick = () => {
-    const { lineData, editIndex } = this.props.module;
-
-    const { validateFields } = this.formRef.current;
+  const handleSaveClick = () => {
+    const { validateFields } = form;
 
     validateFields().then(values => {
       const data = {
@@ -49,26 +40,11 @@ export default class ModuleLineForm extends React.PureComponent {
         lineData.push(data);
       }
 
-      // 关闭当前新增页面
-      this.props.dispatch({
-        type: 'module/updateState',
-        payload: {
-          operate: '',
-          editIndex: '',
-        },
-      });
+      setOperate("");
+      setEditIndex("");
+      setLineData(lineData);
     })
   };
-
-  render() {
-    const { operate, lineData, editIndex } = this.props.module;
-
-    const title = { create: '新增', edit: '编辑' };
-
-    const formItemLayout = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 18 },
-    };
 
     return (
       <Modal
@@ -76,17 +52,17 @@ export default class ModuleLineForm extends React.PureComponent {
         cancelText="取消"
         okText="提交"
         centered
-        onCancel={() => this.handleCloseForm()}
+        onCancel={() => setOperate("")}
         visible={operate !== ''}
         width={500}
-        onOk={() => this.handleSaveClick()}
+        onOk={() => handleSaveClick()}
         title={`${title[operate] || '查看'}资源`}
       >
-        <Form initialValues={lineData[editIndex]} ref={this.formRef} colon layout="horizontal" {...formItemLayout} >
+        <Form initialValues={lineData[editIndex]} form={form} colon layout="horizontal" {...formItemLayout} >
           <Form.Item
                   label="资源描述"
                   name="resourceDesc"
-                  rules={[{required: true,len: 30}]}>
+                  rules={[{required: true,max: 30}]}>
             <Input/>
           </Form.Item>
 
@@ -106,5 +82,4 @@ export default class ModuleLineForm extends React.PureComponent {
         </Form>
       </Modal>
     );
-  }
 }
