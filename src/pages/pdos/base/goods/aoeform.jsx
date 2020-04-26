@@ -23,11 +23,11 @@ export default (props) => {
       };
 
       edit(data).then(() => {
-        setLoading(false);
         setOperateType("");
+        fetch();
       });
-
-      fetch();
+    }).finally(() => {
+      setLoading(false);
     });
   };
 

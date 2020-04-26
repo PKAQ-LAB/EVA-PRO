@@ -61,8 +61,9 @@ export default (props) => {
     if (!selectedRowKeys) return;
     del({
       param: [...selectedRowKeys],
+    }).then(()  => {
+      fetch();
     })
-    fetch();
   };
 
  // 操作按钮
