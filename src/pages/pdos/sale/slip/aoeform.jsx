@@ -1,36 +1,31 @@
-import React from 'react';
-import { connect } from 'umi';
+import React, { useState } from 'react';
+import { useSelector } from 'umi';
 import moment from 'moment';
 import { Drawer, Button, Form, Input, Row, Col, DatePicker, Divider } from 'antd';
 import * as math from 'mathjs';
 import Selector from '@/components/Selector'
 import DictSelector from '@/components/DictSelector'
+import { editSlip } from './services/slipSvc';
 
-@connect(({ loading, saleSlip, global }) => ({
-  global,
-  loading: loading.models.saleSlip,
-  saleSlip,
-}))
-export default class AOEForm extends React.PureComponent{
+export default (props) => {
 
-  formRef = React.createRef();
+  const [ form ] = Form.useForm();
+  const [ loading, setLoading ] = useState(false);
+  const dict = useSelector(state => state.global.dict);
 
-  // 关闭
-  handleOnClose = () => {
-    this.props.dispatch({
-      type:'saleSlip/updateState',
-      payload: {
-        operateType: '',
-        // 清空编辑时留存的数据
-        currentItem: {},
-      }
-    })
-  }
+  const title = { create: '新增', edit: '编辑' };
+  const { operateType, setOperateType, currentItem, fetch  } = props;
+
+  const formItemLayout = {
+    labelCol: { flex: "0 0 90px" },
+    wrapperCol: { flex: "auto" },
+  };
 
   // 保存
-  handleSaveClick = () => {
-    const { currentItem } = this.props.saleSlip;
-    const { validateFields } = this.formRef.current;
+  const handleSaveClick = () => {
+    const { validateFields } = form;
+
+    setLoading(true);
     validateFields().then(values => {
 
       const data = {
@@ -39,28 +34,20 @@ export default class AOEForm extends React.PureComponent{
       };
       data.dealTime = moment(data.dealTime).format("YYYY-MM-DD hh:mm:ss");
 
-      this.props.dispatch({
-        type: 'saleSlip/save',
-        payload: data,
-      });
+      editSlip(data).then(() => {
+        fetch();
+        setOperateType("")
+      })
+    }).finally(() => {
+      setLoading(false);
     });
   };
 
   // 表单渲染
-  renderForm = () => {
-    const { dict } = this.props.global;
-    const { currentItem, operateType } = this.props.saleSlip;
-
+  const renderForm = () => {
     currentItem.dealTime = moment(currentItem.dealTime) || moment();
-
-    const formItemLayout = {
-      labelCol: { flex: "0 0 110px" },
-      wrapperCol: { flex: "auto" },
-    };
-
-
     return (
-      <Form size="middle" {...formItemLayout} labelAlign="left" ref={this.formRef} initialValues={currentItem}>
+      <Form size="middle" {...formItemLayout} labelAlign="left" form={form} initialValues={currentItem}>
         <fieldset>
           <legend>商品信息</legend>
           <Row gutter={24}>
@@ -213,38 +200,33 @@ export default class AOEForm extends React.PureComponent{
     )
   }
 
-  render() {
-    const { operateType } = this.props.saleSlip;
-    const { loading } = this.props;
-
-    return (
-      <Drawer
-        title="新增销售单数据"
-        width="calc(100vw - 240px)"
-        onClose={this.handleOnClose}
-        visible={operateType !== ''}
-        bodyStyle={{ paddingBottom: 80 }}
-        footer={
-          <div
-            style={{
-              textAlign: 'right',
-            }}
+  return (
+    <Drawer
+      title={`${title[operateType] || '查看'}销售单数据`}
+      width="calc(100vw - 240px)"
+      onClose={()=> setOperateType("")}
+      visible={operateType !== ''}
+      bodyStyle={{ paddingBottom: 80 }}
+      footer={
+        <div
+          style={{
+            textAlign: 'right',
+          }}
+        >
+          <Button
+            loading={loading}
+            onClick={()=> setOperateType("")}
+            style={{ marginRight: 8 }}
           >
-            <Button
-              loading={loading}
-              onClick={this.handleOnClose}
-              style={{ marginRight: 8 }}
-            >
-              关闭
-            </Button>
-            <Button   loading={loading} onClick={this.handleSaveClick} type="primary">
-              提交
-            </Button>
-          </div>
-        }
-      >
-          {this.renderForm()}
-      </Drawer>
-    );
-  }
+            关闭
+          </Button>
+          <Button   loading={loading} onClick={() => handleSaveClick()} type="primary">
+            提交
+          </Button>
+        </div>
+      }
+    >
+        {renderForm()}
+    </Drawer>
+  );
 }
