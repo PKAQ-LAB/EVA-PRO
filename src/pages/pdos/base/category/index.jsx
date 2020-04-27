@@ -16,7 +16,6 @@ export default () => {
     }
   })
 
-  // 列表属性
   const listProps = {
     fetch: run,
     setCurrentItem,
@@ -29,7 +28,7 @@ export default () => {
     operateType,
     setOperateType,
     currentItem,
-    fetch,
+    fetch: run,
     data
   }
 
