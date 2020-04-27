@@ -1,34 +1,28 @@
-import React from 'react';
-import { connect } from 'umi';
+import React, { useState } from 'react';
 import moment from 'moment';
+import { useSelector } from 'umi';
 import { Modal, Form, Input, Row, Col } from 'antd';
 import DictSelector from '@/components/DictSelector'
+import { editSlip } from './services/supplierSvc';
 
-@connect(({ loading, supplier, global }) => ({
-  global,
-  loading: loading.models.supplier,
-  supplier,
-}))
-export default class AOEForm extends React.PureComponent{
+export default (props) => {
 
-  formRef = React.createRef();
+  const [ form ] = Form.useForm();
+  const [ loading, setLoading ] = useState(false);
+  const dict = useSelector(state => state.global.dict);
 
-  // 关闭
-  handleOnClose = () => {
-    this.props.dispatch({
-      type:'supplier/updateState',
-      payload: {
-        operateType: '',
-        // 清空编辑时留存的数据
-        currentItem: {},
-      }
-    })
-  }
+  const title = { create: '新增', edit: '编辑' };
+  const { operateType, setOperateType, currentItem, fetch  } = props;
+
+  const formItemLayout = {
+    labelCol: { flex: "0 0 90px" },
+    wrapperCol: { flex: "auto" },
+  };
 
   // 保存
-  handleSaveClick = () => {
-    const { currentItem } = this.props.supplier;
-    const { validateFields } = this.formRef.current;
+  const handleSaveClick = () => {
+    const { validateFields } = form;
+    setLoading(true);
     validateFields().then(values => {
 
       const data = {
@@ -37,26 +31,20 @@ export default class AOEForm extends React.PureComponent{
       };
       data.dealTime = moment(data.dealTime).format("YYYY-MM-DD hh:mm:ss");
 
-      this.props.dispatch({
-        type: 'supplier/save',
-        payload: data,
-      });
+      editSlip(data).then(res => {
+        if(res.success){
+          setOperateType("");
+          fetch();
+        }
+      })
+    }).finally(() => {
+      setLoading(false);
     });
   };
 
-
-  // 表单渲染
-  renderForm = () => {
-    const { dict } = this.props.global;
-    const { currentItem, operateType } = this.props.supplier;
-
-    const formItemLayout = {
-      labelCol: { flex: "0 0 90px" },
-      wrapperCol: { flex: "auto" },
-    };
-
+  const renderForm = () => {
     return (
-      <Form size="middle" {...formItemLayout} labelAlign="left" ref={this.formRef} initialValues={currentItem}>
+      <Form size="middle" {...formItemLayout} labelAlign="left" form={form} initialValues={currentItem}>
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item label="全称" name="fullName" rules={[{required: true}]}>
@@ -110,24 +98,18 @@ export default class AOEForm extends React.PureComponent{
     )
   }
 
-  render() {
-    const { operateType } = this.props.supplier;
-    const { loading } = this.props;
-    const title = { create: '新增', edit: '编辑' };
-
-    return (
-      <Modal
-        maskClosable={false}
-        loading={loading}
-        centered
-        onCancel={() => this.handleOnClose()}
-        visible={operateType !== ''}
-        width="50%"
-        onOk={() => this.handleSaveClick()}
-        title={`${title[operateType] || '查看'}供应商`}
-      >
-          {this.renderForm()}
-      </Modal>
-    );
-  }
+  return (
+    <Modal
+      maskClosable={false}
+      loading={loading}
+      centered
+      onCancel={() => setOperateType("")}
+      visible={operateType !== ''}
+      width="50%"
+      onOk={() => handleSaveClick()}
+      title={`${title[operateType] || '查看'}供应商`}
+    >
+        {renderForm()}
+    </Modal>
+  )
 }
