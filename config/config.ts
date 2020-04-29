@@ -71,7 +71,7 @@ export default defineConfig({
   chainWebpack(memo, { env, webpack, createCSSRule }) {
     memo.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
 
-    // æ‰“åŒ…ä¼˜åŒ– uglifyjs-webpack-plugin é…ç½®
+    // ´ò°üÓÅ»¯ uglifyjs-webpack-plugin ÅäÖÃ
     if (REACT_APP_ENV === 'prod') {
       memo.merge({
         plugin: {
@@ -82,13 +82,13 @@ export default defineConfig({
                 sourceMap: false,
                 uglifyOptions: {
                   compress: {
-                    // åˆ é™¤æ‰€æœ‰çš„ `console` è¯­å¥
+                    // É¾³ıËùÓĞµÄ `console` Óï¾ä
                     drop_console: true,
                   },
                   output: {
-                    // æœ€ç´§å‡‘çš„è¾“å‡º
+                    // ×î½ô´ÕµÄÊä³ö
                     beautify: false,
-                    // åˆ é™¤æ‰€æœ‰çš„æ³¨é‡Š
+                    // É¾³ıËùÓĞµÄ×¢ÊÍ
                     comments: false,
                   },
                 },
