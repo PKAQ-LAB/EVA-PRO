@@ -91,7 +91,7 @@ export default (props) => {
           <Col span={12}>
             <Form.Item label="单位" name="unit">
               <DictSelector
-                data={dict.data_permission}
+                data={dict.unit}
                 disabled={operateType === 'view'} />
             </Form.Item>
           </Col>

@@ -119,7 +119,7 @@ export default (props) => {
           </Row>
           <Row gutter={24}>
             <Col span={8}>
-              <Form.Item label="成本价" name="costPrice">
+              <Form.Item label="成本单价" name="costPrice">
                 <Input readOnly={operateType === 'view'} />
               </Form.Item>
             </Col>

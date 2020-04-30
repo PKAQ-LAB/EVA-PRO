@@ -118,6 +118,7 @@ export default (props) => {
   const columns = [
     {
       title: '商品名称',
+      ellipsis: true,
       dataIndex: 'goodsName',
     }, {
       title: '来源平台',
@@ -125,6 +126,7 @@ export default (props) => {
       render: text => dict.online_platform && dict.online_platform[`${text}`]
     }, {
       title: '订单号',
+      width: 180,
       dataIndex: 'orderCode',
     }, {
       title: '快递费用',
@@ -147,12 +149,14 @@ export default (props) => {
     }, {
       title: '利润',
       dataIndex: 'profit',
+      width: 80,
     }, {
       title: '下单时间',
       dataIndex: 'dealTime',
     }, {
       title: '供应商姓名',
       dataIndex: 'supplierName',
+      ellipsis: true,
     },{
       width: 180,
       render: (text, record) =>
