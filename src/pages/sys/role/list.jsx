@@ -48,7 +48,7 @@ export default (props) => {
     lockRole({
       param: selectedRowKeys,
       status,
-    }).then(() => run());
+    }).then(() => fetch());
   };
 
   // 批量删除
@@ -57,7 +57,7 @@ export default (props) => {
     if (!selectedRowKeys) return;
     delRole({
       param: selectedRowKeys,
-    }).then(() => run());
+    }).then(() => fetch());
 
   };
 
