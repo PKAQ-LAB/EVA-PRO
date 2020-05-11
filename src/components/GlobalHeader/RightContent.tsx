@@ -33,7 +33,7 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
 
   render() {
 
-    const fullscreenText = ['å…¨å±', 'é€€å‡ºå…¨å±'];
+    const fullscreenText = ['È«ÆÁ', 'ÍË³öÈ«ÆÁ'];
     const { fullscreen } = this.state;
 
     const { theme, layout } = this.props;
@@ -45,7 +45,7 @@ export class GlobalHeaderRight extends React.Component<GlobalHeaderRightProps> {
 
     return (
         <div className={className}>
-      {/* å…¨å± */}
+      {/* È«ÆÁ */}
           <Tooltip title={fullscreenText[fullscreen]}>
             <span className={styles.action} onClick={() => this.f11()}>
               { fullscreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }

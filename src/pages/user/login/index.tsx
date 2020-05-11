@@ -5,11 +5,11 @@ import md5 from 'md5';
 import { StateType } from '@/models/login';
 import { LoginParamsType } from '@/services/login';
 import { ConnectState } from '@/models/connect';
-import LoginFrom from './components/Login';
+import LoginForm from './components/Login';
 
 import styles from './style.less';
 
-const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginFrom;
+const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginForm;
 interface LoginProps {
   dispatch: Dispatch;
   userLogin: StateType;
@@ -45,7 +45,7 @@ const Login: React.FC<LoginProps> = props => {
   };
   return (
     <div className={styles.main}>
-      <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
+      <LoginForm activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
         {/* <Tab key="account" tab="账户密码登录"> */}
           {status === 'error' && loginType === 'account' && !submitting && (
             <LoginMessage content="账户或密码错误" />
@@ -117,7 +117,7 @@ const Login: React.FC<LoginProps> = props => {
           </a>
         </div>
         <Submit loading={submitting}>登录</Submit>
-      </LoginFrom>
+      </LoginForm>
     </div>
   );
 };
