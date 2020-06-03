@@ -188,7 +188,7 @@ export default (props) => {
                 return  <ul>
                           <li>成本价： {nummer} x { costPrice } = { totalCost } 元</li>
                           <li>快递费用： { shipPrice } 元</li>
-                          <li>成本总计：{ math.add(costPrice, shipPrice) } 元</li>
+                          <li>成本总计：{ math.add(totalCost, shipPrice) } 元</li>
                           <li>销售总计：{nummer} x { price }  = { totalPrice } 元</li>
                           <li style={{color:'#EC7704'}}>利润：{ math.subtract(math.subtract(totalPrice, totalCost), shipPrice)} 元</li>
                         </ul>
