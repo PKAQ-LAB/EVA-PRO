@@ -36,7 +36,7 @@ const proSettings: DefaultSettings = {
   menu: {
     locale: true,
   },
-  title: 'PKAQ Design Pro',
+  title: 'EVA Pro',
   subTile: '基于Ant Design Pro的后台管理方案',
   copyright: 'Power by PKAQ © 2019',
   pwa: false,

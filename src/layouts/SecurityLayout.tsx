@@ -6,6 +6,7 @@ import { ConnectState } from '@/models/connect';
 import { CurrentUser } from '@/models/user';
 import PageLoading from '@/components/PageLoading';
 import defaultSettings from '../../config/defaultSettings';
+import { printANSI } from '@/utils/screenlog.js';
 
 const cookies = new Cookies();
 
@@ -24,6 +25,7 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
   };
 
   componentDidMount() {
+    printANSI();
     this.setState({
       isReady: true,
     });

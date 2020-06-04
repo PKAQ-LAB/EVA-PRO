@@ -35,6 +35,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
     breadcrumb,
     ...props,
   });
+
   return (
     <HelmetProvider>
       <Helmet>
