@@ -31,6 +31,10 @@ export default {
   'menu.monitor.log.biz' : '操作日志',
   'menu.monitor.log.error' : '错误日志',
   'menu.pdos': '进销存',
+  'menu.pdos.base': '基础管理',
+  'menu.pdos.base.category': '商品类目',
+  'menu.pdos.base.supplier': '供应商管理',
+  'menu.pdos.base.goods': '产品管理',
   'menu.pdos.purchasing': '采购管理',
   'menu.pdos.sale': '零售管理',
   'menu.pdos.sale.slip': '线上销售单'
