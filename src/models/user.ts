@@ -1,6 +1,7 @@
-import { Effect, Reducer } from 'umi';
+import { Effect, Reducer, history } from 'umi';
 
 import { queryCurrent } from '@/services/user';
+import { getFirstLeaf } from '@/utils/DataHelper';
 
 export interface CurrentUser {
   avatar?: string;
@@ -42,6 +43,7 @@ const UserModel: UserModelType = {
   effects: {
     *fetch(_, { call, put }) {
       const response = yield call(queryCurrent);
+
       yield put({
         type: 'saveCurrentUser',
         payload: response.data.user,
@@ -56,6 +58,10 @@ const UserModel: UserModelType = {
           dict: response.data.dict,
         },
       });
+
+      const url = getFirstLeaf(response.data.menus);
+
+      history.push(url);
     },
   },
 

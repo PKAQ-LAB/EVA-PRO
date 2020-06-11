@@ -22,6 +22,20 @@ export function hasChildren(data, idArray) {
 }
 
 /**
+ *获取第一个叶子节点
+ *
+ * @export
+ * @param {*} data
+ * @returns
+ */
+export function getFirstLeaf(data){
+  let path = data[0].path;
+  if(data[0].children){
+    path = getFirstLeaf(data[0].children);
+  }
+  return path;
+}
+/**
  * 获得兄弟节点
  * @param data
  * @param targetPid
