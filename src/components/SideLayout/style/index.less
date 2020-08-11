@@ -1,0 +1,41 @@
+@import '~antd/lib/style/themes/default.less';
+
+// 左侧表头
+.title {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 45px;
+  font-weight: bold;
+  line-height: 45px;
+  background-color: #fafafa;
+  div {
+    padding-left: 15px;
+  }
+  a {
+    display: block;
+    width: 30px;
+    color: #666;
+    text-align: center;
+    background-color: #e3e3e3;
+  }
+  a:hover {
+    color: @primary-color;
+  }
+}
+.body {
+  padding: 15px;
+}
+// 内容区样式
+.content {
+  background-color: #fff;
+}
+
+.layout {
+  :global {
+    .ant-layout-sider-children {
+      background-color: #fefefe;
+      border: 1px solid #e8e8e8;
+    }
+  }
+}
