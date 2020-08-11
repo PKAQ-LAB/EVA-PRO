@@ -77,6 +77,11 @@ export default defineConfig({
   theme: {
     // ...darkTheme,
     'primary-color': defaultSettings.primaryColor,
+    "@layout-sider-background": "#252525",
+    "@layout-header-background": "#1e1e1e;",
+    "@menu-bg": "#1e1e1e",
+    "@menu-dark-submenu-bg":"#1e1e1e",
+    "@menu-dark-item-active-bg":"#37373d",
   },
   // @ts-ignore
   title: false,
