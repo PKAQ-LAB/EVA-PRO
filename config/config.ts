@@ -1,8 +1,10 @@
 // https://umijs.org/config/
-import { defineConfig } from 'umi';
+import { defineConfig, utils } from 'umi';
+import path from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 
+const { winPath } = utils;
 const { REACT_APP_ENV } = process.env;
 
 export default defineConfig({
@@ -62,7 +64,7 @@ export default defineConfig({
           component: './Welcome',
         },
       ],
-    },    
+    },
     {
       path: '/',
       redirect: '/welcome',
@@ -83,4 +85,63 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  cssLoader: {
+    modules: {
+      getLocalIdent: (
+        context: {
+          resourcePath: string;
+        },
+        _: string,
+        localName: string,
+      ) => {
+        if (
+          context.resourcePath.includes('node_modules') ||
+          context.resourcePath.includes('ant.design.pro.less') ||
+          context.resourcePath.includes('global.less')
+        ) {
+          return localName;
+        }
+        const match = context.resourcePath.match(/src(.*)/);
+        if (match && match[1]) {
+          const antdProPath = match[1].replace('.less', '');
+          const arr = winPath(antdProPath)
+            .split('/')
+            .map((a: string) => a.replace(/([A-Z])/g, '-$1'))
+            .map((a: string) => a.toLowerCase());
+          return `antd-pro${arr.join('-')}-${localName}`.replace(/--/g, '-');
+        }
+        return localName;
+      },
+    },
+  },
+  chainWebpack(memo, { env, webpack, createCSSRule }) {
+    memo.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
+    // 打包优化 uglifyjs-webpack-plugin 配置
+    if (REACT_APP_ENV === 'prod') {
+      memo.merge({
+        plugin: {
+          install: {
+            plugin: require('uglifyjs-webpack-plugin'),
+            args: [
+              {
+                sourceMap: false,
+                uglifyOptions: {
+                  compress: {
+                    // 删除所有的 `console` 语句
+                    drop_console: true,
+                  },
+                  output: {
+                    // 最紧凑的输出
+                    beautify: false,
+                    // 删除所有的注释
+                    comments: false,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      });
+    }
+  }
 });
