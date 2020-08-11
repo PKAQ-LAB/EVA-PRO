@@ -6,7 +6,7 @@ export default {
   imgUrl: 'http://localhost:9016/img/',
   token_key: 'auth_token',
   user_key: 'user_info',
-  subTile: '基于Ant Design Pro的后台管理方案',
+  subTitle: '基于Ant Design Pro的后台管理方案',
   copyright: 'Power by PKAQ © 2019',
   // 自定义属性结束
   navTheme: 'dark',

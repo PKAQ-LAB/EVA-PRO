@@ -1,6 +1,7 @@
 import { Alert, Checkbox, message } from 'antd';
 import React, { useState } from 'react';
 import md5 from 'md5';
+import setting from '../../../../config/defaultSettings';
 import { Link, SelectLang, useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import logo from '@/assets/logo.svg';
@@ -86,21 +87,22 @@ const Login: React.FC<{}> = () => {
         <SelectLang />
       </div>
       <div className={styles.content}>
+        <div>
         <div className={styles.top}>
           <div className={styles.header}>
             <Link to="/">
               <img alt="logo" className={styles.logo} src={logo} />
-              <span className={styles.title}>Eva Pro</span>
+              <span className={styles.title}>{setting.title}</span>
             </Link>
           </div>
-          <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+          <div className={styles.desc}>{setting.subTitle}</div>
         </div>
 
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-            <Tab key="account" tab="账户密码登录">
+            <Tab key="account" tab="用户名密码登录">
               {status === 'error' && loginType === 'account' && !submitting && (
-                <LoginMessage content="账户或密码错误（admin/ant.design）" />
+                <LoginMessage content="用户名或密码错误" />
               )}
 
               <Username
@@ -178,9 +180,12 @@ const Login: React.FC<{}> = () => {
                 注册账户
               </Link>
             </div> */}
-          </LoginFrom>
+           </LoginFrom>
+          </div>
         </div>
+
       </div>
+
       <Footer />
     </div>
   );
