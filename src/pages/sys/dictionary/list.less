@@ -1,0 +1,29 @@
+// 操作区
+.ribbon {
+  display: flex;
+  justify-content: flex-start;
+}
+
+// 搜索栏
+.search {
+  :global {
+    .ant-input {
+      border-radius: 0;
+    }
+  }
+}
+// 表格样式
+.grid {
+  :global {
+    .ant-table-content {
+      border-top: 0;
+      border-bottom: 0;
+    }
+    .ant-table-small {
+      border-bottom: 0;
+    }
+    .ant-table-wrapper{
+      padding: 10px 5px !important;
+    }
+  }
+}

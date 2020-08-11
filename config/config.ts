@@ -3,6 +3,7 @@ import { defineConfig, utils } from 'umi';
 import path from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
+import pageroute from './router.config';
 
 const { winPath } = utils;
 const { REACT_APP_ENV } = process.env;
@@ -32,47 +33,7 @@ export default defineConfig({
     ie: 11,
   },
   // umi routes: https://umijs.org/docs/routing
-  routes: [
-    {
-      path: '/user',
-      layout: false,
-      routes: [
-        {
-          name: 'login',
-          path: '/user/login',
-          component: './user/login',
-        },
-      ],
-    },
-    {
-      path: '/welcome',
-      name: 'welcome',
-      icon: 'smile',
-      component: './Welcome',
-    },
-    {
-      path: '/admin',
-      name: 'admin',
-      icon: 'crown',
-      access: 'canAdmin',
-      component: './Admin',
-      routes: [
-        {
-          path: '/admin/sub-page',
-          name: 'sub-page',
-          icon: 'smile',
-          component: './Welcome',
-        },
-      ],
-    },
-    {
-      path: '/',
-      redirect: '/welcome',
-    },
-    {
-      component: './404',
-    },
-  ],
+  routes: pageroute,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     // ...darkTheme,

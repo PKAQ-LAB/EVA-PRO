@@ -52,12 +52,16 @@
     "not ie <= 10"
   ],
   "dependencies": {
+    "@ant-design/compatible": "^1.0.5",
     "@ant-design/icons": "^4.0.0",
     "@ant-design/pro-layout": "^6.2.5",
     "@ant-design/pro-table": "^2.4.0",
     "antd": "^4.4.0",
+    "antd-password-input-strength": "^1.1.1",
     "classnames": "^2.2.6",
+    "dynamic-icon": "^0.1.4",
     "lodash": "^4.17.11",
+    "mathjs": "^7.1.0",
     "md5": "^2.3.0",
     "moment": "^2.25.3",
     "omit.js": "^2.0.2",
