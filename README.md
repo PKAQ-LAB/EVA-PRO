@@ -41,7 +41,7 @@ $ yarn start         # visit http://localhost:8000
 - 样式调整(加载中/表格)
 - 添加系统管理基础模块
 - 支持 cookie
-- 移除单元测试
+- 移除单元测试 √
 - 请求工具优化
 - 国际化按钮显示配置
 - 登录页 title,subtitle,copyright 可配置
