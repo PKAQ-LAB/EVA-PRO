@@ -1,7 +1,8 @@
 import { Tooltip, Tag, Space } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
-import React from 'react';
+import { QuestionCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
 import { useModel, SelectLang } from 'umi';
+import screenfull from 'screenfull';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 
@@ -13,8 +14,17 @@ const ENVTagColor = {
   pre: '#87d068',
 };
 
-const GlobalHeaderRight: React.FC<{}> = () => {
+export default () => {
   const { initialState } = useModel('@@initialState');
+
+  // 全屏控制
+  const [ fullscreen, setFullscreen ] = useState(false);
+  const fullscreenText = ['全屏', '退出全屏'];
+
+  const f11 = () => {
+    setFullscreen(screenfull.isFullscreen ? 0 : 1);
+   screenfull.toggle();
+  };
 
   if (!initialState || !initialState.settings) {
     return null;
@@ -28,6 +38,13 @@ const GlobalHeaderRight: React.FC<{}> = () => {
   }
   return (
     <Space className={className}>
+      {/* 全屏 */}
+      <Tooltip title={fullscreenText[fullscreen]}>
+        <span className={styles.action} onClick={() => f11()}>
+          { fullscreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
+        </span>
+      </Tooltip>
+
       <Tooltip title="使用文档">
         <span
           className={styles.action}
@@ -48,4 +65,3 @@ const GlobalHeaderRight: React.FC<{}> = () => {
     </Space>
   );
 };
-export default GlobalHeaderRight;
