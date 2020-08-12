@@ -5,6 +5,7 @@ import { history, useModel } from 'umi';
 import { loginOut } from '@/utils/utils';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
+import defaultAvatar from '@/assets/avatar.png';
 
 export interface GlobalHeaderRightProps {
   menu?: boolean;
@@ -48,9 +49,9 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     return loading;
   }
 
-  const { currentUser } = initialState;
+  const { userinfo } = initialState;
 
-  if (!currentUser || !currentUser.name) {
+  if (!userinfo || !userinfo.name) {
     return loading;
   }
 
@@ -79,8 +80,8 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   return (
     <HeaderDropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
-        <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-        <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+        <Avatar size="small" className={styles.avatar} src={userinfo.avatar || defaultAvatar} alt="avatar" />
+        <span className={`${styles.name} anticon`}>{userinfo.name}</span>
       </span>
     </HeaderDropdown>
   );
