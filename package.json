@@ -73,6 +73,7 @@
     "screenfull": "^5.0.2",
     "umi": "^3.2.0",
     "umi-request": "^1.0.8",
+    "universal-cookie": "^4.0.3",
     "use-merge-value": "^1.0.1"
   },
   "devDependencies": {
