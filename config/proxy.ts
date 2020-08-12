@@ -8,23 +8,29 @@
 export default {
   dev: {
     '/api/': {
-      target: 'https://preview.pro.ant.design',
+      target: 'http://localhost:9016/api/',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: {
+        '^/api': '',
+      },
     },
   },
   test: {
     '/api/': {
-      target: 'https://preview.pro.ant.design',
+      target: 'http://localhost:9016/api/',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: {
+        '^/api': '',
+      },
     },
   },
   pre: {
     '/api/': {
-      target: 'your pre url',
+      target: 'http://localhost:9016/api/',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: {
+        '^/api': '',
+      },
     },
   },
 };

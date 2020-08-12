@@ -36,3 +36,8 @@ export const getPageQuery = () => {
 
   return {};
 };
+
+// 获取非Undefined字符串
+export function getNoUndefinedString(obj: string) {
+  return obj || '';
+}
