@@ -10,6 +10,8 @@ const { REACT_APP_ENV } = process.env;
 
 export default defineConfig({
   hash: true,
+  // 停用mock
+  mock: false,
   antd: {},
   dva: {
     hmr: true,
@@ -20,9 +22,7 @@ export default defineConfig({
     siderWidth: 208,
   },
   locale: {
-    // default zh-CN
     default: 'zh-CN',
-    // default true, when it is true, will use `navigator.language` overwrite default
     antd: true,
     baseNavigator: true,
   },
