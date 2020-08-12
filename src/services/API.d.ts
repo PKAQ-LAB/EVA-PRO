@@ -1,4 +1,5 @@
 declare namespace API {
+import { message } from 'antd';
   export interface CurrentUser {
     avatar?: string;
     name?: string;
@@ -15,8 +16,10 @@ declare namespace API {
   }
 
   export interface LoginStateType {
-    status?: 'ok' | 'error';
-    type?: string;
+    code?: string;
+    success? : boolean;
+    data? : object;
+    message?: string;
   }
 
   export interface NoticeIconData {

@@ -26,12 +26,15 @@ const LoginMessage: React.FC<{
 );
 
 /**
+ * 登录成功跳转回调
+ * 跳转到登录前页面或首页
  * 此方法会跳转到 redirect 参数所在的位置
  */
 const replaceGoto = () => {
   const urlParams = new URL(window.location.href);
   const params = getPageQuery();
   let { redirect } = params as { redirect: string };
+
   if (redirect) {
     const redirectUrlParams = new URL(redirect);
     if (redirectUrlParams.origin === urlParams.origin) {
@@ -61,8 +64,8 @@ const Login: React.FC<{}> = () => {
       // 登录
       values.password = md5(values.password);
 
-      const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
+      const res = await login({ ...values, type });
+      if (res.success) {
         message.success('登录成功！');
         replaceGoto();
         setTimeout(() => {
@@ -71,14 +74,14 @@ const Login: React.FC<{}> = () => {
         return;
       }
       // 如果失败去设置用户错误信息
-      setUserLoginState(msg);
+      setUserLoginState(res);
     } catch (error) {
       message.error('登录失败，请重试！');
     }
     setSubmitting(false);
   };
 
-  const { status, type: loginType } = userLoginState;
+  const { success, code } = userLoginState;
 
   return (
     <div className={styles.container}>
@@ -100,7 +103,7 @@ const Login: React.FC<{}> = () => {
         <div className={styles.main}>
           <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
             <Tab key="account" tab="用户名密码登录">
-              {status === 'error' && loginType === 'account' && !submitting && (
+              {(!success || code != '0000') && !submitting && (
                 <LoginMessage content="用户名或密码错误" />
               )}
 
@@ -126,7 +129,7 @@ const Login: React.FC<{}> = () => {
               />
             </Tab>
             <Tab key="mobile" tab="手机号登录">
-              {status === 'error' && loginType === 'mobile' && !submitting && (
+              {(!success || code != '0000') && !submitting && (
                 <LoginMessage content="验证码错误" />
               )}
               <Mobile
