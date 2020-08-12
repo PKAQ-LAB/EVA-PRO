@@ -3,11 +3,12 @@ import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-la
 import { notification } from 'antd';
 import { history, RequestConfig } from 'umi';
 import { RequestOptionsInit } from 'umi-request';
+import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { ResponseError } from 'umi-request';
 import { queryCurrent } from './services/user';
-import defaultSettings from '../config/defaultSettings';
+import defaultSettings from '@config/defaultSettings';
 import { message } from 'antd';
 
 export async function getInitialState(): Promise<{
@@ -16,6 +17,7 @@ export async function getInitialState(): Promise<{
 }> {
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
+    printANSI();
     try {
       const currentUser = await queryCurrent();
       return {
@@ -26,6 +28,7 @@ export async function getInitialState(): Promise<{
       history.push('/user/login');
     }
   }
+
   return {
     settings: defaultSettings,
   };
