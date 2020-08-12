@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
-import { message } from 'antd';
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 export default {
   // 支持值为 Object 和 Array
-  'GET /auth/fetch': {
-    "code":0,
+  'GET /api/auth/fetch': {
+    "code":'0000',
     "data":{
       "dict":{
         "purchasing_type":{
@@ -276,12 +275,11 @@ export default {
   },
   // GET POST 可省略
   'POST /api/auth/login': (req: Request, res: Response) => {
-    const { password, account, type } = req.body;
-    console.info(req.body)
+    const { account, type } = req.body;
     if ("admin" === account) {
       res.send({
         success: true,
-        code: 200,
+        code: '0000',
         currentAuthority: 'admin',
         message: '欢迎回来 [Admin] ',
         data: {

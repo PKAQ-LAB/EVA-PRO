@@ -1,7 +1,12 @@
 import React from 'react';
-import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout';
+import { BasicLayoutProps, Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout';
+
+import { SolutionOutlined, RocketFilled, ProfileFilled,
+         RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled,
+         BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
+
 import { notification } from 'antd';
-import { history, RequestConfig } from 'umi';
+import { history, RequestConfig  } from 'umi';
 import { RequestOptionsInit } from 'umi-request';
 import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
@@ -10,9 +15,37 @@ import { ResponseError } from 'umi-request';
 import { queryCurrent } from './services/user';
 import defaultSettings from '@config/defaultSettings';
 import { message } from 'antd';
+import { API } from './services/API';
+
+// 菜单图标映射
+const IconMap = {
+  profile: <ProfileFilled/>,
+  'radar-chart': <RadarChartOutlined/>,
+  file: <FileFilled/>,
+  home: <HomeFilled/>,
+  setting: <SettingFilled/>,
+  flag: <FlagFilled/>,
+  bars: <BarsOutlined/>,
+  'usergroup-add': <UsergroupAddOutlined/>,
+  form: <FormOutlined/>,
+  rocket: <RocketFilled />,
+  "solution": <SolutionOutlined/>
+};
+
+// 自定义菜单渲染
+const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
+  menus = menus || [];
+  return menus.map(({ icon, children, ...item }) => ({
+    ...item,
+    icon: icon && IconMap[icon as string],
+    children: children && loopMenuItem(children),
+  }))
+};
 
 export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser;
+  menus?: any[];
+  userinfo?: object;
   settings?: LayoutSettings;
 }> {
   // 如果是登录页面，不执行
@@ -23,6 +56,8 @@ export async function getInitialState(): Promise<{
       return {
         currentUser,
         settings: defaultSettings,
+        userinfo: currentUser.data.user,
+        menus: currentUser.data.menus
       };
     } catch (error) {
       history.push('/user/login');
@@ -34,22 +69,27 @@ export async function getInitialState(): Promise<{
   };
 }
 
-export const layout = ({
-  initialState,
-}: {
-  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser };
+export const layout = ({initialState,}: {
+  initialState: { settings?: LayoutSettings;
+                  currentUser?: API.CurrentUser;
+                  userinfo?: object;
+                  menus?: MenuDataItem[]
+                };
 }): BasicLayoutProps => {
+  const { menus }  = initialState;
+
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
+    menuDataRender: () => loopMenuItem(menus),
     footerRender: () => <Footer />,
     onPageChange: () => {
+      // 判断是否有userinfo 如果没有 则认为是未登录
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser?.userid && history.location.pathname !== '/user/login') {
+      if (!initialState?.userinfo && history.location.pathname !== '/user/login') {
         history.push('/user/login');
       }
     },
-    menuHeaderRender: undefined,
     ...initialState?.settings,
   };
 };

@@ -13,6 +13,7 @@ import { message } from 'antd';
     userid?: string;
     access?: 'user' | 'guest' | 'admin';
     unreadCount?: number;
+    data?: currentUserData;
   }
 
   export interface LoginStateType {
@@ -35,4 +36,10 @@ import { message } from 'antd';
     extra: any;
     status: string;
   }
+}
+
+export interface currentUserData {
+  menus: Array;
+  dict: object;
+  user: object;
 }
