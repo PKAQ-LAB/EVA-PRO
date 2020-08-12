@@ -56,6 +56,49 @@ html,
 body,
 #root {
   :global {
+    .ant-pro-basicLayout .ant-layout-header.ant-pro-fixed-header {
+      height: 64px !important;
+    }
+    .ant-pro-global-header-layout-mix{
+      background-color: #FFF;
+      color: #222;
+    }
+    .ant-pro-page-container{
+      margin-top: -12px;
+    }
+    .ant-pro-basicLayout-content{
+      margin: 24px !important;
+    }
+    .ant-layout-footer{
+      position: fixed;
+      width: calc(100vw - 208px);
+      bottom: 0;
+    }
+    .ant-pro-global-footer{
+      height: 30px;
+      line-height: 30px;
+      border-top: 3px solid #1890ff;
+    }
+    .ant-pro-global-footer-links{
+      margin-bottom: 0;
+    }
+    .antd-pro-pages-user-login-style-content{
+      margin-top: -100px;
+    }
+    .ant-pro-global-footer-copyright{
+      font-size: 12px;
+    }
+    // 内容区样式
+    .ant-pro-page-container-children-content {
+      height: calc(100vh - 64px - 30px - 108px);
+      margin: 5px 0 -24px 0;
+      background-color: #fff;
+    }
+    .ant-pro-global-footer{
+      margin: 0;
+      text-align: right;
+      font-size: 12px;
+    }
     // 菜单图标, 叶子节点图标样式
     .ant-menu-item.ant-menu-item-only-child .anticon, .ant-menu-submenu-title.ant-menu-item-only-child .anticon{
       margin-right: 8px;
@@ -146,11 +189,6 @@ body,
     .ant-page-header-heading-sub-title {
       margin: 10px 0 0 0;
     }
-    .ant-pro-page-header-wrap-children-content {
-      height: calc(100vh - 200px);
-      margin: 5px 0 -24px 0;
-      background-color: #fff;
-    }
 
     .ant-pro-table-search{
       padding: 24px 24px 24px 0;
@@ -204,11 +242,11 @@ body,
 .eva-ribbon {
   display: flex;
   justify-content: space-between;
-  padding: 15px 15px 0 15px;
+  padding: 15px 5px 0 5px;
 }
 // 主题内容区域
 .eva-body {
-  padding: 15px;
+  padding: 15px 5px;
 }
 // alert
 .eva-alert {
