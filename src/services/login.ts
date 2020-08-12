@@ -1,15 +1,15 @@
 import { request } from 'umi';
 
 export interface LoginParamsType {
-  username: string;
+  account: string;
   password: string;
   mobile: string;
   captcha: string;
   type: string;
 }
 
-export async function fakeAccountLogin(params: LoginParamsType) {
-  return request<API.LoginStateType>('/api/login/account', {
+export async function login(params: LoginParamsType) {
+  return request<API.LoginStateType>('/api/auth/login', {
     method: 'POST',
     data: params,
   });

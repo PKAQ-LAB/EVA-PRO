@@ -1,12 +1,11 @@
 import { Alert, Checkbox, message } from 'antd';
 import React, { useState } from 'react';
 import md5 from 'md5';
-import setting from '../../../../config/defaultSettings';
+import setting from '@config/defaultSettings';
 import { Link, SelectLang, useModel } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import logo from '@/assets/logo.svg';
-import { LoginParamsType, fakeAccountLogin } from '@/services/login';
-import Footer from '@/components/Footer';
+import { LoginParamsType, login } from '@/services/login';
 import LoginFrom from './components/Login';
 import styles from './style.less';
 
@@ -62,7 +61,7 @@ const Login: React.FC<{}> = () => {
       // 登录
       values.password = md5(values.password);
 
-      const msg = await fakeAccountLogin({ ...values, type });
+      const msg = await login({ ...values, type });
       if (msg.status === 'ok') {
         message.success('登录成功！');
         replaceGoto();
