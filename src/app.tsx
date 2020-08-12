@@ -115,14 +115,18 @@ const requestInterceptors = (url: string, options: RequestOptionsInit) => {
  * 4. 基于response interceptors
  */
 const responseInterceptors = (response: Response, options: RequestOptionsInit) => {
-  const result = response.clone().json();
-  if (result && result.success) {
-    if (result.message) {
-      message.success(result.message);
+  response.clone().json().then( r => {
+    console.info(r);
+    if (r && r.success) {
+      if (r.message) {
+        message.success(r.message);
+      }
+    } else {
+      message.error(r.message || '操作失败');
     }
-  } else {
-    message.error(result.message || '操作失败');
-  }
+  }).catch(error => {
+    message.error(error || '操作失败');
+  });
 
   return response;
 };
