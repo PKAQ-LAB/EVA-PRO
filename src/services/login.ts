@@ -1,4 +1,5 @@
 import { request } from 'umi';
+import { API } from './API';
 
 export interface LoginParamsType {
   account: string;
@@ -20,5 +21,5 @@ export async function getFakeCaptcha(mobile: string) {
 }
 
 export async function outLogin() {
-  return request('/api/login/outLogin');
+  return request('/api/auth/logout');
 }

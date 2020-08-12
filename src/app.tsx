@@ -6,14 +6,15 @@ import { SolutionOutlined, RocketFilled, ProfileFilled,
          BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
 
 import { notification } from 'antd';
-import { history, RequestConfig  } from 'umi';
+import { history, RequestConfig } from 'umi';
 import { RequestOptionsInit } from 'umi-request';
 import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { ResponseError } from 'umi-request';
 import { queryCurrent } from './services/user';
-import defaultSettings from '@config/defaultSettings';
+import setting from '@config/defaultSettings';
+import { loginOut } from '@/utils/utils';
 import { message } from 'antd';
 import { API } from './services/API';
 
@@ -55,7 +56,7 @@ export async function getInitialState(): Promise<{
       const currentUser = await queryCurrent();
       return {
         currentUser,
-        settings: defaultSettings,
+        settings: setting,
         userinfo: currentUser.data.user,
         menus: currentUser.data.menus
       };
@@ -65,7 +66,7 @@ export async function getInitialState(): Promise<{
   }
 
   return {
-    settings: defaultSettings,
+    settings: setting,
   };
 }
 
@@ -100,14 +101,14 @@ export const layout = ({initialState,}: {
 const errorHandler = (error: ResponseError) => {
   const { response } = error;
   if (response && response.status) {
-    const { status, url } = response;
+    const { status } = response;
 
     if (status === 401) {
       // @HACK
       /* eslint-disable no-underscore-dangle */
-      window.g_app._store.dispatch({
-        type: 'login/logout',
-      });
+      // TODO
+      // 若退出登录接口返回了401, 则此处会进入退出死循环调用
+      loginOut();
       return;
     }
 
@@ -141,7 +142,7 @@ const requestInterceptors = (url: string, options: RequestOptionsInit) => {
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
     'device': 'pc',
-    'version': defaultSettings.version
+    'version': setting.version
   };
 
   return {

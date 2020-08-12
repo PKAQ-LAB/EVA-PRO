@@ -1,4 +1,8 @@
 import { parse } from 'querystring';
+import { history } from 'umi';
+import Cookies from 'universal-cookie';
+import setting from '@config/defaultSettings';
+import { outLogin } from '@/services/login';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
@@ -41,3 +45,27 @@ export const getPageQuery = () => {
 export function getNoUndefinedString(obj: string) {
   return obj || '';
 }
+
+export const loginOut = async () => {
+
+  const cookies = new Cookies();
+
+  const USER_KEY = setting.userinfo;
+  const access_token = setting.access_token;
+  const refresh_token = setting.refresh_token;
+
+
+  await outLogin();
+
+  // 删除token
+  cookies.remove(access_token, { maxAge: -1, path: '/' });
+  cookies.remove(refresh_token, { maxAge: -1, path: '/' });
+  cookies.remove(USER_KEY, { maxAge: -1, path: '/' });
+
+  const { redirect } = getPageQuery();
+  if (window.location.pathname !== '/user/login' && !redirect) {
+    history.replace({
+      pathname: '/user/login'
+    });
+  }
+};

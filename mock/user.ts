@@ -305,4 +305,7 @@ export default {
       currentAuthority: 'guest',
     });
   },
+  'GET /api/auth/logout': (req: Request, res: Response) => {
+    res.send({ data: {}, success: true, code: '0000', message: '您已经退出登录' });
+  },
 };
