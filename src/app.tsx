@@ -169,7 +169,8 @@ const responseInterceptors = (response: Response, options: RequestOptionsInit) =
       message.error(r.message || '操作失败');
     }
   }).catch(error => {
-    message.error(error || '操作失败');
+    console.info(error)
+    message.error('操作失败: 未知网络错误，无法连接服务器');
   });
 
   return response;
