@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
@@ -33,9 +33,9 @@ export default () => {
                       setCurrentItem };
 
   return (
-    <PageHeaderWrapper title="组织（部门）管理" subTitle="系统组织架构管理维护">
+    <PageContainer title="组织（部门）管理" subTitle="系统组织架构管理维护">
       <List {...listProps}/>
       {operateType !== '' && <AOEForm {...formProps}/>}
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 }

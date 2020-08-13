@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
 import { list } from './services/errorSvc';
@@ -31,9 +31,9 @@ export default () => {
   }
 
   return (
-    <PageHeaderWrapper>
+    <PageContainer>
       <List {...listProps}/>
       {operateType !== '' && <AOEForm {...formProps} />}
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 }

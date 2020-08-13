@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
 import { list } from './services/slipSvc';
@@ -28,12 +28,12 @@ export default () => {
   }
 
   return (
-    <PageHeaderWrapper title="线上销售单" subTitle="各线上平台销售单统计">
+    <PageContainer title="线上销售单" subTitle="各线上平台销售单统计">
       <List {...listProps}/>
       {/* 新增/编辑界面 */}
       {
         operateType !== '' && <AOEForm {...formProps} />
       }
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 }

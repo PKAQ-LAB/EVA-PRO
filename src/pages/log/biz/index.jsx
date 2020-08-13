@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import '@ant-design/compatible/assets/index.css';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'umi';
 import WorkList from './list';
 import AOEForm from './aoeform';
@@ -31,9 +31,9 @@ export default () => {
     tableProps,
   }
   return (
-    <PageHeaderWrapper>
+    <PageContainer>
       <WorkList {...listProps} />
       {operateType !== '' && <AOEForm {...formProps} />}
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 }

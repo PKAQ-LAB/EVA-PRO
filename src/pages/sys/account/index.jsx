@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import { LockOutlined, UnlockOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Form, Input, Button, Alert, Tree } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import SideLayout from '@/components/SideLayout';
 import RoleModal from './rolemodal';
 import List from './list';
@@ -191,7 +191,7 @@ export default () => {
   }
 
   return (
-    <PageHeaderWrapper title="用户管理" subTitle="系统用户账号管理维护">
+    <PageContainer title="用户管理" subTitle="系统用户账号管理维护">
       <div className="eva-ribbon">
         {/* 操作按钮 */}
         <div>{renderButton()}</div>
@@ -229,7 +229,7 @@ export default () => {
       {/* 新增窗口 */}
       {operateType !== '' && <AOEForm {...formPorps} />}
       {roleModal !== '' && <RoleModal {...roleModalProps}/>}
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 
 }

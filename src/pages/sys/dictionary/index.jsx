@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import SideLayout from '@/components/SideLayout';
 import { useRequest } from 'umi';
 import List from './list';
@@ -34,7 +34,7 @@ export default () => {
     currentItem
   }
   return (
-    <PageHeaderWrapper title="字典管理" subTitle="系统字典（码表）管理维护">
+    <PageContainer title="字典管理" subTitle="系统字典（码表）管理维护">
       <div className="eva-body">
         <SideLayout
             title="字典管理"
@@ -45,6 +45,6 @@ export default () => {
           <AOEForm {...formProps} />
         </SideLayout>
       </div>
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 }

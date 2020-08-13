@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import { fetchRoles } from './services/roleSvc';
 import List from './list';
 import AOEForm from './aoeform';
@@ -60,7 +60,7 @@ export default () => {
   }
 
   return (
-    <PageHeaderWrapper title="角色管理" subTitle="系统用户角色权限管理维护">
+    <PageContainer title="角色管理" subTitle="系统用户角色权限管理维护">
       <List {...listPorps} />
       {/* 新增窗口 */}
       {modalType !== '' && <AOEForm {...formProps} />}
@@ -70,6 +70,6 @@ export default () => {
       {operateType === 'Config' && <RoleConfig {...configProps} />}
       {/* 模块授权 */}
       {operateType === 'Module' && <RoleModule {...moduleProps}/>}
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 }

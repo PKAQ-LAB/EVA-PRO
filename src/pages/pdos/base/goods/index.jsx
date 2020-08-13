@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import { useSelector } from 'umi';
 import { useRequest } from 'umi';
 import List from './list';
@@ -40,10 +40,10 @@ export default () => {
   }
 
   return (
-      <PageHeaderWrapper title="产品管理" subTitle="维护产品基础信息">
+      <PageContainer title="产品管理" subTitle="维护产品基础信息">
         <List {...listProps} />
         {operateType !== '' && <AOEForm {...formPorps} /> }
-      </PageHeaderWrapper>
+      </PageContainer>
     );
 }
 

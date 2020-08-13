@@ -1,6 +1,6 @@
 import React from 'react';
 import { message } from 'antd';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 import moment from 'moment';
 import copy from 'copy-to-clipboard';
@@ -81,9 +81,9 @@ export default () => {
     };
 
     return (
-      <PageHeaderWrapper>
+      <PageContainer>
         <ProTable {...tableProps} />
-      </PageHeaderWrapper>
+      </PageContainer>
     )
 }
 

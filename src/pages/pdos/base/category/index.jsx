@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
 import { listCategory } from './services/categorySvc';
@@ -33,9 +33,9 @@ export default () => {
   }
 
   return (
-    <PageHeaderWrapper title="商品分类编码">
+    <PageContainer title="商品分类编码">
         <List {...listProps} />
         {operateType !== '' && <AOEForm {...formProps} />}
-    </PageHeaderWrapper>
+    </PageContainer>
   );
 }
