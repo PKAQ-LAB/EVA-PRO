@@ -57,7 +57,8 @@ export default [
     name: 'dev',
     routes: [
       { name: 'generator', path: '/dev/generator', component: './dev/generator' },
-      // { name: 'formschema', path: '/dev/formschema', component: './dev/formschema' }
+    //  { name: 'workflow', path: '/dev/workflow', component: './dev/workflow' },
+      //{ name: 'formschema', path: '/dev/formschema', component: './dev/formschema' }
     ],
   },
     // 进销存

@@ -51,3 +51,10 @@ $ yarn start         # visit http://localhost:8000
 - 去除其它登录方式以及注册 √
 - 打包自动删除所有 console,最紧凑的输出,删除注释(plugin.config.ts) √
 - 添加 waterfall 等组件 √
+
+
+## 三方
+
+- 可编辑表格: https://github.com/guozhaolong/antd-etable
+- 表单设计: https://github.com/form-render/schema-generator
+- 流程设计: https://github.com/guozhaolong/wfd
