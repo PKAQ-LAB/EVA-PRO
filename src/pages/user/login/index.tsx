@@ -2,7 +2,7 @@ import { Alert, Checkbox, message } from 'antd';
 import React, { useState } from 'react';
 import md5 from 'md5';
 import setting from '@config/defaultSettings';
-import { Link, SelectLang, useModel } from 'umi';
+import { Link, SelectLang, useModel, history, History } from 'umi';
 import { getPageQuery } from '@/utils/utils';
 import logo from '@/assets/logo.svg';
 import { LoginParamsType, login } from '@/services/login';
@@ -31,33 +31,24 @@ const LoginMessage: React.FC<{
  * 此方法会跳转到 redirect 参数所在的位置
  */
 const replaceGoto = () => {
-  const urlParams = new URL(window.location.href);
-  const params = getPageQuery();
-  let { redirect } = params as { redirect: string };
-
-  if (redirect) {
-    const redirectUrlParams = new URL(redirect);
-    if (redirectUrlParams.origin === urlParams.origin) {
-      redirect = redirect.substr(urlParams.origin.length);
-      if (redirect.match(/^\/.*#/)) {
-        redirect = redirect.substr(redirect.indexOf('#'));
-      }
-    } else {
-      window.location.href = '/';
+  setTimeout(() => {
+    const { query } = history.location;
+    const { redirect } = query as { redirect: string };
+    console.info("4 ==============>" + redirect);
+    if (!redirect) {
+      history.replace('/');
       return;
     }
-  }
-  window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/');
+    (history as History).replace(redirect);
+  }, 10);
 };
 
 const Login: React.FC<{}> = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginStateType>({});
   const [submitting, setSubmitting] = useState(false);
-
-  const { refresh } = useModel('@@initialState');
+  const { initialState, setInitialState } = useModel('@@initialState');
   const [autoLogin, setAutoLogin] = useState(true);
   const [type, setType] = useState<string>('account');
-
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
     try {
@@ -67,10 +58,16 @@ const Login: React.FC<{}> = () => {
       const res = await login({ ...values, type });
       if (res.success) {
         message.success('登录成功！');
+        const currentUser = await initialState?.fetchUserInfo();
+
+        console.info("5 ---------------------------> currentUser")
+        console.info(currentUser);
+
+        setInitialState({
+          ...initialState,
+          ...currentUser,
+        });
         replaceGoto();
-        setTimeout(() => {
-          refresh();
-        }, 0);
         return;
       }
       // 如果失败去设置用户错误信息

@@ -5,17 +5,15 @@ import { SolutionOutlined, RocketFilled, ProfileFilled,
          RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled,
          BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
 
-import { notification } from 'antd';
 import { history, RequestConfig } from 'umi';
-import { RequestOptionsInit } from 'umi-request';
+import { RequestOptionsInit, ResponseError } from 'umi-request';
 import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import { ResponseError } from 'umi-request';
-import { queryCurrent } from './services/user';
 import setting from '@config/defaultSettings';
 import { loginOut } from '@/utils/utils';
-import { message } from 'antd';
+import { notification, message } from 'antd';
+import { queryCurrent } from './services/user';
 import { API } from './services/API';
 
 // 菜单图标映射
@@ -44,30 +42,47 @@ const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
 };
 
 export async function getInitialState(): Promise<{
+  settings?: LayoutSettings;
   currentUser?: API.CurrentUser;
+  fetchUserInfo: () => Promise<API.CurrentUser | undefined>;
   menus?: any[];
   userinfo?: object;
-  settings?: LayoutSettings;
 }> {
-  // 如果是登录页面，不执行
-  if (history.location.pathname !== '/user/login') {
+  const fetchUserInfo = async () => {
     printANSI();
     try {
       const currentUser = await queryCurrent();
       return {
         currentUser,
         settings: setting,
-        userinfo: currentUser.data.user,
-        menus: currentUser.data.menus
+        userinfo: currentUser?.data?.user,
+        menus: currentUser?.data?.menus
       };
     } catch (error) {
+      console.info("1 error----------------------->")
       history.push('/user/login');
     }
+    return undefined;
+  };
+
+  // 如果是登录页面，不执行
+  if (history.location.pathname !== '/user/login') {
+    console.info(" 2 -------------------------->");
+    const currentUser = await fetchUserInfo();
+    return {
+      fetchUserInfo,
+      currentUser,
+ 	    userinfo: currentUser.data.user,
+ 	    menus: currentUser?.data?.menus,
+      settings: defaultSettings,
+    };
   }
 
   return {
+    fetchUserInfo,
     settings: setting,
   };
+
 }
 
 export const layout = ({initialState,}: {
@@ -85,9 +100,16 @@ export const layout = ({initialState,}: {
     menuDataRender: () => loopMenuItem(menus),
     footerRender: () => <Footer />,
     onPageChange: () => {
+
+      console.info("3  initialState----------------？");
+      console.info(initialState);
+
+      const { userinfo } = initialState;
+      const { location } = history;
       // 判断是否有userinfo 如果没有 则认为是未登录
       // 如果没有登录，重定向到 login
-      if (!initialState?.userinfo && history.location.pathname !== '/user/login') {
+      if (!userinfo && location.pathname !== '/user/login') {
+        console.info("redirect  xxxxx  ---  > ");
         history.push('/user/login');
       }
     },
@@ -160,7 +182,6 @@ const requestInterceptors = (url: string, options: RequestOptionsInit) => {
  */
 const responseInterceptors = (response: Response, options: RequestOptionsInit) => {
   response.clone().json().then( r => {
-    console.info(r);
     if (r && r.success) {
       if (r.message) {
         message.success(r.message);
@@ -169,7 +190,6 @@ const responseInterceptors = (response: Response, options: RequestOptionsInit) =
       message.error(r.message || '操作失败');
     }
   }).catch(error => {
-    console.info(error)
     message.error('操作失败: 未知网络错误，无法连接服务器');
   });
 
