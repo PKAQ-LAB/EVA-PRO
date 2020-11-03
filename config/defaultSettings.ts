@@ -18,13 +18,10 @@ export default {
   fixedHeader: true,
   fixSiderbar: true,
   colorWeak: false,
-  menu: {
-    locale: true,
-  },
   title: 'EVA Pro',
   pwa: false,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
-} as LayoutSettings & {
+} as Partial<LayoutSettings> & {
   pwa: boolean;
 };
