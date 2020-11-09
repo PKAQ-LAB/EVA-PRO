@@ -1,6 +1,6 @@
 import React from 'react';
-import { BasicLayoutProps, Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout';
-
+import { BasicLayoutProps, Settings as LayoutSettings, PageLoading, MenuDataItem } from '@ant-design/pro-layout';
+import { notification } from 'antd';
 import { SolutionOutlined, RocketFilled, ProfileFilled,
          RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled,
          BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
@@ -16,6 +16,13 @@ import { notification, message } from 'antd';
 import { queryCurrent } from './services/user';
 import { API } from './services/API';
 
+/**
+ * 获取用户信息比较慢的时候会展示一个 loading
+ */
+export const initialStateConfig = {
+  loading: <PageLoading />,
+};
+
 // 菜单图标映射
 const IconMap = {
   profile: <ProfileFilled/>,
@@ -30,7 +37,6 @@ const IconMap = {
   rocket: <RocketFilled />,
   "solution": <SolutionOutlined/>
 };
-
 // 自定义菜单渲染
 const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
   menus = menus || [];
@@ -40,11 +46,10 @@ const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
     children: children && loopMenuItem(children),
   }))
 };
-
 export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
   currentUser?: API.CurrentUser;
-  fetchUserInfo: () => Promise<API.CurrentUser | undefined>;
+  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
   menus?: any[];
   userinfo?: object;
 }> {
@@ -100,16 +105,11 @@ export const layout = ({initialState,}: {
     menuDataRender: () => loopMenuItem(menus),
     footerRender: () => <Footer />,
     onPageChange: () => {
-
-      console.info("3  initialState----------------？");
-      console.info(initialState);
-
       const { userinfo } = initialState;
       const { location } = history;
       // 判断是否有userinfo 如果没有 则认为是未登录
       // 如果没有登录，重定向到 login
       if (!userinfo && location.pathname !== '/user/login') {
-        console.info("redirect  xxxxx  ---  > ");
         history.push('/user/login');
       }
     },

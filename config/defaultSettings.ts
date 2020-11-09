@@ -1,6 +1,9 @@
 import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 
-export default {
+const Settings: LayoutSettings & {
+  pwa?: boolean;
+  logo?: string;
+} = {
   version: '1.0.0',
   url: 'http://localhost:9016/api/',
   imgUrl: 'http://localhost:9016/img/',
@@ -22,6 +25,6 @@ export default {
   pwa: false,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
-} as Partial<LayoutSettings> & {
-  pwa: boolean;
 };
+
+export default Settings;

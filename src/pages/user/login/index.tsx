@@ -4,7 +4,6 @@ import md5 from 'md5';
 import setting from '@config/defaultSettings';
 import { Link, SelectLang, useModel, history, History } from 'umi';
 import { getPageQuery } from '@/utils/utils';
-import logo from '@/assets/logo.svg';
 import { LoginParamsType, login } from '@/services/login';
 import LoginFrom from './components/Login';
 import styles from './style.less';
@@ -60,9 +59,6 @@ const Login: React.FC<{}> = () => {
         message.success('登录成功！');
         const currentUser = await initialState?.fetchUserInfo();
 
-        console.info("5 ---------------------------> currentUser")
-        console.info(currentUser);
-
         setInitialState({
           ...initialState,
           ...currentUser,
@@ -82,15 +78,13 @@ const Login: React.FC<{}> = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.lang}>
-        <SelectLang />
-      </div>
+      <div className={styles.lang}>{SelectLang && <SelectLang />}</div>
       <div className={styles.content}>
         <div>
         <div className={styles.top}>
           <div className={styles.header}>
             <Link to="/">
-              <img alt="logo" className={styles.logo} src={logo} />
+              <img alt="logo" className={styles.logo} src="/logo.svg" />
               <span className={styles.title}>{setting.title}</span>
             </Link>
           </div>
@@ -98,13 +92,31 @@ const Login: React.FC<{}> = () => {
         </div>
 
         <div className={styles.main}>
-          <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
-            <Tab key="account" tab="用户名密码登录">
-              {(!success || code != '0000') && !submitting && (
-                <LoginMessage content="用户名或密码错误" />
-              )}
-
-              <Username
+          <ProForm
+            initialValues={{
+              autoLogin: true,
+            }}
+            submitter={{
+              searchConfig: {
+                submitText: intl.formatMessage({
+                  id: 'pages.login.submit',
+                  defaultMessage: '登录',
+                }),
+              },
+              render: (_, dom) => dom.pop(),
+              submitButtonProps: {
+                loading: submitting,
+                size: 'large',
+                style: {
+                  width: '100%',
+                },
+              },
+            }}
+            onFinish={async (values) => {
+              handleSubmit(values);
+            }}
+          >
+			<Username
                 name="account"
                 placeholder="用户名"
                 rules={[
@@ -112,8 +124,7 @@ const Login: React.FC<{}> = () => {
                     required: true,
                     message: '请输入用户名!',
                   },
-                ]}
-              />
+                ]}              />
               <Password
                 name="password"
                 placeholder="密码"

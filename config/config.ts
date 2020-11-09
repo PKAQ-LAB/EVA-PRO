@@ -3,14 +3,14 @@ import { defineConfig, utils } from 'umi';
 import path from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-import pageroute from './router.config';
+import routes from './router.config';
 
 const { winPath } = utils;
 const { REACT_APP_ENV } = process.env;
 
 export default defineConfig({
   hash: true,
-  // åœç”¨mock
+  // Í£ÓÃmock
   mock: false,
   antd: {},
   dva: {
@@ -27,17 +27,16 @@ export default defineConfig({
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
   },
-  // dynamicImport: {
-  //   loading: '@/components/PageLoading/index',
-  // },
+  dynamicImport: {
+    loading: '@ant-design/pro-layout/es/PageLoading',
+  },
   targets: {
     ie: 11,
   },
   // umi routes: https://umijs.org/docs/routing
-  routes: pageroute,
+  routes,
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
-    // ...darkTheme,
     'primary-color': defaultSettings.primaryColor,
     "@layout-sider-background": "#252525",
     "@layout-header-background": "#1e1e1e;",
@@ -45,13 +44,14 @@ export default defineConfig({
     "@menu-dark-submenu-bg":"#1e1e1e",
     "@menu-dark-item-active-bg":"#37373d",
   },
-  // @ts-ignore
+  esbuild: {},
   title: false,
   ignoreMomentLocale: true,
   proxy: proxy[REACT_APP_ENV || 'dev'],
   manifest: {
     basePath: '/',
   },
+  exportStatic: {},
   cssLoader: {
     modules: {
       getLocalIdent: (
@@ -83,7 +83,7 @@ export default defineConfig({
   },
   chainWebpack(memo, { env, webpack, createCSSRule }) {
     memo.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
-    // æ‰“åŒ…ä¼˜åŒ– uglifyjs-webpack-plugin é…ç½®
+    // ´ò°üÓÅ»¯ uglifyjs-webpack-plugin ÅäÖÃ
     if (REACT_APP_ENV === 'prod') {
       memo.merge({
         plugin: {
@@ -94,13 +94,13 @@ export default defineConfig({
                 sourceMap: false,
                 uglifyOptions: {
                   compress: {
-                    // åˆ é™¤æ‰€æœ‰çš„ `console` è¯­å¥
+                    // É¾³ıËùÓĞµÄ `console` Óï¾ä
                     drop_console: true,
                   },
                   output: {
-                    // æœ€ç´§å‡‘çš„è¾“å‡º
+                    // ×î½ô´ÕµÄÊä³ö
                     beautify: false,
-                    // åˆ é™¤æ‰€æœ‰çš„æ³¨é‡Š
+                    // É¾³ıËùÓĞµÄ×¢ÊÍ
                     comments: false,
                   },
                 },
