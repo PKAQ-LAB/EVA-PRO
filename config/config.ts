@@ -10,7 +10,7 @@ const { REACT_APP_ENV } = process.env;
 
 export default defineConfig({
   hash: true,
-  // Í£ÓÃmock
+  // åœç”¨mock
   mock: false,
   antd: {},
   dva: {
@@ -83,7 +83,7 @@ export default defineConfig({
   },
   chainWebpack(memo, { env, webpack, createCSSRule }) {
     memo.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
-    // ´ò°üÓÅ»¯ uglifyjs-webpack-plugin ÅäÖÃ
+    // æ‰“åŒ…ä¼˜åŒ– uglifyjs-webpack-plugin é…ç½®
     if (REACT_APP_ENV === 'prod') {
       memo.merge({
         plugin: {
@@ -94,13 +94,13 @@ export default defineConfig({
                 sourceMap: false,
                 uglifyOptions: {
                   compress: {
-                    // É¾³ıËùÓĞµÄ `console` Óï¾ä
+                    // åˆ é™¤æ‰€æœ‰çš„ `console` è¯­å¥
                     drop_console: true,
                   },
                   output: {
-                    // ×î½ô´ÕµÄÊä³ö
+                    // æœ€ç´§å‡‘çš„è¾“å‡º
                     beautify: false,
-                    // É¾³ıËùÓĞµÄ×¢ÊÍ
+                    // åˆ é™¤æ‰€æœ‰çš„æ³¨é‡Š
                     comments: false,
                   },
                 },

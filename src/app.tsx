@@ -1,6 +1,5 @@
 import React from 'react';
 import { BasicLayoutProps, Settings as LayoutSettings, PageLoading, MenuDataItem } from '@ant-design/pro-layout';
-import { notification } from 'antd';
 import { SolutionOutlined, RocketFilled, ProfileFilled,
          RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled,
          BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
@@ -37,15 +36,18 @@ const IconMap = {
   rocket: <RocketFilled />,
   "solution": <SolutionOutlined/>
 };
+
 // 自定义菜单渲染
 const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
-  menus = menus || [];
+  if(!menus) return [];
+
   return menus.map(({ icon, children, ...item }) => ({
     ...item,
     icon: icon && IconMap[icon as string],
     children: children && loopMenuItem(children),
   }))
 };
+
 export async function getInitialState(): Promise<{
   settings?: LayoutSettings;
   currentUser?: API.CurrentUser;
@@ -64,7 +66,6 @@ export async function getInitialState(): Promise<{
         menus: currentUser?.data?.menus
       };
     } catch (error) {
-      console.info("1 error----------------------->")
       history.push('/user/login');
     }
     return undefined;
@@ -72,7 +73,6 @@ export async function getInitialState(): Promise<{
 
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
-    console.info(" 2 -------------------------->");
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,

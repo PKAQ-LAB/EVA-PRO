@@ -20,13 +20,16 @@
 }
 
 .content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   padding: 32px 0;
+
 }
 
 @media (min-width: @screen-md-min) {
   .container {
-    background-image: url('../../../assets/login_bg.svg');
+    background-image: url('/login_bg.svg');
     background-repeat: no-repeat;
     background-position: center 110px;
     background-size: 100%;
@@ -74,18 +77,10 @@
 }
 
 .main {
-  width: 328px;
+  width: 368px;
   margin: 0 auto;
   @media screen and (max-width: @screen-sm) {
     width: 95%;
-    max-width: 328px;
-  }
-
-  :global {
-    .@{ant-prefix}-tabs-nav-list {
-      margin: auto;
-      font-size: 16rpx;
-    }
   }
 
   .icon {
@@ -105,13 +100,16 @@
     margin-top: 24px;
     line-height: 22px;
     text-align: left;
+
     .register {
       float: right;
     }
   }
 
-  .prefixIcon {
-    color: @primary-color;
-    font-size: @font-size-base;
+  :global {
+    .antd-pro-login-submit {
+      width: 100%;
+      margin-top: 24px;
+    }
   }
 }

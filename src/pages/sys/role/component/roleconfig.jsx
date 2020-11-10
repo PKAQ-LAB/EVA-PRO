@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal } from 'antd';
-import building from '@/assets/building.png';
 
 export default (props) => {
   const { operateType, setOperateType } = props;
@@ -18,7 +17,7 @@ export default (props) => {
       bodyStyle={{ backgroundColor: '#F9F9F9' }}
     >
       <div style={{ textAlign: 'center' }}>
-        <img alt="" src={building} />
+        <img alt="" src='/building.png' />
         <h1>建设中</h1>
         <h3>敬请期待</h3>
       </div>
