@@ -68,7 +68,6 @@ export async function getInitialState(): Promise<{
     } catch (error) {
       history.push('/user/login');
     }
-    return undefined;
   };
 
   // 如果是登录页面，不执行
@@ -84,6 +83,9 @@ export async function getInitialState(): Promise<{
   }
 
   return {
+    menus: [],
+    currentUser: {},
+    userinfo: {},
     fetchUserInfo,
     settings: setting,
   };
@@ -97,12 +99,11 @@ export const layout = ({initialState,}: {
                   menus?: MenuDataItem[]
                 };
 }): BasicLayoutProps => {
-  const { menus }  = initialState;
 
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    menuDataRender: () => loopMenuItem(menus),
+    menuDataRender: () => loopMenuItem(initialState?.menus || []),
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { userinfo } = initialState;

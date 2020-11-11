@@ -7,7 +7,6 @@ import { Alert, message } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, useModel, history, FormattedMessage, SelectLang } from 'umi';
-import Footer from '@/components/Footer';
 import { login, LoginParamsType } from '@/services/login';
 
 import md5 from 'md5';
@@ -52,7 +51,7 @@ const Login: React.FC<{}> = () => {
       const res = await login({ ...values, type });
       if (res.success) {
         message.success('登录成功！');
-  		const currentUser = await initialState?.fetchUserInfo();
+  		  const currentUser = await initialState?.fetchUserInfo();
 
         setInitialState({
           ...initialState,

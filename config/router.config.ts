@@ -1,5 +1,13 @@
 export default [
   {
+    path: '/',
+    redirect: '/welcome',
+  }, {
+    path: '/welcome',
+    name: 'welcome',
+    icon: 'smile',
+    component: './Welcome',
+  }, {
     path: '/user',
     layout: false,
     routes: [
@@ -9,16 +17,6 @@ export default [
         component: './user/login',
       },
     ],
-  },
-  {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
-  },
-  {
-    path: '/',
-    redirect: '/welcome',
   },
   // 系统管理
   {
