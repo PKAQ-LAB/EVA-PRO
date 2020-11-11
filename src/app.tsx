@@ -106,11 +106,10 @@ export const layout = ({initialState,}: {
     menuDataRender: () => loopMenuItem(initialState?.menus || []),
     footerRender: () => <Footer />,
     onPageChange: () => {
-      const { userinfo } = initialState;
       const { location } = history;
       // 判断是否有userinfo 如果没有 则认为是未登录
       // 如果没有登录，重定向到 login
-      if (!userinfo && location.pathname !== '/user/login') {
+      if (!initialState?.userinfo && location.pathname !== '/user/login') {
         history.push('/user/login');
       }
     },
