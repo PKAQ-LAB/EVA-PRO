@@ -123,16 +123,17 @@ export const layout = ({initialState,}: {
 const errorHandler = (error: ResponseError) => {
   const { response } = error;
   if (response && response.status) {
+    console.error(response);
     const { status } = response;
 
-    if (status === 401) {
+   // if (status === 401) {
       // @HACK
       /* eslint-disable no-underscore-dangle */
       // TODO
       // 若退出登录接口返回了401, 则此处会进入退出死循环调用
-      loginOut();
-      return;
-    }
+      //loginOut();
+     // return;
+ //   }
 
     if (status === 403) {
       history.push('/exception/403');
@@ -180,7 +181,7 @@ const requestInterceptors = (url: string, options: RequestOptionsInit) => {
 /**
  * 4. 基于response interceptors
  */
-const responseInterceptors = (response: Response, options: RequestOptionsInit) => {
+const responseInterceptors = (response: Response) => {
   response.clone().json().then( r => {
     if (r && r.success) {
       if (r.message) {
@@ -189,8 +190,6 @@ const responseInterceptors = (response: Response, options: RequestOptionsInit) =
     } else {
       message.error(r.message || '操作失败');
     }
-  }).catch(error => {
-    message.error('操作失败: 未知网络错误，无法连接服务器');
   });
 
   return response;

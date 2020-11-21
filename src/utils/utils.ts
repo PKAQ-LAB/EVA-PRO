@@ -51,11 +51,10 @@ export const loginOut = async () => {
   const cookies = new Cookies();
 
   const USER_KEY = setting.userinfo;
-  const access_token = setting.access_token;
-  const refresh_token = setting.refresh_token;
+  const { access_token, refresh_token } = setting;
 
 
-  await outLogin();
+  //await outLogin();
 
   // 删除token
   cookies.remove(access_token, { maxAge: -1, path: '/' });
