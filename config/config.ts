@@ -8,6 +8,9 @@ import routes from './router.config';
 const { winPath } = utils;
 const { REACT_APP_ENV } = process.env;
 
+const openBrowser = require('open-browser-webpack-plugin');
+
+
 export default defineConfig({
   hash: true,
   // 停用mock
@@ -83,6 +86,7 @@ export default defineConfig({
     },
   },
   chainWebpack(memo, { env, webpack, createCSSRule }) {
+
     memo.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
     // 打包优化 uglifyjs-webpack-plugin 配置
     if (REACT_APP_ENV === 'prod') {
@@ -110,6 +114,9 @@ export default defineConfig({
           },
         },
       });
+    } else {
+      memo.plugin('open-browser-webpack-plugin')
+          .use(openBrowser, [{ url: 'http://localhost:8000' }]);
     }
   }
 });
