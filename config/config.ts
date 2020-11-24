@@ -12,7 +12,7 @@ const openBrowser = require('open-browser-webpack-plugin');
 
 
 export default defineConfig({
-  hash: true,
+ // hash: true,
   // 停用mock
   mock: false,
   antd: {},

@@ -10,7 +10,6 @@ import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import setting from '@config/defaultSettings';
-import { loginOut } from '@/utils/utils';
 import { notification, message } from 'antd';
 import { queryCurrent } from './services/user';
 import { API } from './services/API';
@@ -68,17 +67,18 @@ export async function getInitialState(): Promise<{
     } catch (error) {
       history.push('/user/login');
     }
+    return undefined;
   };
 
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
-    const currentUser = await fetchUserInfo();
+    const { currentUser, settings, userinfo, menus } = await fetchUserInfo();
     return {
       fetchUserInfo,
       currentUser,
- 	    userinfo: currentUser.data.user,
- 	    menus: currentUser?.data?.menus,
-      settings: defaultSettings,
+ 	    userinfo,
+ 	    menus,
+      settings,
     };
   }
 
@@ -92,7 +92,9 @@ export async function getInitialState(): Promise<{
 
 }
 
-export const layout = ({initialState,}: {
+export const layout = ({
+  initialState
+}: {
   initialState: { settings?: LayoutSettings;
                   currentUser?: API.CurrentUser;
                   userinfo?: object;
@@ -109,6 +111,7 @@ export const layout = ({initialState,}: {
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
+
       // 判断是否有userinfo 如果没有 则认为是未登录
       // 如果没有登录，重定向到 login
       if (!initialState?.userinfo && location.pathname !== '/user/login') {
