@@ -12,7 +12,7 @@ export default (props) => {
 
   const initValues = {
     ...currentItem,
-    enable: currentItem.status === '0000'
+    enable: currentItem.status ? currentItem.status === '0001' : true
   }
 
   // 渲染界面
@@ -111,7 +111,7 @@ export default (props) => {
             placeholder="请选择上级部门（留空为添加顶级部门）"
           />
         </Form.Item>
-        <Row>
+        <Row gutter={24}>
           <Col span={12}>
             <Form.Item label="显示顺序"
                         name="orders">
@@ -125,7 +125,6 @@ export default (props) => {
               <Switch
                 checkedChildren="启用"
                 unCheckedChildren="停用"
-                defaultChecked={currentItem.status ? true : currentItem.status === '0001'}
               />
             </Form.Item>
           </Col>
