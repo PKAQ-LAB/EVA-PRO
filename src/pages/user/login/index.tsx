@@ -41,6 +41,8 @@ const Login: React.FC<{}> = () => {
   const [submitting, setSubmitting] = useState(false);
   const [userLoginState, setUserLoginState] = useState<API.LoginStateType>({});
   const { initialState, setInitialState } = useModel('@@initialState');
+  const [type, setType] = useState<string>('account');
+
   const intl = useIntl();
 
   const handleSubmit = async (values: LoginParamsType) => {
@@ -65,6 +67,7 @@ const Login: React.FC<{}> = () => {
       // 如果失败去设置用户错误信息
       setUserLoginState(res);
     } catch (error) {
+      console.error(error);
       message.error('登录失败，请重试！');
     }
     setSubmitting(false);
@@ -119,7 +122,7 @@ const Login: React.FC<{}> = () => {
               />
             )}
                 <ProFormText
-                  name="username"
+                  name="account"
                   fieldProps={{
                     size: 'large',
                     prefix: <UserOutlined className={styles.prefixIcon} />,

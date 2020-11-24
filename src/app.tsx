@@ -98,7 +98,9 @@ export const layout = ({initialState,}: {
                   userinfo?: object;
                   menus?: MenuDataItem[]
                 };
-}): BasicLayoutProps => {
+}): BasicLayoutProps & {
+  childrenRender?: (dom: JSX.Element) => React.ReactNode;
+} => {
 
   return {
     rightContentRender: () => <RightContent />,

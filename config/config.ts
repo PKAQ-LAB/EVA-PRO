@@ -113,6 +113,7 @@ export default defineConfig({
             ],
           },
         },
+
       });
     } else {
       memo.plugin('open-browser-webpack-plugin')
