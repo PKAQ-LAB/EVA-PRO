@@ -131,7 +131,7 @@ export default (props) => {
       title={`${title[operateType] || '查看'}用户信息`}
     >
       <Form {...formProps}>
-        <Row>
+        <Row gutter={16}>
           <Col span={24}>
             <Form.Item label="　" name="file" colon={false}>
               <Upload
@@ -152,7 +152,7 @@ export default (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={16}>
           <Col span={12}>
             <Form.Item
                   label="姓名"
@@ -185,7 +185,7 @@ export default (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={16}>
           <Col span={12}>
             <Form.Item
                 label={
@@ -229,7 +229,7 @@ export default (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={16}>
           <Col span={24}>
             <Form.Item
               label="所属部门"
@@ -248,7 +248,7 @@ export default (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={16}>
           <Col span={24}>
           <Form.Item
                 label="所属角色"
@@ -266,7 +266,7 @@ export default (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={16}>
           <Col span={12}>
             <Form.Item
                 label="手机号码"
@@ -284,7 +284,7 @@ export default (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={16}>
           <Col span={24}>
             <Form.Item
                 label="是否锁定"
@@ -297,7 +297,7 @@ export default (props) => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row gutter={16}>
           <Col span={24}>
             <Form.Item
               label="备注"
