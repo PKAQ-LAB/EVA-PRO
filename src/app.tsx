@@ -61,6 +61,7 @@ export async function getInitialState(): Promise<{
       return {
         currentUser,
         settings: setting,
+        dict: currentUser?.data?.dict,
         userinfo: currentUser?.data?.user,
         menus: currentUser?.data?.menus
       };
@@ -72,10 +73,11 @@ export async function getInitialState(): Promise<{
 
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
-    const { currentUser, settings, userinfo, menus } = await fetchUserInfo();
+    const { currentUser, settings, userinfo, dict, menus } = await fetchUserInfo();
     return {
       fetchUserInfo,
       currentUser,
+      dict,
  	    userinfo,
  	    menus,
       settings,
@@ -85,6 +87,7 @@ export async function getInitialState(): Promise<{
   return {
     menus: [],
     currentUser: {},
+    dict: {},
     userinfo: {},
     fetchUserInfo,
     settings: setting,
@@ -98,6 +101,7 @@ export const layout = ({
   initialState: { settings?: LayoutSettings;
                   currentUser?: API.CurrentUser;
                   userinfo?: object;
+                  dict?: object;
                   menus?: MenuDataItem[]
                 };
 }): BasicLayoutProps & {

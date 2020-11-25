@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { useSelector } from 'umi';
+import { useModel } from 'umi';
 import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
 import DictSelector from '@/components/DictSelector';
 import { checkUnique, listOrg, saveRole } from './services/roleSvc';
 
 export default (props) => {
   const [ form ] = Form.useForm();
-  const dict = useSelector(state => state.global.dict);
+  const { initialState, setInitialState } = useModel('@@initialState');
+
+  const dict = initialState.dict;
 
   const [ orgs, setOrgs ] = useState([]);
   const [ showDepts, setShowDepts ] = useState(false);

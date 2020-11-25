@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import cx from 'classnames';
-import { useSelector } from 'umi';
+import { useModel } from 'umi';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Table, Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
 import { delSlip, get } from './services/supplierSvc';
@@ -10,8 +10,9 @@ export default (props) => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const { setOperateType, setCurrentItem, fetch, tableProps } = props;
+  const { initialState, setInitialState } = useModel('@@initialState');
 
-  const dict = useSelector(state => state.global.dict);
+  const dict = initialState.dict;
 
   // 单条删除
   const handleDeleteClick = record => {

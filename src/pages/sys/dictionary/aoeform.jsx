@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Card, Row, Col, Button } from 'antd';
-import { useSelector } from 'umi';
+import { useModel } from 'umi';
 import DictSelector from '@/components/DictSelector'
 import LineList from './linelist';
 import { editDict } from './services/dictSvc';
@@ -14,7 +14,9 @@ export default (props) => {
 
   const lineProps = { lineData, setLineData, operateType };
 
-  const dict = useSelector(state => state.global.dict);
+  const { initialState, setInitialState } = useModel('@@initialState');
+
+  const dict = initialState.dict;
 
   const title = { create: '新增', edit: '编辑', view: '查看' };
 

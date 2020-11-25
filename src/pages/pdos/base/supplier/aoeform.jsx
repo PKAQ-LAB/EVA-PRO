@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { useSelector } from 'umi';
+import { useModel } from 'umi';
 import { Modal, Form, Input, Row, Col } from 'antd';
 import DictSelector from '@/components/DictSelector'
 import { editSlip } from './services/supplierSvc';
@@ -9,7 +9,9 @@ export default (props) => {
 
   const [ form ] = Form.useForm();
   const [ loading, setLoading ] = useState(false);
-  const dict = useSelector(state => state.global.dict);
+  const { initialState, setInitialState } = useModel('@@initialState');
+
+  const dict = initialState.dict;
 
   const title = { create: '新增', edit: '编辑' };
   const { operateType, setOperateType, currentItem, fetch  } = props;

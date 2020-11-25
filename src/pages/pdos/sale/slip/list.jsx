@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSelector } from 'umi';
+import { useModel } from 'umi';
 import cx from 'classnames';
 import { Table, Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -9,7 +9,9 @@ export default (props) => {
   const { setOperateType, setCurrentItem, fetch, tableProps } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-  const dict = useSelector(state => state.global.dict);
+  const { initialState, setInitialState } = useModel('@@initialState');
+
+  const dict = initialState.dict;
 
   const [ form ] = Form.useForm();
 

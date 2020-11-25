@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSelector } from 'umi';
+import { useModel } from 'umi';
 import moment from 'moment';
 import { Drawer, Button, Form, Input, Row, Col, DatePicker, Divider } from 'antd';
 import * as math from 'mathjs';
@@ -11,7 +11,9 @@ export default (props) => {
 
   const [ form ] = Form.useForm();
   const [ loading, setLoading ] = useState(false);
-  const dict = useSelector(state => state.global.dict);
+  const { initialState, setInitialState } = useModel('@@initialState');
+
+  const dict = initialState.dict;
 
   const title = { create: '新增', edit: '编辑' };
   const { operateType, setOperateType, currentItem, fetch  } = props;

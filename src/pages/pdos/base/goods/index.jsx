@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { useSelector } from 'umi';
+import { useModel } from 'umi';
 import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
@@ -12,7 +12,9 @@ export default () => {
   const [operateType, setOperateType] = useState("");
   const [currentItem, setCurrentItem] = useState({});
 
-  const dict = useSelector(state => state.global.dict);
+  const { initialState, setInitialState } = useModel('@@initialState');
+
+  const dict = initialState.dict;
 
   const { run, tableProps } = useRequest(list, {
     paginated: true,
