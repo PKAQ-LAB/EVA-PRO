@@ -274,7 +274,7 @@ export default (props) => {
 
   };
 
-  return (<>
+  return (<div style={{ padding: 15 }}>
             {/* 工具条 */}
             <div className="eva-ribbon">
               {/* 操作按钮 */}
@@ -304,5 +304,5 @@ export default (props) => {
             <div className="eva-body">
               <Table {...tbProps} />
             </div>
-          </>)
+          </div>)
 }

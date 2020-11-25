@@ -101,19 +101,21 @@ export default (props) => {
     },
   ];
 
-  return   <Table
-              {...tableProps}
-              columns={columns}
-              rowKey={record => record.id}
-              rowSelection={rowSelection}
-              rowClassName={record =>
-                cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
-              }
-              onRow = {
-                (record) => ({
-                  onDoubleClick: () => handleEditClick(record, 'view'),
-                })
-              }
-            />;
+  return    <div style={{ padding: 15 }}>
+              <Table
+                {...tableProps}
+                columns={columns}
+                rowKey={record => record.id}
+                rowSelection={rowSelection}
+                rowClassName={record =>
+                  cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
+                }
+                onRow = {
+                  (record) => ({
+                    onDoubleClick: () => handleEditClick(record, 'view'),
+                  })
+                }
+              />
+            </div>
 
 }
