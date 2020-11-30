@@ -55,6 +55,9 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  history: {
+    type: 'hash',
+  },
   exportStatic: {},
   cssLoader: {
     modules: {

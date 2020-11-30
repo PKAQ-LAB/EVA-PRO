@@ -6,7 +6,7 @@ import {
 import { Alert, message } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
-import { useIntl, Link, useModel, history, FormattedMessage, SelectLang } from 'umi';
+import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import { login, LoginParamsType } from '@/services/login';
 
 import md5 from 'md5';
@@ -32,9 +32,11 @@ const LoginMessage: React.FC<{
  */
 const goto = () => {
   if (!history) return;
-  const { query } = history.location;
-  const { redirect } = query as { redirect: string };
-  history.push(redirect || '/');
+  setTimeout(() => {
+    const { query } = history.location;
+    const { redirect } = query as { redirect: string };
+    history.push(redirect || '/');
+  }, 10);
 };
 
 const Login: React.FC<{}> = () => {
@@ -44,6 +46,16 @@ const Login: React.FC<{}> = () => {
   const [type, setType] = useState<string>('account');
 
   const intl = useIntl();
+
+  const fetchUserInfo = async () => {
+    const userInfo = await initialState?.fetchUserInfo?.();
+    if (userInfo) {
+      setInitialState({
+        ...initialState,
+        currentUser: userInfo,
+      });
+    }
+  };
 
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
