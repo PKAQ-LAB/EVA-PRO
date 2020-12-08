@@ -1,10 +1,10 @@
 import React from 'react';
-import { BasicLayoutProps, Settings as LayoutSettings, PageLoading, MenuDataItem } from '@ant-design/pro-layout';
+import { Settings as LayoutSettings, PageLoading, MenuDataItem } from '@ant-design/pro-layout';
 import { SolutionOutlined, RocketFilled, ProfileFilled,
          RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled,
          BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
 
-import { history, RequestConfig } from 'umi';
+import { history, RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { RequestOptionsInit, ResponseError } from 'umi-request';
 import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
@@ -95,18 +95,8 @@ export async function getInitialState(): Promise<{
 
 }
 
-export const layout = ({
-  initialState
-}: {
-  initialState: { settings?: LayoutSettings;
-                  currentUser?: API.CurrentUser;
-                  userinfo?: object;
-                  dict?: object;
-                  menus?: MenuDataItem[]
-                };
-}): BasicLayoutProps & {
-  childrenRender?: (dom: JSX.Element) => React.ReactNode;
-} => {
+export const layout: RunTimeLayoutConfig = ({ initialState }) => {
+
 
   return {
     rightContentRender: () => <RightContent />,
@@ -122,6 +112,8 @@ export const layout = ({
         history.push('/user/login');
       }
     },
+    // 自定义 403 页面
+    // unAccessible: <div>unAccessible</div>,
     ...initialState?.settings,
   };
 };
