@@ -66,7 +66,7 @@ export default defineConfig({
   resolve: {
     includes: ['src/components'],
   },
-r: {
+  cssLoader: {
     modules: {
       getLocalIdent: (
         context: {
@@ -129,4 +129,5 @@ r: {
       memo.plugin('open-browser-webpack-plugin')
           .use(openBrowser, [{ url: 'http://localhost:8000' }]);
     }
-  }});
+  }
+});
