@@ -63,7 +63,10 @@ export default defineConfig({
     babelPlugins: [],
     babelOptions: {},
   },
-  cssLoader: {
+  resolve: {
+    includes: ['src/components'],
+  },
+r: {
     modules: {
       getLocalIdent: (
         context: {
@@ -126,5 +129,4 @@ export default defineConfig({
       memo.plugin('open-browser-webpack-plugin')
           .use(openBrowser, [{ url: 'http://localhost:8000' }]);
     }
-  }
-});
+  }});
