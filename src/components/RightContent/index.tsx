@@ -1,5 +1,5 @@
-import { Tag, Space, Menu } from 'antd';
-import { QuestionCircleOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+import { Tooltip, Tag, Space } from 'antd';
+import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useModel, SelectLang } from 'umi';
 import screenfull from 'screenfull';
@@ -45,30 +45,6 @@ export default () => {
         </span>
       </Tooltip>
 
-      <HeaderDropdown
-        overlay={
-          <Menu>
-            <Menu.Item
-              onClick={() => {
-                window.open('/~docs');
-              }}
-            >
-              组件文档
-            </Menu.Item>
-            <Menu.Item
-              onClick={() => {
-                window.open('https://pro.ant.design/docs/getting-started');
-              }}
-            >
-              Ant Design Pro 文档
-            </Menu.Item>
-          </Menu>
-        }
-      >
-        <span className={styles.action}>
-          <QuestionCircleOutlined />
-        </span>
-      </HeaderDropdown>
       <Avatar />
       {REACT_APP_ENV && (
         <span>
