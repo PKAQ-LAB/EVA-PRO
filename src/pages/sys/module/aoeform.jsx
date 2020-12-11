@@ -24,7 +24,7 @@ export default (props) => {
 
   const formInit = {
     ...currentItem,
-    status: currentItem.status ? currentItem.status === '0001' : true
+    status: currentItem.status ? currentItem.status === '0000' : true
   }
 
   // 校验路径唯一性
