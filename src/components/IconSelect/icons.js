@@ -106,7 +106,7 @@ export default [
   'font-colors',
   'font-size',
   'line-height',
-  'colum-height',
+  'column-height',
   'dash',
   'small-dash',
   'sort-ascending',
