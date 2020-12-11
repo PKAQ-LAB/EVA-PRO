@@ -48,7 +48,7 @@ export default class IconSelect extends Component {
           {iconsData.map(icon => (
             <Button
               key={icon}
-              icon={<LegacyIcon type={icon} />}
+              icon={<LegacyIcon key={icon + '-2'} type={icon} />}
               type={value === icon ? 'primary' : 'default'}
               onClick={() => this.handleChangeAction(icon)}
             />
