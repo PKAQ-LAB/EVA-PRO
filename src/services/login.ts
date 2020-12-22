@@ -1,13 +1,13 @@
 import { request } from 'umi';
 import { API } from './API';
 
-export interface LoginParamsType {
+export type LoginParamsType = {
   account: string;
   password: string;
   mobile: string;
   captcha: string;
   type: string;
-}
+};
 
 export async function login(params: LoginParamsType) {
   return request<API.LoginStateType>('/api/auth/login', {

@@ -16,14 +16,14 @@ import { message } from 'antd';
     data?: currentUserData;
   }
 
-  export interface LoginStateType {
+  export type LoginStateType = {
     code?: string;
     success? : boolean;
     data? : object;
     message?: string;
-  }
+  };
 
-  export interface NoticeIconData {
+  export type NoticeIconData = {
     id: string;
     key: string;
     avatar: string;
@@ -35,7 +35,7 @@ import { message } from 'antd';
     clickClose?: boolean;
     extra: any;
     status: string;
-  }
+  };
 }
 
 export interface currentUserData {

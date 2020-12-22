@@ -4,7 +4,7 @@
 /* globals workbox */
 workbox.core.setCacheNameDetails({
   prefix: 'antd-pro',
-  suffix: 'v1',
+  suffix: 'v5',
 });
 // Control all opened tabs ASAP
 workbox.clientsClaim();
@@ -56,14 +56,16 @@ addEventListener('message', (event) => {
   if (replyPort && message && message.type === 'skip-waiting') {
     event.waitUntil(
       self.skipWaiting().then(
-        () =>
+        () => {
           replyPort.postMessage({
             error: null,
-          }),
-        (error) =>
+          });
+        },
+        (error) => {
           replyPort.postMessage({
             error,
-          }),
+          });
+        },
       ),
     );
   }

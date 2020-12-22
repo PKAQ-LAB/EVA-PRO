@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tag, message } from 'antd';
 import { groupBy } from 'lodash';
 import moment from 'moment';
@@ -8,11 +8,13 @@ import { queryNotices } from '@/services/user';
 import NoticeIcon from './NoticeIcon';
 import styles from './index.less';
 
-const getNoticeData = (
-  notices: API.NoticeIconData[],
-): {
-  [key: string]: API.NoticeIconData[];
-} => {
+export type GlobalHeaderRightProps = {
+  fetchingNotices?: boolean;
+  onNoticeVisibleChange?: (visible: boolean) => void;
+  onNoticeClear?: (tabName?: string) => void;
+};
+
+const getNoticeData = (notices: API.NoticeIconData[]): Record<string, API.NoticeIconData[]> => {
   if (!notices || notices.length === 0 || !Array.isArray(notices)) {
     return {};
   }
@@ -52,10 +54,8 @@ const getNoticeData = (
   return groupBy(newNotices, 'type');
 };
 
-const getUnreadData = (noticeData: { [key: string]: API.NoticeIconData[] }) => {
-  const unreadMsg: {
-    [key: string]: number;
-  } = {};
+const getUnreadData = (noticeData: Record<string, API.NoticeIconData[]>) => {
+  const unreadMsg: Record<string, number> = {};
   Object.keys(noticeData).forEach((key) => {
     const value = noticeData[key];
 
@@ -70,12 +70,6 @@ const getUnreadData = (noticeData: { [key: string]: API.NoticeIconData[] }) => {
   return unreadMsg;
 };
 
-export interface GlobalHeaderRightProps {
-  fetchingNotices?: boolean;
-  onNoticeVisibleChange?: (visible: boolean) => void;
-  onNoticeClear?: (tabName?: string) => void;
-}
-
 const NoticeIconView = () => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState || {};
@@ -88,7 +82,7 @@ const NoticeIconView = () => {
   const noticeData = getNoticeData(notices);
   const unreadMsg = getUnreadData(noticeData || {});
 
-  const changeReadState = useCallback((id: string) => {
+  const changeReadState = (id: string) => {
     setNotices(
       notices.map((item) => {
         const notice = { ...item };
@@ -98,7 +92,7 @@ const NoticeIconView = () => {
         return notice;
       }),
     );
-  }, []);
+  };
 
   const clearReadState = (title: string, key: string) => {
     setNotices(

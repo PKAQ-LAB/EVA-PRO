@@ -14,7 +14,7 @@ const ENVTagColor = {
   pre: '#87d068',
 };
 
-export default () => {
+const GlobalHeaderRight: React.FC = () => {
   const { initialState } = useModel('@@initialState');
 
   // 全屏控制
