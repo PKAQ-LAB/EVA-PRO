@@ -55,3 +55,4 @@ const GlobalHeaderRight: React.FC = () => {
     </Space>
   );
 };
+export default GlobalHeaderRight;

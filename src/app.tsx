@@ -1,12 +1,14 @@
 import React from 'react';
-import type { Settings as LayoutSettings, PageLoading, MenuDataItem } from '@ant-design/pro-layout';
+import type { Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout';
+import { PageLoading } from '@ant-design/pro-layout';
 import { SolutionOutlined, RocketFilled, ProfileFilled,
          RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled,
          BarsOutlined, UsergroupAddOutlined, FormOutlined } from '@ant-design/icons';
 
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history } from 'umi';
-import type { RequestOptionsInit, ResponseError } from 'umi-request';
+import type { ResponseError } from 'umi-request';
+import { RequestOptionsInit } from 'umi-request';
 import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
@@ -125,7 +127,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 const errorHandler = (error: ResponseError) => {
   const { response } = error;
   if (response && response.status) {
-    console.error(response);
     const { status } = response;
 
    // if (status === 401) {
