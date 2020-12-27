@@ -122,7 +122,7 @@ const Login: React.FC = () => {
               },
             }}
             onFinish={async (values) => {
-              handleSubmit(values);
+              handleSubmit(values as LoginParamsType);
             }}
           >
             {!success || code !== '0000' && (
