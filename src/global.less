@@ -57,6 +57,13 @@ html,
 body,
 #root {
   :global {
+
+    .ant-card-head {
+      &::before {
+        display: block !important;
+      }
+    }
+
     .ant-pro-basicLayout .ant-layout-header.ant-pro-fixed-header {
       height: 64px !important;
     }
@@ -154,6 +161,7 @@ body,
     // .ant-table-wrapper{
     //   padding: 0 24px 24px;
     // }
+
     // 表高度
     .ant-table-row {
       height: 36px;
