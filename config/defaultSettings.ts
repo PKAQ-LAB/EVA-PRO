@@ -3,6 +3,14 @@ import { Settings as LayoutSettings } from '@ant-design/pro-layout';
 const Settings: LayoutSettings & {
   pwa?: boolean;
   logo?: string;
+  version?: string;
+  url?: string;
+  imgUrl?: string;
+  access_token?: string;
+  refresh_token?: string;
+  user_key?: string;
+  subTitle?: string;
+  copyright?: string;
 } = {
   version: '1.0.0',
   url: 'http://localhost:9016/api/',
