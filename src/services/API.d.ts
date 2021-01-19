@@ -1,5 +1,4 @@
 declare namespace API {
-import { message } from 'antd';
   export interface CurrentUser {
     avatar?: string;
     name?: string;
@@ -39,7 +38,7 @@ import { message } from 'antd';
 }
 
 export interface currentUserData {
-  menus: Array;
+  menus: any[];
   dict: object;
   user: object;
 }

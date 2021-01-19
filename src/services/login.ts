@@ -1,5 +1,5 @@
 import { request } from 'umi';
-import { API } from './API';
+import type { API } from './API';
 
 export type LoginParamsType = {
   account: string;
