@@ -48,7 +48,7 @@ export default class IconSelect extends Component {
           {iconsData.map(icon => (
             <Button
               key={icon}
-              icon={<LegacyIcon key={icon + '-2'} type={icon} />}
+              icon={<LegacyIcon key={`${icon  }-2`} type={icon} />}
               type={value === icon ? 'primary' : 'default'}
               onClick={() => this.handleChangeAction(icon)}
             />
@@ -58,7 +58,7 @@ export default class IconSelect extends Component {
     );
 
     return (
-      <div>
+      <div className={styles.iconselect}>
         <Popover content={iconBox} trigger="click">
           <Input
             type="primary"
