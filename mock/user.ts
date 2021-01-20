@@ -22,8 +22,21 @@ export default {
           "0001":"仅本部门"
         }
       },
-      "menus":[
-        {
+      "menus":[{
+        "exact":false,
+        "gmtModify":"2019-10-15 12:41:52",
+        "icon":"",
+        "id":"5",
+        "isleaf":false,
+        "key":"",
+        "locale":"menu.sys",
+        "name":"测试菜单",
+        "orders":0,
+        "parentName":"测试菜单",
+        "path":"/sys",
+        "pathId":"5",
+        "status":"9999"
+      },{
           "children":[
             {
               "exact":true,
@@ -115,13 +128,6 @@ export default {
           "locale":"menu.sys",
           "name":"系统管理",
           "orders":0,
-          "originChildren":[
-            {"$ref":"$.data.menus[0].children[0]"},
-            {"$ref":"$.data.menus[0].children[1]"},
-            {"$ref":"$.data.menus[0].children[2]"},
-            {"$ref":"$.data.menus[0].children[3]"},
-            {"$ref":"$.data.menus[0].children[4]"}
-          ],
           "parentName":"系统管理",
           "path":"/sys",
           "pathId":"5",
@@ -182,69 +188,9 @@ export default {
           "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
           "name":"系统监控",
           "orders":5,
-          "originChildren":[
-            {"$ref":"$.data.menus[1].children[0]"},
-            {"$ref":"$.data.menus[1].children[1]"}
-          ],
           "path":"/monitor",
           "status":"9999"
         },
-        {
-          "createBy":"9199482d76b443ef9f13fefddcf0046c",
-          "exact":true,
-          "gmtCreate":"2019-10-25 12:34:47",
-          "gmtModify":"2019-10-25 12:34:47",
-          "icon":"rocket",
-          "id":"1187588287316574209",
-          "isleaf":true,
-          "key":"",
-          "locale":"menu.dev.generator",
-          "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
-          "name":"代码生成",
-          "orders":6,
-          "path":"/dev/generator",
-          "status":"9999"
-        },
-        {
-          "children":[
-            {
-              "createBy":"9199482d76b443ef9f13fefddcf0046c",
-              "exact":true,
-              "gmtCreate":"2019-10-26 11:39:48",
-              "gmtModify":"2019-10-26 11:39:48",
-              "id":"1187936839427391490",
-              "isleaf":true,
-              "key":"",
-              "locale":"menu.pdos.purchasing",
-              "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
-              "name":"采购管理",
-              "orders":1,
-              "parentId":"1187919802302926850",
-              "parentName":"进销存",
-              "path":"/pdos/purchasing",
-              "pathId":"1187919802302926850",
-              "pathName":"进销存/采购管理",
-              "status":"9999"
-            }
-          ],
-          "createBy":"9199482d76b443ef9f13fefddcf0046c",
-          "exact":true,
-          "gmtCreate":"2019-10-26 10:32:06",
-          "gmtModify":"2019-10-26 10:32:06",
-          "icon":"home",
-          "id":"1187919802302926850",
-          "isleaf":true,
-          "key":"",
-          "locale":"menu.pdos",
-          "modifyBy":"9199482d76b443ef9f13fefddcf0046c",
-          "name":"进销存",
-          "orders":7,
-          "originChildren":[
-            {"$ref":"$.data.menus[3].children[0]"}
-          ],
-          "path":"/pdos",
-          "status":"9999"
-        }
       ],
       "user":{
         "account":"admin",
