@@ -3,16 +3,18 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
-import { listOrg } from './services/orgSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
+
 /**
  * 组织（部门）管理 主界面
  */
-
 export default () => {
   const [ operateType, setOperateType ] = useState("");
   const [ currentItem, setCurrentItem ] = useState({});
 
-  const { run, data, loading } = useRequest(listOrg, {
+  const { run, data, loading } = useRequest(() => Service.list(API.ORG_LIST), {
     formatResult: (res) => {
       return res.data;
     }

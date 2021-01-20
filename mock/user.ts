@@ -29,11 +29,11 @@ export default {
         "id":"5",
         "isleaf":false,
         "key":"",
-        "locale":"menu.sys",
+        "locale":"menu.test",
         "name":"测试菜单",
         "orders":0,
         "parentName":"测试菜单",
-        "path":"/sys",
+        "path":"/test",
         "pathId":"5",
         "status":"9999"
       },{

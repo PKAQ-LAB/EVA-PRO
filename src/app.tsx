@@ -8,14 +8,14 @@ import { SolutionOutlined, RocketFilled, ProfileFilled,
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history } from 'umi';
 import type { ResponseError } from 'umi-request';
-import { RequestOptionsInit } from 'umi-request';
+import type { RequestOptionsInit } from 'umi-request';
 import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import setting from '@config/defaultSettings';
 import { notification, message } from 'antd';
 import { queryCurrent } from './services/user';
-import { API } from './services/API';
+import type { API } from './services/API';
 
 /**
  * 获取用户信息比较慢的时候会展示一个 loading
@@ -99,7 +99,6 @@ export async function getInitialState(): Promise<{
 }
 
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
-
 
   return {
     rightContentRender: () => <RightContent />,

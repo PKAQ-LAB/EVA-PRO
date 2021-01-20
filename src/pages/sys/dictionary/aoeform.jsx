@@ -3,7 +3,9 @@ import { Form, Input, Card, Row, Col, Button } from 'antd';
 import { useModel } from 'umi';
 import DictSelector from '@/components/DictSelector'
 import LineList from './linelist';
-import { editDict } from './services/dictSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
   const [form] = Form.useForm();
@@ -14,8 +16,9 @@ export default (props) => {
 
   const lineProps = { lineData, setLineData, operateType };
 
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { initialState } = useModel('@@initialState');
 
+  // eslint-disable-next-line prefer-destructuring
   const dict = initialState.dict;
 
   const title = { create: '新增', edit: '编辑', view: '查看' };
@@ -28,7 +31,7 @@ export default (props) => {
   React.useEffect(() => {
     setLineData(currentItem.lines);
     form.resetFields();
-  }, [currentItem])
+  }, [currentItem, form])
 
   // 保存事件
   const handleSaveClick = () => {
@@ -43,7 +46,7 @@ export default (props) => {
       };
       fd.lines = lineData;
 
-      editDict(fd).then(() => {
+      Service.post(API.DICT_EDIT, fd).then(() => {
         // fix 保存后清空表单
         // form.resetFields();
       }).finally(() => {

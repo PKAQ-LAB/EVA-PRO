@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Table, Input, Divider, Popconfirm, Button, Row, Col } from 'antd';
 import { dictFilter } from '@/utils/DataHelper';
 import css from './list.less';
-import { getDict, deleteDict } from './services/dictSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 const { Search } = Input;
 
@@ -16,12 +18,11 @@ const { setOperateType, setCurrentItem, fetch, loading, data } = props;
     if (record.parentId === '0' || !record.parentId) {
       return;
     }
-    getDict({
-      id: record.id,
-    }).then(res => {
-      setCurrentItem(res.data);
-      setOperateType("view");
-    })
+    Service.get(API.DICT_GET, record.id)
+          .then(res => {
+            setCurrentItem(res.data);
+            setOperateType("view");
+          })
   };
 
   // 新增事件
@@ -36,17 +37,16 @@ const { setOperateType, setCurrentItem, fetch, loading, data } = props;
     if (record.parentId === '0' || !record.parentId) {
       return;
     }
-    getDict({
-      id: record.id,
-    }).then(res => {
-      setCurrentItem(res.data);
-      setOperateType("edit");
-    })
+    Service.get(API.DICT_GET, record.id)
+          .then(res => {
+            setCurrentItem(res.data);
+            setOperateType("edit");
+          })
   };
 
   // 删除事件
   const handleDeleteClick = record => {
-    deleteDict({
+    Service.post(API.DICT_DEL, {
       id: record.id,
     }).then(() => {
       fetch();

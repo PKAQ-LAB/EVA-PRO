@@ -3,7 +3,9 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
-import { listModule } from './services/moduleSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 /**
  * 模块（菜单）管理 主界面
  */
@@ -12,7 +14,8 @@ export default () => {
  const [operateType, setOperateType] = useState("");
  const [currentItem, setCurrentItem] = useState({});
 
- const { run, data, loading } = useRequest(listModule, {
+ const { run, data, loading } = useRequest(
+  () => Service.list(API.MODULE_LIST), {
   formatResult: (res) => {
     return res.data;
   }

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
-import { fetchRoles } from './services/roleSvc';
 import List from './list';
 import AOEForm from './aoeform';
 import RoleUser from './component/roleuser';
 import RoleConfig from './component/roleconfig';
 import RoleModule from './component/rolemodule';
+
+import Service from '@/services/service';
+import API from '@/apis';
 /**
  * 角色（权限）管理 主界面
  */
@@ -18,10 +20,11 @@ export default () => {
   const [ currentItem, setCurrentItem ] = useState({});
   const [ selectedRowKeys, setSelectedRowKeys ] = useState([]);
 
-  const { run, tableProps, loading } = useRequest(fetchRoles, {
+  const { run, tableProps, loading } = useRequest(
+    () => Service.list(API.ROLE_LIST), {
     paginated: true,
     formatResult: (res) => {
-      return res.data;
+      return { list: res.data };
     }
   })
 

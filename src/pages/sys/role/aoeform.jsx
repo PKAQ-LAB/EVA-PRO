@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { useModel } from 'umi';
 import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
 import DictSelector from '@/components/DictSelector';
-import { checkUnique, listOrg, saveRole } from './services/roleSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
   const [ form ] = Form.useForm();
   const { initialState, setInitialState } = useModel('@@initialState');
 
+  // eslint-disable-next-line prefer-destructuring
   const dict = initialState.dict;
 
   const [ orgs, setOrgs ] = useState([]);
@@ -28,7 +31,7 @@ export default (props) => {
     if (currentItem.dataPermissionType) {
       currentItem.dataPermissionType = currentItem.dataPermissionType || '0000';
       if(currentItem.dataPermissionType === "0003"){
-        listOrg().then((res) => {
+        Service.list(API.ORG_LIST).then((res) => {
           if(res.success) {
            setOrgs(res.data);
           }
@@ -49,7 +52,7 @@ export default (props) => {
       return Promise.resolve();
     }
 
-    checkUnique({code}).then(r => {
+    Service.post(API.ROLE_CHECKUNIQUE, {code}).then(r => {
       if (r.success) {
         return Promise.resolve();
       }
@@ -59,11 +62,10 @@ export default (props) => {
 
   // 数据权限
  const handleDataPermissionChange = v  => {
-   console.info(v);
     if(v === "0003") {
       setShowDepts(true);
     }
-    listOrg().then((res) => {
+    Service.post(API.ORG_LIST).then((res) => {
       if(res.success) {
        setOrgs(res.data);
       }
@@ -84,7 +86,7 @@ export default (props) => {
         formData.dataPermissionDeptid = values.dataPermissionDeptid.join(',');
       }
       setSubmitting(true);
-      saveRole(formData).then((res) => {
+      Service.post(API.ROLE_SAVE,formData).then((res) => {
         setSubmitting(false);
         if(res.success){
           setModalType("");

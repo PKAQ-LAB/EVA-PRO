@@ -2,25 +2,30 @@ import React from 'react';
 import { Form, Input, Alert, Button, Divider, Popconfirm, Table, Switch, notification } from 'antd';
 import { CheckOutlined, CloseOutlined, PlusOutlined, LockOutlined, UnlockOutlined, DeleteOutlined } from '@ant-design/icons';
 import cx from 'classnames';
-import { delRole, getRole, listModule, listUser, lockRole } from './services/roleSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
   const [ form ] = Form.useForm();
-  const { fetch, loading, selectedRowKeys, setSelectedRowKeys, tableProps, setCurrentItem, setOperateType, setModalType, setRoleId } = props;
+  const { fetch, loading, selectedRowKeys,
+          setSelectedRowKeys, tableProps, setCurrentItem,
+          setOperateType, setModalType, setRoleId } = props;
 
   // 单条删除
   const handleDeleteClick = record => {
-    delRole({
+    Service.post(API.ROLE_DEL,{
       param: [record.id],
     }).then( () => fetch() );
   };
 
   // 编辑
   const handleEditClick = record => {
-    getRole({id: record.id}).then((res) => {
-      setCurrentItem(res.data);
-      setModalType("edit");
-    })
+    Service.get(API.ROLE_GET, record.id)
+           .then((res) => {
+             setCurrentItem(res.data);
+             setModalType("edit");
+           })
   };
 
   // 新增窗口
@@ -45,7 +50,7 @@ export default (props) => {
 
   // 解锁/锁定
   const handleLockSwitch = status => {
-    lockRole({
+    Service.post(API.ROLE_LOCK, {
       param: selectedRowKeys,
       status,
     }).then(() => fetch());
@@ -55,7 +60,7 @@ export default (props) => {
   const handleRemoveClick = () => {
 
     if (!selectedRowKeys) return;
-    delRole({
+    Service.post(API.ROLE_DEL, {
       param: selectedRowKeys,
     }).then(() => fetch());
 
@@ -65,7 +70,7 @@ export default (props) => {
     const param = { roleId: record.id, };
 
     switch(operate){
-      case 'User':   listUser(param)
+      case 'User':   Service.list(API.ROLE_LISTUSER, param)
                         .then(() => {
                           setOperateType(operate);
                           setRoleId(record.id)
@@ -73,7 +78,7 @@ export default (props) => {
                      break;
       case 'Config': setOperateType(operate);
                      break;
-      case 'Module': listModule(param)
+      case 'Module':  Service.list(API.ROLE_LISTMOUDLE, param)
                         .then(() => {
                             setOperateType(operate);
                             setRoleId(record.id)
@@ -90,7 +95,7 @@ export default (props) => {
       return;
     }
 
-    lockRole({
+    Service.list(API.ROLE_LOCK, {
       param: [record.id],
       status: checked ? '0000' : '0001',
     }).then(() => fetch() );
@@ -273,6 +278,8 @@ export default (props) => {
       cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
 
   };
+
+  console.info(tbProps);
 
   return (<div style={{ padding: 15 }}>
             {/* 工具条 */}

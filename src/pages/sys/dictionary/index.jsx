@@ -4,14 +4,17 @@ import SideLayout from '@/components/SideLayout';
 import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
-import { listDict } from './services/dictSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default () => {
   // 初始化数据
  const [operateType, setOperateType] = useState("");
  const [currentItem, setCurrentItem] = useState({});
 
- const { run, data, loading } = useRequest(listDict, {
+ const { run, data, loading } = useRequest(
+    () => Service.list(API.DICT_LIST), {
     formatResult: (res) => {
       return res.data;
     }

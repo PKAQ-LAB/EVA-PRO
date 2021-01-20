@@ -1,7 +1,9 @@
 import React from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Row, Col, Modal, Switch, Tooltip, Form, Input, TreeSelect } from 'antd';
-import { checkUnique, editOrg } from './services/orgSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
 
@@ -31,7 +33,7 @@ export default (props) => {
     if (currentItem && currentItem.id && value === currentItem.code) {
       return Promise.resolve();
     }
-    await checkUnique({code}).then((r)=>{
+    await Service.post(API.ORG_CHECKUNIQUE, {code}).then((r)=>{
       if (r.success) {
         return Promise.resolve();
       }
@@ -52,7 +54,7 @@ export default (props) => {
 
       formData.status = formData.enable ? '0001' : '0000';
 
-      editOrg(formData).then((r) => {
+      Service.post(API.ORG_EDIT, formData).then((r) => {
         setSubmitting(false);
         if(r.success){
           setOperateType("");

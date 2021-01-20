@@ -4,7 +4,9 @@ import { Table, Switch, Alert, Popconfirm, Divider, Button, Input, message, noti
 import cx from 'classnames';
 import { hasChildren, getNodeBorther } from '@/utils/DataHelper';
 import BizIcon from '@/components/BizIcon';
-import { getOrg, switchStatus, deleteOrg, sortOrg } from './services/orgSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 const { Search } = { ...Input };
 
@@ -26,7 +28,7 @@ export default (props) => {
       notification.error('没有选择记录');
       return;
     }
-    getOrg({id: record.id}).then((res) => {
+    Service.get(API.ORG_GET, record.id).then((res) => {
       setCurrentItem(res.data);
       setOperateType("edit");
     })
@@ -38,7 +40,7 @@ export default (props) => {
       notification.error('没有选择记录');
       return;
     }
-    switchStatus({
+    Service.post(API.ORG_STATUS, {
       id: record.id,
       status: checked ? '0000' : '0001',
     }).then(() => {
@@ -54,7 +56,7 @@ export default (props) => {
     if (record.isLeaf || blockItem) {
       message.error(`错误： [${record.name}] 存在子节点,无法删除.`);
     } else {
-      deleteOrg({ param: [record.id],})
+      Service.post(API.ORG_DEL, { param: [record.id],})
       .then(() => fetch())
     }
   };
@@ -66,7 +68,7 @@ export default (props) => {
     if (blockItem) {
       message.error(`错误： [${blockItem}] 存在子节点,无法删除.`);
     } else {
-      deleteOrg({ param: selectedRowKeys,})
+      Service.post(API.ORG_DEL, { param: selectedRowKeys,})
       .then(() => fetch())
     }
     // end if/else
@@ -92,7 +94,7 @@ export default (props) => {
         orders: orginOrders,
       },
     ];
-    sortOrg({...switchObj}).then(() => fetch());
+    Service.post(API.ORG_SORT, {...switchObj}).then(() => fetch());
   };
 
   const column = [

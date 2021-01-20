@@ -16,7 +16,9 @@ import cx from 'classnames';
 
 import { hasChildren, getNodeBorther } from '@/utils/DataHelper';
 import BizIcon from '@/components/BizIcon';
-import { editModule, getModule, deleteModule, sortModule } from './services/moduleSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 const { Search } = { ...Input };
 
@@ -39,13 +41,12 @@ export default (props) => {
       return;
     }
 
-    getModule({
-      id: record.id,
-    }).then( res => {
-      setCurrentItem(res.data);
-      setOperateType("edit");
-    })
-  };
+    Service.get(API.MODULE_GET, record.id)
+           .then( res => {
+              setCurrentItem(res.data);
+              setOperateType("edit");
+            })
+           };
 
   // 启用/停用
   const handleEnable = (record, checked) => {
@@ -53,7 +54,7 @@ export default (props) => {
       notification.error('没有选择记录');
       return;
     }
-    editModule({
+    Service.post(API.ORG_EDIT, {
       id: record.id,
       status: checked ? '0001' : '0000',
       record,
@@ -70,7 +71,7 @@ export default (props) => {
     if (!!record.isLeaf || blockItem) {
       message.error(`错误： [${record.name}] 存在子节点,无法删除.`);
     } else {
-      deleteModule({
+      Service.post(API.MODULE_DEL, {
         param: [record.id],
       }).then( () => fetch());
     }
@@ -83,7 +84,7 @@ export default (props) => {
     if (blockItem) {
       message.error(`错误： [${blockItem}] 存在子节点,无法删除.`);
     } else {
-      deleteModule({
+      Service.post(API.MODULE_DEL,{
         param: selectedRowKeys,
       }).then(() => {
         fetch();
@@ -93,7 +94,7 @@ export default (props) => {
 
   // 搜索
   const handleSearch = val => {
-    fetch(val);
+    fetch({name: val});
   };
 
   // 行选
@@ -116,7 +117,7 @@ export default (props) => {
         orders: orginOrders,
       },
     ];
-    sortModule(switchObj).then(() => fetch());
+    Service.post(API.MODULE_SORT, switchObj).then(() => fetch());
   };
 
   const column = [

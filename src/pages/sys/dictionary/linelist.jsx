@@ -11,8 +11,6 @@ export default (props) => {
 
   const { lineData = [], setLineData, opertateType } = props;
 
-  console.info(lineData);
-
   // 表单属性
   const formPorps = {
     modalType, setModalType, lineData, setLineData, editIndex, setEditIndex

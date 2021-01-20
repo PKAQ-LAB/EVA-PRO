@@ -5,7 +5,9 @@ import TreeSelector from '@/components/TreeSelector';
 import IconSelect from '@/components/IconSelect';
 
 import LineList from './linelist';
-import { checkUnique, editModule } from './services/moduleSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
   const { fetch, operateType, data, setOperateType, currentItem } = props;
@@ -36,7 +38,7 @@ export default (props) => {
     const parentId = getFieldValue('parentId');
     const fd = { id: currentItem.id, path, parentId };
 
-    await checkUnique(fd).then(r => {
+    await Service.post(API.ORG_CHECKUNIQUE, fd).then(r => {
       if (r.success) {
         return Promise.resolve();
       }
@@ -57,7 +59,7 @@ export default (props) => {
 
       fd.resources = lineData;
       fd.status = fd.status ? '0001' : '0000';
-      editModule(fd).then((r) =>{
+      Service.post(API.MODULE_EDIT, fd).then((r) =>{
         setSubmitting(false);
         if(r.success){
           setOperateType("")
