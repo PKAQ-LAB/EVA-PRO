@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Table, Checkbox } from 'antd';
-import { saveModule, listModule } from '../services/roleSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
   const { fetch, operateType, setOperateType, roleId, setRoleId } = props;
@@ -13,7 +15,7 @@ export default (props) => {
   useEffect( () => {
     setLoading(true);
     if(roleId){
-      listModule({roleId}).then((res) => {
+      Service.list(API.ROLE_LISTMOUDLE, {roleId}).then((res) => {
         setLoading(false);
         setChecked(res.data.checked);
         setRecords(res.data.modules);
@@ -32,7 +34,7 @@ export default (props) => {
 
     const modules = checked && checked.map(item => ({ moduleId: item }));
 
-    saveModule({
+    Service.post(API.ROLE_SAVEMODULE, {
       id: roleId,
       modules,
       resources: checkedResource,
