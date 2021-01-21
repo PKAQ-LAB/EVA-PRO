@@ -14,7 +14,7 @@ export default () => {
  const [currentItem, setCurrentItem] = useState({});
 
  const { run, data, loading } = useRequest(
-    () => Service.list(API.DICT_LIST), {
+    (param) => Service.list(API.DICT_LIST, param), {
     formatResult: (res) => {
       return res.data;
     }

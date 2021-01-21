@@ -7,7 +7,9 @@ import SideLayout from '@/components/SideLayout';
 import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';
-import { listUser, listOrg, listRole, lockUser, delUser } from './services/accountSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default () => {
 
@@ -21,7 +23,8 @@ export default () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [form] = Form.useForm();
 
-  const { run, tableProps, loading } = useRequest(listUser, {
+  const { run, tableProps, loading } = useRequest(
+    (param) => Service.list(API.ACCOUNT_LIST, param), {
     paginated: true,
     formatResult: (res) => {
       return res.data;
@@ -29,10 +32,10 @@ export default () => {
   })
 
   useEffect(() => {
-    listOrg().then((res) => {
+    Service.list(API.ORG_LIST).then((res) => {
       setOrgs(res.data);
     })
-    listRole().then((res) => {
+    Service.list(API.ROLE_LIST).then((res) => {
       setRoles(res.data);
     })
   }, []);
@@ -69,7 +72,7 @@ export default () => {
 
     // 解锁/锁定
   const handleLockSwitch = status => {
-    lockUser({
+    Service.post(API.ACCOUNT_LOCK, {
       param: selectedRowKeys,
       status,
     })
@@ -107,7 +110,7 @@ export default () => {
   // 批量删除
   const handleRemoveClick = () => {
     if (!selectedRowKeys) return;
-    delUser({ param: selectedRowKeys, })
+    Service.post(API.ACCOUNT_DEL, { param: selectedRowKeys, })
   };
 
   // 渲染左侧树

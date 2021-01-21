@@ -21,7 +21,7 @@ export default () => {
   const [ selectedRowKeys, setSelectedRowKeys ] = useState([]);
 
   const { run, tableProps, loading } = useRequest(
-    () => Service.list(API.ROLE_LIST), {
+    (param) => Service.list(API.ROLE_LIST, param), {
     paginated: true,
     formatResult: (res) => {
       return { list: res.data };

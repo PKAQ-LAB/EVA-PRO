@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Transfer, Modal } from 'antd';
-import { grantUser } from './services/accountSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
   const { roleModal, setRoleModal, roles, currentItem } = props;
@@ -30,7 +32,7 @@ export default (props) => {
       return obj;
     });
 
-    grantUser({
+    Service.post(API.ACCOUNT_GRANT, {
       id,
       roles: sr,
     }).then(()=>{

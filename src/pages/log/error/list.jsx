@@ -1,7 +1,9 @@
 import React from 'react';
 import { Table, Form, Button, Row, Col, Divider, DatePicker } from 'antd';
 import moment from 'moment';
-import { get } from './services/errorSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -34,9 +36,9 @@ export default (props) => {
     if (!records.id) {
       return;
     }
-    get({
-      id: records.id,
-    }).then((res) => {
+    Service.get(API.ERROR_GET,
+        records.id,
+    ).then((res) => {
       if(res.success){
         setOperateType("check");
         setCurrentItem(res.data);

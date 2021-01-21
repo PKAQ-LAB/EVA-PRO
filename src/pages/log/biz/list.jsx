@@ -1,7 +1,10 @@
 import React from 'react';
 import moment from 'moment';
 import { Table, Form, Button, Row, Col, Divider, DatePicker } from 'antd';
-import { get } from './service/bizSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
+
 
 const { RangePicker } = DatePicker;
 
@@ -63,9 +66,8 @@ export default (props) => {
     if (!records.id) {
       return;
     }
-    get({
-      id: records.id,
-    }).then((res) => {
+    Service.get(API.BIZLOG_GET, records.id,
+    ).then((res) => {
       if(res.success){
         setOperateType("check");
         setCurrentItem(res.data);

@@ -6,7 +6,9 @@ import md5 from 'md5';
 import setting from '@config/defaultSettings';
 import Selector from '@/components/Selector';
 import TreeSelector from '@/components/TreeSelector';
-import { checkUnique, saveUser } from './services/accountSvc';
+
+import Service from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
   const [form] = Form.useForm();
@@ -55,7 +57,7 @@ export default (props) => {
       id: currentItem ? currentItem.id : '',
     };
 
-    await checkUnique(data).then((r) => {
+    await Service.post(API.ACCOUNT_CHECKUNIQUE, data).then((r) => {
       if (r.success) {
         return Promise.resolve();
       }
@@ -107,7 +109,7 @@ export default (props) => {
         });
       }
 
-      saveUser(data).then(res => {
+      Service.post(API.ACCOUNT_EDIT, data).then(res => {
         setSubmitting(false);
         if(res.success){
           setOperateType("");
