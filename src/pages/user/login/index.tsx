@@ -66,7 +66,7 @@ const Login: React.FC = () => {
       const res = await login({ ...values, type });
       if (res.success) {
         message.success('登录成功！');
-  		  const currentUser = await initialState?.fetchUserInfo();
+  		  const currentUser = await initialState?.fetchUserInfo?.();
 
         setInitialState({
           ...initialState,
@@ -80,7 +80,7 @@ const Login: React.FC = () => {
       setUserLoginState(res);
     } catch (error) {
       console.error(error);
-      message.error('登录失败，请重试！');
+      // message.error('登录失败，请重试！');
     }
     setSubmitting(false);
   };
