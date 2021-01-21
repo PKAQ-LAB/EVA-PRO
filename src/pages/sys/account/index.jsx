@@ -27,7 +27,7 @@ export default () => {
     (param) => Service.list(API.ACCOUNT_LIST, param), {
     paginated: true,
     formatResult: (res) => {
-      return res.data;
+      return { list: res.data };
     }
   })
 
