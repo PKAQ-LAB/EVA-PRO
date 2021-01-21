@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 export default {
   'GET /api/sys/account/get/:id  ': (req: Request, res: Response) => {
-    res.send();
+    res.send({"code":"0000","success":true,"message":null,"errorMessage":null,"data":{"id":"1190104332380127233","createBy":"9199482d76b443ef9f13fefddcf0046c","gmtCreate":"2019-11-01 11:12:39","modifyBy":"9199482d76b443ef9f13fefddcf0046c","gmtModify":"2019-11-06 17:31:04","remark":null,"code":null,"deptId":"6","deptName":"加达里","tel":null,"email":null,"account":"scott","avatar":"","name":"操作员","nickName":null,"registerIp":null,"gmtRegister":null,"lastIp":null,"lastLogin":null,"locked":"0000","weixin_id":null,"roles":[{"id":"1191916813788344321","createBy":null,"gmtCreate":null,"modifyBy":null,"gmtModify":null,"remark":null,"name":"系统操作员","code":"ROLE_OPERATOR","parentId":null,"parentName":null,"path":null,"pathName":null,"isleaf":null,"orders":null,"locked":null,"dataPermissionType":null,"dataPermissionDeptid":null,"modules":null,"users":null,"resources":null}],"modules":[],"deleted":"0000"}});
   },
   'GET /api/sys/account/list': (req: Request, res: Response) => {
-    res.send();
+    res.send({"code":"0000","success":true,"message":null,"errorMessage":null,"data":[{"id":"1","createBy":null,"gmtCreate":null,"modifyBy":null,"gmtModify":null,"remark":null,"name":"系统管理员","code":"ROLE_ADMIN","parentId":null,"parentName":null,"path":null,"pathName":null,"isleaf":null,"orders":null,"locked":"9999","dataPermissionType":"0000","dataPermissionDeptid":null,"modules":null,"users":null,"resources":null},{"id":"1191916813788344321","createBy":"9199482d76b443ef9f13fefddcf0046c","gmtCreate":"2019-11-06 11:14:48","modifyBy":"9199482d76b443ef9f13fefddcf0046c","gmtModify":"2019-11-06 14:36:19","remark":"系统操作员 仅可操作本人所属部门及下级部门数据","name":"系统操作员","code":"ROLE_OPERATOR","parentId":null,"parentName":null,"path":null,"pathName":null,"isleaf":null,"orders":null,"locked":"0000","dataPermissionType":"0002","dataPermissionDeptid":null,"modules":null,"users":null,"resources":null}]});
   },
 };
