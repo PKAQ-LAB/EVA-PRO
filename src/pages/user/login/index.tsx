@@ -27,9 +27,7 @@ const LoginMessage: React.FC<{
   />
 );
 
-/**
- * 此方法会跳转到 redirect 参数所在的位置
- */
+/** 此方法会跳转到 redirect 参数所在的位置 */
 const goto = () => {
   if (!history) return;
   setTimeout(() => {
@@ -159,7 +157,7 @@ const Login: React.FC = () => {
                   name="password"
                   fieldProps={{
                     size: 'large',
-                    prefix: <LockTwoTone className={styles.prefixIcon} />,
+                    prefix: <LockOutlined className={styles.prefixIcon} />,
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.password.placeholder',

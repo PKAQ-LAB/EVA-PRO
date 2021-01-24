@@ -15,11 +15,8 @@ import Footer from '@/components/Footer';
 import setting from '@config/defaultSettings';
 import { notification, message } from 'antd';
 import { queryCurrent } from './services/user';
-import type { API } from './services/API';
 
-/**
- * 获取用户信息比较慢的时候会展示一个 loading
- */
+/** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
   loading: <PageLoading />,
 };
@@ -51,7 +48,7 @@ const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
 };
 
 export async function getInitialState(): Promise<{
-  settings?: LayoutSettings;
+  settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
   menus?: any[];
@@ -93,7 +90,7 @@ export async function getInitialState(): Promise<{
     dict: {},
     userinfo: {},
     fetchUserInfo,
-    settings: setting,
+    settings: {},
   };
 
 }
@@ -120,9 +117,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   };
 };
 
-/**
- * 异常处理程序
- */
+/** 异常处理程序 */
 const errorHandler = (error: ResponseError) => {
   const { response } = error;
   if (response && response.status) {

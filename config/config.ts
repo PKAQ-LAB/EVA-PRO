@@ -20,7 +20,6 @@ export default defineConfig({
     hmr: true,
   },
   layout: {
-    name: 'Ant Design Pro',
     locale: true,
     siderWidth: 208,
     ...defaultSettings,
@@ -48,6 +47,8 @@ export default defineConfig({
     "@menu-dark-submenu-bg":"#1e1e1e",
     "@menu-dark-item-active-bg":"#37373d"
   },
+  // esbuild is father build tools
+  // https://umijs.org/plugins/plugin-esbuild
   esbuild: {},
   title: false,
   ignoreMomentLocale: true,

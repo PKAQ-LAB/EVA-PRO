@@ -120,8 +120,6 @@
     "lint-staged": "^10.5.3",
     "mockjs": "^1.1.0",
     "prettier": "^2.2.1",
-    "prettier-plugin-style-order": "^0.2.2",
-    "pro-download": "1.0.1",
     "puppeteer-core": "^5.5.0",
     "stylelint": "^13.8.0",
     "typescript": "^4.1.3"
