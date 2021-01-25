@@ -1,13 +1,14 @@
 
 import {
-  LockTwoTone,
+  LockOutlined ,
   UserOutlined,
 } from '@ant-design/icons';
 import { Alert, message } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
-import { login, LoginParamsType } from '@/services/login';
+import type { LoginParamsType } from '@/services/login';
+import { login } from '@/services/login';
 
 import md5 from 'md5';
 import setting from '@config/defaultSettings';
@@ -41,7 +42,7 @@ const Login: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [userLoginState, setUserLoginState] = useState<API.LoginStateType>({});
   const { initialState, setInitialState } = useModel('@@initialState');
-  const [type, setType] = useState<string>('account');
+  const [type] = useState<string>('account');
 
   const intl = useIntl();
 
