@@ -60,20 +60,20 @@ export default [
     ],
   },
     // 进销存
-    {
-    path: '/pdos',
-    name: 'pdos',
-    routes: [
-      { name: 'base',
-        path: '/pdos/base',
-        routes: [
-          { name: 'category', path: '/pdos/base/category', component: './pdos/base/category' },
-          { name: 'supplier', path: '/pdos/base/supplier', component: './pdos/base/supplier' },
-          { name: 'goods', path: '/pdos/base/goods', component: './pdos/base/goods' },
-        ]
-      },
-      { name: 'sale', path: '/pdos/sale/slip', component: './pdos/sale/slip' }
-    ],
-  },
+  //   {
+  //   path: '/pdos',
+  //   name: 'pdos',
+  //   routes: [
+  //     { name: 'base',
+  //       path: '/pdos/base',
+  //       routes: [
+  //         { name: 'category', path: '/pdos/base/category', component: './pdos/base/category' },
+  //         { name: 'supplier', path: '/pdos/base/supplier', component: './pdos/base/supplier' },
+  //         { name: 'goods', path: '/pdos/base/goods', component: './pdos/base/goods' },
+  //       ]
+  //     },
+  //     { name: 'sale', path: '/pdos/sale/slip', component: './pdos/sale/slip' }
+  //   ],
+  // },
   { component: '404' },
 ];
