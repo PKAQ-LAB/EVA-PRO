@@ -40,7 +40,7 @@ const goto = () => {
 
 const Login: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
-  const [userLoginState, setUserLoginState] = useState<API.LoginStateType>({});
+  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const { initialState, setInitialState } = useModel('@@initialState');
   const [type] = useState<string>('account');
 
@@ -56,7 +56,7 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (values: LoginParamsType) => {
+  const handleSubmit = async (values: API.LoginParams) => {
     setSubmitting(true);
     try {
       // 登录
@@ -121,7 +121,7 @@ const Login: React.FC = () => {
               },
             }}
             onFinish={async (values) => {
-              handleSubmit(values as LoginParamsType);
+              handleSubmit(values as API.LoginParams);
             }}
           >
             {!success || code !== '0000' && (

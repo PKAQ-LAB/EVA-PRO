@@ -14,7 +14,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import setting from '@config/defaultSettings';
 import { notification, message } from 'antd';
-import { queryCurrent } from './services/user';
+import { currentUser as queryCurrentUser } from './services/user';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
@@ -57,7 +57,7 @@ export async function getInitialState(): Promise<{
   const fetchUserInfo = async () => {
     printANSI();
     try {
-      const currentUser = await queryCurrent();
+      const currentUser = await queryCurrentUser();
       return {
         currentUser,
         settings: setting,
@@ -95,6 +95,7 @@ export async function getInitialState(): Promise<{
 
 }
 
+// https://umijs.org/zh-CN/plugins/plugin-layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 
   return {
@@ -117,7 +118,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   };
 };
 
-/** 异常处理程序 */
+/** 异常处理程序
+ * @see https://beta-pro.ant.design/docs/request-cn
+ */
 const errorHandler = (error: ResponseError) => {
   const { response } = error;
   if (response && response.status) {
