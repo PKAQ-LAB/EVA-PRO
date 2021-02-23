@@ -1,6 +1,6 @@
 // https://umijs.org/config/
 import { defineConfig, utils } from 'umi';
-import path from 'path';
+import path, { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './router.config';

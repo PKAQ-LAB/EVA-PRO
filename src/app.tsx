@@ -14,7 +14,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import setting from '@config/defaultSettings';
 import { notification, message } from 'antd';
-import { currentUser as queryCurrentUser } from './services/user';
+import { queryCurrent } from './services/user';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -59,7 +59,7 @@ export async function getInitialState(): Promise<{
   const fetchUserInfo = async () => {
     printANSI();
     try {
-      const currentUser = await queryCurrentUser();
+      const currentUser = await queryCurrent();
       return {
         currentUser,
         settings: setting,
