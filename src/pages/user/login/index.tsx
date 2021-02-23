@@ -7,7 +7,6 @@ import { Alert, message } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
-import type { LoginParamsType } from '@/services/login';
 import { login } from '@/services/login';
 
 import md5 from 'md5';
@@ -47,11 +46,12 @@ const Login: React.FC = () => {
   const intl = useIntl();
 
   const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    if (userInfo) {
+    const currentUser = await initialState?.fetchUserInfo?.();
+
+    if (currentUser) {
       setInitialState({
         ...initialState,
-        currentUser: userInfo,
+        ...currentUser,
       });
     }
   };
@@ -65,13 +65,7 @@ const Login: React.FC = () => {
       const res = await login({ ...values, type });
       if (res.success) {
         message.success('登录成功！');
-  		  const currentUser = await initialState?.fetchUserInfo?.();
-
-        setInitialState({
-          ...initialState,
-          ...currentUser,
-        });
-
+  		  await fetchUserInfo();
         goto();
         return;
       }
