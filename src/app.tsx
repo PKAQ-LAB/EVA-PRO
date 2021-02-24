@@ -9,10 +9,10 @@ import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history } from 'umi';
 import type { ResponseError } from 'umi-request';
 import type { RequestOptionsInit } from 'umi-request';
-import { printANSI } from '@/utils/screenlog.js';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import setting from '@config/defaultSettings';
+import { printANSI } from '@/utils/screenlog.js';
 import { notification, message } from 'antd';
 import { queryCurrent } from './services/user';
 
@@ -50,37 +50,20 @@ const loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => {
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  dict?: object;
   menus?: any[];
-  userinfo?: object;
+  user?: object;
 }> {
-  const fetchUserInfo = async () => {
-    printANSI();
-    try {
-      const currentUser = await queryCurrent();
-      return {
-        currentUser,
-        settings: setting,
-        dict: currentUser?.data?.dict,
-        userinfo: currentUser?.data?.user,
-        menus: currentUser?.data?.menus
-      };
-    } catch (error) {
-      history.push('/user/login');
-    }
-    return undefined;
-  };
-
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/user/login') {
-    const { currentUser, settings, userinfo, dict, menus } = await fetchUserInfo();
+    printANSI();
+    const currentUser = await queryCurrent();
     return {
-      fetchUserInfo,
       currentUser,
-      dict,
- 	    userinfo,
- 	    menus,
-      settings,
+      settings: setting,
+      dict: currentUser?.data?.dict,
+      user: currentUser?.data?.user,
+      menus: currentUser?.data?.menus
     };
   }
 
@@ -88,8 +71,7 @@ export async function getInitialState(): Promise<{
     menus: [],
     currentUser: {},
     dict: {},
-    userinfo: {},
-    fetchUserInfo,
+    user: {},
     settings: {},
   };
 
@@ -106,9 +88,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     onPageChange: () => {
       const { location } = history;
 
-      // 判断是否有userinfo 如果没有 则认为是未登录
+      // 判断是否有user 如果没有 则认为是未登录
       // 如果没有登录，重定向到 login
-      if (!initialState?.userinfo && location.pathname !== '/user/login') {
+      if (!initialState?.user && location.pathname !== '/user/login') {
         history.push('/user/login');
       }
     },

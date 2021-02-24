@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import { login } from '@/services/login';
+import { queryCurrent } from '@/services/user';
 
 import md5 from 'md5';
 import setting from '@config/defaultSettings';
@@ -34,7 +35,7 @@ const goto = () => {
     const { query } = history.location;
     const { redirect } = query as { redirect: string };
     history.push(redirect || '/');
-  }, 10);
+  }, 50);
 };
 
 const Login: React.FC = () => {
@@ -46,12 +47,13 @@ const Login: React.FC = () => {
   const intl = useIntl();
 
   const fetchUserInfo = async () => {
-    const currentUser = await initialState?.fetchUserInfo?.();
-
+    const currentUser = await queryCurrent();
     if (currentUser) {
       setInitialState({
         ...initialState,
-        ...currentUser,
+        dict: currentUser?.data?.dict,
+        user: currentUser?.data?.user,
+        menus: currentUser?.data?.menus
       });
     }
   };
@@ -79,6 +81,7 @@ const Login: React.FC = () => {
   };
 
   const { success, code } = userLoginState;
+
   return (
     <div className={styles.container}>
       <div className={styles.lang}>{SelectLang && <SelectLang />}</div>

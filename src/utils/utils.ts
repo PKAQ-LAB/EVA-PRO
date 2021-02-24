@@ -50,7 +50,7 @@ export const loginOut = async () => {
 
   const cookies = new Cookies();
 
-  const USER_KEY = setting.userinfo;
+  const USER_KEY = setting.user;
   const { access_token, refresh_token } = setting;
 
 
