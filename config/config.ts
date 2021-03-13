@@ -10,11 +10,10 @@ const { REACT_APP_ENV } = process.env;
 
 const openBrowser = require('open-browser-webpack-plugin');
 
-
 export default defineConfig({
   // hash: true,
   // 停用mock
-  // mock: false,
+  mock: false,
   antd: {},
   dva: {
     hmr: true,

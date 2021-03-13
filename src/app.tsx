@@ -83,7 +83,10 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    menuDataRender: () => loopMenuItem(initialState?.menus || []),
+	menuDataRender: () => loopMenuItem(initialState?.menus || []),
+    waterMarkProps: {
+      content: initialState?.currentUser?.name,
+    },
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
