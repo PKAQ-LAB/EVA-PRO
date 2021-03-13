@@ -29,6 +29,17 @@ export default defineConfig({
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
   },
+  nodeModulesTransform: {
+    type: 'none',
+    exclude: [],
+  },
+  targets: {
+    chrome: 79,
+    firefox: false,
+    safari: false,
+    edge: false,
+    ios: false,
+  },
   dynamicImport: {
     loading: '@ant-design/pro-layout/es/PageLoading',
   },
