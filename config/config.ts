@@ -1,44 +1,32 @@
 // https://umijs.org/config/
-import { defineConfig, utils } from 'umi';
-import path, { join } from 'path';
+import { defineConfig } from 'umi';
+import { join } from 'path';
+
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
-import routes from './router.config';
+import routes from './routes';
 
-const { winPath } = utils;
 const { REACT_APP_ENV } = process.env;
 
-const openBrowser = require('open-browser-webpack-plugin');
-
 export default defineConfig({
-  // hash: true,
-  // 停用mock
-  mock: false,
+  hash: true,
   antd: {},
   dva: {
     hmr: true,
   },
   layout: {
+    // https://umijs.org/zh-CN/plugins/plugin-layout
     locale: true,
     siderWidth: 208,
     ...defaultSettings,
   },
+  // https://umijs.org/zh-CN/plugins/plugin-locale
   locale: {
+    // default zh-CN
     default: 'zh-CN',
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
-  },
-  nodeModulesTransform: {
-    type: 'none',
-    exclude: [],
-  },
-  targets: {
-    chrome: 79,
-    firefox: false,
-    safari: false,
-    edge: false,
-    ios: false,
   },
   dynamicImport: {
     loading: '@ant-design/pro-layout/es/PageLoading',
@@ -51,11 +39,6 @@ export default defineConfig({
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': defaultSettings.primaryColor,
-    "@layout-sider-background": "#252525",
-    "@layout-header-background": "#1e1e1e;",
-    "@menu-bg": "#1e1e1e",
-    "@menu-dark-submenu-bg":"#1e1e1e",
-    "@menu-dark-item-active-bg":"#37373d"
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild
@@ -66,13 +49,21 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
-  openAPI: {
-    requestLibPath: "import { request } from 'umi'",
-    // 或者使用在线的版本
-    // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-    schemaPath: join(__dirname, 'oneapi.json'),
-    mock: false,
-  },  cssLoader: {
+  openAPI: [
+    {
+      requestLibPath: "import { request } from 'umi'",
+      // 或者使用在线的版本
+      // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
+      schemaPath: join(__dirname, 'oneapi.json'),
+      mock: false,
+    },
+    {
+      requestLibPath: "import { request } from 'umi'",
+      schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
+      projectName: 'swagger',
+    },
+  ],
+ cssLoader: {
     modules: {
       getLocalIdent: (
         context: {
@@ -100,8 +91,7 @@ export default defineConfig({
         return localName;
       },
     },
-  },
-  chainWebpack(memo, { env, webpack, createCSSRule }) {
+  },  chainWebpack(memo, { env, webpack, createCSSRule }) {
 
     memo.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
     // 打包优化 uglifyjs-webpack-plugin 配置

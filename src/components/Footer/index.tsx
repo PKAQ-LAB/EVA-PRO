@@ -1,4 +1,3 @@
-import React from 'react';
 import { DefaultFooter } from '@ant-design/pro-layout';
 import setting from '@config/defaultSettings';
 
