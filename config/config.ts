@@ -1,15 +1,20 @@
 // https://umijs.org/config/
-import { defineConfig } from 'umi';
-import { join } from 'path';
+import { defineConfig, utils } from 'umi';
+import path, { join } from 'path';
 
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
 
+const { winPath } = utils;
 const { REACT_APP_ENV } = process.env;
 
+const openBrowser = require('open-browser-webpack-plugin');
+
 export default defineConfig({
-  hash: true,
+  // hash: true,
+  // 停用mock
+  mock: false,
   antd: {},
   dva: {
     hmr: true,
@@ -28,6 +33,17 @@ export default defineConfig({
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
   },
+  nodeModulesTransform: {
+    type: 'none',
+    exclude: [],
+  },
+  targets: {
+    chrome: 79,
+    firefox: false,
+    safari: false,
+    edge: false,
+    ios: false,
+  },
   dynamicImport: {
     loading: '@ant-design/pro-layout/es/PageLoading',
   },
@@ -39,6 +55,11 @@ export default defineConfig({
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': defaultSettings.primaryColor,
+    "@layout-sider-background": "#252525",
+    "@layout-header-background": "#1e1e1e;",
+    "@menu-bg": "#1e1e1e",
+    "@menu-dark-submenu-bg":"#1e1e1e",
+    "@menu-dark-item-active-bg":"#37373d"
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild
