@@ -60,6 +60,7 @@ export default (props) => {
   const handleRemoveClick = () => {
 
     if (!selectedRowKeys) return;
+
     Service.post(API.ROLE_DEL, {
       param: selectedRowKeys,
     }).then(() => fetch());
@@ -278,8 +279,6 @@ export default (props) => {
       cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
 
   };
-
-  console.info(tbProps);
 
   return (<div style={{ padding: 15 }}>
             {/* 工具条 */}

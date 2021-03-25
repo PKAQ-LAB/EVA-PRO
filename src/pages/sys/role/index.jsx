@@ -23,9 +23,6 @@ export default () => {
   const { run, tableProps, loading } = useRequest(
     (param) => Service.list(API.ROLE_LIST, param), {
     paginated: true,
-    formatResult: (res) => {
-      return { list: res.data };
-    }
   })
 
   // 表格属性
