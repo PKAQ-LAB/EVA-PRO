@@ -20,7 +20,7 @@ import BizIcon from '@/components/BizIcon';
 import Service from '@/services/service';
 import API from '@/apis';
 
-const { Search } = { ...Input };
+const { Search } = Input;
 
 // 菜单管理列表
 export default (props) => {
@@ -54,10 +54,9 @@ export default (props) => {
       notification.error('没有选择记录');
       return;
     }
-    Service.post(API.ORG_EDIT, {
+    Service.post(API.MODULE_STATUS, {
       id: record.id,
       status: checked ? '0001' : '0000',
-      record,
     }).then(() => {
       fetch();
     })
@@ -142,7 +141,6 @@ export default (props) => {
       title: '排序',
       dataIndex: 'orders',
       render: (text, record, index) => {
-        if (record.status === '0001') {
           const brother = getNodeBorther(data, record.parentId);
 
           const size = brother && brother.length;
@@ -170,8 +168,6 @@ export default (props) => {
               )}
             </div>
           );
-        }
-        return '';
       },
     },
     {
@@ -190,22 +186,26 @@ export default (props) => {
     {
       title: '操作',
       render: (text, record) =>
-        record.status === '0000' && (
-          <div>
-            <a onClick={() => handleAdd(record)}>添加下级</a>
-            <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={e => handleDelete(record, e)}
-            >
-              <a>删除</a>
-            </Popconfirm>
-            <Divider type="vertical" />
-            <a onClick={() => handleEdit(record)}>编辑</a>
-          </div>
-        ),
+        <div>
+          <a onClick={() => handleAdd(record)}>添加下级</a>
+          <Divider type="vertical" />
+          <a onClick={() => handleEdit(record)}>编辑</a>
+          {
+          record.status !== '9999' && record.status !== '0000' && (
+            <>
+              <Divider type="vertical" />
+              <Popconfirm
+                title="确定要删除吗？"
+                okText="确定"
+                cancelText="取消"
+                onConfirm={e => handleDelete(record, e)}
+              >
+                <a>删除</a>
+              </Popconfirm>
+            </>
+            )
+          }
+        </div>
     },
   ];
 

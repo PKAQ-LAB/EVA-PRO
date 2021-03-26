@@ -8,7 +8,7 @@ import BizIcon from '@/components/BizIcon';
 import Service from '@/services/service';
 import API from '@/apis';
 
-const { Search } = { ...Input };
+const { Search } = Input;
 
 // 部门管理列表
 export default (props) => {

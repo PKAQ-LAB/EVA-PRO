@@ -16,9 +16,7 @@ async function list(url, params) {
 async function post(url, params) {
   return request(url, {
     method: 'POST',
-    data: {
-      ...params,
-    },
+    data: params,
   });
 }
 

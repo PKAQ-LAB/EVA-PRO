@@ -14,6 +14,7 @@ export default {
   MODULE_EDIT: '/api/sys/module/edit',
   MODULE_SORT: '/api/sys/module/sort',
   MODULE_DEL: '/api/sys/module/del',
+  MODULE_STATUS: '/api/sys/module/switchStatus',
   MODULE_CHECKUNIQUE: '/api/sys/module/checkUnique',
   // 字典管理
   DICT_GET: '/api/sys/dictionary/get',
