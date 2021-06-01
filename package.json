@@ -121,7 +121,7 @@
     "lint-staged": "^11.0.0",
     "mockjs": "^1.1.0",
     "prettier": "^2.2.1",
-    "puppeteer-core": "^9.0.0",
+    "puppeteer-core": "^10.0.0",
     "stylelint": "^13.12.0",
     "typescript": "^4.2.3"
   },
