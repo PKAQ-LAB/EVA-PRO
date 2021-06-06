@@ -42,7 +42,7 @@ export default (props) => {
     }
     Service.post(API.ORG_STATUS, {
       id: record.id,
-      status: checked ? '0000' : '0001',
+      status: checked ? '0001' : '0000' ,
     }).then(() => {
       fetch();
     })
@@ -110,7 +110,7 @@ export default (props) => {
       title: '排序',
       dataIndex: 'orders',
       render: (text, record, index) => {
-        if (record.status === '0000') {
+        if (record.status === '0001') {
           const brother = getNodeBorther(data, record.parentId);
           const size = brother.length;
           return (
@@ -150,14 +150,14 @@ export default (props) => {
             onChange={checked => handleEnable(record, checked)}
             checkedChildren={<CheckOutlined />}
             unCheckedChildren={<CloseOutlined />}
-            checked={text === '0000'}
+            checked={text === '0001'}
           />
         ),
     },
     {
       title: '操作',
       render: (text, record) =>
-        record.status === '0000' && (
+        record.status === '0001' && (
           <div>
             <a onClick={() => handleAdd(record)}>添加下级</a>
             <Divider type="vertical" />
@@ -245,7 +245,7 @@ export default (props) => {
             })
           }
           rowClassName={record =>
-            cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
+            cx({ 'eva-locked': record.status === '0000', 'eva-disabled': record.status === '9999' })
           }
         />
       </div>
