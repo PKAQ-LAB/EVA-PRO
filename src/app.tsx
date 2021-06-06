@@ -115,19 +115,6 @@ export async function getInitialState(): Promise<{
     504: The gateway timed out. ',
  * @see https://beta-pro.ant.design/docs/request-cn
  */
-export const request: RequestConfig = {
-  errorHandler: (error: any) => {
-    const { response } = error;
-
-    if (!response) {
-      notification.error({
-        description: '您的网络发生异常，无法连接服务器',
-        message: '网络异常',
-      });
-    }
-    throw error;
-  },
-};
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState }) => {
@@ -159,6 +146,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
  * @see https://beta-pro.ant.design/docs/request-cn
  */
 const errorHandler = (error: ResponseError) => {
+
   const { response } = error;
   if (response && response.status) {
     const { status } = response;
