@@ -258,7 +258,7 @@ export default (props) => {
                 >
               <Selector
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                data={roles || []}
+                data={roles.list || []}
                 k="id"
                 v="name"
                 clear
