@@ -94,7 +94,7 @@ export default (props) => {
         orders: orginOrders,
       },
     ];
-    Service.post(API.ORG_SORT, {...switchObj}).then(() => fetch());
+    Service.post(API.ORG_SORT, switchObj).then(() => fetch());
   };
 
   const column = [
