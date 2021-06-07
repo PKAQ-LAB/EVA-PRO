@@ -104,7 +104,7 @@ export default (props) => {
                   }>
           <TreeSelect
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            data={data}
+            treeData={data}
             keys={['id', 'name', 'children']}
             treeNodeFilterProp="name"
             treeDefaultExpandAll
