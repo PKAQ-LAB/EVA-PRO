@@ -33,7 +33,7 @@ export default () => {
       setOrgs(res.data);
     })
     Service.list(API.ROLE_LIST).then((res) => {
-      setRoles(res.data);
+      setRoles(res.data.list);
     })
   }, []);
 
