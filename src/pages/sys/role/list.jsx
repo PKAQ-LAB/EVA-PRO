@@ -96,7 +96,7 @@ export default (props) => {
       return;
     }
 
-    Service.list(API.ROLE_LOCK, {
+    Service.post(API.ROLE_LOCK, {
       param: [record.id],
       status: checked ? '0000' : '0001',
     }).then(() => fetch() );

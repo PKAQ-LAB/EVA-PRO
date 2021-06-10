@@ -30,6 +30,7 @@ export default class Selector extends PureComponent {
       if(typeof data === 'string'){
         data = JSON.parse(data);
       }
+
       const options = data.map(it => <Option key={it[k]}>{it[v]}</Option>);
 
       this.setState({

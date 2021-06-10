@@ -110,11 +110,12 @@ export default (props) => {
       }
 
       Service.post(API.ACCOUNT_EDIT, data).then(res => {
-        setSubmitting(false);
         if(res.success){
           setOperateType("");
           fetch();
         }
+      }).finally(() => {
+        setSubmitting(false);
       });
     });
   };

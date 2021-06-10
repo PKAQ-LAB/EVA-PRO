@@ -64,8 +64,10 @@ export default (props) => {
  const handleDataPermissionChange = v  => {
     if(v === "0003") {
       setShowDepts(true);
+    } else {
+      setShowDepts(false);
     }
-    Service.post(API.ORG_LIST).then((res) => {
+    Service.list(API.ORG_LIST).then((res) => {
       if(res.success) {
        setOrgs(res.data);
       }
@@ -87,12 +89,13 @@ export default (props) => {
       }
       setSubmitting(true);
       Service.post(API.ROLE_SAVE,formData).then((res) => {
-        setSubmitting(false);
         if(res.success){
           setModalType("");
           fetch();
         }
       })
+    }).finally(() => {
+      setSubmitting(false);
     })
   };
 

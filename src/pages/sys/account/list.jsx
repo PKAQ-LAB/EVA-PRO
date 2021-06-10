@@ -74,11 +74,13 @@ export default (props) => {
     {
       title: '账号状态',
       dataIndex: 'locked',
-      dict: [
-        { code: '0000', codeName: '正常' },
-        { code: '0001', codeName: '已锁定' },
-        { code: '0009', codeName: '系统账号' },
-      ],
+      render: (text, record, index) => {
+        switch(text){
+          case '0000': return '正常';
+          case '9999': return '系统用户';
+          case '0001': return '已锁定';
+        }
+      }
     },
     {
       title: '操作',
@@ -110,7 +112,7 @@ export default (props) => {
                 rowKey={record => record.id}
                 rowSelection={rowSelection}
                 rowClassName={record =>
-                  cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
+                  cx({ 'eva-locked': record.locked === '0001', 'eva-disabled': record.locked === '9999' })
                 }
                 onRow = {
                   (record) => ({
