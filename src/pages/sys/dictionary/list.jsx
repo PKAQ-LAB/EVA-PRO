@@ -46,11 +46,10 @@ const { setOperateType, setCurrentItem, fetch, loading, data } = props;
 
   // 删除事件
   const handleDeleteClick = record => {
-    Service.post(API.DICT_DEL, {
-      id: record.id,
-    }).then(() => {
-      fetch();
-    })
+    Service.get(API.DICT_DEL, record.id)
+           .then(() => {
+              fetch();
+            })
   };
 
   // 搜索
@@ -74,8 +73,8 @@ const { setOperateType, setCurrentItem, fetch, loading, data } = props;
         !record.parent &&
         record.parent !== '0' && (
           <>
-            <a onClick={e => handleEditClick(record, e)}>编辑</a>
-            <Divider type="vertical" />
+            {/* <a onClick={e => handleEditClick(record, e)}>编辑</a>
+            <Divider type="vertical" /> */}
             <Popconfirm
               title="删除后系统中部分数据可能无法正确显示,确定要删除吗？"
               okText="确定"
@@ -99,7 +98,7 @@ const { setOperateType, setCurrentItem, fetch, loading, data } = props;
     alternateColor: true,
     dataSource: dictFilter(data, search),
     onRow: (record, index) => ({
-      onClick: () => handleOnRowClick(record, index),
+      onClick: () => handleEditClick(record, index),
     }),
     pagination: false,
   };

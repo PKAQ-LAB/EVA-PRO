@@ -19,7 +19,7 @@ export default {
   // 字典管理
   DICT_GET: '/api/sys/dictionary/get',
   DICT_LIST: '/api/sys/dictionary/list',
-  DICT_EDIT: '/api/sys/dictionary/edi',
+  DICT_EDIT: '/api/sys/dictionary/edit',
   DICT_DEL: '/api/sys/dictionary/del',
   // 角色管理
   ROLE_GET: '/api/sys/role/get',

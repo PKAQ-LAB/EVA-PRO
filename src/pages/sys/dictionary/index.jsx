@@ -34,6 +34,7 @@ export default () => {
   const formProps = {
     fetch: run,
     operateType,
+    setOperateType,
     currentItem
   }
   return (

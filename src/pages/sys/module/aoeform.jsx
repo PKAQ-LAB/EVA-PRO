@@ -156,7 +156,7 @@ export default (props) => {
         <Form.Item
                 label="备注"
                 name="remark"
-                rules={[{len: 200}]}>
+                rules={[{max: 200}]}>
           <Input.TextArea max={200} />
         </Form.Item>
       </Form>

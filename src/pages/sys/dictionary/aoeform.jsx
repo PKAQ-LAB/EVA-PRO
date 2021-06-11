@@ -9,7 +9,7 @@ import API from '@/apis';
 
 export default (props) => {
   const [form] = Form.useForm();
-  const { operateType, currentItem } = props;
+  const { operateType, currentItem, setOperateType } = props;
 
   const [ submitting, setSubmitting ] = React.useState(false);
   const [ lineData, setLineData ] = React.useState(currentItem? currentItem.lines : []);
@@ -29,7 +29,7 @@ export default (props) => {
   };
 
   React.useEffect(() => {
-    setLineData(currentItem.lines);
+    setLineData(currentItem?.lines);
     form.resetFields();
   }, [currentItem, form])
 
@@ -49,6 +49,7 @@ export default (props) => {
       Service.post(API.DICT_EDIT, fd).then(() => {
         // fix 保存后清空表单
         // form.resetFields();
+        setOperateType('view');
       }).finally(() => {
         setSubmitting(false);
       });
