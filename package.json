@@ -63,7 +63,7 @@
     "@ant-design/pro-table": "^2.31.0",
     "@antv/dom-util": "^2.0.3",
     "@antv/g-canvas": "^0.5.7",
-    "@antv/g6": "4.3.2",
+    "@antv/g6": "4.3.4",
     "@antv/matrix-util": "^3.0.4",
     "@antv/util": "~2.0.13",
     "@umijs/openapi": "^1.1.15",
