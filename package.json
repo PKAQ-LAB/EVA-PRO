@@ -62,7 +62,7 @@
     "@ant-design/pro-layout": "^6.15.4",
     "@ant-design/pro-table": "^2.31.0",
     "@antv/dom-util": "^2.0.3",
-    "@antv/g-canvas": "^0.5.7",
+    "@antv/g-canvas": "^1.0.4",
     "@antv/g6": "4.5.0",
     "@antv/matrix-util": "^3.0.4",
     "@antv/util": "~2.0.13",
