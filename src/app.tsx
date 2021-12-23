@@ -16,6 +16,10 @@ import { printANSI } from '@/utils/screenlog.js';
 import { notification, message } from 'antd';
 import { queryCurrent } from './services/user';
 
+
+const isDev = process.env.NODE_ENV === 'development';
+const loginPath = '/user/login';
+
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
   loading: <PageLoading />,
@@ -55,7 +59,7 @@ export async function getInitialState(): Promise<{
   user?: object;
 }> {
   // 如果是登录页面，不执行
-  if (history.location.pathname !== '/user/login') {
+  if (history.location.pathname !== loginPath) {
     printANSI();
     const currentUser = await queryCurrent();
     return {
@@ -132,13 +136,18 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 
       // 判断是否有user 如果没有 则认为是未登录
       // 如果没有登录，重定向到 login
-      if (!initialState?.user && location.pathname !== '/user/login') {
-        history.push('/user/login');
+      if (!initialState?.user && location.pathname !== loginPath) {
+        history.push(loginPath);
       }
     },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     ...initialState?.settings,
+    // 增加一个 loading 的状态
+    // childrenRender: (children) => {
+    //   if (initialState.loading) return <PageLoading />;
+    //   	return children;
+    // },
   };
 };
 
