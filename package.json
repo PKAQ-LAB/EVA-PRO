@@ -73,7 +73,7 @@
     "@umijs/route-utils": "^2.0.1",
     "antd": "^4.14.1",
     "antd-etable": "^1.3.71",
-    "antd-password-input-strength": "^1.1.1",
+    "antd-password-input-strength": "^2.0.1",
     "classnames": "^2.2.6",
     "dynamic-icon": "^0.1.4",
     "fr-generator": "^2.0.0",
