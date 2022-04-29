@@ -52,6 +52,7 @@ export default defineConfig({
   },
   // umi routes: https://umijs.org/docs/routing
   routes,
+  access: {},
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': defaultSettings.primaryColor,

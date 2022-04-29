@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout';
+import { SettingDrawer } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
 import { SolutionOutlined, RocketFilled, ProfileFilled,
          RadarChartOutlined, FileFilled, HomeFilled, SettingFilled, FlagFilled,
@@ -15,6 +16,7 @@ import setting from '@config/defaultSettings';
 import { printANSI } from '@/utils/screenlog.js';
 import { notification, message } from 'antd';
 import { queryCurrent } from './services/user';
+import defaultSettings from '../config/defaultSettings';
 
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -58,7 +60,7 @@ export async function getInitialState(): Promise<{
   menus?: any[];
   user?: object;
 }> {
-  // 如果是登录页面，不执行
+  // 如果不是登录页面，执行
   if (history.location.pathname !== loginPath) {
     printANSI();
     const currentUser = await queryCurrent();
@@ -76,7 +78,7 @@ export async function getInitialState(): Promise<{
     currentUser: {},
     dict: {},
     user: {},
-    settings: {},
+    settings: defaultSettings,
   };
 
 }
@@ -121,7 +123,7 @@ export async function getInitialState(): Promise<{
  */
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
-export const layout: RunTimeLayoutConfig = ({ initialState }) => {
+export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
 
   return {
     rightContentRender: () => <RightContent />,
@@ -144,10 +146,27 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     // unAccessible: <div>unAccessible</div>,
     ...initialState?.settings,
     // 增加一个 loading 的状态
-    // childrenRender: (children) => {
-    //   if (initialState.loading) return <PageLoading />;
-    //   	return children;
-    // },
+    childrenRender: (children, props) => {
+      // if (initialState?.loading) return <PageLoading />;
+      return (
+        <>
+          {children}
+          {!props.location?.pathname?.includes('/login') && (
+            <SettingDrawer
+              disableUrlParams
+              enableDarkTheme
+              settings={initialState?.settings}
+              onSettingChange={(settings) => {
+                setInitialState((preInitialState) => ({
+                  ...preInitialState,
+                  settings,
+                }));
+              }}
+            />
+          )}
+        </>
+      );
+    },
   };
 };
 
