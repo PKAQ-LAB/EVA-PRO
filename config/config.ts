@@ -47,20 +47,25 @@ export default defineConfig({
   dynamicImport: {
     loading: '@ant-design/pro-layout/es/PageLoading',
   },
-  targets: {
-    ie: 11,
-  },
   // umi routes: https://umijs.org/docs/routing
   routes,
   access: {},
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': defaultSettings.primaryColor,
-    "@layout-sider-background": "#252525",
-    "@layout-header-background": "#1e1e1e;",
-    "@menu-bg": "#1e1e1e",
-    "@menu-dark-submenu-bg":"#1e1e1e",
-    "@menu-dark-item-active-bg":"#37373d"
+    '@layout-sider-background': '#252525',
+    '@layout-header-background': '#1e1e1e;',
+    '@menu-bg': '#1e1e1e',
+    '@menu-dark-submenu-bg': '#1e1e1e',
+    '@menu-dark-item-active-bg': '#37373d',
+  },
+  lessLoader: {
+    // golbalVars: {
+    //   'root-entry-name': 'default'
+    // }
+    modifyVars: {
+      'root-entry-name': 'default',
+    },
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild
@@ -87,7 +92,7 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
- cssLoader: {
+  cssLoader: {
     modules: {
       getLocalIdent: (
         context: {
@@ -115,9 +120,9 @@ export default defineConfig({
         return localName;
       },
     },
-  },  chainWebpack(memo, { env, webpack, createCSSRule }) {
-
-    memo.resolve.alias.set('@config', path.resolve(__dirname, '..','config'));
+  },
+  chainWebpack(memo, { env, webpack, createCSSRule }) {
+    memo.resolve.alias.set('@config', path.resolve(__dirname, '..', 'config'));
     // 打包优化 uglifyjs-webpack-plugin 配置
     if (REACT_APP_ENV === 'prod') {
       memo.merge({
@@ -143,11 +148,11 @@ export default defineConfig({
             ],
           },
         },
-
       });
     } else {
-      memo.plugin('open-browser-webpack-plugin')
-          .use(openBrowser, [{ url: 'http://localhost:8000' }]);
+      memo
+        .plugin('open-browser-webpack-plugin')
+        .use(openBrowser, [{ url: 'http://localhost:8000' }]);
     }
-  }
+  },
 });

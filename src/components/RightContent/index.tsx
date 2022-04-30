@@ -2,7 +2,7 @@ import { Tooltip, Tag, Space } from 'antd';
 import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useModel, SelectLang } from 'umi';
-import screenfull from 'screenfull';
+// import screenfull from 'screenfull';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 
@@ -12,13 +12,12 @@ const GlobalHeaderRight: React.FC = () => {
   const { initialState } = useModel('@@initialState');
 
   // 全屏控制
-  const [ fullscreen, setFullscreen ] = useState(false);
-  const fullscreenText = ['全屏', '退出全屏'];
+  // const [fullscreen, setFullscreen] = useState(false);
 
-  const f11 = () => {
-    setFullscreen(screenfull.isFullscreen ? 0 : 1);
-   screenfull.toggle();
-  };
+  // const f11 = () => {
+  //   setFullscreen(screenfull.isFullscreen);
+  //   screenfull.toggle();
+  // };
 
   if (!initialState || !initialState.settings) {
     return null;
@@ -33,11 +32,11 @@ const GlobalHeaderRight: React.FC = () => {
   return (
     <Space className={className}>
       {/* 全屏 */}
-      <Tooltip title={fullscreenText[fullscreen]}>
+      {/* <Tooltip title={fullscreen ? '全屏' : '退出全屏'}>
         <span className={styles.action} onClick={() => f11()}>
-          { fullscreen? <FullscreenExitOutlined/> : <FullscreenOutlined/> }
+          {fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
         </span>
-      </Tooltip>
+      </Tooltip> */}
 
       <Avatar />
       <SelectLang className={styles.action} />
