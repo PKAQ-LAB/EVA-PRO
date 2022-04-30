@@ -26,7 +26,7 @@ jobs:
             The title of the current issue is not detected, please fill in according to the specifications, thank you!
 
       - if: steps.check.outputs.check-result == 'true'
-        uses: actions-cool/issues-similarity-analysis@v1.1.0
+        uses: actions-cool/issues-similarity-analysis@v1.1.2
         with:
           filter-threshold: 0.6
           title-excludes: '🐛[BUG], 👑 [需求], 🧐[问题]'
