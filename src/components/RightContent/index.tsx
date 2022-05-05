@@ -1,5 +1,5 @@
 import { Tooltip, Tag, Space } from 'antd';
-import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
+// import { FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { useModel, SelectLang } from 'umi';
 // import screenfull from 'screenfull';
@@ -12,6 +12,8 @@ const GlobalHeaderRight: React.FC = () => {
   const { initialState } = useModel('@@initialState');
 
   // 全屏控制
+  // 全屏控制目前引入有问题
+  // github.com/sindresorhus/screenfull/issues/195
   // const [fullscreen, setFullscreen] = useState(false);
 
   // const f11 = () => {
@@ -19,7 +21,7 @@ const GlobalHeaderRight: React.FC = () => {
   //   screenfull.toggle();
   // };
 
-  if (!initialState || !initialState.settings) {
+  https: if (!initialState || !initialState.settings) {
     return null;
   }
 
