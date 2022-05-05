@@ -8,7 +8,7 @@ jobs:
   check-issue:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions-cool/issues-helper@v2.2.0
+      - uses: actions-cool/issues-helper@v3.0.0
         id: check
         with:
           actions: 'check-issue'
@@ -16,7 +16,7 @@ jobs:
           title-excludes: '🐛[BUG], 👑 [需求], 🧐[问题]'
 
       - if: steps.check.outputs.check-result == 'false' && github.event.issue.state == 'open'
-        uses: actions-cool/issues-helper@v2.2.0
+        uses: actions-cool/issues-helper@v3.0.0
         with:
           actions: 'create-comment, close-issue'
           issue-number: ${{ github.event.issue.number }}
@@ -26,7 +26,7 @@ jobs:
             The title of the current issue is not detected, please fill in according to the specifications, thank you!
 
       - if: steps.check.outputs.check-result == 'true'
-        uses: actions-cool/issues-similarity-analysis@v1.1.0
+        uses: actions-cool/issues-similarity-analysis@v1.1.2
         with:
           filter-threshold: 0.6
           title-excludes: '🐛[BUG], 👑 [需求], 🧐[问题]'
