@@ -52,7 +52,7 @@
     "@ant-design/pro-descriptions": "1.10.73",
     "@ant-design/pro-form": "1.67.3",
     "@ant-design/pro-layout": "6.38.2",
-    "@ant-design/pro-table": "2.74.3",
+    "@ant-design/pro-table": "2.74.4",
     "@umijs/route-utils": "2.1.1",
     "antd": "4.20.5",
     "classnames": "2.3.1",
