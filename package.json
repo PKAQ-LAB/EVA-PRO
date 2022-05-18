@@ -85,7 +85,7 @@
   },
   "devDependencies": {
     "@ant-design/pro-cli": "2.1.5",
-  	"@playwright/test": "1.22.0",
+  	"@playwright/test": "1.22.1",
     "@types/express": "4.17.13",
     "@types/history": "4.7.11",
     "@types/jest": "27.5.1",
