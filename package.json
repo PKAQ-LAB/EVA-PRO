@@ -114,7 +114,7 @@
     "stylelint": "14.8.5",
     "swagger-ui-react": "4.11.1",
     "typescript": "4.7.2",
-  	"umi-serve": "1.9.10"
+  	"umi-serve": "1.9.11"
   },
   "engines": {
     "node": ">=12.0.0"
