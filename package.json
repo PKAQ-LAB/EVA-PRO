@@ -68,7 +68,7 @@
     "umi": "3.5.24",
     "@ant-design/compatible": "1.1.0",
     "@antv/dom-util": "2.0.4",
-    "@antv/g-canvas": "1.1.5",
+    "@antv/g-canvas": "1.1.6",
     "@antv/g6": "4.6.4",
     "@antv/matrix-util": "3.0.4",
     "@antv/util": "3.0.2",
