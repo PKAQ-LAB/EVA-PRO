@@ -110,7 +110,7 @@
     "lint-staged": "13.0.0",
     "mockjs": "1.1.0",
     "prettier": "2.6.2",
-    "puppeteer-core": "14.1.2",
+    "puppeteer-core": "14.2.1",
     "stylelint": "14.8.5",
     "swagger-ui-react": "4.11.1",
     "typescript": "4.7.2",
