@@ -113,7 +113,7 @@
     "puppeteer-core": "14.2.1",
     "stylelint": "14.8.5",
     "swagger-ui-react": "4.11.1",
-    "typescript": "4.7.2",
+    "typescript": "4.7.3",
   	"umi-serve": "1.9.11"
   },
   "engines": {
