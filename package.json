@@ -93,7 +93,7 @@
 	  "@types/react": "18.0.12",
     "@types/react-dom": "18.0.5",
     "@types/react-helmet": "6.1.5",
-    "@umijs/fabric": "2.11.1",
+    "@umijs/fabric": "2.12.2",
     "@umijs/openapi": "1.5.1",
   	"@umijs/plugin-blocks": "2.2.2",
     "@umijs/plugin-esbuild": "1.4.1",
