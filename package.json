@@ -104,7 +104,7 @@
     "cross-env": "7.0.3",
     "cross-port-killer": "1.4.0",
     "detect-installer": "1.0.2",
-    "eslint": "8.16.0",
+    "eslint": "8.21.0",
     "gh-pages": "4.0.0",
     "jsdom-global": "3.0.2",
     "lint-staged": "13.0.0",
