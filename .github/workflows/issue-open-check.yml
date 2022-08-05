@@ -8,7 +8,7 @@ jobs:
   check-issue:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions-cool/issues-helper@v3.0.0
+      - uses: actions-cool/issues-helper@v3.0.1
         id: check
         with:
           actions: 'check-issue'
@@ -16,7 +16,7 @@ jobs:
           title-excludes: '🐛[BUG], 👑 [需求], 🧐[问题]'
 
       - if: steps.check.outputs.check-result == 'false' && github.event.issue.state == 'open'
-        uses: actions-cool/issues-helper@v3.0.0
+        uses: actions-cool/issues-helper@v3.0.1
         with:
           actions: 'create-comment, close-issue'
           issue-number: ${{ github.event.issue.number }}
