@@ -1,7 +1,12 @@
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import {
+  FullscreenExitOutlined,
+  FullscreenOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
 import { SelectLang, useModel } from '@umijs/max';
-import { Space } from 'antd';
-import React from 'react';
+import { Space, Tooltip } from 'antd';
+import React, { useState } from 'react';
+import screenfull from 'screenfull';
 import HeaderSearch from '../HeaderSearch';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
@@ -10,6 +15,15 @@ export type SiderTheme = 'light' | 'dark';
 
 const GlobalHeaderRight: React.FC = () => {
   const { initialState } = useModel('@@initialState');
+
+  // 全屏控制
+  // github.com/sindresorhus/screenfull/issues/195
+  const [fullscreen, setFullscreen] = useState(false);
+
+  const f11 = () => {
+    setFullscreen(screenfull.isFullscreen);
+    screenfull.toggle();
+  };
 
   if (!initialState || !initialState.settings) {
     return null;
@@ -54,6 +68,12 @@ const GlobalHeaderRight: React.FC = () => {
       >
         <QuestionCircleOutlined />
       </span>
+      {/* 全屏 */}
+      <Tooltip title={fullscreen ? '全屏' : '退出全屏'}>
+        <span className={styles.action} onClick={() => f11()}>
+          {fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+        </span>
+      </Tooltip>
       <Avatar />
       <SelectLang className={styles.action} />
     </Space>
