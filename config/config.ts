@@ -4,6 +4,7 @@ import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
+const { WebpackOpenBrowser } = require('webpack-open-browser');
 
 const { REACT_APP_ENV } = process.env;
 
@@ -40,6 +41,17 @@ export default defineConfig({
     // 如果不想要 configProvide 动态设置主题需要把这个设置为 default
     // 只有设置为 variable， 才能使用 configProvide 动态设置主色调
     'root-entry-name': 'variable',
+  },
+  cssMinifier: 'esbuild',
+  cssMinifierOptions: {
+    minifyWhitespace: true,
+    minifySyntax: true,
+  },
+  jsMinifier: 'esbuild',
+  jsMinifierOptions: {
+    minifyWhitespace: true,
+    minifyIdentifiers: true,
+    minifySyntax: true
   },
   /**
    * @name moment 的国际化配置
@@ -131,4 +143,11 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
+
+  chainWebpack: (config) => {
+    config
+      .plugin('webpack-open-browser')
+      .use(WebpackOpenBrowser, [{ url: 'http://localhost:8000' }]);
+    // new WebpackOpenBrowser({ url: 'http://localhost:8000' });
+  },
 });
