@@ -4,6 +4,7 @@ import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
+import path from 'path';
 const { WebpackOpenBrowser } = require('webpack-open-browser');
 
 const { REACT_APP_ENV } = process.env;
@@ -31,6 +32,7 @@ export default defineConfig({
    */
   // umi routes: https://umijs.org/docs/routing
   routes,
+
   /**
    * @name 主题的配置
    * @description 虽然叫主题，但是其实只是 less 的变量设置
@@ -145,9 +147,9 @@ export default defineConfig({
   ],
 
   chainWebpack: (config) => {
+    config.resolve.alias.set('@config', path.resolve(__dirname, '..', 'config'));
     config
       .plugin('webpack-open-browser')
       .use(WebpackOpenBrowser, [{ url: 'http://localhost:8000' }]);
-    // new WebpackOpenBrowser({ url: 'http://localhost:8000' });
   },
 });

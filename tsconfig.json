@@ -20,6 +20,7 @@
     "strict": true,
     "paths": {
       "@/*": ["./src/*"],
+      "@config/*": ["./config/*"],
       "@@/*": ["./src/.umi/*"]
     }
   },

@@ -16,6 +16,8 @@ const Settings: LayoutSettings & {
   fixSiderbar: true,
   colorWeak: false,
   title: 'Ant Design Pro',
+  subTitle: 'This is subTitle',
+  copyright: 'Power by PKAQ © 2022',
   pwa: false,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',

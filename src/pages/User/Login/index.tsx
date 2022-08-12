@@ -7,6 +7,8 @@ import { Alert, message } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.less';
 
+import setting from '@config/defaultSettings';
+
 const LoginMessage: React.FC<{
   content: string;
 }> = ({ content }) => {
@@ -75,8 +77,8 @@ const Login: React.FC = () => {
       <div className={styles.content}>
         <LoginForm
           logo={<img alt="logo" src="/logo.svg" />}
-          title="Ant Design"
-          subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
+          title={setting.title}
+          subTitle={setting.subTitle}
           initialValues={{
             autoLogin: true,
           }}
