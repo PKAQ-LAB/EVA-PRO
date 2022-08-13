@@ -44,6 +44,9 @@ Language : [🇺🇸](./README.md) | 🇨🇳 | [🇷🇺](./README.ru-RU.md) | 
 * 添加 waterfall 等组件√
 * 加系统管理基础模块√
 * 移除单元测试√
+* 加载数据时显示loading√
+* mock模式走本地mock数据
+* 权限控制
 * 请求工具优化
 * 支持远程菜单获取
 * 样式调整(加载中/表格)
