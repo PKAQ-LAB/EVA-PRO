@@ -41,12 +41,12 @@ Language : [🇺🇸](./README.md) | 🇨🇳 | [🇷🇺](./README.ru-RU.md) | 
 * 登录页 title,subtitle,copyright 可配置 √
 * 去除其它登录方式以及注册 √
 * 开启打包优化：cssMinifier,jsMinifier 打包自动删除所有 console,最紧凑的输出,删除注释(plugin.config.ts) √
-* 添加 waterfall 等组件
+* 添加 waterfall 等组件√
+* 加系统管理基础模块√
 * 移除单元测试√
 * 请求工具优化
 * 支持远程菜单获取
 * 样式调整(加载中/表格)
-* 添加系统管理基础模块
 
 ## 三方
 
