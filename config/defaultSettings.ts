@@ -18,6 +18,7 @@ const Settings: LayoutSettings & {
   title: 'Ant Design Pro',
   subTitle: 'This is subTitle',
   copyright: 'Power by PKAQ © 2022',
+  version: '5.0',
   pwa: false,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
