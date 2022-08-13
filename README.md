@@ -10,13 +10,8 @@ Language : [🇺🇸](./README.md) | 🇨🇳 | [🇷🇺](./README.ru-RU.md) | 
 
 </div>
 
-
 - 使用文档：http://pro.ant.design/docs/getting-started-cn
 - 常见问题：http://pro.ant.design/docs/faq-cn
-
-## 5.0 已经发布! 🎉🎉🎉
-
-[Ant Design Pro 5.0.0](https://github.com/ant-design/ant-design-pro/issues/8656)
 
 ## 特性
 
@@ -34,14 +29,27 @@ Language : [🇺🇸](./README.md) | 🇨🇳 | [🇷🇺](./README.ru-RU.md) | 
 
 ## 模板
 
-
 ## 使用
-
 
 更多信息请参考 [使用文档](http://pro.ant.design/docs/getting-started)。
 
 ## 支持环境
 
+- 自动打开浏览器: webpack-open-browser√
 
-- 自动打开浏览器: webpack-open-browser
-- 开启打包优化：cssMinifier,jsMinifier
+* 支持全屏 √
+* 登录页 title,subtitle,copyright 可配置 √
+* 去除其它登录方式以及注册 √
+* 开启打包优化：cssMinifier,jsMinifier 打包自动删除所有 console,最紧凑的输出,删除注释(plugin.config.ts) √
+* 添加 waterfall 等组件
+* 移除单元测试
+* 请求工具优化
+* 支持远程菜单获取
+* 样式调整(加载中/表格)
+* 添加系统管理基础模块
+
+## 三方
+
+* 可编辑表格: [https://github.com/guozhaolong/antd-etable](https://github.com/guozhaolong/antd-etable)
+* 表单设计: [https://github.com/form-render/schema-generator](https://github.com/form-render/schema-generator)
+* 流程设计: [https://github.com/guozhaolong/wfd](https://github.com/guozhaolong/wfd)

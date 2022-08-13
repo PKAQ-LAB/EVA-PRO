@@ -12,15 +12,12 @@
     "i18n-remove": "pro i18n-remove --locale=zh-CN --write",
     "postinstall": "max setup",
     "openapi": "max openapi",
-    "playwright": "playwright install && playwright test",
     "prettier": "prettier -c --write \"src/**/*\"",
     "serve": "umi-serve",
     "start": "cross-env UMI_ENV=dev max dev",
     "start:dev": "cross-env REACT_APP_ENV=dev MOCK=none UMI_ENV=dev max dev",
     "start:no-mock": "cross-env MOCK=none UMI_ENV=dev max dev",
     "start:pre": "cross-env REACT_APP_ENV=pre UMI_ENV=dev max dev",
-    "start:test": "cross-env REACT_APP_ENV=test MOCK=none UMI_ENV=dev max dev",
-    "test:e2e": "node ./tests/run-tests.js",
     "tsc": "tsc --noEmit"
   },
   "browserslist": [
@@ -48,7 +45,6 @@
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.1.0",
-    "@playwright/test": "^1.17.0",
     "@types/classnames": "^2.3.1",
     "@types/express": "^4.17.0",
     "@types/history": "^4.7.0",
