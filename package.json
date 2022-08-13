@@ -42,6 +42,9 @@
     "react-helmet-async": "^1.2.0",
     "screenfull": "^6.0.2",
     "dynamic-icon": "^0.1.4",
+    "querystring": "^0.2.1",
+    "events": "^3.3.0",
+    "universal-cookie": "^4.0.4",
     "webpack-open-browser": "^2.0.2"
   },
   "devDependencies": {
