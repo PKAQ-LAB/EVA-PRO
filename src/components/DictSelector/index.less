@@ -1,0 +1,28 @@
+@import '~antd/lib/style/themes/default.less';
+@import '~@/utils/utils.less';
+
+.headerInfo {
+  position: relative;
+  text-align: center;
+  & > span {
+    display: inline-block;
+    margin-bottom: 4px;
+    color: @text-color-secondary;
+    font-size: @font-size-base;
+    line-height: 22px;
+  }
+  & > p {
+    margin: 0;
+    color: @heading-color;
+    font-size: 18px;
+    line-height: 32px;
+  }
+  & > em {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 45px;
+    background-color: @border-color-split;
+  }
+}
