@@ -39,7 +39,7 @@ Language : [🇺🇸](./README.md) | 🇨🇳 | [🇷🇺](./README.ru-RU.md) | 
 
 * 支持全屏 √
 * 登录页 title,subtitle,copyright 可配置 √
-* 去除其它登录方式以及注册 √
+* 去除其它登录方式以及注册  调整样式 使用本地图片√
 * 开启打包优化：cssMinifier,jsMinifier 打包自动删除所有 console,最紧凑的输出,删除注释(plugin.config.ts) √
 * 添加 waterfall 等组件√
 * 加系统管理基础模块√
