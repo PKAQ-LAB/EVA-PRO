@@ -1,6 +1,17 @@
 import loadsh from 'lodash';
 // 判断是否存在子节点
 import { isUrl } from './utils';
+import IconMap from '@/appicon.jsx';
+// 自定义菜单渲染
+export function loopMenuItem(menus){
+  if(!menus) return [];
+
+  return menus.map(({ icon, children, ...item }) => ({
+    ...item,
+    icon: icon && IconMap[icon],
+    children: children && loopMenuItem(children),
+  }))
+};
 
 export function filterID(data, id, itemArray) {
   // eslint-disable-next-line consistent-return
@@ -80,7 +91,7 @@ export function moudleFormatter(data, parentPath = '/') {
 }
 
 /**
- * 格式化菜单数据
+ * 格式化字典数据
  * @param data
  * @param parentPath
  */

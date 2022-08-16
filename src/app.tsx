@@ -8,14 +8,21 @@ import type { RequestConfig, ResponseInterceptor, RunTimeLayoutConfig } from '@u
 import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import { fetchMenus } from '@/services/user';
 
+import { loopMenuItem } from '@/utils/DataHelper';
 import setting from '@config/defaultSettings';
 import { printANSI } from '@/utils/screenlog';
 import { message, notification } from 'antd';
+// import { createRef } from 'react';
+
+// 打印控制台欢迎语句
 printANSI();
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+
+// export const layoutActionRef = createRef<{ reload: () => void }>();
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
@@ -97,6 +104,23 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         ]
       : [],
     menuHeaderRender: undefined,
+    menu: {
+      locale: false,
+      // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
+      params: initialState,
+     // 调用下面的代码手动刷新菜单
+     // request().then(() => {
+     //   layoutActionRef.current.reload();
+     // });
+      // actionRef: layoutActionRef,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      request: async (_params, _defaultMenuData) => {
+        const res = await fetchMenus();
+        const menus = res.data;
+        // return menus;
+        return loopMenuItem(menus);
+      },
+    },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
