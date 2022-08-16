@@ -1,5 +1,5 @@
 import { stringify } from 'qs';
-import { request } from 'umi';
+import { request } from '@umijs/max';
 import { getNoUndefinedString } from '@/utils/utils';
 
 // 获取表单的数据

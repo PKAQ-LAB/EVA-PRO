@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { TreeSelect } from 'antd';
-import { request } from 'umi';
+import { request } from '@umijs/max';
 /**
  * 远程获取树形结构下拉菜单选项
  */

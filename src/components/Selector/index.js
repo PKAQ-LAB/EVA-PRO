@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Select } from 'antd';
-import { request } from 'umi';
+import { request } from '@umijs/max';
 
 const { Option } = Select;
 
