@@ -6,15 +6,18 @@ import { PageLoading } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, ResponseInterceptor, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
-import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { fetchMenus } from '@/services/user';
 
 import { loopMenuItem } from '@/utils/DataHelper';
-import setting from '@config/defaultSettings';
+import defaultSettings from '@config/defaultSettings';
 import { printANSI } from '@/utils/screenlog';
 import { message, notification } from 'antd';
+
 // import { createRef } from 'react';
+import { access_token } from './constant'
+import Cookies from 'universal-cookie';
+const cookie = new Cookies();
 
 // 打印控制台欢迎语句
 printANSI();
@@ -44,7 +47,13 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
-  // 如果不是登录页面，执行
+  // 判断本地是否有用户登录信息 未登录跳转登录页
+
+  if(!!!cookie.get(access_token)){
+    history.push(loginPath);
+  }
+
+  // 如果不是登录页面 且已经登录，执行
   if (window.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
     return {
@@ -159,6 +168,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  const errorHandler = (error: any) => {
 
   const { response } = error;
+  console.info(error);
+  console.info(response);
   if (response && response.status) {
     const { status } = response;
 
@@ -201,7 +212,7 @@ const requestInterceptors = (url: string, options: any) => {
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
     'device': 'pc',
-    'version': setting.version
+    'version': defaultSettings.version
   };
 
   return {
