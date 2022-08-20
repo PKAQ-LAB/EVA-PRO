@@ -48,7 +48,6 @@ export async function getInitialState(): Promise<{
     return undefined;
   };
   // 判断本地是否有用户登录信息 未登录跳转登录页
-
   if(!!!cookie.get(access_token)){
     history.push(loginPath);
   }
@@ -168,8 +167,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  const errorHandler = (error: any) => {
 
   const { response } = error;
-  console.info(error);
-  console.info(response);
   if (response && response.status) {
     const { status } = response;
 
@@ -229,13 +226,12 @@ const requestInterceptors = (url: string, options: any) => {
  * 4. 基于response interceptors
  */
 const responseInterceptors = (response: ResponseInterceptor) => {
-    if (response && response.success) {
-      if (response.message) {
-        message.success(response.message);
-      }
-    } else {
-      message.error(response.message || '操作失败');
-    }
+  const { data } = response;
+  if (data &&data.message) {
+    message.success(data.message);
+  } else {
+    message.error(data.message || '操作失败');
+  }
 
   return response;
 };

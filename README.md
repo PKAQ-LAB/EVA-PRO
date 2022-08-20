@@ -46,8 +46,10 @@ Language : [🇺🇸](./README.md) | 🇨🇳 | [🇷🇺](./README.ru-RU.md) | 
 * 移除单元测试√
 * 加载数据时显示loading√
 * 请求工具优化√
+* fix:app.tsx因重定向产生的额外请求√
 * 权限控制
 * 支持远程菜单获取以及自定义菜单图标√
+* [请问各位这个bug如何优化？登录拦截不生效，出现先进入主页（也触发了后端获取当前用户接口），再重定向回登录页？ · Issue #3808 · ant-design/ant-design-pro (github.com)](https://github.com/ant-design/ant-design-pro/issues/3808)
 * 样式调整(加载中/表格)
 
 ## 三方

@@ -7,6 +7,9 @@ import { Alert, message } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.less';
 
+import Cookies from 'universal-cookie';
+const cookie = new Cookies();
+
 import setting from '@config/defaultSettings';
 
 const LoginMessage: React.FC<{
@@ -32,11 +35,13 @@ const Login: React.FC = () => {
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
+
     if (userInfo) {
       await setInitialState((s) => ({
         ...s,
         currentUser: userInfo,
       }));
+      cookie.set("access_token", "access_token");
     }
   };
 
@@ -51,11 +56,15 @@ const Login: React.FC = () => {
         });
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        history.push(urlParams.get('redirect') || '/');
+
+        // 添加settimeout 解决 Can't perform a React state update on an unmounted component.
+        setTimeout(() => {
+          const urlParams = new URL(window.location.href).searchParams;
+          history.push(urlParams.get('redirect') || '/');
+        }, 100);
+
         return;
       }
-      console.log(msg);
       // 如果失败去设置用户错误信息
       setUserLoginState(msg);
     } catch (error) {
