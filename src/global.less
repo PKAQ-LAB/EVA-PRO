@@ -48,3 +48,231 @@ ol {
     }
   }
 }
+
+
+.ant-card-head {
+  &::before {
+    display: block !important;
+  }
+}
+
+.ant-pro-basicLayout .ant-layout-header.ant-pro-fixed-header {
+  height: 64px !important;
+}
+.ant-pro-global-header-layout-mix{
+  background-color: #FFF;
+  color: #222;
+}
+.ant-pro-page-container{
+  margin-top: -12px;
+
+}
+.ant-pro-page-container-warp{
+  background-color: #fff !important;
+}
+.ant-pro-grid-content{
+  background-color: #fff !important;
+}
+.ant-pro-basicLayout-content{
+  margin: 24px !important;
+}
+
+.ant-layout-footer{
+  position: fixed;
+  width: calc(100vw - 208px);
+  bottom: 0;
+}
+
+.ant-pro-global-footer{
+  margin: 0 !important;
+  height: 45px;
+  line-height: 45px;
+  border-top: 3px solid #eee;
+}
+.ant-pro-global-footer-links{
+  margin-bottom: 0;
+}
+.antd-pro-pages-user-login-style-content{
+  margin-top: -100px;
+}
+.ant-pro-global-footer-copyright{
+  font-size: 12px;
+}
+// 内容区样式
+.ant-pro-page-container-children-content {
+  height: calc(100vh - 105px - 108px - 10px);
+  margin: 5px 0 -24px 0;
+}
+.ant-page-header{
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  border-bottom: 1px solid #EEE;
+}
+.ant-pro-page-container-children-content{
+  margin: 0 20px !important;
+}
+.ant-pro-grid-content-children{
+  margin-top: 10px;
+}
+
+.ant-page-header.has-breadcrumb{
+  padding-top: 18px !important;
+  border-bottom: 1px solid #EEE;
+}
+.ant-pro-global-footer{
+  margin: 0;
+  text-align: right;
+  font-size: 12px;
+}
+// 菜单图标, 叶子节点图标样式
+.ant-menu-item.ant-menu-item-only-child .anticon, .ant-menu-submenu-title.ant-menu-item-only-child .anticon{
+  margin-right: 8px;
+}
+// 侧边栏样式  开始  -------------------------------------------------
+// 选中的菜单颜色
+// .ant-menu.ant-menu-dark .ant-menu-item-selected,
+// .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
+//   background: #37373d;
+//   border-right: 3.3px solid #1890ff;
+// }
+// 侧边栏样式  结束  -------------------------------------------------
+.ant-table table > thead > tr {
+  height: 45px;
+}
+// 内容区边距
+// 表头颜色
+.ant-table-content {
+  border-top: 5px solid #1da9ff;
+}
+.ant-table-fixed-left {
+  border-top: 5px solid #1da9ff;
+}
+.ant-table-fixed-right {
+  border-top: 5px solid #1da9ff;
+}
+// 表头复选列
+.ant-table.ant-table-scroll-position-left .ant-table-fixed-left {
+  border-top: 5px solid #1da9ff;
+}
+
+.alternate-table {
+  table tbody {
+    background: #fff;
+    width: 100%;
+    tr:nth-child(odd) {
+      background: #fff;
+    }
+    tr:nth-child(even) {
+      background: #f5f5f5;
+    }
+    tr:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+// .ant-table {
+//   min-height: 496px !important;
+// }
+// 使protable的表格与操作区等宽
+// .ant-table-wrapper{
+//   padding: 0 24px 24px;
+// }
+
+// 表高度
+.ant-table-row {
+  height: 36px;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 12px;
+}
+.ant-tree.ant-tree-show-line li span.ant-tree-switcher {
+  background-color: transparent;
+  background-image: none;
+}
+// 让表单紧凑
+.ant-form-item {
+  margin-bottom: 5px !important;
+}
+
+.ant-input[readonly] {
+  background: #eee;
+}
+// 表格滚动条
+.ant-table-body {
+  overflow: auto;
+}
+// 内容区样式
+.ant-pro-basicLayout-content {
+  margin: 24px 24px -24px 24px;
+}
+// 页头边距
+.ant-pro-page-header-wrap-page-header-warp {
+  padding-bottom: 0;
+}
+// 页头副标题样式
+.ant-page-header-heading-sub-title {
+  margin: 10px 0 0 0;
+}
+
+.ant-pro-table-search{
+  padding: 24px 24px 24px 0;
+}
+.ant-pro-table{
+  background-color: #efefef;
+  .ant-table-wrapper{
+    padding: 0 24px;
+  }
+}
+//pro table的查询区域高度
+.ant-pro-table-search{
+  padding-top: 12px;
+  margin-bottom: 5px;
+}
+// 禁用颜色
+.eva-locked {
+  background-color: #fff5ee;
+}
+
+.eva-disabled {
+  background-color: #f5f5f5;
+}
+
+.eva-side-layout {
+  min-height: calc(100vh - 175px);
+}
+
+// 修改全局滚动条样式
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: #fff;
+}
+
+// /*定义滚动条轨道 内阴影*/
+::-webkit-scrollbar-track {
+  background-color: #fff;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+}
+
+// /*定义滑块 内阴影*/
+::-webkit-scrollbar-thumb {
+  background-color: #d5d5d5;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+}
+
+// 操作区
+.eva-ribbon {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 5px 0 5px;
+}
+// 主题内容区域
+.eva-body {
+  padding: 15px 5px;
+}
+// alert
+.eva-alert {
+  padding: 15px 15px 0 10px
+}
