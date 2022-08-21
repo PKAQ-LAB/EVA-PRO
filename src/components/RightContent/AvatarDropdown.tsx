@@ -3,7 +3,7 @@ import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons
 import { history, useModel } from '@umijs/max';
 import { Avatar, Menu, Spin } from 'antd';
 import type { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 import type { MenuInfo } from 'rc-menu/lib/interface';
 import React, { useCallback } from 'react';
 import HeaderDropdown from '../HeaderDropdown';

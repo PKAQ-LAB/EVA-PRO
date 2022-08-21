@@ -1,8 +1,7 @@
-import { parse } from 'querystring';
+import { parse } from 'qs';
 import { history } from 'umi';
 import Cookies from 'universal-cookie';
 import setting from '@config/defaultSettings';
-import { outLogin } from '@/services/login';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg =

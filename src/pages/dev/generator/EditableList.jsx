@@ -2,9 +2,7 @@
 /* eslint-disable no-restricted-syntax */
 import React from 'react';
 import { connect } from 'umi';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Input, Table, Checkbox, Select } from 'antd';
+import { Form,Input, Table, Checkbox, Select } from 'antd';
 import styles from './index.less';
 
 const FormItem = Form.Item;

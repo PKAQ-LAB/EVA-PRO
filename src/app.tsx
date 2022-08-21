@@ -72,9 +72,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    waterMarkProps: {
-      content: initialState?.currentUser?.name,
-    },
+    // waterMarkProps: {
+    //   content: initialState?.currentUser?.name,
+    // },
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
@@ -180,9 +180,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  //   }
 
     if (status === 403) {
-      history.push('/exception/403');
+      // history.push('/exception/403');
     } else if (status >= 404 && status < 422) {
-      history.push('/exception/404');
+      // history.push('/exception/404');
     } else {
       message.error({
         content: '未知网络错误，无法连接服务器',

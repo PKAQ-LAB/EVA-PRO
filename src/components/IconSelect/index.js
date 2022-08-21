@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
+import Icon from '@ant-design/icons';
 import { Input, Popover, Button } from 'antd';
 import iconsData from './icons';
 import styles from './index.less';
@@ -48,7 +48,7 @@ export default class IconSelect extends Component {
           {iconsData.map(icon => (
             <Button
               key={icon}
-              icon={<LegacyIcon key={`${icon  }-2`} type={icon} />}
+              icon={<Icon key={`${icon  }-2`} type={icon} />}
               type={value === icon ? 'primary' : 'default'}
               onClick={() => this.handleChangeAction(icon)}
             />
@@ -63,7 +63,7 @@ export default class IconSelect extends Component {
           <Input
             type="primary"
             placeholder="请选择图标"
-            addonBefore={value && <LegacyIcon type={value} style={{ color: '#40a9ff', border: '0' }} />}
+            addonBefore={value && <Icon type={value} style={{ color: '#40a9ff', border: '0' }} />}
             onChange={this.handleChangeAction}
             readOnly
             value={value}

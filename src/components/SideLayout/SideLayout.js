@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FolderOutlined } from '@ant-design/icons';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
+import Icon from '@ant-design/icons';
 import { Layout } from 'antd';
 import cx from 'classnames';
 import style from './style/index.less';
@@ -57,7 +57,7 @@ class SideLayout extends Component {
               &nbsp; {title}
             </div>
             <a className="side-handle" onClick={this.toggle} title={openSide ? '收起' : '展开'}>
-              <LegacyIcon type={openSide ? 'caret-left' : 'caret-right'} />
+              <Icon type={openSide ? 'caret-left' : 'caret-right'} />
             </a>
           </div>
           {/* 内容 */}

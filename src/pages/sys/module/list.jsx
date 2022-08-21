@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Icon as LegacyIcon } from '@ant-design/compatible';
+import Icon from '@ant-design/icons';
 import { CheckOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   Table,
@@ -127,7 +127,7 @@ export default (props) => {
     {
       title: '图标',
       dataIndex: 'icon',
-      render: text => <LegacyIcon type={text} />,
+      render: text => <Icon type={text} />,
     },
     {
       title: 'Path',
