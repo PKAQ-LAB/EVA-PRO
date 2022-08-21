@@ -16,6 +16,7 @@ const Footer: React.FC = () => {
     <DefaultFooter
       style={{
         background: 'none',
+        textAlign: 'right'
       }}
       copyright={setting.copyright}
       // copyright={`${currentYear} ${defaultMessage}`}

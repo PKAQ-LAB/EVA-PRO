@@ -105,8 +105,7 @@ export default (props) => {
     },
   ];
 
-  return    <div style={{ padding: 15 }}>
-              <Table
+  return    <Table
                 {...tableProps}
                 columns={columns}
                 rowKey={record => record.id}
@@ -120,6 +119,5 @@ export default (props) => {
                   })
                 }
               />
-            </div>
 
 }

@@ -185,7 +185,7 @@ export default (props) => {
   };
 
   return (
-    <div style={{ padding: 15 }}>
+    <>
       <div className="eva-ribbon">
         <div>
           <Button icon={<PlusOutlined />} type="primary" onClick={() => handleAdd('')} loading={loading}>
@@ -249,6 +249,6 @@ export default (props) => {
           }
         />
       </div>
-    </div>
+    </>
   );
 }

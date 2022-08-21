@@ -179,15 +179,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
      // return;
  //   }
 
-    if (status === 403) {
-      // history.push('/exception/403');
-    } else if (status >= 404 && status < 422) {
-      // history.push('/exception/404');
-    } else {
-      message.error({
-        content: '未知网络错误，无法连接服务器',
-      });
-    }
+    message.error({
+      content: '['+status+'] 网络错误，无法连接服务器',
+    });
   }
 
   if (!response) {

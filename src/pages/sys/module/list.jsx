@@ -220,8 +220,8 @@ export default (props) => {
   };
 
   return (
-    <div style={{ padding: 15 }}>
-     <div className="eva-ribbon">
+    <>
+      <div className="eva-ribbon">
         <div>
           <Button icon={<PlusOutlined />} loading={loading} type="primary" onClick={() => handleAdd('')}>
             新增模块
@@ -265,21 +265,21 @@ export default (props) => {
           showIcon
         />
       )}
-      {/* 列表 */}
-      <Table
-        defaultExpandAllRows
-        size="small"
-        columns={column}
-        dataSource={data}
-        loading={loading}
-        rowClassName={record =>
-          cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
-        }
-        pagination={false}
-        rowKey={record => record.id}
-        rowSelection={rowSelection}
-      />
+        {/* 列表 */}
+        <Table
+          defaultExpandAllRows
+          size="small"
+          columns={column}
+          dataSource={data}
+          loading={loading}
+          rowClassName={record =>
+            cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' })
+          }
+          pagination={false}
+          rowKey={record => record.id}
+          rowSelection={rowSelection}
+        />
       </div>
-    </div>
+    </>
   );
 }
