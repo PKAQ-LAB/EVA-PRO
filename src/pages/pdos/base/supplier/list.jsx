@@ -16,7 +16,7 @@ export default (props) => {
 
   // 单条删除
   const handleDeleteClick = record => {
-    delSlip({
+    del({
       param: [record.id],
     }).then(() => {
       fetch();
@@ -54,7 +54,7 @@ export default (props) => {
   const handleRemoveClick = () => {
     if (!selectedRowKeys) return;
 
-    delSlip({
+    del({
       param: selectedRowKeys,
     }).then(() => {
       fetch();
@@ -123,18 +123,40 @@ export default (props) => {
       title: '简称',
       dataIndex: 'name',
     }, {
-      title: '助记码',
+      title: ' ',
+      width: 80,
+      dataIndex: '',
+      render: (text, record) =>{
+        const flag = [];
+        if(record.sdwr) flag.push("七");
+        if(record.freeDelivery) flag.push("包");
+        if(record.dropShipping) flag.push("代");
+        return  flag.concat
+      }
+    }, {
+      title: '编码',
+      dataIndex: 'code',
+    }, {
+      title: '联系人',
+      dataIndex: 'mnemonic',
+    }, {
+      title: '电话',
       dataIndex: 'mnemonic',
     }, {
       title: '类型',
-      dataIndex: 'category',
-      render: text => dict.supplier_type && dict.supplier_type[`${text}`]
-    },  {
-      title: '联系人',
-      dataIndex: 'linkman',
+      dataIndex: 'mnemonic',
     }, {
-      title: '联系方式',
-      dataIndex: 'mobile',
+      title: '主营品类',
+      dataIndex: 'mnemonic',
+    }, {
+      title: '标签',
+      dataIndex: 'mnemonic',
+    }, {
+      title: '退货地址',
+      dataIndex: 'mnemonic',
+    }, {
+      title: '店铺地址',
+      dataIndex: 'mnemonic',
     }, {
       width: 180,
       render: (text, record) =>
@@ -167,6 +189,7 @@ export default (props) => {
 
   const dataTableProps = {
     ...tableProps,
+    size: "small",
     columns,
     rowKey: record => record.id,
     rowSelection,
