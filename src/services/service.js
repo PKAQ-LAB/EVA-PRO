@@ -7,7 +7,7 @@ async function get(url, params) {
   return request(`${url}/${getNoUndefinedString(params)}`);
 }
 
-// 加载组织列表
+// 加载列表
 async function list(url, params) {
   return request(`${url}?${stringify(params)}`);
 }
