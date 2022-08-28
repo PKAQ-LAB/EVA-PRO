@@ -270,6 +270,19 @@ export default {
               "path":"/pdos/base/goods",
               "pathId":"8,20",
               "status":"9999"
+            },{
+              "exact":true,
+              "icon":"form",
+              "id":"21",
+              "isleaf":true,
+              "key":"",
+              "locale":"menu.pdos.shop",
+              "name":"店铺管理",
+              "orders":4,
+              "parentId":"8",
+              "path":"/pdos/base/shop",
+              "pathId":"8,21",
+              "status":"9999"
             },
             {
               "exact":true,
