@@ -2,6 +2,8 @@
 /* eslint-disable */
 
 declare namespace API {
+  type dict = any;
+
   type CurrentUser = {
     name?: string;
     avatar?: string;

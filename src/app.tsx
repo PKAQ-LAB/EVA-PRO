@@ -7,7 +7,7 @@ import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, ResponseInterceptor, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-import { fetchMenus } from '@/services/user';
+import { fetchMenus, fetchDict } from '@/services/user';
 
 import { loopMenuItem } from '@/utils/DataHelper';
 import defaultSettings from '@config/defaultSettings';
@@ -33,9 +33,19 @@ const loginPath = '/user/login';
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
+  dict?: API.dict;
   loading?: boolean;
+  initDict?: () => Promise<API.dict | undefined>;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
+  /**
+       * 加载字典
+       */
+  const initDict = async () => {
+    return await fetchDict();
+  }
+
+
   const fetchUserInfo = async () => {
     try {
       const msg = await queryCurrentUser({
@@ -55,7 +65,9 @@ export async function getInitialState(): Promise<{
   // 如果不是登录页面 且已经登录，执行
   if (window.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
+    const dict = await initDict();
     return {
+      dict: dict?.data,
       fetchUserInfo,
       currentUser,
       settings: defaultSettings,
@@ -221,10 +233,8 @@ const requestInterceptors = (url: string, options: any) => {
  */
 const responseInterceptors = (response: ResponseInterceptor) => {
   const { data } = response;
-  if (data &&data.message) {
-    message.success(data.message);
-  } else {
-    message.error(data.message || '操作失败');
+  if (!!!data?.success) {
+    message.error(data?.message || '操作失败');
   }
 
   return response;

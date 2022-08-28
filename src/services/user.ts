@@ -12,6 +12,14 @@ export async function fetchMenus(options?: Record<string, any>) {
   });
 }
 
+export async function fetchDict(options?: Record<string, any>) {
+  return request<any>('/api/auth/fetchDict',{
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+
 export async function queryNotices(): Promise<any> {
   return request<{ data: API.NoticeIconData[] }>('/api/notices');
 }
