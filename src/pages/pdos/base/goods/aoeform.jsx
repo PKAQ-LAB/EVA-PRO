@@ -34,7 +34,7 @@ export default (props) => {
   // 表单渲染
   const renderForm = () => {
   const formItemLayout = {
-    labelCol: { flex: "0 0 90px" },
+    labelCol: { flex: "0 0 100px" },
     wrapperCol: { flex: "auto" },
   };
 
@@ -72,16 +72,21 @@ export default (props) => {
                 />
             </Form.Item>
           </Col>
+          <Col span={12}>
+            <Form.Item label="品牌" name="itemNo" rules={[{required: true}]}>
+              <Input readOnly={operateType === 'view'} />
+            </Form.Item>
+          </Col>
         </Row>
 
         <Row gutter={24}>
           <Col span={12}>
-            <Form.Item label="助记码" name="mnemonic" rules={[{required: true}]}>
+            <Form.Item label="货号" name="itemNo" rules={[{required: true}]}>
               <Input readOnly={operateType === 'view'} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="货号" name="itemNo" rules={[{required: true}]}>
+            <Form.Item label="助记码" name="mnemonic" rules={[{required: true}]}>
               <Input readOnly={operateType === 'view'} />
             </Form.Item>
           </Col>
@@ -103,12 +108,7 @@ export default (props) => {
         </Row>
 
         <Row gutter={24}>
-        <Col span={12}>
-            <Form.Item label="生产厂家" name="factory">
-              <Input readOnly={operateType === 'view'} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
+          <Col span={24}>
             <Form.Item label="条码" name="barcode">
               <Input readOnly={operateType === 'view'} />
             </Form.Item>

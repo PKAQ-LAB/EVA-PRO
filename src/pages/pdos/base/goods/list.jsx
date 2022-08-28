@@ -143,11 +143,17 @@ export default (props) => {
       }
     },
     {
+      title: '编码',
+      dataIndex: 'code',
+    }, {
+      title: '品牌',
+      dataIndex: 'brandName',
+    }, {
       title: '品名',
       dataIndex: 'name',
     }, {
       title: '品类',
-      dataIndex: 'category',
+      dataIndex: 'categoryName',
     }, {
       title: '货号',
       dataIndex: 'itemNo',
@@ -161,12 +167,9 @@ export default (props) => {
     },  {
       title: '装箱规格',
       dataIndex: 'boxunit',
-    }, {
-      title: '生产厂家',
-      dataIndex: 'factory',
     },{
       title: '条码',
-      dataIndex: 'barcode',
+      dataIndex: 'qrcode',
     }, {
       width: 180,
       render: (_text, record) =>
@@ -217,6 +220,7 @@ export default (props) => {
       </div>
       <div className={cx("eva-body","alternate-table")}>
         <Table
+          size = 'small'
           {...tableProps}
           columns={columns}
           rowKey={record => record.id}
