@@ -259,6 +259,20 @@ export default {
           "children":[
             {
               "exact":true,
+              "icon":"profile",
+              "id":"18",
+              "isleaf":true,
+              "key":"",
+              "locale":"menu.pdos.category",
+              "name":"类目管理",
+              "orders":1,
+              "parentId":"8",
+              "path":"/pdos/base/category",
+              "pathId":"8,18",
+              "status":"9999"
+            },
+            {
+              "exact":true,
               "icon":"form",
               "id":"20",
               "isleaf":true,
@@ -283,6 +297,19 @@ export default {
               "path":"/pdos/base/shop",
               "pathId":"8,21",
               "status":"9999"
+            },{
+              "exact":true,
+              "icon":"form",
+              "id":"22",
+              "isleaf":true,
+              "key":"",
+              "locale":"menu.pdos.brand",
+              "name":"品牌管理",
+              "orders":4,
+              "parentId":"8",
+              "path":"/pdos/base/brand",
+              "pathId":"8,22",
+              "status":"9999"
             },
             {
               "exact":true,
@@ -296,20 +323,6 @@ export default {
               "parentId":"8",
               "path":"/pdos/base/supplier",
               "pathId":"8,19",
-              "status":"9999"
-            },
-            {
-              "exact":true,
-              "icon":"profile",
-              "id":"18",
-              "isleaf":true,
-              "key":"",
-              "locale":"menu.pdos.category",
-              "name":"分类管理",
-              "orders":1,
-              "parentId":"8",
-              "path":"/pdos/base/category",
-              "pathId":"8,18",
               "status":"9999"
             }
           ],
