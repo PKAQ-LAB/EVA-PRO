@@ -19,6 +19,10 @@ import { access_token } from './constant'
 import Cookies from 'universal-cookie';
 const cookie = new Cookies();
 
+import bgA from '../public/bgA.webp';
+import bgB from '../public/bgB.webp';
+import bgC from '../public/bgC.webp';
+
 // 打印控制台欢迎语句
 printANSI();
 
@@ -97,19 +101,19 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     layoutBgImgList: [
       {
-        src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr',
+        src: bgA,
         left: 85,
         bottom: 100,
         height: '303px',
       },
       {
-        src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/C2TWRpJpiC0AAAAAAAAAAAAAFl94AQBr',
+        src: bgB,
         bottom: -68,
         right: -45,
         height: '303px',
       },
       {
-        src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/F6vSTbj8KpYAAAAAAAAAAAAAFl94AQBr',
+        src: bgC,
         bottom: 0,
         left: 0,
         width: '331px',

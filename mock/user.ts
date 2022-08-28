@@ -200,7 +200,7 @@ export default {
   },
   // 字典
   'GET /api/auth/fetchDict' : (req: Request, res: Response) => {
-    res.status(401).send({
+    res.status(200).send({
       "code": '0000',
       "success":true,
       "data": {
@@ -224,7 +224,7 @@ export default {
   },
   // 支持值为 Object 和 Array
   'GET /api/auth/fetchMenus' : (req: Request, res: Response) => {
-      res.status(401).send({
+      res.status(200).send({
       "code":'0000',
       "data":[
         // "dict":{
