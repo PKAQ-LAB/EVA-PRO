@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Modal, Form, Input, Row, Col } from 'antd';
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
+import DragUpload from '@/components/DragUpload';
+
 import { edit } from './services/goodsSvc';
 
 export default (props) => {
@@ -68,7 +70,7 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={24}>
             <Form.Item label="Logo" name="logo" rules={[{required: true}]}>
-              <Input readOnly={ readOnly } />
+              <DragUpload/>
             </Form.Item>
           </Col>
         </Row>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Form, Input, Row, Col } from 'antd';
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
+import DragUpload from '@/components/DragUpload';
 import { edit } from './services/goodsSvc';
 
 export default (props) => {
@@ -111,6 +112,13 @@ export default (props) => {
           <Col span={24}>
             <Form.Item label="条码" name="barcode">
               <Input readOnly={operateType === 'view'} />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={24}>
+          <Col span={24}>
+            <Form.Item label="资料包" name="barcode">
+              <DragUpload />
             </Form.Item>
           </Col>
         </Row>
