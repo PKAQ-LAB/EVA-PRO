@@ -6,7 +6,7 @@ import { PageLoading } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, ResponseInterceptor, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+// import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { fetchMenus, fetchDict } from '@/services/user';
 
 import { loopMenuItem } from '@/utils/DataHelper';
@@ -40,7 +40,7 @@ export async function getInitialState(): Promise<{
   dict?: API.dict;
   loading?: boolean;
   initDict?: () => Promise<API.dict | undefined>;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  // fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
   /**
        * 加载字典
@@ -48,37 +48,22 @@ export async function getInitialState(): Promise<{
   const initDict = async () => {
     return await fetchDict();
   }
-
-
-  const fetchUserInfo = async () => {
-    try {
-      const msg = await queryCurrentUser({
-        skipErrorHandler: true,
-      });
-      return msg.data;
-    } catch (error) {
-      history.push(loginPath);
-    }
-    return undefined;
-  };
   // 判断本地是否有用户登录信息 未登录跳转登录页
-  if(!!!cookie.get(access_token)){
+
+  if(!cookie.get(access_token)){
     history.push(loginPath);
   }
 
   // 如果不是登录页面 且已经登录，执行
   if (window.location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
     const dict = await initDict();
     return {
       dict: dict?.data,
-      fetchUserInfo,
-      currentUser,
       settings: defaultSettings,
     };
   }
   return {
-    fetchUserInfo,
+    // fetchUserInfo,
     settings: defaultSettings,
   };
 }
@@ -95,7 +80,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
+      if (!cookie.get(access_token) && location.pathname !== loginPath) {
         history.push(loginPath);
       }
     },
