@@ -13,7 +13,7 @@ export async function fetchMenus(options?: Record<string, any>) {
 }
 
 export async function fetchDict(options?: Record<string, any>) {
-  return request<any>('/api/auth/fetchDict',{
+  return request<any>('/api/auth/fetchDicts',{
     method: 'GET',
     ...(options || {}),
   });
