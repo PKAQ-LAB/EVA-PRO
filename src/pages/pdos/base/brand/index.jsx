@@ -20,7 +20,6 @@ export default () => {
 
   const { run, tableProps } = useAntdTable(async () => {
     const res = await Svc.list(API.BRAND_LIST);
-    console.info(res);
     return res.data;
   }, {pageSize: 15})
 

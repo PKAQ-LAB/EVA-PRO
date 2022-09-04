@@ -3,7 +3,8 @@ import { useRequest } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
-import { listCategory } from './services/categorySvc';
+import Svc from '@/services/service';
+import API from '@/apis'
 
 export default () => {
 

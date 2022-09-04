@@ -13,7 +13,8 @@ import {
 } from 'antd';
 import cx from 'classnames';
 import { hasChildren } from '@/utils/DataHelper';
-import { getCategory, switchCategory, deleteCategory } from './services/categorySvc';
+import Svc from '@/services/service';
+import API from '@/apis'
 
 const { Search } = { ...Input };
 

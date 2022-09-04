@@ -1,7 +1,8 @@
 import React from 'react';
 import TreeSelector from '@/components/TreeSelector';
 import { Row, Col, Input, Modal, Switch, Form } from 'antd';
-import { checkUnique, editCategory } from './services/categorySvc';
+import Svc from '@/services/service';
+import API from '@/apis'
 
 const FormItem = Form.Item;
 const Area = Input.TextArea;
