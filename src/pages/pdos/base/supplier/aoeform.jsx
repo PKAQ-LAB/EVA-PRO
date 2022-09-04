@@ -3,7 +3,8 @@ import moment from 'moment';
 import { useModel } from 'umi';
 import { Modal, Form, Input, Row, Col, Switch } from 'antd';
 import DictSelector from '@/components/DictSelector'
-import { editSlip } from './services/supplierSvc';
+import Svc from '@/services/service';
+import API from '@/apis'
 
 export default (props) => {
 
@@ -33,7 +34,7 @@ export default (props) => {
       };
       data.dealTime = moment(data.dealTime).format("YYYY-MM-DD hh:mm:ss");
 
-      editSlip(data).then(res => {
+      Svc.edit(data).then(res => {
         if(res.success){
           setOperateType("");
           fetch();
@@ -103,30 +104,22 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={6}>
               <Form.Item label="七退"  name="sdwr">
-                <Switch checkedChildren="启用"
-                        unCheckedChildren="停用"
-                />
+                <Switch />
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item label="包邮"  name="freeDelivery">
-                  <Switch checkedChildren="启用"
-                          unCheckedChildren="停用"
-                  />
+                  <Switch />
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item label="代发"  name="dropShipping">
-                  <Switch checkedChildren="启用"
-                          unCheckedChildren="停用"
-                  />
+                  <Switch />
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item label="启用"  name="isEnable">
-                  <Switch checkedChildren="启用"
-                          unCheckedChildren="停用"
-                  />
+                  <Switch />
                 </Form.Item>
               </Col>
           </Row>

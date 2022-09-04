@@ -3,7 +3,9 @@ import cx from 'classnames';
 import { useModel } from 'umi';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Table, Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
-import { delSlip, get } from './services/supplierSvc';
+import Svc from '@/services/service';
+import API from '@/apis'
+
 
 export default (props) => {
   const [ form ] = Form.useForm();
@@ -16,7 +18,7 @@ export default (props) => {
 
   // 单条删除
   const handleDeleteClick = record => {
-    del({
+    Svc.del(API.SUPPLIER_DEL, {
       param: [record.id],
     }).then(() => {
       fetch();
@@ -25,9 +27,8 @@ export default (props) => {
 
   // 编辑/查看
   const handleEditClick = (record, operateType) => {
-    get({
-      id: record.id,
-    }).then(res => {
+    Svc.get(API.SUPPLIER_GET,record.id,
+    ).then(res => {
       setCurrentItem(res.data);
       setOperateType(operateType)
     })
@@ -54,7 +55,7 @@ export default (props) => {
   const handleRemoveClick = () => {
     if (!selectedRowKeys) return;
 
-    del({
+    Svc.del(API.SUPPLIER_DEL, {
       param: selectedRowKeys,
     }).then(() => {
       fetch();
@@ -118,9 +119,11 @@ export default (props) => {
 
   const columns = [{
       title: '全称',
+      ellipsis: true,
       dataIndex: 'fullName',
     }, {
       title: '简称',
+      width: 120,
       dataIndex: 'name',
     }, {
       title: ' ',
@@ -128,6 +131,7 @@ export default (props) => {
       dataIndex: '',
       render: (text, record) =>{
         const flag = [];
+        console.info(record);
         if(record.sdwr) flag.push("七");
         if(record.freeDelivery) flag.push("包");
         if(record.dropShipping) flag.push("代");
@@ -138,25 +142,27 @@ export default (props) => {
       dataIndex: 'code',
     }, {
       title: '联系人',
-      dataIndex: 'mnemonic',
+      dataIndex: 'contact',
     }, {
       title: '电话',
-      dataIndex: 'mnemonic',
+      dataIndex: 'tel',
     }, {
       title: '类型',
-      dataIndex: 'mnemonic',
+      dataIndex: 'type',
     }, {
       title: '主营品类',
-      dataIndex: 'mnemonic',
+      dataIndex: 'category',
     }, {
       title: '标签',
-      dataIndex: 'mnemonic',
+      dataIndex: 'tags',
     }, {
       title: '退货地址',
-      dataIndex: 'mnemonic',
+      ellipsis: true,
+      dataIndex: 'returnAddr',
     }, {
       title: '店铺地址',
-      dataIndex: 'mnemonic',
+      ellipsis: true,
+      dataIndex: 'shopUrl',
     }, {
       width: 180,
       render: (text, record) =>
