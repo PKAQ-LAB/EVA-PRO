@@ -227,37 +227,103 @@ export default {
       res.status(200).send({
       "code":'0000',
       "data":[
-        // "dict":{
-        //   "purchasing_type":{
-        //     "0002":"市场采购",
-        //     "0001":"网络采购"
-        //   },
-        //   "goods_type":{
-        //     "0002":"饰品",
-        //     "0001":"玩具"
-        //   },
-        //   "data_permission":{
-        //     "0005":"仅本人创建",
-        //     "0002":"本部门及下属部门",
-        //     "0003":"指定部门",
-        //     "0000":"全部",
-        //     "0001":"仅本部门"
-        //   }
-        // },
-        // "menus":[
           {
           "exact":false,
-          "gmtModify":"2019-10-15 12:41:52",
           "icon":"",
-          "id":"5",
+          "id":"25",
           "isleaf":false,
           "key":"",
-          "locale":"menu.test",
-          "name":"测试菜单",
+          "locale":"menu.pdos.sale",
+          "name":"销售管理",
           "orders":0,
-          "parentName":"测试菜单",
-          "path":"/test",
-          "pathId":"5",
+          "parentName":"销售管理",
+          "path":"/pdos/sale",
+          "pathId":"25",
+          "status":"9999",
+          "children":[
+            {
+              "exact":true,
+              "icon":"form",
+              "id":"20",
+              "isleaf":true,
+              "key":"",
+              "locale":"menu.pdos.sale.slip",
+              "name":"销售单",
+              "orders":4,
+              "parentId":"8",
+              "path":"/pdos/sale/slip",
+              "pathId":"8,20",
+              "status":"9999"
+            }]
+        },{
+          "children":[
+            {
+              "exact":true,
+              "icon":"form",
+              "id":"20",
+              "isleaf":true,
+              "key":"",
+              "locale":"menu.pdos.goods",
+              "name":"商品管理",
+              "orders":4,
+              "parentId":"8",
+              "path":"/pdos/base/goods",
+              "pathId":"8,20",
+              "status":"9999"
+            },{
+              "exact":true,
+              "icon":"form",
+              "id":"21",
+              "isleaf":true,
+              "key":"",
+              "locale":"menu.pdos.shop",
+              "name":"店铺管理",
+              "orders":4,
+              "parentId":"8",
+              "path":"/pdos/base/shop",
+              "pathId":"8,21",
+              "status":"9999"
+            },
+            {
+              "exact":true,
+              "icon":"bars",
+              "id":"19",
+              "isleaf":true,
+              "key":"",
+              "locale":"menu.pdos.supplier",
+              "name":"供应商管理",
+              "orders":3,
+              "parentId":"8",
+              "path":"/pdos/base/supplier",
+              "pathId":"8,19",
+              "status":"9999"
+            },
+            {
+              "exact":true,
+              "icon":"profile",
+              "id":"18",
+              "isleaf":true,
+              "key":"",
+              "locale":"menu.pdos.category",
+              "name":"分类管理",
+              "orders":1,
+              "parentId":"8",
+              "path":"/pdos/base/category",
+              "pathId":"8,18",
+              "status":"9999"
+            }
+          ],
+          "exact":false,
+          "icon":"setting",
+          "id":"8",
+          "isleaf":false,
+          "key":"",
+          "locale":"menu.pdos",
+          "name":"进销存",
+          "orders":0,
+          "parentName":"进销存",
+          "path":"/pdos/base",
+          "pathId":"8",
           "status":"9999"
         },{
             "children":[
