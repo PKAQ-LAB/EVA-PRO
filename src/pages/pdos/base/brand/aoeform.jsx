@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Row, Col } from 'antd';
+import { Modal, Form, Input, Row, Col, Upload } from 'antd';
+import { PlusOutlined } from "@ant-design/icons";
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
-import DragUpload from '@/components/DragUpload';
-
-import { edit } from './services/goodsSvc';
-
+import Svc from '@/services/service';
+import API from '@/apis'
 
 export default (props) => {
   const { setOperateType, operateType, currentItem, dict, fetch } = props;
@@ -26,7 +25,7 @@ export default (props) => {
         id: currentItem ? currentItem.id : '',
       };
 
-      edit(data).then(() => {
+      Svc.edit(API.BRAND_EDIT ,data).then(() => {
         setOperateType("");
         fetch();
       });
@@ -60,7 +59,7 @@ export default (props) => {
           </Col>
 
           <Col span={12}>
-            <Form.Item label="编码" name="url" rules={[{required: true}]}>
+            <Form.Item label="编码" name="code" rules={[{required: true}]}>
               <Input readOnly={ readOnly } />
             </Form.Item>
           </Col>
@@ -68,8 +67,13 @@ export default (props) => {
 
         <Row gutter={24}>
           <Col span={24}>
-            <Form.Item label="Logo" name="logo" rules={[{required: true}]}>
-              <DragUpload />
+            <Form.Item label="Logo" name="logo" valuePropName="fileList">
+              <Upload listType="picture-card" showUploadList={false} readOnly={ readOnly }>
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              </Upload>
             </Form.Item>
           </Col>
         </Row>
@@ -77,7 +81,7 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={24}>
             <Form.Item label="备注" name="remark">
-              <Input readOnly={ readOnly } />
+              <Input.TextArea rows={3} readOnly={ readOnly }/>
             </Form.Item>
           </Col>
         </Row>

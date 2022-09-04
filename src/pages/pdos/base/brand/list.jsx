@@ -3,7 +3,8 @@ import { Form, Alert, Button, Divider, Popconfirm, Input, Table } from 'antd';
 import cx from 'classnames';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import TreeSelector from '@/components/TreeSelector';
-import { get, del } from './services/goodsSvc';
+import Svc from '@/services/service';
+import API from '@/apis'
 
 export default (props) => {
 
@@ -20,7 +21,7 @@ export default (props) => {
    // 编辑/查看
   const handleEditClick = (record, operate) => {
     if (record.id) {
-      get({id: record.id}).then(response => {
+      Svc.get(API.BRAND_GET, record.id).then(response => {
         setCurrentItem(response.data);
         setOperateType(operate);
       });
@@ -30,7 +31,7 @@ export default (props) => {
   // 单条删除
   const handleDeleteClick = record => {
     if (record.id) {
-      del({ param: [record.id], }).then(() => {
+      Svc.del(API.BRAND_DEL,{ param: [record.id], }).then(() => {
         fetch();
       });
     }
@@ -59,7 +60,7 @@ export default (props) => {
   const handleRemoveClick = () => {
 
     if (!selectedRowKeys) return;
-    del({
+    Svc.del(API.BRAND_DEL,{
       param: [...selectedRowKeys],
     }).then(()  => {
       fetch();
@@ -123,19 +124,22 @@ export default (props) => {
   const columns = [
     {
       title: '',
+      width: 30,
       render: (_text, _record, index) => {
         return index;
       }
     },
     {
       title: '名称',
+      width: 300,
       dataIndex: 'name',
     }, {
       title: '编码',
-      dataIndex: 'platform',
+      width: 180,
+      dataIndex: 'code',
     }, {
-      title: 'Logo',
-      dataIndex: 'deposit',
+      title: '备注',
+      dataIndex: 'remark',
     }, {
       width: 180,
       render: (_text, record) =>
