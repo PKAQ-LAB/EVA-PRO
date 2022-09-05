@@ -3,8 +3,8 @@ import { Modal, Form, Input, Row, Col } from 'antd';
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
 import DragUpload from '@/components/DragUpload';
-
-import { edit } from './services/goodsSvc';
+import Svc from '@/services/service';
+import API from '@/apis'
 
 export default (props) => {
   const { setOperateType, operateType, currentItem, dict, fetch } = props;
@@ -25,7 +25,7 @@ export default (props) => {
         id: currentItem ? currentItem.id : '',
       };
 
-      edit(data).then(() => {
+      Svc.edit(API.SHOP_EDIT, data).then(() => {
         setOperateType("");
         fetch();
       });

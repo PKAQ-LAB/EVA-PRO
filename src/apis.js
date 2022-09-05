@@ -41,6 +41,27 @@ export default {
   ACCOUNT_DEL: '/api/sys/account/del',
   ACCOUNT_LOCK: '/api/sys/account/lock',
 
+  // 品牌管理
+  BRAND_GET: '/api/pdos/base/brand/get',
+  BRAND_LIST: '/api/pdos/base/brand/list',
+  BRAND_EDIT: '/api/pdos/base/brand/edit',
+  BRAND_DEL: '/api/pdos/base/brand/del',
+  // 供应商管理
+  SUPPLIER_GET: '/api/pdos/base/supplier/get',
+  SUPPLIER_LIST: '/api/pdos/base/supplier/list',
+  SUPPLIER_EDIT: '/api/pdos/base/supplier/edit',
+  SUPPLIER_DEL: '/api/pdos/base/supplier/del',
+  // 分类管理
+  CATEGORY_GET: '/api/pdos/base/category/get',
+  CATEGORY_LIST: '/api/pdos/base/category/list',
+  CATEGORY_EDIT: '/api/pdos/base/category/edit',
+  CATEGORY_DEL: '/api/pdos/base/category/del',
+  // 店铺管理
+  SHOP_GET: '/api/pdos/base/shop/get',
+  SHOP_LIST: '/api/pdos/base/shop/list',
+  SHOP_EDIT: '/api/pdos/base/shop/edit',
+  SHOP_DEL: '/api/pdos/base/shop/del',
+
   /**  系统日志 * */
   // 在线用户
   ONLINE_LIST: '/api/monitor/log/online/list',

@@ -6,7 +6,6 @@ import { Table, Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
 import Svc from '@/services/service';
 import API from '@/apis'
 
-
 export default (props) => {
   const [ form ] = Form.useForm();
 

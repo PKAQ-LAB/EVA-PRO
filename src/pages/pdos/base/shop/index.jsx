@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { useModel } from 'umi';
-import { useRequest } from 'umi';
+import { useAntdTable } from 'ahooks';
 import List from './list';
 import AOEForm from './aoeform';
-import { list } from './services/goodsSvc';
+import Svc from '@/services/service';
+import API from '@/apis'
 
 export default () => {
 
@@ -16,12 +17,10 @@ export default () => {
 
   const { dict } = initialState;
 
-  const { run, tableProps } = useRequest(list, {
-    paginated: true,
-    formatResult: (res) => {
-      return res.data;
-    }
-  })
+  const { run, tableProps } = useAntdTable(async () => {
+    const res = await Svc.list(API.SHOP_LIST);
+    return res.data;
+  }, {pageSize: 15})
 
   // 列表属性
   const listProps = {
