@@ -87,6 +87,10 @@ export default [
     { name: 'sale', path: '/pdos/sale/slip', component: './pdos/sale/slip' }
   ],
   },
-  { component: '404' },
+  {
+    path: '*',
+    layout: false,
+    component: './404'
+  },
 ];
 
