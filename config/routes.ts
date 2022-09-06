@@ -47,7 +47,15 @@ export default [
     path: '/config',
     name: 'user',
     routes: [
-      { name: 'setting', path: '/config/settings', component: './User/settings' },
+      {
+        path: '/admin',
+        redirect: '/admin/sub-page',
+      },
+      {
+        path: '/admin/sub-page',
+        name: 'sub-page',
+        component: './Admin',
+      },
     ],
   },
   // 系统日志
