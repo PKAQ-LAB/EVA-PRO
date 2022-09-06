@@ -193,6 +193,9 @@ export default (props) => {
   };
 
   const dataTableProps = {
+    scroll: {
+      x: '100vw'
+    },
     ...tableProps,
     size: "small",
     columns,

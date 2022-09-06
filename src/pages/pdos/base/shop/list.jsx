@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Alert, Button, Divider, Popconfirm, Input, Table } from 'antd';
 import cx from 'classnames';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import TreeSelector from '@/components/TreeSelector';
+import DictSelector from '@/components/DictSelector'
 import Svc from '@/services/service';
 import API from '@/apis'
 
@@ -113,16 +113,10 @@ export default (props) => {
         <Form.Item
           label="所属平台"
           name="category">
-            <TreeSelector
-              url="/api/pdos/base/category/list"
-              keys={['id', 'name', 'children']}
-              search
-              showAll={false}
-              treeDefaultExpandAll
-              allowClear
-              showSearch
-              placeholder="请选择所属平台"
-            />
+            <DictSelector
+                placeholder="请选择平台"
+                code="platform"
+                data={dict?.platform}/>
         </Form.Item>
 
         <Button type="primary" htmlType="submit" onClick={() => handleSearch()}>
@@ -142,11 +136,22 @@ export default (props) => {
       render: (_text, _record, index) => {
         return index;
       }
-    },
-    {
+    },{
+      title: 'Logo',
+      dataIndex: 'Logo',
+    },{
       title: '店名',
       dataIndex: 'name',
     }, {
+      title: '编码',
+      dataIndex: 'code',
+    },{
+      title: '账号',
+      dataIndex: 'account',
+    },{
+      title: '主体类型',
+      dataIndex: 'type',
+    },{
       title: '平台',
       dataIndex: 'platform',
     }, {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, Form, Input, Row, Col } from 'antd';
+import { Modal, Form, Input, Row, Col, Upload, DatePicker } from 'antd';
+import { PlusOutlined } from "@ant-design/icons";
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
-import DragUpload from '@/components/DragUpload';
 import Svc from '@/services/service';
 import API from '@/apis'
 
@@ -51,8 +51,20 @@ export default (props) => {
 
     return (
       <Form {...formProps}>
-        <Row gutter={24}>
+        <Row>
           <Col span={24}>
+            <Form.Item label="Logo" name="logo">
+                <Upload listType="picture-card" showUploadList={false} readOnly={ readOnly }>
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              </Upload>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={24}>
+          <Col span={16}>
             <Form.Item label="店名" name="name" rules={[{required: true}]}>
               <Input readOnly={ readOnly } />
             </Form.Item>
@@ -68,27 +80,46 @@ export default (props) => {
         </Row>
 
         <Row gutter={24}>
-          <Col span={24}>
-            <Form.Item label="Logo" name="logo" rules={[{required: true}]}>
-              <DragUpload/>
+          <Col span={8}>
+            <Form.Item label="编码" name="code" >
+              <Input readOnly={ readOnly } />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="账号" name="account" rules={[{required: true}]}>
+              <Input readOnly={ readOnly } />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col span={8}>
+            <Form.Item label="类型" name="type" rules={[{required: true}]}>
+              <DictSelector
+                placeholder="选择主体类型"
+                readOnly={ readOnly }
+                data={dict?.shopType}/>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="所属平台" name="platform" rules={[{required: true}]}>
+              <DictSelector
+                placeholder="选择所属平台"
+                readOnly={ readOnly }
+                data={dict?.shopType}/>
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={24}>
           <Col span={8}>
-            <Form.Item label="所属平台" name="platform" rules={[{required: true}]}>
-              <Input readOnly={ readOnly } />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
             <Form.Item label="保证金" name="deposit" rules={[{required: true}]}>
               <Input readOnly={ readOnly } />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="开店日期" name="openDate" rules={[{required: true}]}>
-              <Input readOnly={ readOnly } />
+            <Form.Item label="开店日期" name="openDate" >
+              <DatePicker readOnly={ readOnly } />
             </Form.Item>
           </Col>
         </Row>
@@ -96,7 +127,7 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={24}>
             <Form.Item label="备注" name="remark">
-              <Input readOnly={ readOnly } />
+              <Input.TextArea rows={3} readOnly={ readOnly } />
             </Form.Item>
           </Col>
         </Row>
