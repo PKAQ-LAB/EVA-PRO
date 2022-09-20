@@ -1,42 +1,44 @@
 import React, { useState } from 'react';
-import { useRequest } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
+import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
-import Svc from '@/services/service';
-import API from '@/apis'
 
+import Service from '@/services/service';
+import API from '@/apis';
+
+/**
+ * 商品管理 主界面
+ */
 export default () => {
+  const [ operateType, setOperateType ] = useState("");
+  const [ currentItem, setCurrentItem ] = useState({});
 
-  const [operateType, setOperateType] = useState("");
-  const [currentItem, setCurrentItem] = useState({});
-
-  const { run, data, loading } = useRequest(listCategory, {
+  const { run, data, loading } = useRequest(
+    (param) => Service.list(API.CATEGORY_LIST, param), {
     formatResult: (res) => {
       return res.data;
     }
   })
 
-  const listProps = {
-    fetch: run,
-    setCurrentItem,
-    setOperateType,
-    data,
-    loading
-  }
+  const formProps = { fetch: run,
+                      data,
+                      operateType,
+                      currentItem,
+                      setOperateType };
 
-  const formProps = {
-    operateType,
-    setOperateType,
-    currentItem,
-    fetch: run,
-    data
-  }
+  const listProps = { fetch: run,
+                      data,
+                      loading,
+                      operateType,
+                      setOperateType,
+                      currentItem,
+                      setCurrentItem };
 
   return (
     <PageContainer title="商品分类编码">
-        <List {...listProps} />
-        {operateType !== '' && <AOEForm {...formProps} />}
+      <List {...listProps}/>
+      {operateType !== '' && <AOEForm {...formProps}/>}
     </PageContainer>
   );
 }

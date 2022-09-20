@@ -7,6 +7,7 @@ import BizIcon from '@/components/BizIcon';
 
 import Service from '@/services/service';
 import API from '@/apis';
+import { smaller } from 'mathjs';
 
 const { Search } = Input;
 
@@ -237,6 +238,7 @@ export default (props) => {
           dataSource={data}
           loading={loading}
           columns={column}
+          size="small"
           rowKey={record => record.id}
           rowSelection={rowSelection}
           onRow = {
