@@ -1,10 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useModel } from 'umi';
 import moment from 'moment';
-import { Drawer, Button, Form, Input, Row, Col, DatePicker, Divider } from 'antd';
+import { Drawer, Button, Form, Input, InputNumber, Row, Col, DatePicker, Divider } from 'antd';
 import { EditableProTable, ProCard, ProFormField } from '@ant-design/pro-components'
 import * as math from 'mathjs';
-import Selector from '@/components/Selector'
 import DictSelector from '@/components/DictSelector'
 
 import Http from '@/utils/http';
@@ -30,7 +29,6 @@ export default (props) => {
     wrapperCol: { flex: "auto" },
   };
 
-  console.info(currentItem.lines);
 
   const defaultData = currentItem?.lines || [];
 
@@ -51,17 +49,7 @@ export default (props) => {
             required: true,
             whitespace: true,
             message: '此项是必填项',
-          },
-          {
-            max: 16,
-            whitespace: true,
-            message: '最长为 16 位',
-          },
-          {
-            min: 6,
-            whitespace: true,
-            message: '最小为 6 位',
-          },
+          }
         ],
       },
     },{
@@ -110,12 +98,14 @@ export default (props) => {
     validateFields().then(values => {
 
       const rows = editorFormRef.current?.getRowsData?.();
-      console.log(rows[0]);
+      values.orderDate = moment(values.orderDate).format('YYYY-MM-DD HH:mm:ss')
 
       const formData = {
         ...values,
         id: currentItem ? currentItem.id : '',
+        lines: rows
       };
+
 
       Http.post(API.ORDER_EDIT, formData).then((r) => {
         fetch();
@@ -136,13 +126,13 @@ export default (props) => {
           <legend>基本信息</legend>
           <Row gutter={24}>
             <Col span={8}>
-              <Form.Item label="订单时间" name="itemNo">
-                <Input readOnly={readOnly} />
+              <Form.Item label="订单时间" name="orderDate">
+                <DatePicker showTime showToday readOnly={readOnly} style={{width: '100%'}}/>
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="订单号" name="orderNumber">
-                <Input readOnly={readOnly} />
+                <Input readOnly={readOnly} style={{width: '100%'}}/>
               </Form.Item>
             </Col>
           </Row>
@@ -151,12 +141,18 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={8}>
             <Form.Item label="订单状态" name="orderCode">
-              <Input readOnly={readOnly} />
+              <DictSelector
+                placeholder="订单状态"
+                readOnly={ readOnly }
+                data={dict?.order_status}/>
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="来源店铺" name="goodsName">
-              <Input readOnly={readOnly} />
+            <DictSelector
+                placeholder="来源店铺"
+                readOnly={ readOnly }
+                data={dict?.online_platform}/>
             </Form.Item>
           </Col>
         </Row>
@@ -164,12 +160,12 @@ export default (props) => {
         <Row gutter={24}>
          <Col span={8}>
             <Form.Item label="合计数量" name="totalNum">
-              <Input readOnly={readOnly} />
+              <InputNumber controls={false} readOnly={readOnly} style={{width: '100%'}} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="合计金额" name="totalAmount">
-              <Input readOnly={readOnly} />
+              <InputNumber controls={false} readOnly={readOnly} style={{width: '100%'}}/>
             </Form.Item>
           </Col>
         </Row>
@@ -182,39 +178,32 @@ export default (props) => {
           </Col>
         </Row>
 
-        <Divider />
-
-        <fieldset>
-          <legend>订单明细</legend>
-          <EditableProTable
-            editableFormRef={editorFormRef}
-            className={style.lines}
-            columns={columns}
-            rowKey="id"
-            scroll={{
-              x: 960,
-            }}
-            value={dataSource}
-            onChange={setDataSource}
-            recordCreatorProps={{
-              newRecordType: 'dataSource',
-              record: () => ({
-                id: Date.now(),
-              }),
-            }}
-            editable={{
-              type: 'multiple',
-              editableKeys,
-              actionRender: (row, config, defaultDoms) => {
-                return [defaultDoms.delete];
-              },
-              onValuesChange: (record, recordList) => {
-                setDataSource(recordList);
-              },
-              onChange: setEditableRowKeys,
-            }}
-          />
-        </fieldset>
+        <EditableProTable
+          editableFormRef={editorFormRef}
+          className={style.lines}
+          columns={columns}
+          rowKey="id"
+          scroll={{ x: 960 }}
+          value={dataSource}
+          onChange={setDataSource}
+          recordCreatorProps={{
+            newRecordType: 'dataSource',
+            record: () => ({
+              id: Date.now(),
+            }),
+          }}
+          editable={{
+            type: 'multiple',
+            editableKeys,
+            actionRender: (row, config, defaultDoms) => {
+              return [defaultDoms.delete];
+            },
+            onValuesChange: (record, recordList) => {
+              setDataSource(recordList);
+            },
+            onChange: setEditableRowKeys,
+          }}
+        />
       </Form>
     )
   }
