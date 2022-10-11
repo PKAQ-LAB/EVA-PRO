@@ -80,11 +80,11 @@ export default [
       routes: [
         { name: 'category', path: '/pdos/base/category', component: './pdos/base/category' },
         { name: 'supplier', path: '/pdos/base/supplier', component: './pdos/base/supplier' },
-        { name: 'goods', path: '/pdos/base/goods', component: './pdos/base/goods' },
         { name: 'shop', path: '/pdos/base/shop', component: './pdos/base/shop' },
         { name: 'brand', path: '/pdos/base/brand', component: './pdos/base/brand' },
       ]
     },
+    { name: 'goods', path: '/pdos/goods/base', component: './pdos/goods/base' },
     { name: 'sale', path: '/pdos/sale/slip', component: './pdos/sale/slip' }
   ],
   },
