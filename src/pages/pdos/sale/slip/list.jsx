@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useModel } from 'umi';
 import cx from 'classnames';
-import { Table, Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
+import { Table, Form, Alert, Button, Divider, DatePicker, Popconfirm, Input } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import Http from '@/utils/http';
 import API from '@/apis';
@@ -92,12 +92,13 @@ export default (props) => {
   const renderSearchForm = () => {
     return (
       <Form  colon layout="inline" onSubmit={handleSearch} form={form} >
-        <Form.Item label="商品名称" name="goodsName">
-          <Input />
-        </Form.Item>
 
         <Form.Item label="订单号" name="orderCode">
           <Input />
+        </Form.Item>
+
+        <Form.Item label="订单时间" name="orderCode">
+           <DatePicker showToday/>
         </Form.Item>
 
         <Button type="primary" htmlType="submit"  onClick={() => handleSearch()}>

@@ -29,6 +29,7 @@ export default (props) => {
     wrapperCol: { flex: "auto" },
   };
 
+  console.info(currentItem);
 
   const defaultData = currentItem?.lines || [];
 
@@ -119,7 +120,8 @@ export default (props) => {
   const readOnly = operateType === 'view';
   // 表单渲染
   const renderForm = () => {
-    currentItem.dealTime = moment(currentItem.dealTime) || moment();
+    currentItem.orderDate = moment(currentItem.orderDate) || moment();
+
     return (
       <Form size="middle" {...formItemLayout} labelAlign="left" form={form} initialValues={currentItem} ref={formRef}>
         <fieldset>
