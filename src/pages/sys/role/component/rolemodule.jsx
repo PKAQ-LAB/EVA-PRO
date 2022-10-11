@@ -127,7 +127,7 @@ export default (props) => {
 
   return (
     <Modal
-      visible={operateType === 'Module'}
+      open={operateType === 'Module'}
       maskClosable={false}
       loading={loading}
       title="选择授权模块"

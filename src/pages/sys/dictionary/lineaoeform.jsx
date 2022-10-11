@@ -54,7 +54,7 @@ export default (props) => {
       okText="提交"
       centered
       onCancel={() => setModalType("")}
-      visible={modalType !== ''}
+      open={modalType !== ''}
       width={500}
       onOk={() => handleSaveClick()}
       title={`${title[modalType] || '查看'}字典明细信息`}

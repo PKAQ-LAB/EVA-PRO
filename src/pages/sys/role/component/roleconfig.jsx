@@ -6,7 +6,7 @@ export default (props) => {
 
   return (
     <Modal
-      visible={operateType === 'Config'}
+      open={operateType === 'Config'}
       maskClosable={false}
       title="选择授权配置"
       okText="确定"

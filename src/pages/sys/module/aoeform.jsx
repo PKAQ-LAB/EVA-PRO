@@ -76,7 +76,7 @@ export default (props) => {
       width={ 640}
       maskClosable={false}
       onClose={() => setOperateType("")}
-      visible={operateType !== ''}
+      open={operateType !== ''}
       title={`${title[operateType] || '查看'}模块信息`}
     >
       <Form initialValues={formInit} form={form} {...formItemLayout} colon>

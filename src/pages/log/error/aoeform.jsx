@@ -9,7 +9,7 @@ export default (props) => {
     <Drawer
       closable
       width={600}
-      visible={operateType !== ''}
+      open={operateType !== ''}
       onClose={() =>setOperateType("")}
     >
       <ul className={styles.ul}>

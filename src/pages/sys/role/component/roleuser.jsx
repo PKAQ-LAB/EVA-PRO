@@ -109,7 +109,7 @@ export default (props) => {
       <Modal
         confirmLoading={loading}
         maskClosable={false}
-        visible={operateType === 'User'}
+        open={operateType === 'User'}
         title="选择授权用户"
         okText="保存"
         cancelText="关闭"
