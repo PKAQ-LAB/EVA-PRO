@@ -6,7 +6,7 @@ import IconSelect from '@/components/IconSelect';
 
 import LineList from './linelist';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -38,7 +38,7 @@ export default (props) => {
     const parentId = getFieldValue('parentId');
     const fd = { id: currentItem.id, path, parentId };
 
-    await Service.post(API.MODULE_CHECKUNIQUE, fd).then(r => {
+    await Http.post(API.MODULE_CHECKUNIQUE, fd).then(r => {
       if (r.success) {
         return Promise.resolve();
       }
@@ -59,7 +59,7 @@ export default (props) => {
 
       fd.resources = lineData;
       fd.status = fd.status ? '0000' : '0001';
-      Service.post(API.MODULE_EDIT, fd).then((r) =>{
+      Http.post(API.MODULE_EDIT, fd).then((r) =>{
         setSubmitting(false);
         if(r.success){
           setOperateType("")

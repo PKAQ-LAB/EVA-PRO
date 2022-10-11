@@ -4,7 +4,7 @@ import { useModel } from 'umi';
 import DictSelector from '@/components/DictSelector'
 import LineList from './linelist';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -46,7 +46,7 @@ export default (props) => {
       };
       fd.lines = lineData;
 
-      Service.post(API.DICT_EDIT, fd).then(() => {
+      Http.post(API.DICT_EDIT, fd).then(() => {
         // fix 保存后清空表单
         // form.resetFields();
         setOperateType('view');

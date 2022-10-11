@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Tree, Card, Row, Col, Table } from 'antd';
 import cs from './roleuser.less';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 // 授权用户窗口
@@ -16,11 +16,11 @@ export default (props) => {
 
   useEffect( () => {
     if(roleId){
-      Service.list(API.ORG_LIST).then(res => {
+      Http.list(API.ORG_LIST).then(res => {
         setOrgs(res.data);
       })
 
-      Service.list(API.ROLE_LISTUSER, {roleId}).then((res) => {
+      Http.list(API.ROLE_LISTUSER, {roleId}).then((res) => {
         setChecked(res.data.checked);
         setRecords(res.data.users);
       })
@@ -42,7 +42,7 @@ export default (props) => {
       deptId: selectedKeys[0],
     };
 
-    Service.list(API.ROLE_LISTUSER, values).then((res) => {
+    Http.list(API.ROLE_LISTUSER, values).then((res) => {
       setChecked(res.data.checked);
       setRecords(res.data.users);
     })
@@ -55,7 +55,7 @@ export default (props) => {
     if (checked && checked.length > 0) {
       users = checked.map(item => ({ userId: item }));
     }
-    Service.post(API.ROLE_SAVEUSER, {
+    Http.post(API.ROLE_SAVEUSER, {
       id: roleId,
       users,
     }).then(() => {

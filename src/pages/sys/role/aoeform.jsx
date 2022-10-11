@@ -3,7 +3,7 @@ import { useModel } from 'umi';
 import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
 import DictSelector from '@/components/DictSelector';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -31,7 +31,7 @@ export default (props) => {
     if (currentItem.dataPermissionType) {
       currentItem.dataPermissionType = currentItem.dataPermissionType || '0000';
       if(currentItem.dataPermissionType === "0003"){
-        Service.list(API.ORG_LIST).then((res) => {
+        Http.list(API.ORG_LIST).then((res) => {
           if(res.success) {
            setOrgs(res.data);
           }
@@ -52,7 +52,7 @@ export default (props) => {
       return Promise.resolve();
     }
 
-    Service.post(API.ROLE_CHECKUNIQUE, {code}).then(r => {
+    Http.post(API.ROLE_CHECKUNIQUE, {code}).then(r => {
       if (r.success) {
         return Promise.resolve();
       }
@@ -67,7 +67,7 @@ export default (props) => {
     } else {
       setShowDepts(false);
     }
-    Service.list(API.ORG_LIST).then((res) => {
+    Http.list(API.ORG_LIST).then((res) => {
       if(res.success) {
        setOrgs(res.data);
       }
@@ -88,7 +88,7 @@ export default (props) => {
         formData.dataPermissionDeptid = values.dataPermissionDeptid.join(',');
       }
       setSubmitting(true);
-      Service.post(API.ROLE_SAVE,formData).then((res) => {
+      Http.post(API.ROLE_SAVE,formData).then((res) => {
         if(res.success){
           setModalType("");
           fetch();

@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import { Table, Form, Button, Row, Col, Divider, DatePicker } from 'antd';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 
@@ -66,7 +66,7 @@ export default (props) => {
     if (!records.id) {
       return;
     }
-    Service.get(API.BIZLOG_GET, records.id,
+    Http.get(API.BIZLOG_GET, records.id,
     ).then((res) => {
       if(res.success){
         setOperateType("check");

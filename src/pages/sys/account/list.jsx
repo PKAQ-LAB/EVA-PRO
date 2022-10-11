@@ -2,7 +2,7 @@ import React from 'react';
 import cx from 'classnames';
 import { Divider, Popconfirm, notification, Table } from 'antd';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -28,7 +28,7 @@ export default (props) => {
 
   //  单条删除
   const handleDeleteClick = record => {
-    Service.post(API.ACCOUNT_DEL, [record.id]).then((res)=>{
+    Http.post(API.ACCOUNT_DEL, [record.id]).then((res)=>{
       if(res.success){
         fetch();
       }
@@ -38,7 +38,7 @@ export default (props) => {
   // 编辑
   const handleEditClick = record => {
     if (record.id) {
-      Service.get(API.ACCOUNT_GET, record.id).then((res) => {
+      Http.get(API.ACCOUNT_GET, record.id).then((res) => {
         setCurrentItem(res.data);
         setOperateType("edit");
       })
@@ -49,7 +49,7 @@ export default (props) => {
 
   // 权限选择
   const handleRoleClick = record => {
-    Service.get(API.ACCOUNT_GET, record.id).then((res) => {
+    Http.get(API.ACCOUNT_GET, record.id).then((res) => {
       setCurrentItem(res.data);
       setRoleModal("edit");
     })

@@ -8,7 +8,7 @@ import RoleModal from './rolemodal';
 import List from './list';
 import AOEForm from './aoeform';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default () => {
@@ -24,15 +24,15 @@ export default () => {
   const [form] = Form.useForm();
 
   const { run, tableProps, loading } = useRequest(
-    (param) => Service.list(API.ACCOUNT_LIST, param), {
+    (param) => Http.list(API.ACCOUNT_LIST, param), {
     paginated: true,
   })
 
   useEffect(() => {
-    Service.list(API.ORG_LIST).then((res) => {
+    Http.list(API.ORG_LIST).then((res) => {
       setOrgs(res.data);
     })
-    Service.list(API.ROLE_LIST).then((res) => {
+    Http.list(API.ROLE_LIST).then((res) => {
       setRoles(res.data.list);
     })
   }, []);
@@ -69,7 +69,7 @@ export default () => {
 
     // 解锁/锁定
   const handleLockSwitch = status => {
-    Service.post(API.ACCOUNT_LOCK, {
+    Http.post(API.ACCOUNT_LOCK, {
       param: selectedRowKeys,
       status,
     })
@@ -107,7 +107,7 @@ export default () => {
   // 批量删除
   const handleRemoveClick = () => {
     if (!selectedRowKeys) return;
-    Service.post(API.ACCOUNT_DEL, { param: selectedRowKeys, })
+    Http.post(API.ACCOUNT_DEL, { param: selectedRowKeys, })
   };
 
   // 渲染左侧树

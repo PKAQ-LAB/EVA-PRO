@@ -5,7 +5,7 @@ import ProTable from '@ant-design/pro-table';
 import moment from 'moment';
 import copy from 'copy-to-clipboard';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default () => {
@@ -73,7 +73,7 @@ export default () => {
       headerTitle: '在线用户名单',
       rowKey: 'id',
       rowSelection: {},
-      request: params => Service.list(API.ONLINE_LIST, params),
+      request: params => Http.list(API.ONLINE_LIST, params),
       tableAlertRender: selectedRowKeys => (
         <div>
           已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项

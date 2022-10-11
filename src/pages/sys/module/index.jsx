@@ -4,7 +4,7 @@ import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 /**
  * 模块（菜单）管理 主界面
@@ -15,7 +15,7 @@ export default () => {
  const [currentItem, setCurrentItem] = useState({});
 
  const { run, data, loading } = useRequest(
-  (param) => Service.list(API.MODULE_LIST, param), {
+  (param) => Http.list(API.MODULE_LIST, param), {
   formatResult: (res) => {
     return res.data;
   }

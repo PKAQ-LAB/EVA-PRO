@@ -7,7 +7,7 @@ import setting from '@config/defaultSettings';
 import Selector from '@/components/Selector';
 import TreeSelector from '@/components/TreeSelector';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -57,7 +57,7 @@ export default (props) => {
       id: currentItem ? currentItem.id : '',
     };
 
-    await Service.post(API.ACCOUNT_CHECKUNIQUE, data).then((r) => {
+    await Http.post(API.ACCOUNT_CHECKUNIQUE, data).then((r) => {
       if (r.success) {
         return Promise.resolve();
       }
@@ -109,7 +109,7 @@ export default (props) => {
         });
       }
 
-      Service.post(API.ACCOUNT_EDIT, data).then(res => {
+      Http.post(API.ACCOUNT_EDIT, data).then(res => {
         if(res.success){
           setOperateType("");
           fetch();

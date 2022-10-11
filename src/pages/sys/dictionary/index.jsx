@@ -5,7 +5,7 @@ import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default () => {
@@ -14,7 +14,7 @@ export default () => {
  const [currentItem, setCurrentItem] = useState({});
 
  const { run, data, loading } = useRequest(
-    (param) => Service.list(API.DICT_LIST, param), {
+    (param) => Http.list(API.DICT_LIST, param), {
     formatResult: (res) => {
       return res.data;
     }

@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, Form, Button, Row, Col, Divider, DatePicker } from 'antd';
 import moment from 'moment';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 const FormItem = Form.Item;
@@ -36,7 +36,7 @@ export default (props) => {
     if (!records.id) {
       return;
     }
-    Service.get(API.ERROR_GET,
+    Http.get(API.ERROR_GET,
         records.id,
     ).then((res) => {
       if(res.success){
