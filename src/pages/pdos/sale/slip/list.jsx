@@ -3,7 +3,7 @@ import { useModel } from 'umi';
 import cx from 'classnames';
 import { Table, Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import Http from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -55,7 +55,7 @@ export default (props) => {
 
     if (!selectedRowKeys) return;
 
-    Service.post(API.ORDER_DEL, { param: selectedRowKeys, })
+    Http.post(API.ORDER_DEL, { param: selectedRowKeys, })
     .then(() => fetch())
   };
 
