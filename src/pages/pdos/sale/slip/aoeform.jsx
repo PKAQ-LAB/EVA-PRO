@@ -7,7 +7,7 @@ import * as math from 'mathjs';
 import Selector from '@/components/Selector'
 import DictSelector from '@/components/DictSelector'
 
-import Http from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 import style from './index.less';

@@ -5,7 +5,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
 
-import Http from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default () => {

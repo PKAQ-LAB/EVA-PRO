@@ -3,7 +3,7 @@ import { Form, Alert, Button, Divider, Popconfirm, Input, Table } from 'antd';
 import cx from 'classnames';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import DictSelector from '@/components/DictSelector'
-import Svc from '@/services/service';
+import Svc from '@/utils/http';
 import API from '@/apis'
 
 export default (props) => {

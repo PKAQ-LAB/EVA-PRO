@@ -3,7 +3,7 @@ import moment from 'moment';
 import { useModel } from 'umi';
 import { Modal, Form, Input, Row, Col, Switch } from 'antd';
 import DictSelector from '@/components/DictSelector'
-import Svc from '@/services/service';
+import Svc from '@/utils/http';
 import API from '@/apis'
 
 export default (props) => {

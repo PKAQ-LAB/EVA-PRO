@@ -5,7 +5,7 @@ import { useAntdTable } from 'ahooks';
 import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
-import Svc from '@/services/service';
+import Svc from '@/utils/http';
 import API from '@/apis'
 
 export default () => {

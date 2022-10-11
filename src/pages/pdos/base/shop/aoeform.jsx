@@ -3,7 +3,7 @@ import { Modal, Form, Input, Row, Col, Upload, DatePicker } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
-import Svc from '@/services/service';
+import Svc from '@/utils/http';
 import API from '@/apis'
 
 export default (props) => {

@@ -3,7 +3,7 @@ import { useAntdTable } from 'ahooks';
 import { PageContainer } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
-import Svc from '@/services/service';
+import Svc from '@/utils/http';
 import API from '@/apis'
 
 export default () => {
