@@ -170,7 +170,7 @@ export default (props) => {
       loading={loading}
       centered
       onCancel={() => setOperateType("")}
-      visible={operateType !== ''}
+      open={operateType !== ''}
       width="50%"
       onOk={() => handleSaveClick()}
       title={`${title[operateType] || '查看'}供应商`}

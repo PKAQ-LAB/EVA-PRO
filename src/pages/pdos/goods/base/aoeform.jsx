@@ -74,7 +74,7 @@ export default (props) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="品牌" name="itemNo" rules={[{required: true}]}>
+            <Form.Item label="品牌" name="brand" rules={[{required: true}]}>
               <Input readOnly={operateType === 'view'} />
             </Form.Item>
           </Col>
@@ -132,7 +132,7 @@ export default (props) => {
       loading={loading}
       centered
       onCancel={() => setOperateType("")}
-      visible={operateType !== ''}
+      open={operateType !== ''}
       width="50%"
       onOk={() => handleSaveClick()}
       title={`${title[operateType] || '查看'}商品`}

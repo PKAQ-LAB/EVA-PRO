@@ -69,7 +69,7 @@ export default (props) => {
       maskClosable={false}
       confirmLoading={submitting}
       onCancel={() => setOperateType("")}
-      visible={operateType !== ''}
+      open={operateType !== ''}
       width={700}
       centered
       onOk={() => handleSaveClick()}

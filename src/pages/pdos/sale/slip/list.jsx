@@ -3,7 +3,8 @@ import { useModel } from 'umi';
 import cx from 'classnames';
 import { Table, Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { delSlip, get } from './services/slipSvc';
+import Http from '@/services/service';
+import API from '@/apis';
 
 export default (props) => {
   const { setOperateType, setCurrentItem, fetch, tableProps } = props;
@@ -37,18 +38,13 @@ export default (props) => {
 
   // 单条删除
   const handleDeleteClick = record => {
-    delSlip({
-      param: [record.id],
-    }).then(() => {
-      fetch();
-    })
+    Http.post(API.ORDER_DEL, { param: [record.id], })
+    .then(() => fetch());
   };
 
   // 编辑/查看
   const handleEditClick = (record, operateType) => {
-    get({
-      id: record.id
-    }).then( res => {
+    Http.get(API.ORDER_GET, record.id).then((res) => {
       setCurrentItem(res.data);
       setOperateType(operateType);
     })
@@ -59,11 +55,8 @@ export default (props) => {
 
     if (!selectedRowKeys) return;
 
-    delSlip({
-      param: selectedRowKeys,
-    }).then( () => {
-      fetch();
-    })
+    Service.post(API.ORDER_DEL, { param: selectedRowKeys, })
+    .then(() => fetch())
   };
 
  // 操作按钮
@@ -117,48 +110,31 @@ export default (props) => {
       </Form>
     );
   }
-  const columns = [
-    {
-      title: '商品名称',
-      ellipsis: true,
-      dataIndex: 'goodsName',
+  const columns = [{
+      title: '来源店铺',
+      dataIndex: 'shopName'
     }, {
-      title: '来源平台',
-      dataIndex: 'sourcePlatform',
-      render: text => dict.online_platform && dict.online_platform[`${text}`]
+      title: '所属平台',
+      dataIndex: 'shopName'
     }, {
       title: '订单号',
       width: 180,
-      dataIndex: 'orderCode',
+      dataIndex: 'orderNumber',
     }, {
-      title: '快递费用',
-      dataIndex: 'shipPrice',
+      title: '订单时间',
+      dataIndex: 'orderDate',
     },  {
-      title: '下单价格',
-      dataIndex: 'price',
+      title: '订单状态',
+      dataIndex: 'orderStatus',
     }, {
-      title: '下单数量',
-      dataIndex: 'nummer',
+      title: '合计数量',
+      dataIndex: 'totalNum',
     }, {
-      title: '总成交额',
-      dataIndex: 'totalPrice',
+      title: '合计金额',
+      dataIndex: 'totalAmount',
     },{
-      title: '成本价',
-      dataIndex: 'costPrice',
-    }, {
-      title: '成本总计',
-      dataIndex: 'totalCost',
-    }, {
-      title: '利润',
-      dataIndex: 'profit',
-      width: 80,
-    }, {
-      title: '下单时间',
-      dataIndex: 'dealTime',
-    }, {
-      title: '供应商姓名',
-      dataIndex: 'supplierName',
-      ellipsis: true,
+      title: '买家地址',
+      dataIndex: 'buyerAddress',
     },{
       width: 180,
       render: (text, record) =>
@@ -192,6 +168,7 @@ export default (props) => {
   const dataTableProps = {
     ...tableProps,
     columns,
+    size: 'small',
     rowKey: record => record.id,
     rowSelection,
     rowClassName: record =>
@@ -231,5 +208,5 @@ export default (props) => {
           <div className="eva-body">
             <Table {...dataTableProps}/>
           </div>
-         </>;
+    </>;
 }

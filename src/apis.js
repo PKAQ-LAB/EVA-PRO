@@ -3,10 +3,10 @@ export default {
   // 部门管理
   ORG_GET: '/api/sys/organization/get',
   ORG_LIST: '/api/sys/organization/list',
-  ORG_SORT: '/api/sys/organization/sort',
   ORG_EDIT: '/api/sys/organization/edit',
-  ORG_STATUS: '/api/sys/organization/switchStatus',
   ORG_DEL: '/api/sys/organization/del',
+  ORG_SORT: '/api/sys/organization/sort',
+  ORG_STATUS: '/api/sys/organization/switchStatus',
   ORG_CHECKUNIQUE: '/api/sys/organization/checkUnique',
   // 模块管理
   MODULE_GET: '/api/sys/module/get',
@@ -40,7 +40,6 @@ export default {
   ACCOUNT_GRANT: '/api/sys/account/grant',
   ACCOUNT_DEL: '/api/sys/account/del',
   ACCOUNT_LOCK: '/api/sys/account/lock',
-
   // 品牌管理
   BRAND_GET: '/api/pdos/base/brand/get',
   BRAND_LIST: '/api/pdos/base/brand/list',
@@ -56,11 +55,20 @@ export default {
   CATEGORY_LIST: '/api/pdos/base/category/list',
   CATEGORY_EDIT: '/api/pdos/base/category/edit',
   CATEGORY_DEL: '/api/pdos/base/category/del',
+  CATEGORY_SORT: '/api/pdos/base/category/sort',
+  CATEGORY_STATUS: '/api/pdos/base/category/switchStatus',
+  CATEGORY_CHECKUNIQUE: '/api/pdos/base/category/checkUnique',
   // 店铺管理
   SHOP_GET: '/api/pdos/base/shop/get',
   SHOP_LIST: '/api/pdos/base/shop/list',
   SHOP_EDIT: '/api/pdos/base/shop/edit',
   SHOP_DEL: '/api/pdos/base/shop/del',
+
+  // 订单管理
+  ORDER_GET: '/api/pdos/sale/orders/get',
+  ORDER_LIST: '/api/pdos/sale/orders/list',
+  ORDER_EDIT: '/api/pdos/sale/orders/edit',
+  ORDER_DEL: '/api/pdos/sale/orders/del',
 
   /**  系统日志 * */
   // 在线用户

@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
+import { useAntdTable } from 'ahooks';
 import { PageContainer } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
-import { list } from './services/slipSvc';
+
+import Http from '@/services/service';
+import API from '@/apis';
 
 export default () => {
   const [operateType, setOperateType] = useState("");
   const [currentItem, setCurrentItem] = useState({});
 
-  const { run, tableProps } = useRequest(list, {
-    paginated: true,
-    formatResult: (res) => {
-      return res.data;
-    }
-  })
+  const { run, tableProps } = useAntdTable(async () => {
+    const res = await Http.list(API.ORDER_LIST);
+    return res.data;
+  }, {pageSize: 15});
 
   const listProps = {
     fetch: run,
