@@ -70,7 +70,7 @@ export default class AOEForm extends Component {
         cancelText="取消修改"
         okText="确认修改"
         onCancel={() => this.handleCloseForm()}
-        visible={modalType !== ''}
+        open={modalType !== ''}
         width={496}
         onOk={() => this.handleSaveClick()}
         title="修改密码"

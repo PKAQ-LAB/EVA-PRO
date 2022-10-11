@@ -105,7 +105,7 @@ export default (props) => {
         maskClosable={false}
         confirmLoading={submitting}
         onCancel={() => setModalType("")}
-        visible={modalType !== ''}
+        open={modalType !== ''}
         width={700}
         centered
         onOk={() => handleSaveClick()}

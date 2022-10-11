@@ -128,7 +128,7 @@ export default (props) => {
       okText="提交"
       centered
       onCancel={() => setOperateType("")}
-      visible={operateType !== ''}
+      open={operateType !== ''}
       width="50%"
       onOk={() => handleSaveClick()}
       title={`${title[operateType] || '查看'}用户信息`}

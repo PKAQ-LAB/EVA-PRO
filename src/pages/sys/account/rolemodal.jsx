@@ -43,7 +43,7 @@ export default (props) => {
 
   return (
     <Modal
-      visible={ roleModal !== '' }
+      open={ roleModal !== '' }
       title="选择授权角色"
       okText="确定"
       cancelText="关闭"

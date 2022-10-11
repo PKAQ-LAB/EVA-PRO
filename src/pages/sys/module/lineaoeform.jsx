@@ -53,7 +53,7 @@ export default (props) => {
         okText="提交"
         centered
         onCancel={() => setOperate("")}
-        visible={operate !== ''}
+        open={operate !== ''}
         width={500}
         onOk={() => handleSaveClick()}
         title={`${title[operate] || '查看'}资源`}

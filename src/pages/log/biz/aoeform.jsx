@@ -10,7 +10,7 @@ export default (props) => {
     <Drawer
       closable
       width={600}
-      visible={operateType === 'check'}
+      open={operateType === 'check'}
       onClose={() => setOperateType("")}
     >
       <ul className={styles.ul}>
