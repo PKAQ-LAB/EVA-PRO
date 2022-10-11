@@ -7,7 +7,7 @@ import RoleUser from './component/roleuser';
 import RoleConfig from './component/roleconfig';
 import RoleModule from './component/rolemodule';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 /**
  * 角色（权限）管理 主界面
@@ -21,7 +21,7 @@ export default () => {
   const [ selectedRowKeys, setSelectedRowKeys ] = useState([]);
 
   const { run, tableProps, loading } = useRequest(
-    (param) => Service.list(API.ROLE_LIST, param), {
+    (param) => Http.list(API.ROLE_LIST, param), {
     paginated: true,
   })
 

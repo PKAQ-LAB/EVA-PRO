@@ -3,7 +3,7 @@ import { Form, Input, Alert, Button, Divider, Popconfirm, Table, Switch, notific
 import { CheckOutlined, CloseOutlined, PlusOutlined, LockOutlined, UnlockOutlined, DeleteOutlined } from '@ant-design/icons';
 import cx from 'classnames';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -14,14 +14,14 @@ export default (props) => {
 
   // 单条删除
   const handleDeleteClick = record => {
-    Service.post(API.ROLE_DEL,{
+    Http.post(API.ROLE_DEL,{
       param: [record.id],
     }).then( () => fetch() );
   };
 
   // 编辑
   const handleEditClick = record => {
-    Service.get(API.ROLE_GET, record.id)
+    Http.get(API.ROLE_GET, record.id)
            .then((res) => {
              setCurrentItem(res.data);
              setModalType("edit");
@@ -50,7 +50,7 @@ export default (props) => {
 
   // 解锁/锁定
   const handleLockSwitch = status => {
-    Service.post(API.ROLE_LOCK, {
+    Http.post(API.ROLE_LOCK, {
       param: selectedRowKeys,
       status,
     }).then(() => fetch());
@@ -61,7 +61,7 @@ export default (props) => {
 
     if (!selectedRowKeys) return;
 
-    Service.post(API.ROLE_DEL, {
+    Http.post(API.ROLE_DEL, {
       param: selectedRowKeys,
     }).then(() => fetch());
 
@@ -71,7 +71,7 @@ export default (props) => {
     const param = { roleId: record.id, };
 
     switch(operate){
-      case 'User':   Service.list(API.ROLE_LISTUSER, param)
+      case 'User':   Http.list(API.ROLE_LISTUSER, param)
                         .then(() => {
                           setOperateType(operate);
                           setRoleId(record.id)
@@ -79,7 +79,7 @@ export default (props) => {
                      break;
       case 'Config': setOperateType(operate);
                      break;
-      case 'Module':  Service.list(API.ROLE_LISTMOUDLE, param)
+      case 'Module':  Http.list(API.ROLE_LISTMOUDLE, param)
                         .then(() => {
                             setOperateType(operate);
                             setRoleId(record.id)
@@ -96,7 +96,7 @@ export default (props) => {
       return;
     }
 
-    Service.post(API.ROLE_LOCK, {
+    Http.post(API.ROLE_LOCK, {
       param: [record.id],
       status: checked ? '0000' : '0001',
     }).then(() => fetch() );

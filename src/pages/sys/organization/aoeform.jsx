@@ -2,7 +2,7 @@ import React from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Row, Col, Modal, Switch, Tooltip, Form, Input, TreeSelect } from 'antd';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -33,7 +33,7 @@ export default (props) => {
     if (currentItem && currentItem.id && value === currentItem.code) {
       return Promise.resolve();
     }
-    await Service.post(API.ORG_CHECKUNIQUE, {code}).then((r)=>{
+    await Http.post(API.ORG_CHECKUNIQUE, {code}).then((r)=>{
       if (r.success) {
         return Promise.resolve();
       }
@@ -54,7 +54,7 @@ export default (props) => {
 
       formData.status = formData.enable ? '0001' : '0000';
 
-      Service.post(API.ORG_EDIT, formData).then((r) => {
+      Http.post(API.ORG_EDIT, formData).then((r) => {
         setSubmitting(false);
         if(r.success){
           setOperateType("");

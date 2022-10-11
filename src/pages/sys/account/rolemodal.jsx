@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Transfer, Modal } from 'antd';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default (props) => {
@@ -32,7 +32,7 @@ export default (props) => {
       return obj;
     });
 
-    Service.post(API.ACCOUNT_GRANT, {
+    Http.post(API.ACCOUNT_GRANT, {
       id,
       roles: sr,
     }).then(()=>{

@@ -3,7 +3,7 @@ import { Table, Input, Divider, Popconfirm, Button, Row, Col } from 'antd';
 import { dictFilter } from '@/utils/DataHelper';
 import css from './list.less';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 const { Search } = Input;
@@ -18,7 +18,7 @@ const { setOperateType, setCurrentItem, fetch, loading, data } = props;
     if (record.parentId === '0' || !record.parentId) {
       return;
     }
-    Service.get(API.DICT_GET, record.id)
+    Http.get(API.DICT_GET, record.id)
           .then(res => {
             setCurrentItem(res.data);
             setOperateType("view");
@@ -37,7 +37,7 @@ const { setOperateType, setCurrentItem, fetch, loading, data } = props;
     if (record.parentId === '0' || !record.parentId) {
       return;
     }
-    Service.get(API.DICT_GET, record.id)
+    Http.get(API.DICT_GET, record.id)
           .then(res => {
             setCurrentItem(res.data);
             setOperateType("edit");
@@ -46,7 +46,7 @@ const { setOperateType, setCurrentItem, fetch, loading, data } = props;
 
   // 删除事件
   const handleDeleteClick = record => {
-    Service.get(API.DICT_DEL, record.id)
+    Http.get(API.DICT_DEL, record.id)
            .then(() => {
               fetch();
             })

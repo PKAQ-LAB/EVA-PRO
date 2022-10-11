@@ -4,7 +4,7 @@ import { useRequest } from 'umi';
 import WorkList from './list';
 import AOEForm from './aoeform';
 
-import Service from '@/services/service';
+import Http from '@/utils/http';
 import API from '@/apis';
 
 export default () => {
@@ -12,7 +12,7 @@ export default () => {
   const [currentItem, setCurrentItem] = useState({});
 
   const { run, tableProps } = useRequest(
-    (param) => Service.list(API.BIZLOG_LIST, param), {
+    (param) => Http.list(API.BIZLOG_LIST, param), {
     paginated: true,
     formatResult: (res) => {
       return res.data;
