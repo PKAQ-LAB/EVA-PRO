@@ -4,7 +4,7 @@ import { PageContainer } from '@ant-design/pro-layout';
 import List from './list';
 import AOEForm from './aoeform';
 import Svc from '@/utils/http';
-import API from '@/apis'
+import API from '@/services/apis'
 
 export default () => {
   const [operateType, setOperateType] = useState("");

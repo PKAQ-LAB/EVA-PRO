@@ -4,7 +4,7 @@ import { dictFilter } from '@/utils/DataHelper';
 import css from './list.less';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 const { Search } = Input;
 

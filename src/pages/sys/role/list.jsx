@@ -4,7 +4,7 @@ import { CheckOutlined, CloseOutlined, PlusOutlined, LockOutlined, UnlockOutline
 import cx from 'classnames';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const [ form ] = Form.useForm();

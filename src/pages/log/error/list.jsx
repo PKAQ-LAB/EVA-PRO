@@ -3,7 +3,7 @@ import { Table, Form, Button, Row, Col, Divider, DatePicker } from 'antd';
 import moment from 'moment';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;

@@ -5,7 +5,7 @@ import List from './list';
 import AOEForm from './aoeform';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 /**
  * 模块（菜单）管理 主界面
  */

@@ -4,7 +4,7 @@ import { useModel } from 'umi';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Table, Form, Alert, Button, Divider, Popconfirm, Input } from 'antd';
 import Svc from '@/utils/http';
-import API from '@/apis'
+import API from '@/services/apis'
 
 export default (props) => {
   const [ form ] = Form.useForm();

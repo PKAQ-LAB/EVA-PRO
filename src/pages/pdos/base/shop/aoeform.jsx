@@ -4,7 +4,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
 import Svc from '@/utils/http';
-import API from '@/apis'
+import API from '@/services/apis'
 
 export default (props) => {
   const { setOperateType, operateType, currentItem, dict, fetch } = props;

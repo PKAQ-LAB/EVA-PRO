@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { Table, Form, Alert, Button, Divider, DatePicker, Popconfirm, Input } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const { setOperateType, setCurrentItem, fetch, tableProps } = props;

@@ -9,7 +9,7 @@ import List from './list';
 import AOEForm from './aoeform';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default () => {
 

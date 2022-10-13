@@ -4,7 +4,7 @@ import cx from 'classnames';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import DictSelector from '@/components/DictSelector'
 import Svc from '@/utils/http';
-import API from '@/apis'
+import API from '@/services/apis'
 
 export default (props) => {
 

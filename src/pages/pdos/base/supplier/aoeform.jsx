@@ -4,7 +4,7 @@ import { useModel } from 'umi';
 import { Modal, Form, Input, Row, Col, Switch } from 'antd';
 import DictSelector from '@/components/DictSelector'
 import Svc from '@/utils/http';
-import API from '@/apis'
+import API from '@/services/apis'
 
 export default (props) => {
 

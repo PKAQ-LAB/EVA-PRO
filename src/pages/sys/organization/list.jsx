@@ -6,7 +6,7 @@ import { hasChildren, getNodeBorther } from '@/utils/DataHelper';
 import BizIcon from '@/components/BizIcon';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 import { smaller } from 'mathjs';
 
 const { Search } = Input;

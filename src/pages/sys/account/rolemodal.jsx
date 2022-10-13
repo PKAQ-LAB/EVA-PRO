@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Transfer, Modal } from 'antd';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const { roleModal, setRoleModal, roles, currentItem } = props;

@@ -6,7 +6,7 @@ import moment from 'moment';
 import copy from 'copy-to-clipboard';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default () => {
     const columns = [

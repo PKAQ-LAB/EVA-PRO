@@ -5,7 +5,7 @@ import TreeSelector from '@/components/TreeSelector';
 import DragUpload from '@/components/DragUpload';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const { setOperateType, operateType, currentItem, dict, fetch } = props;

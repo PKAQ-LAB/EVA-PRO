@@ -7,7 +7,7 @@ import IconSelect from '@/components/IconSelect';
 import LineList from './linelist';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const { fetch, operateType, data, setOperateType, currentItem } = props;

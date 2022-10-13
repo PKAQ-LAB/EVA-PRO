@@ -8,7 +8,7 @@ import RoleConfig from './component/roleconfig';
 import RoleModule from './component/rolemodule';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 /**
  * 角色（权限）管理 主界面
  */

@@ -3,7 +3,7 @@ import cx from 'classnames';
 import { Divider, Popconfirm, notification, Table } from 'antd';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const { fetch,

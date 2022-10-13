@@ -3,7 +3,7 @@ import { Modal, Tree, Card, Row, Col, Table } from 'antd';
 import cs from './roleuser.less';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 // 授权用户窗口
 export default (props) => {

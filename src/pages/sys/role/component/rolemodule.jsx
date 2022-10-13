@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Table, Checkbox } from 'antd';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const { fetch, operateType, setOperateType, roleId, setRoleId } = props;

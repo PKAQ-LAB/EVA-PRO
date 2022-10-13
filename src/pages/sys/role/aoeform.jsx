@@ -4,7 +4,7 @@ import { Form, Input, Row, Col, Modal, TreeSelect } from 'antd';
 import DictSelector from '@/components/DictSelector';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const [ form ] = Form.useForm();

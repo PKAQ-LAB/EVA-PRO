@@ -8,7 +8,7 @@ import Selector from '@/components/Selector';
 import TreeSelector from '@/components/TreeSelector';
 
 import Http from '@/utils/http';
-import API from '@/apis';
+import API from '@/services/apis';
 
 export default (props) => {
   const [form] = Form.useForm();
