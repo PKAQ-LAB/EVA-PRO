@@ -63,12 +63,16 @@ export default {
   SHOP_LIST: '/api/pdos/base/shop/list',
   SHOP_EDIT: '/api/pdos/base/shop/edit',
   SHOP_DEL: '/api/pdos/base/shop/del',
-
   // 订单管理
   ORDER_GET: '/api/pdos/sale/orders/get',
   ORDER_LIST: '/api/pdos/sale/orders/list',
   ORDER_EDIT: '/api/pdos/sale/orders/edit',
   ORDER_DEL: '/api/pdos/sale/orders/del',
+  //商品管理
+  GOODS_GET: '/api/pdos/sale/goods/get',
+  GOODS_LIST: '/api/pdos/sale/goods/list',
+  GOODS_EDIT: '/api/pdos/sale/goods/edit',
+  GOODS_DEL: '/api/pdos/sale/goods/del',
 
   /**  系统日志 * */
   // 在线用户

@@ -3,7 +3,9 @@ import { Form, Alert, Button, Divider, Popconfirm, Input, Table } from 'antd';
 import cx from 'classnames';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import TreeSelector from '@/components/TreeSelector';
-import { get, del } from './services/goodsSvc';
+
+import Http from '@/utils/http';
+import API from '@/apis';
 
 export default (props) => {
 
@@ -20,19 +22,18 @@ export default (props) => {
    // 编辑/查看
   const handleEditClick = (record, operate) => {
     if (record.id) {
-      get({id: record.id}).then(response => {
-        setCurrentItem(response.data);
-        setOperateType(operate);
-      });
+      Http.get(API.ORDER_GET, record.id).then((res) => {
+        setCurrentItem(res.data);
+        setOperateType(operateType);
+      })
     }
   }
 
   // 单条删除
   const handleDeleteClick = record => {
     if (record.id) {
-      del({ param: [record.id], }).then(() => {
-        fetch();
-      });
+      Http.post(API.GOODS_DEL, { param: [record.id], })
+      .then(() => fetch());
     }
   };
 
@@ -59,11 +60,9 @@ export default (props) => {
   const handleRemoveClick = () => {
 
     if (!selectedRowKeys) return;
-    del({
-      param: [...selectedRowKeys],
-    }).then(()  => {
-      fetch();
-    })
+
+    Http.post(API.ORDER_DEL, { param: selectedRowKeys, })
+    .then(() => fetch())
   };
 
  // 操作按钮

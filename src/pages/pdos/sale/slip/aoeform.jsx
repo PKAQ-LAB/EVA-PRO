@@ -214,6 +214,7 @@ export default (props) => {
     <Drawer
       title={`${title[operateType] || '查看'}销售单数据`}
       width="70%"
+      destroyOnClose
       onClose={() => setOperateType("")}
       open={operateType !== ''}
       bodyStyle={{ paddingBottom: 80 }}

@@ -3,7 +3,9 @@ import { Modal, Form, Input, Row, Col } from 'antd';
 import DictSelector from '@/components/DictSelector'
 import TreeSelector from '@/components/TreeSelector';
 import DragUpload from '@/components/DragUpload';
-import { edit } from './services/goodsSvc';
+
+import Http from '@/utils/http';
+import API from '@/apis';
 
 export default (props) => {
   const { setOperateType, operateType, currentItem, dict, fetch } = props;
@@ -23,7 +25,7 @@ export default (props) => {
         id: currentItem ? currentItem.id : '',
       };
 
-      edit(data).then(() => {
+      Http.post(API.GOODS_EDIT, formData).then((r) => {
         setOperateType("");
         fetch();
       });
