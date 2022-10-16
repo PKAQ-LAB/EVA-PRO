@@ -4,6 +4,7 @@ import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { FormattedMessage, history, SelectLang, useIntl, useModel } from '@umijs/max';
 import { Alert, message } from 'antd';
 import React, { useState } from 'react';
+import { flushSync } from 'react-dom';
 import styles from './index.less';
 import md5 from 'md5';
 
@@ -41,10 +42,12 @@ const Login: React.FC = () => {
         defaultMessage: '登录成功！',
       });
 
-      await setInitialState((s) => ({
-        ...s,
-        currentUser: res?.data?.user_info,
-      }));
+      flushSync(() => {
+        setInitialState((s) => ({
+          ...s,
+          currentUser: res?.data?.user_info,,
+        }));
+      });
       message.success(defaultLoginSuccessMessage);
 
       // 添加settimeout 解决 Can't perform a React state update on an unmounted component.
