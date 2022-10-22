@@ -37,7 +37,7 @@ export default (props) => {
   // 表单渲染
   const renderForm = () => {
   const formItemLayout = {
-    labelCol: { flex: "0 0 80px" },
+    labelCol: { flex: "0 0 100px" },
     wrapperCol: { flex: "auto" },
   };
 
@@ -92,13 +92,13 @@ export default (props) => {
           </Col>
         </Row>
 
-        <Row>
+        <Row gutter={24}>
           <Col span={8}>
             <Form.Item label="类型" name="type" rules={[{required: true}]}>
               <DictSelector
                 placeholder="选择主体类型"
                 readOnly={ readOnly }
-                data={dict?.shopType}/>
+                code="shopType"/>
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -106,7 +106,7 @@ export default (props) => {
               <DictSelector
                 placeholder="选择所属平台"
                 readOnly={ readOnly }
-                data={dict?.shopType}/>
+                code="online_platform"/>
             </Form.Item>
           </Col>
         </Row>
@@ -119,7 +119,7 @@ export default (props) => {
           </Col>
           <Col span={8}>
             <Form.Item label="开店日期" name="openDate" >
-              <DatePicker readOnly={ readOnly } />
+              <DatePicker readOnly={ readOnly }  style={{width: '100%'}} />
             </Form.Item>
           </Col>
         </Row>

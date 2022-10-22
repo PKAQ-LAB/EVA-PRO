@@ -25,7 +25,7 @@ export default (props) => {
         id: currentItem ? currentItem.id : '',
       };
 
-      Svc.edit(API.BRAND_EDIT ,data).then(() => {
+      Svc.post(API.BRAND_EDIT, data).then((r) => {
         setOperateType("");
         fetch();
       });

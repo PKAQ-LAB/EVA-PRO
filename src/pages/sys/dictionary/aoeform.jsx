@@ -80,7 +80,7 @@ export default (props) => {
                 name="parentId"
                 rules={[{required: true,}]}>
                 <DictSelector
-                  data={dict.dict_type}
+                  code="dict_type"
                   disabled={operateType === '' || operateType === 'view'}
                 />
               </Form.Item>

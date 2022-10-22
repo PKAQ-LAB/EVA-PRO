@@ -37,7 +37,7 @@ export default class DictSelector extends PureComponent {
         options,
       });
     } else if (code) {
-      request(`/api/sys/dict/query/${code}`).then(response => {
+      request(`/api/sys/dictionary/query/${code}`).then(response => {
         if (response && response.data) {
           const rdata = Object.keys(response.data);
           const options = rdata.map(v => <Option key={v}>{response.data[v]}</Option>);

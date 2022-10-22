@@ -6,6 +6,7 @@ import DragUpload from '@/components/DragUpload';
 
 import Http from '@/utils/http';
 import API from '@/services/apis';
+import Selector from '@/components/Selector';
 
 export default (props) => {
   const { setOperateType, operateType, currentItem, dict, fetch } = props;
@@ -49,12 +50,14 @@ export default (props) => {
      initialValues: {...currentItem}
   }
 
+  const readOnly = operateType === 'view';
+
     return (
       <Form {...formProps}>
         <Row gutter={24}>
           <Col span={24}>
             <Form.Item label="品名" name="name" rules={[{required: true}]}>
-              <Input readOnly={operateType === 'view'} />
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
         </Row>
@@ -77,7 +80,16 @@ export default (props) => {
           </Col>
           <Col span={12}>
             <Form.Item label="品牌" name="brand" rules={[{required: true}]}>
-              <Input readOnly={operateType === 'view'} />
+              <Selector
+                readOnly = {readOnly}
+                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                url="/api/pdos/base/brand/listAll"
+                k="id"
+                v="name"
+                clear
+                showSearch
+                mode="multiple"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -85,12 +97,12 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={12}>
             <Form.Item label="货号" name="itemNo" rules={[{required: true}]}>
-              <Input readOnly={operateType === 'view'} />
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label="助记码" name="mnemonic" rules={[{required: true}]}>
-              <Input readOnly={operateType === 'view'} />
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
         </Row>
@@ -105,7 +117,7 @@ export default (props) => {
           </Col>
           <Col span={12}>
             <Form.Item label="装箱数量" name="boxunit">
-              <Input readOnly={operateType === 'view'} />
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
         </Row>
@@ -113,7 +125,7 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={24}>
             <Form.Item label="条码" name="barcode">
-              <Input readOnly={operateType === 'view'} />
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
         </Row>

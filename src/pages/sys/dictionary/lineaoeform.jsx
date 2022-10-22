@@ -9,7 +9,7 @@ export default (props) => {
   const { modalType, setModalType, lineData, setLineData, editIndex, setEditIndex } = props;
 
   const formItemLayout = {
-    labelCol: { flex: '0 0 100px' },
+    labelCol: { flex: '0 0 60px' },
     wrapperCol: { flex: 'auto' },
   };
 

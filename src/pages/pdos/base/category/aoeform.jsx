@@ -73,14 +73,14 @@ export default (props) => {
       width={700}
       centered
       onOk={() => handleSaveClick()}
-      title={`${title[operateType] || '查看'}部门信息`}
+      title={`${title[operateType] || '查看'}分类信息`}
     >
       <Form initialValues={initValues} {...formItemLayout} colon form={form}  labelAlign = "left">
-        <Form.Item name="name" label="部门名称" rules={[{required: true,}]}>
+        <Form.Item name="name" label="分类名称" rules={[{required: true,}]}>
           <Input max={30} />
         </Form.Item>
         <Form.Item name="code"
-                    label="部门编码"
+                    label="分类编码"
                     validateTrigger="onBlur"
                     hasFeedback
                     rules={[{
@@ -96,8 +96,8 @@ export default (props) => {
         <Form.Item name="parentId"
                     label={
                     <span>
-                      上级部门&nbsp;
-                      <Tooltip title="留空为添加顶级部门">
+                      上级分类&nbsp;
+                      <Tooltip title="留空为添加顶级分类">
                         <QuestionCircleOutlined />
                       </Tooltip>
                     </span>
@@ -110,7 +110,7 @@ export default (props) => {
             treeDefaultExpandAll
             allowClear
             showSearch
-            placeholder="请选择上级部门（留空为添加顶级部门）"
+            placeholder="请选择上级分类（留空为添加顶级分类）"
           />
         </Form.Item>
         <Row gutter={24}>

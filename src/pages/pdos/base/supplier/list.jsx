@@ -164,6 +164,7 @@ export default (props) => {
       dataIndex: 'shopUrl',
     }, {
       width: 180,
+      fixed: 'right',
       render: (text, record) =>
         <>
           <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>

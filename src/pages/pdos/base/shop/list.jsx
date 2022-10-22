@@ -115,8 +115,8 @@ export default (props) => {
           name="category">
             <DictSelector
                 placeholder="请选择平台"
-                code="platform"
-                data={dict?.platform}/>
+                code="online_platform"
+            />
         </Form.Item>
 
         <Button type="primary" htmlType="submit" onClick={() => handleSearch()}>

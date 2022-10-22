@@ -17,6 +17,8 @@ export default (props) => {
   const title = { create: '新增', edit: '编辑' };
   const { operateType, setOperateType, currentItem, fetch  } = props;
 
+  const readOnly = operateType === 'view';
+
   const formItemLayout = {
     labelCol: { flex: "0 0 90px" },
     wrapperCol: { flex: "auto" },
@@ -32,10 +34,13 @@ export default (props) => {
         ...values,
         id: currentItem ? currentItem.id : '',
       };
-      data.dealTime = moment(data.dealTime).format("YYYY-MM-DD hh:mm:ss");
+      data.sdwr = data.sdwr ? '0001' : '0000';
+      data.freeDelivery = data.freeDelivery ? '0001' : '0000';
+      data.dropShipping = data.dropShipping ? '0001' : '0000';
+      data.isEnable = data.isEnable ? '0001' : '0000';
 
-      Svc.edit(data).then(res => {
-        if(res.success){
+      Svc.post(API.SUPPLIER_EDIT, data).then((r) => {
+        if(r.success){
           setOperateType("");
           fetch();
         }
@@ -51,7 +56,7 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item label="全称" name="fullName" rules={[{required: true}]}>
-                <Input readOnly={operateType === 'view'} />
+                <Input readOnly={readOnly} />
               </Form.Item>
             </Col>
           </Row>
@@ -59,7 +64,7 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item label="标签" name="tags">
-                <Input readOnly={operateType === 'view'} />
+                <Input readOnly={readOnly} />
               </Form.Item>
             </Col>
           </Row>
@@ -67,20 +72,17 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={8}>
               <Form.Item label="简称" name="name" rules={[{required: true}]}>
-                <Input readOnly={operateType === 'view'} />
+                <Input readOnly={readOnly} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="编码" name="code" rules={[{required: true}]}>
-                <DictSelector
-                  data={dict.supplier_type}
-                  disabled={operateType === 'view'}
-                />
+                <Input disabled={readOnly}/>
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="助记码" name="mnemonic">
-                <Input readOnly={operateType === 'view'} />
+                <Input readOnly={readOnly} />
               </Form.Item>
             </Col>
           </Row>
@@ -88,14 +90,14 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={8}>
               <Form.Item label="主营品类" name="category" >
-                <Input readOnly={operateType === 'view'} />
+                <Input readOnly={readOnly} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="类型" name="type" >
                 <DictSelector
-                  data={dict.supplier_type}
-                  disabled={operateType === 'view'}
+                  code="supplier_type"
+                  disabled={readOnly}
                 />
               </Form.Item>
             </Col>
@@ -119,7 +121,7 @@ export default (props) => {
               </Col>
               <Col span={6}>
                 <Form.Item label="启用"  name="isEnable">
-                  <Switch />
+                  <Switch defaultChecked />
                 </Form.Item>
               </Col>
           </Row>
@@ -127,12 +129,12 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={8}>
               <Form.Item label="联系人" name="contact">
-                <Input readOnly={operateType === 'view'} />
+                <Input readOnly={readOnly} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="联系方式" name="tel">
-                <Input readOnly={operateType === 'view'} />
+                <Input readOnly={readOnly} />
               </Form.Item>
             </Col>
           </Row>
@@ -140,7 +142,7 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item label="店铺地址" name="shopUrl" >
-                <Input.TextArea rows={2} readOnly={operateType === 'view'} />
+                <Input.TextArea rows={2} readOnly={readOnly} />
               </Form.Item>
             </Col>
           </Row>
@@ -148,7 +150,7 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item label="退货地址" name="returnAddr" >
-                <Input.TextArea rows={3} readOnly={operateType === 'view'} />
+                <Input.TextArea rows={3} readOnly={readOnly} />
               </Form.Item>
             </Col>
           </Row>
@@ -156,7 +158,7 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item label="厂址" name="address" >
-                <Input.TextArea rows={3} readOnly={operateType === 'view'} />
+                <Input.TextArea rows={3} readOnly={readOnly} />
               </Form.Item>
             </Col>
           </Row>
