@@ -9,7 +9,8 @@ async function get(url, params) {
 
 // 加载列表
 async function list(url, params) {
-  return request(`${url}?${stringify(params)}`);
+  const urls =  params? `${url}?${stringify(params)}` : url;
+  return request(urls);
 }
 
 // 新增/编辑
