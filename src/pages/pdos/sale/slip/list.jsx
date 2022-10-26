@@ -170,6 +170,9 @@ export default (props) => {
     ...tableProps,
     columns,
     size: 'small',
+    scroll: {
+      x: '100vw'
+    },
     rowKey: record => record.id,
     rowSelection,
     rowClassName: record =>

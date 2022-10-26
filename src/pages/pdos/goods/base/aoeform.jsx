@@ -26,7 +26,7 @@ export default (props) => {
         id: currentItem ? currentItem.id : '',
       };
 
-      Http.post(API.GOODS_EDIT, formData).then((r) => {
+      Http.post(API.GOODS_EDIT, data).then((r) => {
         setOperateType("");
         fetch();
       });
@@ -64,13 +64,13 @@ export default (props) => {
 
         <Row gutter={24}>
           <Col span={12}>
-            <Form.Item label="品类" name="category" rules={[{required: true}]} >
+            <Form.Item label="品类" name="categoryId" rules={[{required: true}]} >
               <TreeSelector
                   url="/api/pdos/base/category/list"
                   keys={['id', 'name', 'children']}
                   search
                   showAll={false}
-                  disabled={operateType === 'view'}
+                  disabled={readOnly}
                   treeDefaultExpandAll
                   allowClear
                   showSearch
@@ -79,7 +79,7 @@ export default (props) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="品牌" name="brand" rules={[{required: true}]}>
+            <Form.Item label="品牌" name="brandId" rules={[{required: true}]}>
               <Selector
                 readOnly = {readOnly}
                 dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -88,7 +88,6 @@ export default (props) => {
                 v="name"
                 clear
                 showSearch
-                mode="multiple"
               />
             </Form.Item>
           </Col>
@@ -100,11 +99,6 @@ export default (props) => {
               <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
-          <Col span={12}>
-            <Form.Item label="助记码" name="mnemonic" rules={[{required: true}]}>
-              <Input readOnly={readOnly} />
-            </Form.Item>
-          </Col>
         </Row>
 
         <Row gutter={24}>
@@ -112,7 +106,7 @@ export default (props) => {
             <Form.Item label="单位" name="unit">
               <DictSelector
                 data={dict.unit}
-                disabled={operateType === 'view'} />
+                disabled={readOnly} />
             </Form.Item>
           </Col>
           <Col span={12}>

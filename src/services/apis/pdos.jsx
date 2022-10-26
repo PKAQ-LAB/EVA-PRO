@@ -30,6 +30,7 @@ export default {
     //商品管理
     GOODS_GET: '/api/pdos/sale/goods/get',
     GOODS_LIST: '/api/pdos/sale/goods/list',
+    GOODS_LISTALL: '/api/pdos/sale/goods/listAll',
     GOODS_EDIT: '/api/pdos/sale/goods/edit',
     GOODS_DEL: '/api/pdos/sale/goods/del',
 }

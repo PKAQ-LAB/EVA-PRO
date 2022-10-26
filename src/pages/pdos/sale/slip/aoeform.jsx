@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { useModel } from 'umi';
 import moment from 'moment';
-import { Drawer, Button, Form, Input, InputNumber, Row, Col, DatePicker, Divider } from 'antd';
+import { Select, Spin,Drawer, Button, Form, Input, InputNumber, Row, Col, DatePicker, Divider } from 'antd';
 import { EditableProTable, ProCard, ProFormField } from '@ant-design/pro-components'
 import * as math from 'mathjs';
 import DictSelector from '@/components/DictSelector'
+import DebounSelector from '@/components/DebounSelector';
+import Selector from '@/components/Selector';
 
 import Http from '@/utils/http';
 import API from '@/services/apis';
@@ -29,9 +31,10 @@ export default (props) => {
     wrapperCol: { flex: "auto" },
   };
 
-  console.info(currentItem);
-
-  const defaultData = currentItem?.lines || [];
+  const [value, setValue] = useState([]);
+  const defaultData = currentItem?.lines || new Array(1).fill(1).map( (_,index) => {
+    return {id: (Date.now() + index).toString(),}
+  });
 
   const [editableKeys, setEditableRowKeys] = useState(() =>
     defaultData.map((item) => item.id),
@@ -39,26 +42,33 @@ export default (props) => {
 
   const [dataSource, setDataSource] = useState(() => defaultData);
 
+  const fetchGoodsList = async (param,r) => {
+    return Http.list(API.GOODS_LISTALL,{itemNo:param})
+               .then(res => {
+                return res.data
+                          .map((item) => ({
+                            label: `[${item.itemNo}] - ${item.brandName} ${item.name}`,
+                            value: item.id
+                       }))
+            });
+  }
+
   const columns = [
     {
       title: '商品',
-      dataIndex: 'cargoName',
-      width: '30%',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            whitespace: true,
-            message: '此项是必填项',
-          }
-        ],
-      },
-    },{
-      title: '货号',
-      dataIndex: 'cargoCode'
+      dataIndex: 'goodsId',
+      width: 160,
+      renderFormItem: (_,r) =>{
+        return <DebounSelector
+                  placeholder="货号查找"
+                  fetchOptions={(v) => fetchGoodsList(v, r)}
+                  style={{ width: '100%' }}
+                />
+      }
     },{
       title: '数量',
       dataIndex: 'dealNum',
+      width: 80,
       formItemProps: {
         rules: [{
             required: true,
@@ -71,15 +81,19 @@ export default (props) => {
       },
     },{
       title: '单价',
+      width: 80,
       dataIndex: 'notaxValue',
     },{
       title: '优惠金额',
+      width: 80,
       dataIndex: 'discount',
     },{
       title: '成交价',
+      width: 80,
       dataIndex: 'dealPrice',
     },{
       title: '成交金额',
+      width: 80,
       dataIndex: 'amount',
     },{
       title: '操作',
@@ -149,12 +163,28 @@ export default (props) => {
                 data={dict?.order_status}/>
             </Form.Item>
           </Col>
+        </Row>
+
+        <Row gutter={24}>
           <Col span={8}>
-            <Form.Item label="来源店铺" name="goodsName">
+            <Form.Item label="来源平台" name="platform">
             <DictSelector
-                placeholder="来源店铺"
+                placeholder="来源平台"
                 readOnly={ readOnly }
                 data={dict?.online_platform}/>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="来源店铺" name="shopId">
+              <Selector
+                  readOnly = {readOnly}
+                  dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                  url="/api/pdos/base/shop/listAll"
+                  k="id"
+                  v="name"
+                  clear
+                  showSearch
+                />
             </Form.Item>
           </Col>
         </Row>
@@ -179,33 +209,37 @@ export default (props) => {
             </Form.Item>
           </Col>
         </Row>
-
-        <EditableProTable
-          editableFormRef={editorFormRef}
-          className={style.lines}
-          columns={columns}
-          rowKey="id"
-          scroll={{ x: 960 }}
-          value={dataSource}
-          onChange={setDataSource}
-          recordCreatorProps={{
-            newRecordType: 'dataSource',
-            record: () => ({
-              id: Date.now(),
-            }),
-          }}
-          editable={{
-            type: 'multiple',
-            editableKeys,
-            actionRender: (row, config, defaultDoms) => {
-              return [defaultDoms.delete];
-            },
-            onValuesChange: (record, recordList) => {
-              setDataSource(recordList);
-            },
-            onChange: setEditableRowKeys,
-          }}
-        />
+        <Row gutter={24}>
+          <Col span={24}>
+            <EditableProTable
+              editableFormRef={editorFormRef}
+              className={style.lines}
+              columns={columns}
+              size="small"
+              rowKey="id"
+              scroll={{ x: '100vw' }}
+              value={dataSource}
+              onChange={setDataSource}
+              recordCreatorProps={{
+                newRecordType: 'dataSource',
+                record: () => ({
+                  id: Date.now(),
+                }),
+              }}
+              editable={{
+                type: 'multiple',
+                editableKeys,
+                actionRender: (row, config, defaultDoms) => {
+                  return [defaultDoms.delete];
+                },
+                onValuesChange: (record, recordList) => {
+                  setDataSource(recordList);
+                },
+                onChange: setEditableRowKeys,
+              }}
+            />
+          </Col>
+        </Row>
       </Form>
     )
   }
