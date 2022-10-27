@@ -60,7 +60,7 @@
     "@types/react": "17.0.50",
     "@types/react-dom": "17.0.17",
     "@types/react-helmet": "6.1.5",
-    "@umijs/fabric": "2.14.0",
+    "@umijs/fabric": "3.0.0",
     "@umijs/max": "4.0.26",
     "@umijs/openapi": "1.7.0",
     "cross-env": "7.0.3",
