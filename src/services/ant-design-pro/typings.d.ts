@@ -27,6 +27,9 @@ declare namespace API {
 
   type LoginResult = {
     success: any;
+    data: {
+      user_info: object;
+    };
     code?: string;
     message?: string;
     currentAuthority?: string;

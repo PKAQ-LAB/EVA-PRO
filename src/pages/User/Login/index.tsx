@@ -27,8 +27,7 @@ const LoginMessage: React.FC<{
 
 const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
-  const [type, setType] = useState<string>('account');
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { refresh, setInitialState } = useModel('@@initialState');
 
   const intl = useIntl();
 
@@ -45,9 +44,12 @@ const Login: React.FC = () => {
       flushSync(() => {
         setInitialState((s) => ({
           ...s,
-          currentUser: res?.data?.user_info,,
+          currentUser: res?.data?.user_info,
         }));
       });
+
+      refresh();
+
       message.success(defaultLoginSuccessMessage);
 
       // 添加settimeout 解决 Can't perform a React state update on an unmounted component.

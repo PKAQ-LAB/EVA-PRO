@@ -145,10 +145,7 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
-  mfsu: {
-    exclude :['@playwright/test']
-  },
-  chainWebpack: (config) => {
+  chainWebpack : (config) => {
     config.resolve.alias.set('@config', path.resolve(__dirname, '..', 'config'));
     config
       .plugin('webpack-open-browser')
