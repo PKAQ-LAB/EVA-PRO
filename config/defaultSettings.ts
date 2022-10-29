@@ -7,14 +7,13 @@ const Settings: LayoutSettings & {
   pwa?: boolean;
   logo?: string;
 } = {
-  navTheme: "light",
-  colorPrimary: "#1677FF",
-  layout: "mix",
-  contentWidth: "Fluid",
-  fixedHeader: true,
+  navTheme: 'light',
+  // 拂晓蓝
+  colorPrimary: '#1890ff',
+  layout: 'mix',
+  contentWidth: 'Fluid',
+  fixedHeader: false,
   fixSiderbar: true,
-  splitMenus: false,
-  siderMenuType: "sub",
   colorWeak: false,
   title: 'Ant Design Pro',
   subTitle: 'This is subTitle',
