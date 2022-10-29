@@ -22,11 +22,7 @@ export default [
     path: '/user',
     layout: false,
     routes: [
-      {
-        name: 'login',
-        path: '/user/login',
-        component: './User/Login',
-      },
+      { name: 'login', path: '/user/login',component: './User/Login' },
     ],
   },
   // 系统管理

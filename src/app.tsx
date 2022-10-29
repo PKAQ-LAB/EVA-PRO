@@ -56,7 +56,7 @@ export async function getInitialState(): Promise<{
 
   // 如果不是登录页面 且已经登录，执行
   if (window.location.pathname !== loginPath) {
-    const dict = await initDict();
+    const dict = initDict();
     return {
       dict: dict?.data,
       settings: defaultSettings,
