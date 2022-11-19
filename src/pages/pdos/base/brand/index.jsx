@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { useModel } from 'umi';
+import { useModel, useRequest } from 'umi';
 import { useAntdTable } from 'ahooks';
-import { useRequest } from 'umi';
 import List from './list';
 import AOEForm from './aoeform';
 import Svc from '@/utils/http';
@@ -18,8 +17,9 @@ export default () => {
 
   const { dict } = initialState;
 
-  const { run, tableProps } = useAntdTable(async () => {
-    const res = await Svc.list(API.BRAND_LIST);
+  const { run, tableProps } = useAntdTable(async (args) => {
+    console.info(args);
+    const res = await Svc.list(API.BRAND_LIST, args);
     return res.data;
   }, {pageSize: 15})
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Alert, Button, Divider, Popconfirm, Input, Table } from 'antd';
+import withTrim from '@/components/TrimInput/index';
 import cx from 'classnames';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import TreeSelector from '@/components/TreeSelector';
@@ -7,6 +8,7 @@ import Svc from '@/utils/http';
 import API from '@/services/apis'
 
 export default (props) => {
+  const TrimInput = withTrim(Input);
 
   const { setOperateType, setCurrentItem, dict, fetch, loading, tableProps } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -106,8 +108,9 @@ export default (props) => {
       <Form colon layout="inline" onSubmit={() => handleSearch()} form={form} >
         <Form.Item
           label="品牌名称"
+          rules={[{whitespace: true}]}
           name="name">
-          <Input />
+          <TrimInput />
         </Form.Item>
 
         <Button type="primary" htmlType="submit" onClick={() => handleSearch()}>
