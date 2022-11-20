@@ -10,8 +10,8 @@ export default () => {
   const [operateType, setOperateType] = useState("");
   const [currentItem, setCurrentItem] = useState({});
 
-  const { run, tableProps } = useAntdTable(async () => {
-    const res = await Svc.list(API.SUPPLIER_LIST);
+  const { run, tableProps } = useAntdTable(async (args) => {
+    const res = await Svc.list(API.SUPPLIER_LIST, args);
     return res.data;
   }, { pageSize: 15 })
 
@@ -24,6 +24,7 @@ export default () => {
 
   const formProps = {
     operateType,
+    currentItem,
     setOperateType,
     initialValues: 'create' === operateType? {} : {...currentItem},
     fetch: run

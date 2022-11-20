@@ -46,8 +46,11 @@ export default (props) => {
   };
 
   // 查询
-  const handleSearch = (values) => {
-    fetch(values);
+  const handleSearch = () => {
+    const { validateFields } = form;
+    validateFields().then(values => {
+      fetch({ ...values });
+    });
   };
 
   // 批量删除
@@ -130,7 +133,6 @@ export default (props) => {
     dataIndex: '',
     render: (text, record) => {
       const flag = [];
-      console.info(record);
       if (record.sdwr) flag.push("七");
       if (record.freeDelivery) flag.push("包");
       if (record.dropShipping) flag.push("代");
@@ -162,6 +164,9 @@ export default (props) => {
     title: '店铺地址',
     ellipsis: true,
     dataIndex: 'shopUrl',
+    render: (text, record) => {
+      return <a href={text} target="_blank">{text}</a>
+    }
   }, {
     width: 180,
     fixed: 'right',
