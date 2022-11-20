@@ -15,21 +15,11 @@ async function list(url: string, params: object) {
 
 // 新增/编辑
 export async function edit(url: string, params: object) {
-  return request(url, {
-    method: 'POST',
-    data: {
-      ...params,
-    },
-  });
+  return post(url, params);
 }
-// 根据ID删除
+// 根据参数删除
 export async function del(url: string, params: object) {
-  return request(url, {
-    method: 'POST',
-    data: {
-      ...params,
-    },
-  });
+  return post(url, params);
 }
 
 // post请求
