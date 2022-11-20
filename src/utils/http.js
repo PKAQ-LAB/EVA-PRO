@@ -43,6 +43,5 @@ async function post(url, params) {
 export default {
   get,
   list,
-  del,
   post
 }
