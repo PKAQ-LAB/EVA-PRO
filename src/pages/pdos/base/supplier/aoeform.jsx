@@ -21,7 +21,6 @@ export default (props) => {
 
   const formItemLayout = {
     labelCol: { flex: "0 0 90px" },
-    wrapperCol: { flex: "auto" },
   };
 
   // 校验编码唯一性
