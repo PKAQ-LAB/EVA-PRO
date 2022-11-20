@@ -178,9 +178,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       //loginOut();
      // return;
  //   }
-
+    const msgtxt = response.data?.message;
     message.error({
-      content: '['+status+'] 网络错误，无法连接服务器',
+      content: msgtxt || '['+status+'] 网络错误，无法连接服务器',
     });
   }
 
