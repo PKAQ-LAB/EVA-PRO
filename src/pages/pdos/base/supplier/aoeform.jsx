@@ -15,7 +15,7 @@ export default (props) => {
   const dict = initialState.dict;
 
   const title = { create: '新增', edit: '编辑' };
-  const { operateType, setOperateType, currentItem, fetch  } = props;
+  const { operateType, setOperateType, initialValues, fetch  } = props;
 
   const readOnly = operateType === 'view';
 
@@ -52,7 +52,7 @@ export default (props) => {
 
   const renderForm = () => {
     return (
-      <Form size="small" {...formItemLayout} labelAlign="right" form={form} initialValues={currentItem}>
+      <Form size="small" {...formItemLayout} labelAlign="right" form={form} initialValues={{...initialValues}}>
           <Row gutter={24}>
             <Col span={24}>
               <Form.Item label="全称" name="fullName" rules={[{required: true}]}>
@@ -106,22 +106,22 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={6}>
               <Form.Item label="七退"  name="sdwr">
-                <Switch />
+                <Switch  disabled={readOnly}/>
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item label="包邮"  name="freeDelivery">
-                  <Switch />
+                  <Switch  disabled={readOnly}/>
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item label="代发"  name="dropShipping">
-                  <Switch />
+                  <Switch  disabled={readOnly}/>
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item label="启用"  name="isEnable">
-                  <Switch defaultChecked />
+                  <Switch defaultChecked  disabled={readOnly}/>
                 </Form.Item>
               </Col>
           </Row>

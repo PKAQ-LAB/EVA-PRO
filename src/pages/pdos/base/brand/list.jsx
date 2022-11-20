@@ -200,7 +200,7 @@ export default (props) => {
           rowSelection={rowSelection}
           onRow = {
             (record) => ({
-              onClick: () => handleEditClick(record, 'view'),
+              onDoubleClick: () => handleEditClick(record, 'view'),
             })
           }
         />;

@@ -13,7 +13,7 @@ export default () => {
   const { run, tableProps } = useAntdTable(async () => {
     const res = await Svc.list(API.SUPPLIER_LIST);
     return res.data;
-  }, {pageSize: 15})
+  }, { pageSize: 15 })
 
   const listProps = {
     fetch: run,
@@ -23,12 +23,15 @@ export default () => {
   }
 
   const formProps = {
-    operateType, setOperateType, currentItem, fetch: run
+    operateType,
+    setOperateType,
+    initialValues: 'create' === operateType? {} : {...currentItem},
+    fetch: run
   }
 
   return (
     <PageContainer title="供应商管理" subTitle="供应商管理">
-      <List {...listProps}/>
+      <List {...listProps} />
       {/* 新增/编辑界面 */}
       {
         operateType !== '' && <AOEForm {...formProps} />

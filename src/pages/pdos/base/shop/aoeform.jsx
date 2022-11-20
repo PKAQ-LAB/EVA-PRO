@@ -8,7 +8,7 @@ import API from '@/services/apis'
 
 export default (props) => {
   const { setOperateType, operateType, currentItem, dict, fetch } = props;
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [form] = Form.useForm();
   const title = { create: '新增', edit: '编辑' };
@@ -36,25 +36,25 @@ export default (props) => {
 
   // 表单渲染
   const renderForm = () => {
-  const formItemLayout = {
-    labelCol: { flex: "0 0 100px" },
-    wrapperCol: { flex: "auto" },
-  };
+    const formItemLayout = {
+      labelCol: { flex: "0 0 100px" },
+      wrapperCol: { flex: "auto" },
+    };
 
-  const formProps = {
-    size:"middle" ,
-    ...formItemLayout,
-     labelAlign:"right",
-     form,
-     initialValues: {...currentItem}
-  }
+    const formProps = {
+      size: "middle",
+      ...formItemLayout,
+      labelAlign: "right",
+      form,
+      initialValues: 'create' === operateType ? {} : { ...currentItem }
+    }
 
     return (
       <Form {...formProps}>
         <Row>
           <Col span={24}>
             <Form.Item label="Logo" name="logo">
-                <Upload listType="picture-card" showUploadList={false} readOnly={ readOnly }>
+              <Upload listType="picture-card" showUploadList={false} readOnly={readOnly}>
                 <div>
                   <PlusOutlined />
                   <div style={{ marginTop: 8 }}>Upload</div>
@@ -65,16 +65,16 @@ export default (props) => {
         </Row>
         <Row gutter={24}>
           <Col span={16}>
-            <Form.Item label="店名" name="name" rules={[{required: true}]}>
-              <Input readOnly={ readOnly } />
+            <Form.Item label="店名" name="name" rules={[{ required: true }]}>
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={24}>
           <Col span={24}>
-            <Form.Item label="URL" name="url" rules={[{required: true}]}>
-              <Input readOnly={ readOnly } />
+            <Form.Item label="URL" name="url" rules={[{ required: true }]}>
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
         </Row>
@@ -82,44 +82,44 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={8}>
             <Form.Item label="编码" name="code" >
-              <Input readOnly={ readOnly } />
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="账号" name="account" rules={[{required: true}]}>
-              <Input readOnly={ readOnly } />
+            <Form.Item label="账号" name="account" rules={[{ required: true }]}>
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={24}>
           <Col span={8}>
-            <Form.Item label="类型" name="type" rules={[{required: true}]}>
+            <Form.Item label="类型" name="type" rules={[{ required: true }]}>
               <DictSelector
                 placeholder="选择主体类型"
-                readOnly={ readOnly }
-                code="shopType"/>
+                readOnly={readOnly}
+                code="shopType" />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="所属平台" name="platform" rules={[{required: true}]}>
+            <Form.Item label="所属平台" name="platform" rules={[{ required: true }]}>
               <DictSelector
                 placeholder="选择所属平台"
-                readOnly={ readOnly }
-                code="online_platform"/>
+                readOnly={readOnly}
+                code="online_platform" />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={24}>
           <Col span={8}>
-            <Form.Item label="保证金" name="deposit" rules={[{required: true}]}>
-              <Input readOnly={ readOnly } />
+            <Form.Item label="保证金" name="deposit" rules={[{ required: true }]}>
+              <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="开店日期" name="openDate" >
-              <DatePicker readOnly={ readOnly }  style={{width: '100%'}} />
+              <DatePicker readOnly={readOnly} style={{ width: '100%' }} />
             </Form.Item>
           </Col>
         </Row>
@@ -127,7 +127,7 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={24}>
             <Form.Item label="备注" name="remark">
-              <Input.TextArea rows={3} readOnly={ readOnly } />
+              <Input.TextArea rows={3} readOnly={readOnly} />
             </Form.Item>
           </Col>
         </Row>
@@ -146,7 +146,7 @@ export default (props) => {
       onOk={() => handleSaveClick()}
       title={`${title[operateType] || '查看'} 店铺`}
     >
-        {renderForm()}
+      {renderForm()}
     </Modal>
   );
 }

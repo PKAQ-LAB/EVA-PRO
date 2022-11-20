@@ -7,7 +7,7 @@ import Svc from '@/utils/http';
 import API from '@/services/apis'
 
 export default (props) => {
-  const [ form ] = Form.useForm();
+  const [form] = Form.useForm();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const { setOperateType, setCurrentItem, fetch, tableProps } = props;
@@ -26,7 +26,7 @@ export default (props) => {
 
   // 编辑/查看
   const handleEditClick = (record, operateType) => {
-    Svc.get(API.SUPPLIER_GET,record.id,
+    Svc.get(API.SUPPLIER_GET, record.id,
     ).then(res => {
       setCurrentItem(res.data);
       setOperateType(operateType)
@@ -64,35 +64,35 @@ export default (props) => {
   // 操作按钮
   const renderButton = () => {
     return <>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => handleCreateClick()}
-            >
-              新增供应商
+      <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        onClick={() => handleCreateClick()}
+      >
+        新增供应商
+      </Button>
+      {
+        selectedRowKeys.length > 0 &&
+        <span>
+          <Popconfirm
+            title="确定要删除所选供应商吗?"
+            placement="top"
+            onConfirm={() => handleRemoveClick}
+          >
+            <Divider type="vertical" />
+            <Button style={{ marginLeft: 8 }} type="danger" icon={<DeleteOutlined />} loading={loading}>
+              删除供应商
             </Button>
-            {
-              selectedRowKeys.length > 0 &&
-                <span>
-                  <Popconfirm
-                    title="确定要删除所选供应商吗?"
-                    placement="top"
-                    onConfirm={() => handleRemoveClick}
-                  >
-                    <Divider type="vertical" />
-                    <Button style={{ marginLeft: 8 }} type="danger" icon={<DeleteOutlined />} loading={loading}>
-                      删除供应商
-                    </Button>
-                  </Popconfirm>
-                </span>
-            }
-          </>
+          </Popconfirm>
+        </span>
+      }
+    </>
   }
 
   // 简单搜索条件
-  const renderSearchForm = ()  => {
+  const renderSearchForm = () => {
     return (
-      <Form  colon layout="inline" onFinish={() => handleSearch} form={form} >
+      <Form colon layout="inline" onFinish={() => handleSearch} form={form} >
         <Form.Item
           label="供应商名称"
           name="fullName">
@@ -100,8 +100,8 @@ export default (props) => {
         </Form.Item>
 
         <Form.Item
-          label="助记码"
-          name="mnemonic">
+          label="编码"
+          name="code">
           <Input />
         </Form.Item>
 
@@ -117,70 +117,70 @@ export default (props) => {
   }
 
   const columns = [{
-      title: '全称',
-      ellipsis: true,
-      dataIndex: 'fullName',
-    }, {
-      title: '简称',
-      width: 120,
-      dataIndex: 'name',
-    }, {
-      title: ' ',
-      width: 80,
-      dataIndex: '',
-      render: (text, record) =>{
-        const flag = [];
-        console.info(record);
-        if(record.sdwr) flag.push("七");
-        if(record.freeDelivery) flag.push("包");
-        if(record.dropShipping) flag.push("代");
-        return  flag.concat
-      }
-    }, {
-      title: '编码',
-      dataIndex: 'code',
-    }, {
-      title: '联系人',
-      dataIndex: 'contact',
-    }, {
-      title: '电话',
-      dataIndex: 'tel',
-    }, {
-      title: '类型',
-      dataIndex: 'type',
-    }, {
-      title: '主营品类',
-      dataIndex: 'category',
-    }, {
-      title: '标签',
-      dataIndex: 'tags',
-    }, {
-      title: '退货地址',
-      ellipsis: true,
-      dataIndex: 'returnAddr',
-    }, {
-      title: '店铺地址',
-      ellipsis: true,
-      dataIndex: 'shopUrl',
-    }, {
-      width: 180,
-      fixed: 'right',
-      render: (text, record) =>
-        <>
-          <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>
-          <Divider type="vertical" />
-          <a onClick={() => handleEditClick(record, 'edit')}>编辑</a>
-          <Divider type="vertical" />
-          <Popconfirm
-            title="确定要删除吗？"
-            okText="确定"
-            cancelText="取消"
-            onConfirm={() => handleDeleteClick(record)}
-          >
-            <a>删除</a>
-          </Popconfirm>
-        </>
-    },
+    title: '全称',
+    ellipsis: true,
+    dataIndex: 'fullName',
+  }, {
+    title: '简称',
+    width: 120,
+    dataIndex: 'name',
+  }, {
+    title: ' ',
+    width: 80,
+    dataIndex: '',
+    render: (text, record) => {
+      const flag = [];
+      console.info(record);
+      if (record.sdwr) flag.push("七");
+      if (record.freeDelivery) flag.push("包");
+      if (record.dropShipping) flag.push("代");
+      return flag.concat
+    }
+  }, {
+    title: '编码',
+    dataIndex: 'code',
+  }, {
+    title: '联系人',
+    dataIndex: 'contact',
+  }, {
+    title: '电话',
+    dataIndex: 'tel',
+  }, {
+    title: '类型',
+    dataIndex: 'type',
+  }, {
+    title: '主营品类',
+    dataIndex: 'category',
+  }, {
+    title: '标签',
+    dataIndex: 'tags',
+  }, {
+    title: '退货地址',
+    ellipsis: true,
+    dataIndex: 'returnAddr',
+  }, {
+    title: '店铺地址',
+    ellipsis: true,
+    dataIndex: 'shopUrl',
+  }, {
+    width: 180,
+    fixed: 'right',
+    render: (text, record) =>
+      <>
+        <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>
+        <Divider type="vertical" />
+        <a onClick={() => handleEditClick(record, 'edit')}>编辑</a>
+        <Divider type="vertical" />
+        <Popconfirm
+          title="确定要删除吗？"
+          okText="确定"
+          cancelText="取消"
+          onConfirm={() => handleDeleteClick(record)}
+        >
+          <a>删除</a>
+        </Popconfirm>
+      </>
+  },
   ];
 
   const rowSelection = {
@@ -205,39 +205,39 @@ export default (props) => {
     rowClassName: record =>
       cx({ 'eva-locked': record.status === '0001', 'eva-disabled': record.status === '9999' }),
     onRow: (record) => ({
-        onDoubleClick: () => handleEditClick(record, 'view'),
+      onDoubleClick: () => handleEditClick(record, 'view'),
     })
   };
 
   return <>
     {/* 工具条 */}
     <div className="eva-ribbon">
-        {/* 操作按钮 */}
-        <>{renderButton(selectedRowKeys)}</>
-        {/* 查询条件 */}
-        <>{renderSearchForm()}</>
-      </div>
-      {/* 删除条幅 */}
-      <div className="eva-alert">
-        {selectedRowKeys.length > 0 && (
-          <Alert
-            message={
-              <div>
-                已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
-                {selectedRowKeys.length > 0 && (
-                  <a onClick={() => setSelectedRowKeys([])} style={{ marginLeft: 24 }}>
-                    清空选择
-                  </a>
-                )}
-              </div>
-            }
-            type="info"
-            showIcon
-          />
-        )}
-      </div>
-      <div className="eva-body">
-        <Table {...dataTableProps} />
-      </div>
+      {/* 操作按钮 */}
+      <>{renderButton(selectedRowKeys)}</>
+      {/* 查询条件 */}
+      <>{renderSearchForm()}</>
+    </div>
+    {/* 删除条幅 */}
+    <div className="eva-alert">
+      {selectedRowKeys.length > 0 && (
+        <Alert
+          message={
+            <div>
+              已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项&nbsp;&nbsp;
+              {selectedRowKeys.length > 0 && (
+                <a onClick={() => setSelectedRowKeys([])} style={{ marginLeft: 24 }}>
+                  清空选择
+                </a>
+              )}
+            </div>
+          }
+          type="info"
+          showIcon
+        />
+      )}
+    </div>
+    <div className="eva-body">
+      <Table {...dataTableProps} />
+    </div>
   </>;
 }

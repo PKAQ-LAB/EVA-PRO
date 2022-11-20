@@ -1,6 +1,7 @@
 export default {
     // 品牌管理
     BRAND_GET: '/api/pdos/base/brand/get',
+    BRAND_CHECKCODE: '/api/pdos/base/brand/checkUnique',
     BRAND_LIST: '/api/pdos/base/brand/list',
     BRAND_EDIT: '/api/pdos/base/brand/edit',
     BRAND_DEL: '/api/pdos/base/brand/del',
