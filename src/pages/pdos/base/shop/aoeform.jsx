@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Form, Input, Row, Col, Upload, DatePicker } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
 import DictSelector from '@/components/DictSelector'
-import TreeSelector from '@/components/TreeSelector';
+import moment from 'moment';
 import Svc from '@/utils/http';
 import API from '@/services/apis'
 
@@ -14,12 +14,32 @@ export default (props) => {
   const title = { create: '新增', edit: '编辑' };
 
   const readOnly = operateType === 'view';
+
+  // 校验编码唯一性
+  // eslint-disable-next-line consistent-return
+  const checkCode = async (rule, value) => {
+    const { getFieldValue } = form;
+
+    const code = getFieldValue('code');
+
+    if (currentItem && currentItem.id && value === currentItem.code) {
+      return Promise.resolve();
+    }
+    await Svc.post(API.SHOP_CHECKUNIQUE, { code }).then((r) => {
+      if (r.success) {
+        return Promise.resolve();
+      }
+      return Promise.reject(r.message);
+    });
+  };
+
   // 保存
   const handleSaveClick = () => {
     const { validateFields } = form;
     validateFields().then(values => {
       setLoading(true);
 
+      values.openDate = moment(values.openDate).format('YYYY-MM-DD')
       const data = {
         ...values,
         id: currentItem ? currentItem.id : '',
@@ -38,7 +58,6 @@ export default (props) => {
   const renderForm = () => {
     const formItemLayout = {
       labelCol: { flex: "0 0 100px" },
-      wrapperCol: { flex: "auto" },
     };
 
     const formProps = {
@@ -54,7 +73,7 @@ export default (props) => {
         <Row>
           <Col span={24}>
             <Form.Item label="Logo" name="logo">
-              <Upload listType="picture-card" showUploadList={false} readOnly={readOnly}>
+              <Upload listType="picture-card" showUploadList={false} disabled={readOnly}>
                 <div>
                   <PlusOutlined />
                   <div style={{ marginTop: 8 }}>Upload</div>
@@ -81,7 +100,16 @@ export default (props) => {
 
         <Row gutter={24}>
           <Col span={8}>
-            <Form.Item label="编码" name="code" >
+            <Form.Item label="编码"
+              name="code"
+              validateTrigger="onBlur"
+              hasFeedback
+              rules={[{
+                required: true,
+                whitespace: true,
+                validator: checkCode,
+              },
+              ]}>
               <Input readOnly={readOnly} />
             </Form.Item>
           </Col>
@@ -97,7 +125,7 @@ export default (props) => {
             <Form.Item label="类型" name="type" rules={[{ required: true }]}>
               <DictSelector
                 placeholder="选择主体类型"
-                readOnly={readOnly}
+                disabled={readOnly}
                 code="shopType" />
             </Form.Item>
           </Col>
@@ -105,7 +133,7 @@ export default (props) => {
             <Form.Item label="所属平台" name="platform" rules={[{ required: true }]}>
               <DictSelector
                 placeholder="选择所属平台"
-                readOnly={readOnly}
+                disabled={readOnly}
                 code="online_platform" />
             </Form.Item>
           </Col>

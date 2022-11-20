@@ -17,10 +17,10 @@ export default () => {
 
   const { dict } = initialState;
 
-  const { run, tableProps } = useAntdTable(async () => {
-    const res = await Svc.list(API.SHOP_LIST);
+  const { run, tableProps } = useAntdTable(async (args) => {
+    const res = await Svc.list(API.SHOP_LIST, args);
     return res.data;
-  }, {pageSize: 15})
+  }, { pageSize: 15 })
 
   // 列表属性
   const listProps = {
@@ -41,11 +41,11 @@ export default () => {
   }
 
   return (
-      <PageContainer title="店铺管理" subTitle="店铺基础信息管理">
-        <List {...listProps} />
-        {operateType !== '' && <AOEForm {...formPorps} /> }
-      </PageContainer>
-    );
+    <PageContainer title="店铺管理" subTitle="店铺基础信息管理">
+      <List {...listProps} />
+      {operateType !== '' && <AOEForm {...formPorps} />}
+    </PageContainer>
+  );
 }
 
 

@@ -20,7 +20,6 @@ export default (props) => {
   // 渲染界面
   const formItemLayout = {
     labelCol: { flex: '0 0 100px' },
-    wrapperCol: { flex: 'auto' },
   };
 
   // 校验编码唯一性

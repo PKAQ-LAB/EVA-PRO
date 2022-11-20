@@ -57,7 +57,6 @@ export default (props) => {
   const renderForm = () => {
     const formItemLayout = {
       labelCol: { flex: "0 0 80px" },
-      wrapperCol: { flex: "auto" },
     };
 
   const formProps = {
