@@ -27,7 +27,7 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@ant-design/icons": "4.7.0",
+    "@ant-design/icons": "4.8.0",
     "@ant-design/pro-components": "2.3.34",
     "@umijs/route-utils": "2.2.1",
     "antd": "4.24.2",
