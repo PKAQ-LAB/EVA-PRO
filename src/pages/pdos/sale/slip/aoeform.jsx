@@ -53,6 +53,25 @@ export default (props) => {
             });
   }
 
+
+  // 校验编码唯一性
+  // eslint-disable-next-line consistent-return
+  const checkCode = async (rule, value) => {
+    const { getFieldValue } = form;
+
+    const code = getFieldValue('orderNumber');
+
+    if (currentItem && currentItem.id && value === currentItem.code) {
+      return Promise.resolve();
+    }
+    await Http.post(API.ORDER_CHECKCODE, {code}).then((r)=>{
+      if (r.success) {
+        return Promise.resolve();
+      }
+      return Promise.reject(r.message);
+    });
+  };
+
   const columns = [
     {
       title: '商品',
@@ -156,7 +175,7 @@ export default (props) => {
 
         <Row gutter={24}>
           <Col span={8}>
-            <Form.Item label="订单状态" name="orderCode">
+            <Form.Item label="订单状态" name="orderStatus">
               <DictSelector
                 placeholder="订单状态"
                 readOnly={ readOnly }

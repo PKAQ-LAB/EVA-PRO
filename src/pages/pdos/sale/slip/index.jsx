@@ -12,8 +12,8 @@ export default () => {
   const [operateType, setOperateType] = useState("");
   const [currentItem, setCurrentItem] = useState({});
 
-  const { run, tableProps } = useAntdTable(async () => {
-    const res = await Http.list(API.ORDER_LIST);
+  const { run, tableProps } = useAntdTable(async (args) => {
+    const res = await Http.list(API.ORDER_LIST, args);
     return res.data;
   }, {pageSize: 15});
 

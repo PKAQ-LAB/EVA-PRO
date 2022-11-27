@@ -27,11 +27,13 @@ export default {
   SHOP_DEL: '/api/pdos/base/shop/del',
   // 订单管理
   ORDER_GET: '/api/pdos/sale/orders/get',
+  ORDER_CHECKCODE: '/api/pdos/sale/orders/checkUnique',
   ORDER_LIST: '/api/pdos/sale/orders/list',
   ORDER_EDIT: '/api/pdos/sale/orders/edit',
   ORDER_DEL: '/api/pdos/sale/orders/del',
   //商品管理
   GOODS_GET: '/api/pdos/sale/goods/get',
+  GOODS_CHECKCODE: '/api/pdos/sale/goods/checkUnique',
   GOODS_LIST: '/api/pdos/sale/goods/list',
   GOODS_LISTALL: '/api/pdos/sale/goods/listAll',
   GOODS_EDIT: '/api/pdos/sale/goods/edit',

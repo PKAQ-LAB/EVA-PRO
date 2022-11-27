@@ -18,8 +18,8 @@ export default () => {
 
   const dict = initialState.dict;
 
-  const { run, tableProps } = useAntdTable(async () => {
-    const res = await Http.list(API.GOODS_LIST);
+  const { run, tableProps } = useAntdTable(async (args) => {
+    const res = await Http.list(API.GOODS_LIST, args);
     return res.data;
   }, {pageSize: 15});
 

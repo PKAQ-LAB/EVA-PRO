@@ -6,6 +6,8 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import Http from '@/utils/http';
 import API from '@/services/apis';
 
+import moment from 'moment';
+
 export default (props) => {
   const { setOperateType, setCurrentItem, fetch, tableProps } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -32,6 +34,7 @@ export default (props) => {
   const handleSearch = () => {
     const { validateFields } = form;
     validateFields().then(values => {
+      values.orderDate = values.orderDate && moment(values.orderDate).format('YYYY-MM-DD')
       fetch(values);
     });
   };
@@ -93,11 +96,11 @@ export default (props) => {
     return (
       <Form  colon layout="inline" onSubmit={handleSearch} form={form} >
 
-        <Form.Item label="订单号" name="orderCode">
+        <Form.Item label="订单号" name="orderNumber">
           <Input />
         </Form.Item>
 
-        <Form.Item label="订单时间" name="orderCode">
+        <Form.Item label="订单时间" name="orderDate">
            <DatePicker showToday/>
         </Form.Item>
 
@@ -116,7 +119,8 @@ export default (props) => {
       dataIndex: 'shopName'
     }, {
       title: '所属平台',
-      dataIndex: 'shopName'
+      dataIndex: 'platform',
+      render: text => (dict.online_platform && dict.online_platform[`${text}`]) || text
     }, {
       title: '订单号',
       width: 180,

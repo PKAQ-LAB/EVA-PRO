@@ -19,12 +19,12 @@ export default (props) => {
     onChange: rows => setSelectedRowKeys(rows)
   };
 
-   // 编辑/查看
+  // 编辑/查看
   const handleEditClick = (record, operate) => {
     if (record.id) {
-      Http.get(API.ORDER_GET, record.id).then((res) => {
+      Http.get(API.GOODS_GET, record.id).then((res) => {
         setCurrentItem(res.data);
-        setOperateType(operateType);
+        setOperateType(operate);
       })
     }
   }
@@ -33,7 +33,7 @@ export default (props) => {
   const handleDeleteClick = record => {
     if (record.id) {
       Http.post(API.GOODS_DEL, { param: [record.id], })
-      .then(() => fetch());
+        .then(() => fetch());
     }
   };
 
@@ -52,7 +52,7 @@ export default (props) => {
   const handleSearch = () => {
     const { validateFields } = form;
     validateFields().then(values => {
-      fetch({...values});
+      fetch({ ...values });
     });
   };
 
@@ -62,41 +62,41 @@ export default (props) => {
     if (!selectedRowKeys) return;
 
     Http.post(API.ORDER_DEL, { param: selectedRowKeys, })
-    .then(() => fetch())
+      .then(() => fetch())
   };
 
- // 操作按钮
- const renderButton = () => {
-  return <div>
-    <Button
-      type="primary"
-      icon={<PlusOutlined />}
-      onClick={() => handleCreateClick()}
-      loading={loading}
-    >
-      新增产品
-    </Button>
-    {selectedRowKeys.length > 0 && (
-      <>
-        <Divider type="vertical" />
-        <span>
-          <Popconfirm
-            title="确定要删除所选产品吗?"
-            placement="top"
-            onConfirm={()=> handleRemoveClick()}
-          >
-            <Button style={{ marginLeft: 8 }}
-                    type="danger"
-                    icon={<DeleteOutlined />}
-                    loading={loading}>
-              删除产品
-            </Button>
-          </Popconfirm>
-        </span>
-      </>
-    )}
-  </div>;
-}
+  // 操作按钮
+  const renderButton = () => {
+    return <div>
+      <Button
+        type="primary"
+        icon={<PlusOutlined />}
+        onClick={() => handleCreateClick()}
+        loading={loading}
+      >
+        新增产品
+      </Button>
+      {selectedRowKeys.length > 0 && (
+        <>
+          <Divider type="vertical" />
+          <span>
+            <Popconfirm
+              title="确定要删除所选产品吗?"
+              placement="top"
+              onConfirm={() => handleRemoveClick()}
+            >
+              <Button style={{ marginLeft: 8 }}
+                type="danger"
+                icon={<DeleteOutlined />}
+                loading={loading}>
+                删除产品
+              </Button>
+            </Popconfirm>
+          </span>
+        </>
+      )}
+    </div>;
+  }
 
   // 简单搜索条件
   const renderSearchForm = () => {
@@ -110,17 +110,17 @@ export default (props) => {
 
         <Form.Item
           label="所属分类"
-          name="category">
-            <TreeSelector
-              url="/api/pdos/base/category/list"
-              keys={['id', 'name', 'children']}
-              search
-              showAll={false}
-              treeDefaultExpandAll
-              allowClear
-              showSearch
-              placeholder="请选择所属分类"
-            />
+          name="categoryId">
+          <TreeSelector
+            url={API.CATEGORY_LIST}
+            keys={['id', 'name', 'children']}
+            search
+            showAll={false}
+            treeDefaultExpandAll
+            allowClear
+            showSearch
+            placeholder="请选择所属分类"
+          />
         </Form.Item>
 
         <Button type="primary" htmlType="submit" onClick={() => handleSearch()}>
@@ -162,30 +162,30 @@ export default (props) => {
     }, {
       title: '单位',
       dataIndex: 'unit',
-      render: text => dict.unit && dict.unit[`${text}`]
-    },  {
+      render: text => (dict.unit && dict.unit[`${text}`]) || text
+    }, {
       title: '装箱规格',
       dataIndex: 'boxunit',
-    },{
+    }, {
       title: '条码',
       dataIndex: 'qrcode',
     }, {
       width: 180,
       render: (_text, record) =>
-          <>
-            <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>
-            <Divider type="vertical" />
-            <a onClick={() => handleEditClick(record, 'edit')}>编辑</a>
-            <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => handleDeleteClick(record)}
-            >
-              <a>删除</a>
-            </Popconfirm>
-          </>
+        <>
+          <a onClick={() => handleEditClick(record, 'view')}>查看详情</a>
+          <Divider type="vertical" />
+          <a onClick={() => handleEditClick(record, 'edit')}>编辑</a>
+          <Divider type="vertical" />
+          <Popconfirm
+            title="确定要删除吗？"
+            okText="确定"
+            cancelText="取消"
+            onConfirm={() => handleDeleteClick(record)}
+          >
+            <a>删除</a>
+          </Popconfirm>
+        </>
     },
   ];
 
@@ -217,16 +217,16 @@ export default (props) => {
           />
         )}
       </div>
-      <div className={cx("eva-body","alternate-table")}>
+      <div className={cx("eva-body", "alternate-table")}>
         <Table
-          size = 'small'
+          size='small'
           {...tableProps}
           columns={columns}
           rowKey={record => record.id}
           rowSelection={rowSelection}
-          onRow = {
+          onRow={
             (record) => ({
-              onClick: () => handleEditClick(record, 'view'),
+              onDoubleClick: () => handleEditClick(record, 'view'),
             })
           }
         />;
