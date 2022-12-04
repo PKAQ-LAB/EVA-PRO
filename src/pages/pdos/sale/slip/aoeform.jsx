@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useModel } from 'umi';
 import moment from 'moment';
-import { Select, Spin,Drawer, Button, Form, Input, InputNumber, Row, Col, DatePicker, Divider } from 'antd';
+import { Select, Spin, Drawer, Button, Form, Input, InputNumber, Row, Col, DatePicker, Divider } from 'antd';
 import { EditableProTable, ProCard, ProFormField } from '@ant-design/pro-components'
 import * as math from 'mathjs';
 import DictSelector from '@/components/DictSelector'
@@ -32,8 +32,8 @@ export default (props) => {
   };
 
   const [value, setValue] = useState([]);
-  const defaultData = currentItem?.lines || new Array(1).fill(1).map( (_,index) => {
-    return {id: (Date.now() + index).toString(),}
+  const defaultData = currentItem?.lines || new Array(1).fill(1).map((_, index) => {
+    return { id: (Date.now() + index).toString(), }
   });
 
   const [editableKeys, setEditableRowKeys] = useState(() =>
@@ -42,15 +42,15 @@ export default (props) => {
 
   const [dataSource, setDataSource] = useState(() => defaultData);
 
-  const fetchGoodsList = async (param,r) => {
-    return Http.list(API.GOODS_LISTALL,{itemNo:param})
-               .then(res => {
-                return res.data
-                          .map((item) => ({
-                            label: `[${item.itemNo}] - ${item.brandName} ${item.name}`,
-                            value: item.id
-                       }))
-            });
+  const fetchGoodsList = async (param, r) => {
+    return Http.list(API.GOODS_LISTALL, { itemNo: param })
+      .then(res => {
+        return res.data
+          .map((item) => ({
+            label: `[${item.itemNo}] - ${item.brandName} ${item.name}`,
+            value: item.id
+          }))
+      });
   }
 
 
@@ -64,7 +64,7 @@ export default (props) => {
     if (currentItem && currentItem.id && value === currentItem.code) {
       return Promise.resolve();
     }
-    await Http.post(API.ORDER_CHECKCODE, {code}).then((r)=>{
+    await Http.post(API.ORDER_CHECKCODE, { code }).then((r) => {
       if (r.success) {
         return Promise.resolve();
       }
@@ -77,44 +77,44 @@ export default (props) => {
       title: '商品',
       dataIndex: 'goodsId',
       width: 160,
-      renderFormItem: (_,r) =>{
+      renderFormItem: (_, r) => {
         return <DebounSelector
-                  placeholder="货号查找"
-                  fetchOptions={(v) => fetchGoodsList(v, r)}
-                  style={{ width: '100%' }}
-                />
+          placeholder="货号查找"
+          fetchOptions={(v) => fetchGoodsList(v, r)}
+          style={{ width: '100%' }}
+        />
       }
-    },{
+    }, {
       title: '数量',
       dataIndex: 'dealNum',
       width: 80,
       formItemProps: {
         rules: [{
-            required: true,
-            whitespace: true,
-            message: '此项是必填项',
-          },{
-            message: '必须包含数字',
-            pattern: /[0-9]/,
-          }],
+          required: true,
+          whitespace: true,
+          message: '此项是必填项',
+        }, {
+          message: '必须包含数字',
+          pattern: /[0-9]/,
+        }],
       },
-    },{
+    }, {
       title: '单价',
       width: 80,
       dataIndex: 'notaxValue',
-    },{
+    }, {
       title: '优惠金额',
       width: 80,
       dataIndex: 'discount',
-    },{
+    }, {
       title: '成交价',
       width: 80,
       dataIndex: 'dealPrice',
-    },{
+    }, {
       title: '成交金额',
       width: 80,
       dataIndex: 'amount',
-    },{
+    }, {
       title: '操作',
       valueType: 'option',
       width: 250,
@@ -162,12 +162,12 @@ export default (props) => {
           <Row gutter={24}>
             <Col span={8}>
               <Form.Item label="订单时间" name="orderDate">
-                <DatePicker showTime showToday readOnly={readOnly} style={{width: '100%'}}/>
+                <DatePicker showTime showToday disabled={readOnly} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="订单号" name="orderNumber">
-                <Input readOnly={readOnly} style={{width: '100%'}}/>
+                <Input readOnly={readOnly} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
           </Row>
@@ -178,8 +178,8 @@ export default (props) => {
             <Form.Item label="订单状态" name="orderStatus">
               <DictSelector
                 placeholder="订单状态"
-                readOnly={ readOnly }
-                data={dict?.order_status}/>
+                disabled={readOnly}
+                data={dict?.orderStatus} />
             </Form.Item>
           </Col>
         </Row>
@@ -187,36 +187,36 @@ export default (props) => {
         <Row gutter={24}>
           <Col span={8}>
             <Form.Item label="来源平台" name="platform">
-            <DictSelector
+              <DictSelector
                 placeholder="来源平台"
-                readOnly={ readOnly }
-                data={dict?.online_platform}/>
+                disabled={readOnly}
+                data={dict?.online_platform} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="来源店铺" name="shopId">
               <Selector
-                  readOnly = {readOnly}
-                  dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                  url="/api/pdos/base/shop/listAll"
-                  k="id"
-                  v="name"
-                  clear
-                  showSearch
-                />
+                disabled={readOnly}
+                dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                url="/api/pdos/base/shop/listAll"
+                k="id"
+                v="name"
+                clear
+                showSearch
+              />
             </Form.Item>
           </Col>
         </Row>
 
         <Row gutter={24}>
-         <Col span={8}>
+          <Col span={8}>
             <Form.Item label="合计数量" name="totalNum">
-              <InputNumber controls={false} readOnly={readOnly} style={{width: '100%'}} />
+              <InputNumber controls={false} readOnly={readOnly} style={{ width: '100%' }} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="合计金额" name="totalAmount">
-              <InputNumber controls={false} readOnly={readOnly} style={{width: '100%'}}/>
+              <InputNumber controls={false} readOnly={readOnly} style={{ width: '100%' }} />
             </Form.Item>
           </Col>
         </Row>
@@ -239,13 +239,13 @@ export default (props) => {
               scroll={{ x: '100vw' }}
               value={dataSource}
               onChange={setDataSource}
-              recordCreatorProps={{
+              recordCreatorProps={!readOnly && {
                 newRecordType: 'dataSource',
                 record: () => ({
                   id: Date.now(),
                 }),
               }}
-              editable={{
+              editable={!readOnly && {
                 type: 'multiple',
                 editableKeys,
                 actionRender: (row, config, defaultDoms) => {

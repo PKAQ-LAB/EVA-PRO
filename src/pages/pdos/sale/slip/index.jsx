@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRequest } from 'umi';
 import { useAntdTable } from 'ahooks';
-import { PageContainer } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-components';
 import List from './list';
 import AOEForm from './aoeform';
 

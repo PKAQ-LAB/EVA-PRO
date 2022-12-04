@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-components';
 import { useModel } from 'umi';
 import { useAntdTable } from 'ahooks';
 import List from './list';
