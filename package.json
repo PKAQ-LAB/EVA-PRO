@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "@ant-design/icons": "4.8.0",
-    "@ant-design/pro-components": "2.3.34",
+    "@ant-design/pro-components": "2.3.47",
     "@umijs/route-utils": "2.2.1",
     "antd": "4.24.3",
     "antd-password-input-strength": "2.0.1",
