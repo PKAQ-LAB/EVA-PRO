@@ -239,6 +239,7 @@ export default (props) => {
               scroll={{ x: '100vw' }}
               value={dataSource}
               onChange={setDataSource}
+              controlled={true}
               recordCreatorProps={!readOnly && {
                 newRecordType: 'dataSource',
                 record: () => ({
@@ -252,6 +253,13 @@ export default (props) => {
                   return [defaultDoms.delete];
                 },
                 onValuesChange: (record, recordList) => {
+                  console.info("first")
+                  console.info(record);
+                  console.info(recordList);
+
+                  record.dealPrice = '15';
+                  recordList[0].dealPrice='20';
+
                   setDataSource(recordList);
                 },
                 onChange: setEditableRowKeys,
