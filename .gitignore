@@ -41,3 +41,4 @@ screenshot
 
 build
 /.yarn
+/.yarnrc
