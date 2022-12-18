@@ -120,7 +120,9 @@ export default defineConfig({
    * @description 内置了 babel import 插件
    * @doc https://umijs.org/docs/max/antd#antd
    */
-  antd: {},
+  antd: {
+    compact: true
+  },
   /**
    * @name 网络请求配置
    * @description 它基于 axios 和 ahooks 的 useRequest 提供了一套统一的网络请求和错误处理方案。
@@ -140,7 +142,7 @@ export default defineConfig({
    * @description 基于 openapi 的规范生成serve 和mock，能减少很多样板代码
    * @doc https://pro.ant.design/zh-cn/docs/openapi/
    */
-  mfsu: false,
+  // mfsu: false,
   openAPI: [
     {
       requestLibPath: "import { request } from '@umijs/max'",
@@ -159,7 +161,7 @@ export default defineConfig({
     strategy: 'normal',
   },
   requestRecord: {},
-  chainWebpack : (config) => {
+  chainWebpack : (config:any) => {
     config.resolve.alias.set('@config', path.resolve(__dirname, '..', 'config'));
     config
       .plugin('webpack-open-browser')
