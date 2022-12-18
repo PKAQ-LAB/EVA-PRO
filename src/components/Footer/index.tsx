@@ -1,5 +1,6 @@
 import { DefaultFooter } from '@ant-design/pro-components';
 // import { useIntl } from '@umijs/max';
+import React from 'react';
 
 import setting from '@config/defaultSettings';
 

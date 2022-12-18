@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Input, Modal, Row, Col, Switch, Tooltip, Upload } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
-import md5 from 'md5';
+import md5 from 'crypto-js/md5';
 import setting from '@config/defaultSettings';
 import Selector from '@/components/Selector';
 import TreeSelector from '@/components/TreeSelector';

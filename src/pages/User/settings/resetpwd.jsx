@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Input, Modal, Tooltip } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
-import md5 from 'md5';
+import md5 from 'crypto-js/md5';
 import { connect } from 'umi';
 
 const FormItem = Form.Item;

@@ -8,7 +8,7 @@ import type { RequestConfig, ResponseInterceptor, RunTimeLayoutConfig } from '@u
 import { history, Link } from '@umijs/max';
 // import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { fetchMenus, fetchDict } from '@/services/user';
-
+import React from 'react';
 import { loopMenuItem } from '@/utils/DataHelper';
 import defaultSettings from '@config/defaultSettings';
 import { printANSI } from '@/utils/screenlog';
@@ -55,7 +55,8 @@ export async function getInitialState(): Promise<{
   }
 
   // 如果不是登录页面 且已经登录，执行
-  if (window.location.pathname !== loginPath) {
+  const { location } = history;
+  if (location.pathname !== loginPath) {
     const dict = initDict();
     return {
       dict: dict?.data,
@@ -132,24 +133,22 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
-    childrenRender: (children, props) => {
+    childrenRender: (children) => {
       if (initialState?.loading) return <PageLoading />;
       return (
         <>
           {children}
-          {!props.location?.pathname?.includes('/login') && (
-            <SettingDrawer
-              disableUrlParams
-              enableDarkTheme
-              settings={initialState?.settings}
-              onSettingChange={(settings) => {
-                setInitialState((preInitialState) => ({
-                  ...preInitialState,
-                  settings,
-                }));
-              }}
-            />
-          )}
+          <SettingDrawer
+            disableUrlParams
+            enableDarkTheme
+            settings={initialState?.settings}
+            onSettingChange={(settings) => {
+              setInitialState((preInitialState) => ({
+                ...preInitialState,
+                settings,
+              }));
+            }}
+          />
         </>
       );
     },
