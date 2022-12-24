@@ -119,8 +119,7 @@ export default (props) => {
       dataIndex: 'shopName'
     }, {
       title: '所属平台',
-      dataIndex: 'platform',
-      render: text => (dict.online_platform && dict.online_platform[`${text}`]) || text
+      dataIndex: 'platform'
     }, {
       title: '订单号',
       width: 180,

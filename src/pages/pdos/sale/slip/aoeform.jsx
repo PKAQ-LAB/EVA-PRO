@@ -3,7 +3,7 @@ import { useModel } from 'umi';
 import moment from 'moment';
 import { Select, Spin, Drawer, Button, Form, Input, InputNumber, Row, Col, DatePicker, Divider } from 'antd';
 import { EditableProTable, ProCard, ProFormField } from '@ant-design/pro-components'
-import * as math from 'mathjs';
+import math from 'mathjs';
 import DictSelector from '@/components/DictSelector'
 import DebounSelector from '@/components/DebounSelector';
 import Selector from '@/components/Selector';
@@ -107,7 +107,7 @@ export default (props) => {
       width: 80,
       dataIndex: 'discount',
     }, {
-      title: '成交价',
+      title: '成交均价',
       width: 80,
       dataIndex: 'dealPrice',
     }, {
@@ -201,7 +201,7 @@ export default (props) => {
                 url="/api/pdos/base/shop/listAll"
                 k="id"
                 v="name"
-                clear
+                clear="true"
                 showSearch
               />
             </Form.Item>
@@ -241,6 +241,7 @@ export default (props) => {
               onChange={setDataSource}
               controlled={true}
               recordCreatorProps={!readOnly && {
+                creatorButtonText: "新增一行",
                 newRecordType: 'dataSource',
                 record: () => ({
                   id: Date.now(),
@@ -253,13 +254,27 @@ export default (props) => {
                   return [defaultDoms.delete];
                 },
                 onValuesChange: (record, recordList) => {
-                  console.info("first")
-                  console.info(record);
-                  console.info(recordList);
+                  // 自动计算
+                  // 成交单价 = 单价*数量-优惠金额/数量
+                  // 成交金额 = 单价*数量-优惠金额
+                  if (record?.dealNum && record?.notaxValue) {
+                    let amount = record.dealNum * record.notaxValue - (record.discount || 0)
+                    record.dealPrice = (amount / record.dealNum).toFixed(2);
+                    record.amount = amount;
+                  }
 
-                  record.dealPrice = '15';
-                  recordList[0].dealPrice='20';
+                  if (recordList && recordList.length > 0) {
+                    let totalNum = 0;
+                    let totalAmount = 0;
 
+                    recordList.forEach(item => {
+                      if(item?.dealNum) totalNum  += Number(item.dealNum);
+                      if(item?.amount) totalAmount  += Number(item.amount);
+                    });
+
+                    formRef.current.setFieldValue("totalNum", totalNum);
+                    formRef.current.setFieldValue("totalAmount", totalAmount);
+                  }
                   setDataSource(recordList);
                 },
                 onChange: setEditableRowKeys,
