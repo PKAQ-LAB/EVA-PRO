@@ -60,12 +60,12 @@ export async function getInitialState(): Promise<{
     const dict: any = initDict();
     return {
       dict: dict?.data,
-      settings: defaultSettings,
+      settings: defaultSettings as Partial<LayoutSettings>,
     };
   }
   return {
     // fetchUserInfo,
-    settings: defaultSettings,
+    settings: defaultSettings as Partial<LayoutSettings>,
   };
 }
 
