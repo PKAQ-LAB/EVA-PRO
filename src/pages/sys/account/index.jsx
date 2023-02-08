@@ -130,7 +130,7 @@ export default () => {
               placement="top"
               onConfirm={() => handleRemoveClick()}
             >
-              <Button style={{ marginLeft: 8 }} type="danger" icon={<DeleteOutlined />}>
+              <Button style={{ marginLeft: 8 }} danger icon={<DeleteOutlined />}>
                 删除用户
               </Button>
             </Popconfirm>
