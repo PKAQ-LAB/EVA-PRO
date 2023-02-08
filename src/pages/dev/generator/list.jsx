@@ -229,7 +229,7 @@ export default class Item extends PureComponent {
         <Col span={2}>
           <Button
             ghost
-            danger
+            type="danger"
             onClick={() => this.handleSubRemove(key)}
             style={{ marginTop: '4px' }}
           >

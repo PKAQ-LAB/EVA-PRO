@@ -199,7 +199,7 @@ export default (props) => {
                 placement="top"
                 onConfirm={() => handleBatchDelete()}
               >
-                <Button style={{ marginLeft: 8 }} danger loading={loading}>
+                <Button style={{ marginLeft: 8 }} type="danger" loading={loading}>
                   删除部门
                 </Button>
               </Popconfirm>
