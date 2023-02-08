@@ -13,12 +13,14 @@ export default [
   {
     path: '/',
     redirect: '/welcome',
-  }, {
+  },
+  {
     path: '/welcome',
     name: 'welcome',
     icon: 'smile',
     component: './Welcome',
-  }, {
+  },
+  {
     path: '/user',
     layout: false,
     routes: [
@@ -46,9 +48,7 @@ export default [
   {
     path: '/config',
     name: 'user',
-    routes: [
-      { name: 'setting', path: '/config/settings', component: './User/settings' },
-    ],
+    routes: [{ name: 'setting', path: '/config/settings', component: './User/settings' }],
   },
   // 系统日志
   {
@@ -60,34 +60,25 @@ export default [
       { name: 'online', path: '/monitor/log/online', component: './log/online' },
     ],
   },
-  // 代码生成器
+  // 进销存
   {
-    path: '/dev',
-    name: 'dev',
+    path: '/pdos',
+    name: 'pdos',
     routes: [
-      { name: 'generator', path: '/dev/generator', component: './dev/generator' },
-     // { name: 'workflow', path: '/dev/workflow', component: './dev/workflow' },
-      { name: 'formschema', path: '/dev/formschema', component: './dev/formschema' }
+      {
+        name: 'base',
+        path: '/pdos/base',
+        routes: [
+          { name: 'category', path: '/pdos/base/category', component: './pdos/base/category' },
+          { name: 'supplier', path: '/pdos/base/supplier', component: './pdos/base/supplier' },
+          { name: 'shop', path: '/pdos/base/shop', component: './pdos/base/shop' },
+          { name: 'brand', path: '/pdos/base/brand', component: './pdos/base/brand' },
+        ],
+      },
+      { name: 'goods', path: '/pdos/goods/base', component: './pdos/goods/base' },
+      { name: 'sale', path: '/pdos/sale/slip', component: './pdos/sale/slip' },
+      { name: 'purchase', path: '/pdos/purchase/orders', component: './pdos/purchase/orders' },
     ],
-  },
-    // 进销存
-  {
-  path: '/pdos',
-  name: 'pdos',
-  routes: [
-    { name: 'base',
-      path: '/pdos/base',
-      routes: [
-        { name: 'category', path: '/pdos/base/category', component: './pdos/base/category' },
-        { name: 'supplier', path: '/pdos/base/supplier', component: './pdos/base/supplier' },
-        { name: 'shop', path: '/pdos/base/shop', component: './pdos/base/shop' },
-        { name: 'brand', path: '/pdos/base/brand', component: './pdos/base/brand' },
-      ]
-    },
-    { name: 'goods', path: '/pdos/goods/base', component: './pdos/goods/base' },
-    { name: 'sale', path: '/pdos/sale/slip', component: './pdos/sale/slip' }
-  ],
   },
   { component: '404' },
 ];
-
