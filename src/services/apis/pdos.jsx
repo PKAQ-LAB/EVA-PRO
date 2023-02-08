@@ -38,11 +38,4 @@ export default {
   GOODS_LISTALL: '/api/pdos/sale/goods/listAll',
   GOODS_EDIT: '/api/pdos/sale/goods/edit',
   GOODS_DEL: '/api/pdos/sale/goods/del',
-  //采购单
-  PURCHASE_GET: '/api/pdos/purchase/get',
-  PURCHASE_CHECKCODE: '/api/pdos/purchase/checkUnique',
-  PURCHASE_LIST: '/api/pdos/purchase/list',
-  PURCHASE_LISTALL: '/api/pdos/purchase/listAll',
-  PURCHASE_EDIT: '/api/pdos/purchase/edit',
-  PURCHASE_DEL: '/api/pdos/purchase/del',
 }

@@ -81,7 +81,7 @@ export default (props) => {
               onConfirm={() => handleRemoveClick()}
             >
                 <Divider type="vertical" />
-              <Button style={{ marginLeft: 8 }} danger icon={<DeleteOutlined />}>
+              <Button style={{ marginLeft: 8 }} type="danger" icon={<DeleteOutlined />}>
                 删除销售单
               </Button>
             </Popconfirm>

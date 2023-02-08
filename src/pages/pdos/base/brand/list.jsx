@@ -90,7 +90,7 @@ export default (props) => {
             onConfirm={()=> handleRemoveClick()}
           >
             <Button style={{ marginLeft: 8 }}
-                    danger
+                    type="danger"
                     icon={<DeleteOutlined />}
                     loading={loading}>
               删除品牌
