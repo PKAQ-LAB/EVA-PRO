@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'umi';
 import { Divider } from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-components';
 import AOEForm from './aoeform';
 import List from './list';
 

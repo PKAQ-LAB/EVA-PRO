@@ -14,6 +14,9 @@ import defaultSettings from '@config/defaultSettings';
 import { printANSI } from '@/utils/screenlog';
 import { message, notification } from 'antd';
 
+import { RuntimeAntdConfig } from 'umi';
+import { theme } from 'antd';
+
 // import { createRef } from 'react';
 import { access_token } from './constant'
 import Cookies from 'universal-cookie';
@@ -68,6 +71,12 @@ export async function getInitialState(): Promise<{
     settings: defaultSettings as Partial<LayoutSettings>,
   };
 }
+
+export const antd: RuntimeAntdConfig = (memo) => {
+  memo.theme ||= {};
+  memo.theme.algorithm = theme.darkAlgorithm;
+  return memo;
+};
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {

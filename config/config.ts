@@ -122,7 +122,7 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/antd#antd
    */
   antd: {
-    compact: true
+    // compact: true
   },
   /**
    * @name 网络请求配置
@@ -166,9 +166,7 @@ export default defineConfig({
       projectName: 'swagger',
     },
   ],
-  mfsu: {
-    strategy: 'normal',
-  },
+  mfsu: false,
   requestRecord: {},
   chainWebpack : (config:any) => {
     config.resolve.alias.set('@config', path.resolve(__dirname, '..', 'config'));

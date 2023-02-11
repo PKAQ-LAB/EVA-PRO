@@ -66,7 +66,7 @@ const GlobalHeaderRight: React.FC = () => {
       </span>
       {/* 全屏 */}
       <Tooltip title={fullscreen ? '全屏' : '退出全屏'}>
-        <span onClick={() => f11()}>
+        <span className={actionClassName} onClick={() => f11()}>
           {fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
         </span>
       </Tooltip>

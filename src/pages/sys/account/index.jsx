@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRequest } from 'umi';
 import { LockOutlined, UnlockOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Divider, Popconfirm, Form, Input, Button, Alert, Tree } from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-components';
 import SideLayout from '@/components/SideLayout';
 import RoleModal from './rolemodal';
 import List from './list';

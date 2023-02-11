@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Input, Modal, Row, Col, Switch, Tooltip, Upload } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
-import md5 from 'crypto-js/md5';
+import { MD5 } from "jscrypto/es6/MD5";
 import setting from '@config/defaultSettings';
 import Selector from '@/components/Selector';
 import TreeSelector from '@/components/TreeSelector';
@@ -88,8 +88,8 @@ export default (props) => {
 
       // 加密密码
       if (data.password) {
-        data.password = md5(data.password);
-        data.repassword = md5(data.repassword);
+        data.password = MD5.hash(data.password).toString();
+        data.repassword = MD5.hash(data.repassword).toString();
       }
 
       if (data.password !== data.repassword) {

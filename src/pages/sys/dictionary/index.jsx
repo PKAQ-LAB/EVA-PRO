@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-components';
 import SideLayout from '@/components/SideLayout';
 import { useRequest } from 'umi';
 import List from './list';

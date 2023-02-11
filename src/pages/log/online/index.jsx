@@ -1,7 +1,6 @@
 import React from 'react';
 import { message } from 'antd';
-import { PageContainer } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
+import { PageContainer, ProTable } from '@ant-design/pro-components';
 import moment from 'moment';
 import copy from 'copy-to-clipboard';
 

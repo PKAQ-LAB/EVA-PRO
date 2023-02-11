@@ -4,7 +4,8 @@ import { Alert, message } from 'antd';
 import Settings from '../../../../config/defaultSettings';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
-import md5 from 'crypto-js/md5';
+import { MD5 } from "jscrypto/es6/MD5";
+import bg from '../../../../public/login_bg.png'
 
 import setting from '@config/defaultSettings';
 import { FormattedMessage, Helmet, SelectLang, history, useIntl, useModel } from '@umijs/max';
@@ -60,8 +61,7 @@ const Login: React.FC = () => {
       flexDirection: 'column',
       height: '100vh',
       overflow: 'auto',
-      backgroundImage:
-        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
+      backgroundImage: bg,
       backgroundSize: '100% 100%',
     };
   });
@@ -69,13 +69,21 @@ const Login: React.FC = () => {
   const intl = useIntl();
 
   const userLogin = async (values: API.LoginParams) =>{
-    values.password = md5(values.password);
+
+    console.info(values);
+
+
+    values.password = MD5.hash(values.password).toString();
+
+    console.info(values);
+
+
     const res = await login({ ...values });
 
     if (res.success) {
       const defaultLoginSuccessMessage = intl.formatMessage({
         id: 'pages.login.success',
-        defaultMessage: '登录成功！',
+        defaultMessage: '登录成功',
       });
 
       flushSync(() => {
@@ -108,7 +116,7 @@ const Login: React.FC = () => {
     } catch (error) {
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
-        defaultMessage: '登录失败，请重试！',
+        defaultMessage: '登录失败，请重试',
       });
       console.log(error);
       message.error(defaultLoginFailureMessage);

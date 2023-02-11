@@ -73,7 +73,7 @@ export default [
     routes: [
       { name: 'generator', path: '/dev/generator', component: './dev/generator' },
      // { name: 'workflow', path: '/dev/workflow', component: './dev/workflow' },
-      { name: 'formschema', path: '/dev/formschema', component: './dev/formschema' }
+      // { name: 'formschema', path: '/dev/formschema', component: './dev/formschema' }
     ],
   },
   {

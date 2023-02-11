@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Form, Input, Modal, Tooltip } from 'antd';
 import { PasswordInput } from 'antd-password-input-strength';
-import md5 from 'crypto-js/md5';
+import { MD5 } from "jscrypto/es6/MD5";
 import { connect } from 'umi';
 
 const FormItem = Form.Item;
@@ -44,9 +44,9 @@ export default class AOEForm extends Component {
         return;
       }
       // 加密密码
-      data.originpassword = md5(data.originpassword);
-      data.newpassword = md5(data.newpassword);
-      data.repassword = md5(data.repassword);
+      data.originpassword = MD5.hash(data.originpassword).toString();
+      data.newpassword = MD5.hash(data.newpassword).toString();
+      data.repassword = MD5.hash(data.repassword).toString();
 
       dispatch({
         type: 'global/repwd',

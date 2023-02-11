@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
+import { PageContainer } from '@ant-design/pro-components';
 import { useRequest } from 'umi';
 import WorkList from './list';
 import AOEForm from './aoeform';
