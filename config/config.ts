@@ -221,6 +221,13 @@ export default defineConfig({
         },
       },
     },
+    // Production minification: utoopack (Turbopack/SWC) enables this by
+    // default; we set it explicitly to lock the intent in code, matching
+    // the previous esbuild minify* config from EVA-PRO V5.
+    optimization: {
+      minify: true,
+      compress: true,
+    },
   },
   requestRecord: {},
   exportStatic: {},
