@@ -61,7 +61,9 @@ export default {
   'POST /api/login/account': async (req: Request, res: Response) => {
     const { password, username, type } = req.body;
     await waitTime(2000);
-    if (password === 'ant.design' && username === 'admin') {
+    // MD5('ant.design') === '8914de686ab28dc22f30d3d8e107ff6c'
+    const ANT_DESIGN_MD5 = '8914de686ab28dc22f30d3d8e107ff6c';
+    if (password === ANT_DESIGN_MD5 && username === 'admin') {
       res.send({
         status: 'ok',
         type,
@@ -70,7 +72,7 @@ export default {
       access = 'admin';
       return;
     }
-    if (password === 'ant.design' && username === 'user') {
+    if (password === ANT_DESIGN_MD5 && username === 'user') {
       res.send({
         status: 'ok',
         type,
