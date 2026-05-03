@@ -15,6 +15,7 @@ import {
   DocLink,
   ErrorBoundary,
   Footer,
+  FullscreenToggle,
   LangDropdown,
   OfflineBanner,
   VersionDropdown,
@@ -90,6 +91,7 @@ export const layout: RunTimeLayoutConfig = ({
     },
     actionsRender: () => [
       <DocLink key="doc" />,
+      <FullscreenToggle key="fullscreen" />,
       <VersionDropdown key="version" />,
       <LangDropdown key="lang" />,
     ],

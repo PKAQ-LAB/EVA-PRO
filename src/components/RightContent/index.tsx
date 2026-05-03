@@ -2,13 +2,16 @@ import {
   BookOutlined,
   CheckOutlined,
   ForkOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined,
   GlobalOutlined,
 } from '@ant-design/icons';
 import { getAllLocales, getLocale, history, setLocale } from '@umijs/max';
 import type { MenuProps } from 'antd';
 import { Button, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import screenfull from 'screenfull';
 import HeaderDropdown from '../HeaderDropdown';
 
 export const localeLabelMap: Record<string, { emoji: string; label: string }> =
@@ -35,6 +38,38 @@ const useStyles = createStyles(({ token, css }) => ({
     border-radius: ${token.borderRadius}px !important;
   `,
 }));
+
+export const FullscreenToggle: React.FC = () => {
+  const { styles } = useStyles();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    if (!screenfull.isEnabled) return;
+    const onChange = () => setIsFullscreen(screenfull.isFullscreen);
+    screenfull.on('change', onChange);
+    return () => screenfull.off('change', onChange);
+  }, []);
+
+  if (!screenfull.isEnabled) return null;
+
+  const toggle = () => {
+    screenfull.toggle();
+  };
+
+  return (
+    <Tooltip title={isFullscreen ? '退出全屏' : '全屏'}>
+      <Button
+        type="text"
+        className={styles.action}
+        icon={
+          isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />
+        }
+        aria-label={isFullscreen ? '退出全屏' : '全屏'}
+        onClick={toggle}
+      />
+    </Tooltip>
+  );
+};
 
 export const DocLink: React.FC = () => {
   const { styles } = useStyles();
