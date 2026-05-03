@@ -23,7 +23,9 @@
       "!biome.json",
       "!tailwind.css",
       "!package-lock.json",
-      "!**/.worktrees"
+      "!**/.worktrees",
+      "!**/src/components/PatternLock/PatternLock.js",
+      "!**/src/components/LunarCalendar/getLunarDate.js"
     ]
   },
   "formatter": {
@@ -40,7 +42,8 @@
       },
       "correctness": {
         "useUniqueElementIds": "off",
-        "useExhaustiveDependencies": "off"
+        "useExhaustiveDependencies": "off",
+        "noUnknownPseudoClass": "off"
       },
       "a11y": {
         "noStaticElementInteractions": "off",
