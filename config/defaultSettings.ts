@@ -1,10 +1,15 @@
 import type { ProLayoutProps } from '@ant-design/pro-components';
 
 /**
- * @name
+ * @name 项目站点级配置
+ * @description title / subTitle / copyright / version 字段会被 Footer 与
+ * Login 页消费，方便整站统一品牌信息。
  */
 const Settings: ProLayoutProps & {
   logo?: string;
+  subTitle?: string;
+  copyright?: string;
+  version?: string;
 } = {
   navTheme: 'light',
   // 拂晓蓝
@@ -15,6 +20,10 @@ const Settings: ProLayoutProps & {
   fixSiderbar: true,
   colorWeak: false,
   title: 'Ant Design Pro',
+  subTitle: 'This is subTitle',
+  copyright: `Power by PKAQ © ${new Date().getFullYear()}`,
+  version: '6.0',
+  pwa: true,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
   token: {
