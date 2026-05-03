@@ -1,0 +1,29 @@
+.iconSelect :global(.ant-btn-icon-only) {
+  margin: 8px 0 0 8px;
+}
+
+.iconSelect :global(.ant-input[disabled]) {
+  color: rgba(0, 0, 0, 0.65);
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.iconSelect :global(.ant-input[disabled]:hover) {
+  border-color: #40a9ff;
+}
+
+.iconInner {
+  max-height: 258px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.iconList {
+  margin: -8px 0 0 -8px;
+  padding: 0;
+}
+
+.iconList::-webkit-scrollbar {
+  width: 0;
+  height: 1px;
+}

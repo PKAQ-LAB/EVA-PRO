@@ -1,0 +1,32 @@
+.copyBlock {
+  position: fixed;
+  right: 32px;
+  bottom: 96px;
+  z-index: 50;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+  cursor: pointer;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.copyBlock:hover {
+  color: #1677ff;
+}
+
+.copyBlockView {
+  max-width: 480px;
+}
+
+.copyBlockCode {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

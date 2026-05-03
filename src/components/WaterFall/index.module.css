@@ -1,0 +1,11 @@
+.waterfall {
+  position: relative;
+}
+
+.waterfallItem {
+  transition: z-index 0s;
+}
+
+.waterfallItem:hover {
+  z-index: 1;
+}
