@@ -3,6 +3,7 @@ import packageJson from '@root/package.json';
 import { Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
+import settings from '../../../config/defaultSettings';
 
 const getRepoUrl = () => {
   if (!packageJson.repository)
