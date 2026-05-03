@@ -98,6 +98,41 @@ export default {
     });
     access = 'guest';
   },
+  'POST /api/auth/login': async (req: Request, res: Response) => {
+    const { account, password } = req.body;
+    await waitTime(2000);
+    // MD5('ant.design') === '8914de686ab28dc22f30d3d8e107ff6c'
+    const ANT_DESIGN_MD5 = '8914de686ab28dc22f30d3d8e107ff6c';
+    if (password === ANT_DESIGN_MD5 && account === 'admin') {
+      res.send({
+        status: 'ok',
+        currentAuthority: 'admin',
+        data: {
+          access_token: 'admin-access-token',
+          refresh_token: 'admin-refresh-token',
+        },
+      });
+      access = 'admin';
+      return;
+    }
+    if (password === ANT_DESIGN_MD5 && account === 'user') {
+      res.send({
+        status: 'ok',
+        currentAuthority: 'user',
+        data: {
+          access_token: 'user-access-token',
+          refresh_token: 'user-refresh-token',
+        },
+      });
+      access = 'user';
+      return;
+    }
+    res.send({
+      status: 'error',
+      currentAuthority: 'guest',
+    });
+    access = 'guest';
+  },
   'POST /api/login/outLogin': (_req: Request, res: Response) => {
     access = '';
     res.send({ data: {}, success: true });
