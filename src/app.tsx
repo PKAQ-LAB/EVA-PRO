@@ -18,6 +18,7 @@ import {
   FullscreenToggle,
   LangDropdown,
   OfflineBanner,
+  PageLoading,
   VersionDropdown,
 } from '@/components';
 import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
@@ -151,7 +152,7 @@ export const layout: RunTimeLayoutConfig = ({
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
     childrenRender: (children) => {
-      // if (initialState?.loading) return <PageLoading />;
+      if (initialState?.loading) return <PageLoading />;
       return (
         <>
           {children}
