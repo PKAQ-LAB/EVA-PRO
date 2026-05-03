@@ -21,6 +21,7 @@ import {
 } from '@umijs/max';
 import { Alert, App, Tabs } from 'antd';
 import { createStyles } from 'antd-style';
+import { MD5 } from 'jscrypto/es6/MD5';
 import React, { startTransition, useState } from 'react';
 import { Footer } from '@/components';
 import { login } from '@/services/ant-design-pro/api';
@@ -152,8 +153,12 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (values: API.LoginParams) => {
     try {
+      const payload = { ...values, type };
+      if (payload.password) {
+        payload.password = MD5.hash(payload.password).toString();
+      }
       // 登录
-      const msg = await login({ ...values, type });
+      const msg = await login(payload);
       if (msg.status === 'ok') {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
