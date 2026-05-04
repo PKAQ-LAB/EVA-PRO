@@ -122,21 +122,26 @@ const Login: React.FC = () => {
       }
       const msg = await login(payload);
       if (msg.status === 'ok') {
-        // 写入 cookie，供 TASK-14 的全局守卫读取
+        // 1) 写入 cookie（TASK-15）
         const tokenValue = msg.data?.access_token ?? access_token;
         cookies.set(access_token, tokenValue, { path: '/' });
         if (msg.data?.refresh_token) {
           cookies.set(refresh_token, msg.data.refresh_token, { path: '/' });
         }
+        // 2) 提示 + 刷新当前用户（fetchUserInfo 内部用 flushSync 同步刷新 state）
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
+        // 3) 延迟一拍再跳转，让 React 完成 state flush 并避免在 unmount 中
+        // 触发更新的告警（V5 EVA 的优化点）
         const urlParams = new URL(window.location.href).searchParams;
         const redirectUrl = getSafeRedirectUrl(urlParams.get('redirect'));
-        window.location.href = redirectUrl;
+        setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 50);
         return;
       }
       setUserLoginState(msg);
