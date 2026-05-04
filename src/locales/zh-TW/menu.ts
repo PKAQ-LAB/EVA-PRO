@@ -49,4 +49,18 @@ export default {
   'menu.editor.flow': '流程編輯器',
   'menu.editor.mind': '腦圖編輯器',
   'menu.editor.koni': '拓撲編輯器',
+  // EVA-PRO 業務模組
+  'menu.sys': '系統管理',
+  'menu.sys.account': '用戶管理',
+  'menu.sys.organization': '組織管理',
+  'menu.sys.role': '角色管理',
+  'menu.sys.module': '模組管理',
+  'menu.sys.dictionary': '字典管理',
+  'menu.log': '系統日誌',
+  'menu.log.online': '在線用戶',
+  'menu.log.biz': '業務日誌',
+  'menu.log.error': '錯誤日誌',
+  'menu.dev': '開發工具',
+  'menu.dev.generator': '代碼生成',
+  'menu.dev.workflow': '工作流',
 };
