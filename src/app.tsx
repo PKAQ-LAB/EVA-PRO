@@ -11,6 +11,7 @@ import React from 'react';
 dayjs.extend(relativeTime);
 
 import Cookies from 'universal-cookie';
+import IconMap from '@/appicon';
 import {
   AvatarDropdown,
   DocLink,
@@ -24,6 +25,8 @@ import {
 } from '@/components';
 import { access_token } from '@/constant';
 import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
+import { fetchMenus } from '@/services/user';
+import { loopMenuItem } from '@/utils/DataHelper';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
 
@@ -110,6 +113,22 @@ export const layout: RunTimeLayoutConfig = ({
         );
       }
       return dom;
+    },
+    /**
+     * 远程菜单：从后端 /api/auth/fetchMenus 拉取菜单树，
+     * 用 loopMenuItem 将字符串图标名映射成对应的 React 节点。
+     * 后端不可达时落空菜单（不会影响 layout 渲染）。
+     */
+    menu: {
+      locale: false,
+      request: async () => {
+        try {
+          const res = await fetchMenus({ skipErrorHandler: true });
+          return loopMenuItem((res?.data as never[]) || [], IconMap) as never[];
+        } catch {
+          return [];
+        }
+      },
     },
     actionsRender: () => [
       <DocLink key="doc" />,

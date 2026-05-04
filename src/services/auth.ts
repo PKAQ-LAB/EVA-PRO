@@ -24,3 +24,8 @@ export async function login(body: AuthLoginParams) {
     data: body,
   });
 }
+
+/** 退出登录 GET /api/auth/logout */
+export async function outLogin() {
+  return request<unknown>('/api/auth/logout');
+}
