@@ -1,0 +1,88 @@
+/**
+ * EVA-PRO 全局工具类与基础样式（TASK-17 迁移自 V5 src/global.less）
+ *
+ * 已剔除：所有针对 antd v5 .ant-* 的覆盖（v6 改用 CSS 变量 / 组件 API
+ * + ConfigProvider theme token，DOM 结构与类名差异巨大，逐条复刻意义不大）
+ * 保留：业务模块直接消费的工具类 + 全局滚动条 + colorWeak
+ */
+
+/* 视障辅助：色弱模式 */
+.colorWeak {
+  filter: invert(80%);
+}
+
+/* 列表项默认无 list-style，避免 antd 列表里出现奇怪点 */
+ul,
+ol {
+  list-style: none;
+}
+
+canvas {
+  display: block;
+}
+
+/* ============== EVA 业务通用容器类 ============== */
+/* 操作按钮 + 搜索条所在的 ribbon */
+.eva-ribbon {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 5px 0 5px;
+}
+
+/* 主内容区 */
+.eva-body {
+  padding: 15px 5px;
+}
+
+/* 选中项提示条 */
+.eva-alert {
+  padding: 15px 15px 0 10px;
+}
+
+/* SideLayout 默认高度 */
+.eva-side-layout {
+  min-height: calc(100vh - 175px);
+}
+
+/* 锁定行（橙色淡背景） */
+.eva-locked {
+  background-color: #fff5ee;
+}
+
+/* 系统用户（不可操作）行（灰背景） */
+.eva-disabled {
+  background-color: #f5f5f5;
+}
+
+/* ============== 全局滚动条 ============== */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 15px;
+  background-color: #fff;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #fff;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d5d5d5;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+}
+
+/* ============== 移动端表格自适应 ============== */
+@media (max-width: 768px) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    white-space: pre;
+  }
+  .ant-table-thead > tr > th > span,
+  .ant-table-tbody > tr > td > span {
+    display: block;
+  }
+}
