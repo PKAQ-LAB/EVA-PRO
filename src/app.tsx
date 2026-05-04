@@ -27,8 +27,12 @@ import { access_token } from '@/constant';
 import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
 import { fetchMenus } from '@/services/user';
 import { loopMenuItem } from '@/utils/DataHelper';
+import { printANSI } from '@/utils/screenlog';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
+
+// 启动时打印 ASCII 欢迎语 (TASK-11)
+printANSI();
 
 const cookies = new Cookies();
 
