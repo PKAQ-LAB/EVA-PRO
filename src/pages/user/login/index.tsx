@@ -16,9 +16,13 @@ import { createStyles } from 'antd-style';
 import { MD5 } from 'jscrypto/es6/MD5';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
+import Cookies from 'universal-cookie';
 import { Footer } from '@/components';
+import { access_token, refresh_token } from '@/constant';
 import { type AuthLoginResult, login } from '@/services/auth';
 import Settings from '../../../../config/defaultSettings';
+
+const cookies = new Cookies();
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -119,6 +123,12 @@ const Login: React.FC = () => {
       }
       const msg = await login(payload);
       if (msg.status === 'ok') {
+        // 写入 cookie，供 TASK-14 的全局守卫读取
+        const tokenValue = msg.data?.access_token ?? access_token;
+        cookies.set(access_token, tokenValue, { path: '/' });
+        if (msg.data?.refresh_token) {
+          cookies.set(refresh_token, msg.data.refresh_token, { path: '/' });
+        }
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
