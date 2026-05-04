@@ -25,6 +25,7 @@ export { default as AvatarList } from './AvatarList';
 export { default as BizIcon } from './BizIcon';
 export { default as CopyBlock } from './CopyBlock';
 export { default as CountDown } from './CountDown';
+export { default as DebounSelector } from './DebounSelector';
 export { default as DictSelector } from './DictSelector';
 export { default as IconSelect } from './IconSelect';
 export { default as LunarCalendar } from './LunarCalendar';
