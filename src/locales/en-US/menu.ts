@@ -50,4 +50,18 @@ export default {
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
   'menu.chatbot': 'AI Assistant',
+  // EVA-PRO business modules
+  'menu.sys': 'System',
+  'menu.sys.account': 'Accounts',
+  'menu.sys.organization': 'Organizations',
+  'menu.sys.role': 'Roles',
+  'menu.sys.module': 'Modules',
+  'menu.sys.dictionary': 'Dictionaries',
+  'menu.log': 'Logs',
+  'menu.log.online': 'Online Users',
+  'menu.log.biz': 'Business Log',
+  'menu.log.error': 'Error Log',
+  'menu.dev': 'Dev Tools',
+  'menu.dev.generator': 'Code Generator',
+  'menu.dev.workflow': 'Workflow',
 };

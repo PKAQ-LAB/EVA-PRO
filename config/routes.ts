@@ -286,6 +286,53 @@ export default [
     icon: 'robot',
     component: './chatbot',
   },
+  // === EVA-PRO 业务模块（TASK-08 迁移） ===
+  {
+    path: '/sys',
+    name: 'sys',
+    icon: 'setting',
+    routes: [
+      { path: '/sys', redirect: '/sys/account' },
+      { name: 'account', path: '/sys/account', component: './sys/account' },
+      {
+        name: 'organization',
+        path: '/sys/organization',
+        component: './sys/organization',
+      },
+      { name: 'role', path: '/sys/role', component: './sys/role' },
+      { name: 'module', path: '/sys/module', component: './sys/module' },
+      {
+        name: 'dictionary',
+        path: '/sys/dictionary',
+        component: './sys/dictionary',
+      },
+    ],
+  },
+  {
+    path: '/log',
+    name: 'log',
+    icon: 'profile',
+    routes: [
+      { path: '/log', redirect: '/log/online' },
+      { name: 'online', path: '/log/online', component: './log/online' },
+      { name: 'biz', path: '/log/biz', component: './log/biz' },
+      { name: 'error', path: '/log/error', component: './log/error' },
+    ],
+  },
+  {
+    path: '/dev',
+    name: 'dev',
+    icon: 'tool',
+    routes: [
+      { path: '/dev', redirect: '/dev/generator' },
+      {
+        name: 'generator',
+        path: '/dev/generator',
+        component: './dev/generator',
+      },
+      { name: 'workflow', path: '/dev/workflow', component: './dev/workflow' },
+    ],
+  },
   {
     path: '/',
     redirect: '/dashboard/analysis',

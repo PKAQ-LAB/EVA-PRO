@@ -50,4 +50,18 @@ export default {
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
   'menu.chatbot': 'AI 助手',
+  // EVA-PRO 业务模块
+  'menu.sys': '系统管理',
+  'menu.sys.account': '用户管理',
+  'menu.sys.organization': '组织管理',
+  'menu.sys.role': '角色管理',
+  'menu.sys.module': '模块管理',
+  'menu.sys.dictionary': '字典管理',
+  'menu.log': '系统日志',
+  'menu.log.online': '在线用户',
+  'menu.log.biz': '业务日志',
+  'menu.log.error': '错误日志',
+  'menu.dev': '开发工具',
+  'menu.dev.generator': '代码生成',
+  'menu.dev.workflow': '工作流',
 };
