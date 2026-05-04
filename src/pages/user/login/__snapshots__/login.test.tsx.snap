@@ -62,7 +62,7 @@ exports[`Login Page should login success 1`] = `
               <span
                 class="ant-pro-form-login-title"
               >
-                Ant Design Pro
+                Eva Admin Pro
               </span>
             </div>
             <div
@@ -487,7 +487,7 @@ exports[`Login Page should show login form 1`] = `
               <span
                 class="ant-pro-form-login-title"
               >
-                Ant Design Pro
+                Eva Admin Pro
               </span>
             </div>
             <div
