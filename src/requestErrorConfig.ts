@@ -2,6 +2,7 @@
 import type { RequestConfig } from '@umijs/max';
 import { getIntl } from '@umijs/max';
 import { message, notification } from 'antd';
+import defaultSettings from '../config/defaultSettings';
 
 // 错误处理方案： 错误类型
 enum ErrorShowType {
@@ -22,34 +23,41 @@ interface ResponseStructure {
 
 /**
  * @name 错误处理
- * pro 自带的错误处理， 可以在这里做自己的改动
+ * pro 自带的错误处理 + EVA-PRO 增强：
+ * - HTTP 状态错误 → message.error (含 status 与 服务端 message)
+ * - 完全无响应 → notification.error (网络异常)
+ * - 业务错误 (success=false) → 由 errorThrower 抛 BizError 后按 showType 处理
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const errorConfig: RequestConfig = {
-  // 错误处理： umi@3 的错误处理方案。
   errorConfig: {
-    // 错误抛出
     errorThrower: (res) => {
       const { success, data, errorCode, errorMessage, showType } =
         res as unknown as ResponseStructure;
       if (!success) {
-        const error: any = new Error(errorMessage);
+        const error: Error & {
+          info?: ResponseStructure;
+        } = new Error(errorMessage);
         error.name = 'BizError';
-        error.info = { errorCode, errorMessage, showType, data };
-        throw error; // 抛出自制的错误
+        error.info = {
+          success,
+          data,
+          errorCode,
+          errorMessage,
+          showType,
+        };
+        throw error;
       }
     },
-    // 错误接收及处理
-    errorHandler: (error: any, opts: any) => {
+    errorHandler: (error: any, opts?: { skipErrorHandler?: boolean }) => {
       if (opts?.skipErrorHandler) throw error;
-      // 我们的 errorThrower 抛出的错误。
+      // 业务错误：errorThrower 抛出的 BizError
       if (error.name === 'BizError') {
-        const errorInfo: ResponseStructure | undefined = error.info;
+        const errorInfo = error.info;
         if (errorInfo) {
           const { errorMessage, errorCode } = errorInfo;
           switch (errorInfo.showType) {
             case ErrorShowType.SILENT:
-              // do nothing
               break;
             case ErrorShowType.WARN_MESSAGE:
               message.warning(errorMessage);
@@ -59,7 +67,7 @@ export const errorConfig: RequestConfig = {
               break;
             case ErrorShowType.NOTIFICATION:
               notification.open({
-                title: errorCode,
+                title: String(errorCode ?? ''),
                 description: errorMessage,
               });
               break;
@@ -71,9 +79,10 @@ export const errorConfig: RequestConfig = {
           }
         }
       } else if (error.response) {
-        // Axios 的错误
-        // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
-        message.error(`Response status:${error.response.status}`);
+        // HTTP 状态码异常
+        const { status, data } = error.response;
+        const detail = data?.message;
+        message.error(detail || `[${status}] 网络错误，无法连接服务器`);
       } else if (typeof navigator !== 'undefined' && !navigator.onLine) {
         message.error(
           getIntl().formatMessage({
@@ -83,26 +92,47 @@ export const errorConfig: RequestConfig = {
           }),
         );
       } else if (error.request) {
-        message.error('None response! Please retry.');
+        // 请求已发出，没有响应
+        notification.error({
+          title: '网络异常',
+          description: '您的网络发生异常，无法连接服务器',
+        });
       } else {
-        message.error('Request error, please retry.');
+        message.error('请求异常，请稍后重试');
       }
     },
   },
 
-  // 请求拦截器
+  // 请求拦截器：补全标准 Header（Accept / Content-Type / device / version）
   requestInterceptors: [
     (config: RequestOptions) => {
-      // 拦截请求配置，进行个性化处理。
-      // 示例：为请求附加 token（按需启用）
-      // const token = localStorage.getItem('token');
-      // if (token) {
-      //   config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
-      // }
-      return config;
+      const headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+        Pragma: 'no-cache',
+        'Cache-Control': 'no-cache',
+        device: 'pc',
+        version: defaultSettings.version ?? '',
+        ...(config.headers || {}),
+      };
+      return { ...config, headers };
     },
   ],
 
-  // 响应拦截器
-  responseInterceptors: [],
+  // 响应拦截器：业务约定 data.success 为 false 时弹错误
+  responseInterceptors: [
+    (response) => {
+      const data = response?.data as ResponseStructure | undefined;
+      // 仅在响应体形如 { success, data } 时才介入，避免误伤直接返回数组等场景
+      if (
+        data &&
+        typeof data === 'object' &&
+        'success' in data &&
+        data.success === false
+      ) {
+        message.error(data.errorMessage || '操作失败');
+      }
+      return response;
+    },
+  ],
 };
