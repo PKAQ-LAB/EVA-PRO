@@ -1,6 +1,7 @@
 import { history } from '@umijs/max';
 import { parse } from 'qs';
 import Cookies from 'universal-cookie';
+import { access_token, refresh_token, user_key } from '@/constant';
 
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg =
@@ -32,19 +33,14 @@ export function getNoUndefinedString(obj: string | undefined | null): string {
   return obj ?? '';
 }
 
-// Cookie 名称（在 TASK-14 的 src/constant.tsx 中重新导出，TASK-14 之后此处会切换）
-const ACCESS_TOKEN_KEY = 'access_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
-const USER_KEY = 'user';
-
 /**
  * 退出登录：清理本地 cookie，并跳转到登录页
  */
 export const loginOut = async () => {
   const cookies = new Cookies();
-  cookies.remove(ACCESS_TOKEN_KEY, { maxAge: -1, path: '/' });
-  cookies.remove(REFRESH_TOKEN_KEY, { maxAge: -1, path: '/' });
-  cookies.remove(USER_KEY, { maxAge: -1, path: '/' });
+  cookies.remove(access_token, { maxAge: -1, path: '/' });
+  cookies.remove(refresh_token, { maxAge: -1, path: '/' });
+  cookies.remove(user_key, { maxAge: -1, path: '/' });
 
   const { redirect } = getPageQuery();
   if (window.location.pathname !== '/user/login' && !redirect) {
