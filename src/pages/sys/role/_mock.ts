@@ -153,10 +153,9 @@ export default {
     const checked = isAdmin ? allModules.map((m) => m.id) : ['mod-sys-account'];
     const checkedResource: Record<string, string[]> = {};
     for (const m of allModules) {
-      // biome-ignore lint/suspicious/noExplicitAny: simplified mock typing
-      const resources = (m as any).resources as
-        | Array<{ id: string; resourceDesc: string }>
-        | undefined;
+      const resources = (
+        m as { resources?: Array<{ id: string; resourceDesc: string }> }
+      ).resources;
       if (!resources) continue;
       if (isAdmin) {
         checkedResource[m.id] = resources.map((r) => r.id);
