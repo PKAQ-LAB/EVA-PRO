@@ -1,21 +1,283 @@
-import React from 'react';
-import MigrationPlaceholder from '../../_placeholder';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import { PageContainer } from '@ant-design/pro-components';
+import { useQuery } from '@tanstack/react-query';
+import {
+  Alert,
+  App,
+  Button,
+  Divider,
+  Input,
+  Popconfirm,
+  Switch,
+  Table,
+  type TableColumnsType,
+} from 'antd';
+import clsx from 'clsx';
+import React, { useState } from 'react';
+import { getNodeBorther, hasChildren } from '@/utils/DataHelper';
+import OrgAOEForm, { type OperateType } from './aoeform';
+import type { OrgItem } from './data.d';
+import {
+  deleteOrgs,
+  getOrg,
+  queryOrgs,
+  sortOrgs,
+  switchOrgStatus,
+} from './service';
 
-const Page: React.FC = () => (
-  <MigrationPlaceholder
-    title="组织管理"
-    v5Source="src/pages/sys/organization/{index,list,aoeform}.jsx"
-    apiKeys={[
-      'ORG_GET',
-      'ORG_LIST',
-      'ORG_EDIT',
-      'ORG_DEL',
-      'ORG_SORT',
-      'ORG_STATUS',
-      'ORG_CHECKUNIQUE',
-    ]}
-    notes="树形结构，支持拖拽排序与启停切换"
-  />
-);
+const { Search } = Input;
 
-export default Page;
+const SysOrganizationPage: React.FC = () => {
+  const { message: msg, modal } = App.useApp();
+  const [operateType, setOperateType] = useState<OperateType>('');
+  const [currentItem, setCurrentItem] = useState<Partial<OrgItem>>({});
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+  const [searchName, setSearchName] = useState<string>('');
+
+  const orgsQuery = useQuery<OrgItem[]>({
+    queryKey: ['sys', 'orgs', { name: searchName }],
+    queryFn: async () => {
+      const res = await queryOrgs(
+        searchName ? { name: searchName } : undefined,
+      );
+      return (res?.data ?? []) as OrgItem[];
+    },
+  });
+
+  const data = orgsQuery.data ?? [];
+  const refresh = () => orgsQuery.refetch();
+
+  const handleAdd = (record?: OrgItem) => {
+    setCurrentItem(record ? { parentId: record.id } : {});
+    setOperateType('create');
+  };
+
+  const handleEdit = async (record: OrgItem) => {
+    if (!record.id) {
+      modal.warning({ title: '提示', content: '没有选择记录' });
+      return;
+    }
+    const res = await getOrg(record.id);
+    if (res.data) {
+      setCurrentItem(res.data);
+      setOperateType('edit');
+    }
+  };
+
+  const handleEnable = async (record: OrgItem, checked: boolean) => {
+    if (!record.id) return;
+    const res = await switchOrgStatus(record.id, checked ? '0001' : '0000');
+    if (res.success) refresh();
+  };
+
+  const handleDelete = async (record: OrgItem) => {
+    const blockItem = hasChildren(data as never, [record.id]);
+    if (record.isLeaf || blockItem) {
+      msg.error(`错误：[${record.name}] 存在子节点，无法删除`);
+      return;
+    }
+    const res = await deleteOrgs([record.id]);
+    if (res.success) refresh();
+  };
+
+  const handleBatchDelete = async () => {
+    const blockItem = hasChildren(data as never, selectedRowKeys);
+    if (blockItem) {
+      msg.error(`错误：[${blockItem}] 存在子节点，无法删除`);
+      return;
+    }
+    const res = await deleteOrgs(selectedRowKeys);
+    if (res.success) {
+      setSelectedRowKeys([]);
+      refresh();
+    }
+  };
+
+  const handleSort = async (
+    nodes: OrgItem[],
+    index: number,
+    direction: 'up' | 'down',
+  ) => {
+    const target = direction === 'up' ? nodes[index - 1] : nodes[index + 1];
+    if (!target) return;
+    const res = await sortOrgs([
+      {
+        id: nodes[index].id,
+        orders: direction === 'up' ? index - 1 : index + 1,
+      },
+      { id: target.id, orders: index },
+    ]);
+    if (res.success) refresh();
+  };
+
+  const columns: TableColumnsType<OrgItem> = [
+    { title: '单位/部门名称', dataIndex: 'name' },
+    { title: '所属单位/部门', dataIndex: 'parentName' },
+    {
+      title: '排序',
+      dataIndex: 'orders',
+      render: (text, record, index) => {
+        if (record.status !== '0001') return '';
+        const brother = getNodeBorther(
+          data as never,
+          record.parentId ?? '',
+        ) as OrgItem[];
+        const size = brother.length;
+        return (
+          <div>
+            {text}
+            <Divider type="vertical" />
+            {size !== 0 && index !== size - 1 ? (
+              <CaretDownOutlined
+                onClick={() => handleSort(brother, index, 'down')}
+                style={{ color: '#098FFF', cursor: 'pointer' }}
+              />
+            ) : (
+              <CaretDownOutlined style={{ opacity: 0.3 }} />
+            )}
+            <Divider type="vertical" />
+            {size !== 0 && index !== 0 ? (
+              <CaretUpOutlined
+                onClick={() => handleSort(brother, index, 'up')}
+                style={{ color: '#098FFF', cursor: 'pointer' }}
+              />
+            ) : (
+              <CaretUpOutlined style={{ opacity: 0.3 }} />
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      render: (_, record) =>
+        record.status !== '9999' && (
+          <Switch
+            onChange={(checked) => handleEnable(record, checked)}
+            checkedChildren={<CheckOutlined />}
+            unCheckedChildren={<CloseOutlined />}
+            checked={record.status === '0001'}
+          />
+        ),
+    },
+    {
+      title: '操作',
+      render: (_, record) =>
+        record.status === '0001' && (
+          <div>
+            <a onClick={() => handleAdd(record)}>添加下级</a>
+            <Divider type="vertical" />
+            <a onClick={() => handleEdit(record)}>编辑</a>
+            <Divider type="vertical" />
+            <Popconfirm
+              title="确定要删除吗？"
+              okText="确定"
+              cancelText="取消"
+              onConfirm={() => handleDelete(record)}
+            >
+              <a>删除</a>
+            </Popconfirm>
+          </div>
+        ),
+    },
+  ];
+
+  return (
+    <PageContainer title="组织（部门）管理" subTitle="系统组织架构管理维护">
+      <div className="eva-ribbon">
+        <div>
+          <Button
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => handleAdd()}
+            loading={orgsQuery.isLoading}
+          >
+            新增部门
+          </Button>
+          {selectedRowKeys.length > 0 && (
+            <>
+              <Divider type="vertical" />
+              <Popconfirm
+                title="确定要删除选中的条目吗?"
+                placement="top"
+                onConfirm={handleBatchDelete}
+              >
+                <Button danger>删除部门</Button>
+              </Popconfirm>
+            </>
+          )}
+        </div>
+        <div>
+          <Search
+            placeholder="输入组织名称以搜索"
+            onSearch={(value) => setSearchName(value)}
+            style={{ width: 280 }}
+          />
+        </div>
+      </div>
+      <div className="eva-body">
+        {selectedRowKeys.length > 0 && (
+          <Alert
+            style={{ marginTop: 8, marginBottom: 8 }}
+            type="info"
+            showIcon
+            message={
+              <div>
+                已选择{' '}
+                <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项
+                <a
+                  style={{ marginLeft: 24 }}
+                  onClick={() => setSelectedRowKeys([])}
+                >
+                  清空选择
+                </a>
+              </div>
+            }
+          />
+        )}
+        <Table<OrgItem>
+          pagination={false}
+          dataSource={data}
+          loading={orgsQuery.isLoading}
+          columns={columns}
+          rowKey="id"
+          rowSelection={{
+            selectedRowKeys,
+            onChange: (keys) => setSelectedRowKeys(keys.map(String)),
+            getCheckboxProps: (record) => ({
+              disabled: record.status === '9999',
+            }),
+          }}
+          onRow={(record) => ({
+            onDoubleClick: () => handleEdit(record),
+          })}
+          rowClassName={(record) =>
+            clsx({
+              'eva-locked': record.status === '0000',
+              'eva-disabled': record.status === '9999',
+            })
+          }
+        />
+      </div>
+
+      {operateType !== '' && (
+        <OrgAOEForm
+          operateType={operateType}
+          currentItem={currentItem}
+          data={data}
+          onClose={() => setOperateType('')}
+          onSuccess={refresh}
+        />
+      )}
+    </PageContainer>
+  );
+};
+
+export default SysOrganizationPage;
