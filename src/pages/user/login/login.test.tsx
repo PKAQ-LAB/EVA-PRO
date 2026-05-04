@@ -31,7 +31,7 @@ describe('Login Page', () => {
       />,
     );
 
-    await rootContainer.findByPlaceholderText('Account: admin or user');
+    await rootContainer.findByPlaceholderText('Account: admin');
 
     act(() => {
       historyRef.current?.push('/user/login');
@@ -58,28 +58,26 @@ describe('Login Page', () => {
       />,
     );
 
-    await rootContainer.findByPlaceholderText('Account: admin or user');
+    await rootContainer.findByPlaceholderText('Account: admin');
 
-    const accountInput = await rootContainer.findByPlaceholderText(
-      'Account: admin or user',
-    );
+    const accountInput =
+      await rootContainer.findByPlaceholderText('Account: admin');
 
     act(() => {
       fireEvent.change(accountInput, { target: { value: 'admin' } });
     });
 
-    const passwordInput = await rootContainer.findByPlaceholderText(
-      'Password: ant.design',
-    );
+    const passwordInput =
+      await rootContainer.findByPlaceholderText('Password: admin123');
 
     act(() => {
-      fireEvent.change(passwordInput, { target: { value: 'ant.design' } });
+      fireEvent.change(passwordInput, { target: { value: 'admin123' } });
     });
 
     await (await rootContainer.findByText('Login')).click();
 
     // Wait for login to succeed and navigate to home page
-    await rootContainer.findAllByText('Ant Design Pro', undefined, {
+    await rootContainer.findAllByText('Eva Admin Pro', undefined, {
       timeout: 10000,
     });
 
