@@ -19,7 +19,7 @@ const Settings: ProLayoutProps & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'Ant Design Pro',
+  title: 'Eva Admin Pro',
   subTitle: 'This is subTitle',
   copyright: `Power by PKAQ © ${new Date().getFullYear()}`,
   version: '6.0',
