@@ -10,6 +10,7 @@ import React from 'react';
 // Initialize dayjs plugins globally
 dayjs.extend(relativeTime);
 
+import Cookies from 'universal-cookie';
 import {
   AvatarDropdown,
   DocLink,
@@ -21,9 +22,12 @@ import {
   PageLoading,
   VersionDropdown,
 } from '@/components';
+import { access_token } from '@/constant';
 import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
+
+const cookies = new Cookies();
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -52,8 +56,25 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
-  // 如果不是登录页面，执行
+  // 判断本地是否有 access_token，没有就直接跳到登录页，避免无谓的接口请求
   const { location } = history;
+  const hasToken = !!cookies.get(access_token);
+  if (
+    !hasToken &&
+    ![loginPath, '/user/register', '/user/register-result'].includes(
+      location.pathname,
+    )
+  ) {
+    history.replace(
+      `${loginPath}?redirect=${encodeURIComponent(location.pathname + location.search + location.hash)}`,
+    );
+    return {
+      fetchUserInfo,
+      settings: defaultSettings as Partial<LayoutSettings>,
+      settingDrawerOpen: false,
+    };
+  }
+  // 如果不是登录页面，且本地存在 token，则获取用户信息
   if (
     ![loginPath, '/user/register', '/user/register-result'].includes(
       location.pathname,
@@ -109,8 +130,12 @@ export const layout: RunTimeLayoutConfig = ({
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
-      // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
+      // 路由切换时再校验一次 cookie，未登录直接跳登录页
+      const hasToken = !!cookies.get(access_token);
+      if (
+        (!hasToken || !initialState?.currentUser) &&
+        location.pathname !== loginPath
+      ) {
         history.replace(
           `${loginPath}?redirect=${encodeURIComponent(location.pathname + location.search + location.hash)}`,
         );
