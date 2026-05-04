@@ -25,7 +25,7 @@ import {
 } from '@/components';
 import { access_token } from '@/constant';
 import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
-import { fetchMenus } from '@/services/user';
+import { fetchDict, fetchMenus } from '@/services/user';
 import { loopMenuItem } from '@/utils/DataHelper';
 import { printANSI } from '@/utils/screenlog';
 import defaultSettings from '../config/defaultSettings';
@@ -45,8 +45,10 @@ const loginPath = '/user/login';
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
+  dict?: Record<string, unknown>;
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  fetchDict?: () => Promise<Record<string, unknown> | undefined>;
   settingDrawerOpen?: boolean;
 }> {
   const fetchUserInfo = async () => {
@@ -63,6 +65,18 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
+  /**
+   * 加载全量字典：登录后非登录页时会预加载，挂在 initialState.dict
+   * 上供下游业务使用。建议字典字段较多时改用 React Query 长缓存。
+   */
+  const initDict = async (): Promise<Record<string, unknown> | undefined> => {
+    try {
+      const res = await fetchDict({ skipErrorHandler: true });
+      return (res?.data as Record<string, unknown>) ?? {};
+    } catch {
+      return undefined;
+    }
+  };
   // 判断本地是否有 access_token，没有就直接跳到登录页，避免无谓的接口请求
   const { location } = history;
   const hasToken = !!cookies.get(access_token);
@@ -77,26 +91,33 @@ export async function getInitialState(): Promise<{
     );
     return {
       fetchUserInfo,
+      fetchDict: initDict,
       settings: defaultSettings as Partial<LayoutSettings>,
       settingDrawerOpen: false,
     };
   }
-  // 如果不是登录页面，且本地存在 token，则获取用户信息
+  // 如果不是登录页面，且本地存在 token，则同时获取用户信息 + 字典
   if (
     ![loginPath, '/user/register', '/user/register-result'].includes(
       location.pathname,
     )
   ) {
-    const currentUser = await fetchUserInfo();
+    const [currentUser, dict] = await Promise.all([
+      fetchUserInfo(),
+      initDict(),
+    ]);
     return {
       fetchUserInfo,
+      fetchDict: initDict,
       currentUser,
+      dict,
       settings: defaultSettings as Partial<LayoutSettings>,
       settingDrawerOpen: false,
     };
   }
   return {
     fetchUserInfo,
+    fetchDict: initDict,
     settings: defaultSettings as Partial<LayoutSettings>,
     settingDrawerOpen: false,
   };
