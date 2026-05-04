@@ -58,52 +58,38 @@ export default {
       address: 'Sidney No. 1 Lake Park',
     },
   ],
+  // 默认账号 admin / admin123，密码经前端 MD5 后再发到后端
+  // MD5('admin123') === '0192023a7bbd73250516f069df18b500'
+  // MD5('user123')  === '0a791842f52a0d33b25c4b62fcefa125'
   'POST /api/login/account': async (req: Request, res: Response) => {
     const { password, username, type } = req.body;
-    await waitTime(2000);
-    // MD5('ant.design') === '8914de686ab28dc22f30d3d8e107ff6c'
-    const ANT_DESIGN_MD5 = '8914de686ab28dc22f30d3d8e107ff6c';
-    if (password === ANT_DESIGN_MD5 && username === 'admin') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'admin',
-      });
+    await waitTime(500);
+    const ADMIN_MD5 = '0192023a7bbd73250516f069df18b500';
+    const USER_MD5 = '0a791842f52a0d33b25c4b62fcefa125';
+    if (password === ADMIN_MD5 && username === 'admin') {
+      res.send({ status: 'ok', type, currentAuthority: 'admin' });
       access = 'admin';
       return;
     }
-    if (password === ANT_DESIGN_MD5 && username === 'user') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'user',
-      });
+    if (password === USER_MD5 && username === 'user') {
+      res.send({ status: 'ok', type, currentAuthority: 'user' });
       access = 'user';
       return;
     }
     if (type === 'mobile') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'admin',
-      });
+      res.send({ status: 'ok', type, currentAuthority: 'admin' });
       access = 'admin';
       return;
     }
-
-    res.send({
-      status: 'error',
-      type,
-      currentAuthority: 'guest',
-    });
+    res.send({ status: 'error', type, currentAuthority: 'guest' });
     access = 'guest';
   },
   'POST /api/auth/login': async (req: Request, res: Response) => {
     const { account, password } = req.body;
-    await waitTime(2000);
-    // MD5('ant.design') === '8914de686ab28dc22f30d3d8e107ff6c'
-    const ANT_DESIGN_MD5 = '8914de686ab28dc22f30d3d8e107ff6c';
-    if (password === ANT_DESIGN_MD5 && account === 'admin') {
+    await waitTime(500);
+    const ADMIN_MD5 = '0192023a7bbd73250516f069df18b500';
+    const USER_MD5 = '0a791842f52a0d33b25c4b62fcefa125';
+    if (password === ADMIN_MD5 && account === 'admin') {
       res.send({
         status: 'ok',
         currentAuthority: 'admin',
@@ -115,7 +101,7 @@ export default {
       access = 'admin';
       return;
     }
-    if (password === ANT_DESIGN_MD5 && account === 'user') {
+    if (password === USER_MD5 && account === 'user') {
       res.send({
         status: 'ok',
         currentAuthority: 'user',
@@ -127,11 +113,71 @@ export default {
       access = 'user';
       return;
     }
-    res.send({
-      status: 'error',
-      currentAuthority: 'guest',
-    });
+    res.send({ status: 'error', currentAuthority: 'guest' });
     access = 'guest';
+  },
+  'GET /api/auth/logout': (_req: Request, res: Response) => {
+    access = '';
+    res.send({ success: true });
+  },
+  // 远程菜单：暴露 sys / log / dev 三大块
+  'GET /api/auth/fetchMenus': (_req: Request, res: Response) => {
+    res.send({
+      success: true,
+      data: [
+        {
+          name: '系统管理',
+          path: '/sys',
+          icon: 'setting',
+          children: [
+            { name: '用户管理', path: '/sys/account', icon: 'usergroup-add' },
+            { name: '组织管理', path: '/sys/organization', icon: 'profile' },
+            { name: '角色管理', path: '/sys/role', icon: 'solution' },
+            { name: '模块管理', path: '/sys/module', icon: 'bars' },
+            { name: '字典管理', path: '/sys/dictionary', icon: 'file' },
+          ],
+        },
+        {
+          name: '系统日志',
+          path: '/log',
+          icon: 'profile',
+          children: [
+            { name: '在线用户', path: '/log/online', icon: 'usergroup-add' },
+            { name: '业务日志', path: '/log/biz', icon: 'profile' },
+            { name: '错误日志', path: '/log/error', icon: 'flag' },
+          ],
+        },
+        {
+          name: '开发工具',
+          path: '/dev',
+          icon: 'rocket',
+          children: [
+            { name: '代码生成', path: '/dev/generator', icon: 'form' },
+            { name: '工作流', path: '/dev/workflow', icon: 'radar-chart' },
+          ],
+        },
+      ],
+    });
+  },
+  // 字典数据：sys/dictionary、sys/role 的 DictSelector 会消费
+  'GET /api/auth/fetchDicts': (_req: Request, res: Response) => {
+    res.send({
+      success: true,
+      data: {
+        dict_type: {
+          '0001': '业务字典',
+          '0002': '系统字典',
+          '0003': '权限字典',
+        },
+        data_permission: {
+          '0000': '本人',
+          '0001': '本部门',
+          '0002': '本部门及下级',
+          '0003': '自定义',
+          '9999': '全部',
+        },
+      },
+    });
   },
   'POST /api/login/outLogin': (_req: Request, res: Response) => {
     access = '';

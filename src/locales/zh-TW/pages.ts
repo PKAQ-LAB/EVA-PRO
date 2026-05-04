@@ -2,13 +2,12 @@ export default {
   'pages.layouts.userLayout.title':
     'Ant Design 是西湖區最具影響力的 Web 設計規範',
   'pages.login.accountLogin.tab': '賬戶密碼登錄',
-  'pages.login.accountLogin.errorMessage':
-    '錯誤的用戶名和密碼(admin/ant.design)',
+  'pages.login.accountLogin.errorMessage': '錯誤的用戶名和密碼(admin/admin123)',
   'pages.login.failure': '登錄失敗，請重試！',
   'pages.login.success': '登錄成功！',
-  'pages.login.account.placeholder': '賬號: admin or user',
+  'pages.login.account.placeholder': '賬號: admin',
   'pages.login.account.required': '賬號是必填項！',
-  'pages.login.password.placeholder': '密碼: ant.design',
+  'pages.login.password.placeholder': '密碼: admin123',
   'pages.login.password.required': '密碼是必填項！',
   'pages.login.rememberMe': '自動登錄',
   'pages.login.submit': '登錄',
