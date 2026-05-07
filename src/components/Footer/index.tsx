@@ -1,9 +1,10 @@
 import { GithubOutlined } from '@ant-design/icons';
 import packageJson from '@root/package.json';
+import { useModel } from '@umijs/max';
 import { Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
-import settings from '../../../config/defaultSettings';
+import defaultSettings from '../../../config/defaultSettings';
 
 const getRepoUrl = () => {
   if (!packageJson.repository)
@@ -64,13 +65,31 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
-const Footer: React.FC = () => {
+export interface FooterProps {
+  /**
+   * Copyright 文案。
+   * 优先级：组件 props > initialState.settings.copyright（SettingDrawer 可改）
+   *   > config/defaultSettings.ts 中的 copyright > 默认占位文案。
+   */
+  copyright?: React.ReactNode;
+}
+
+const Footer: React.FC<FooterProps> = ({ copyright }) => {
   const { styles } = useStyles();
+  const { initialState } = useModel('@@initialState');
   const year = new Date().getFullYear();
+  const resolvedCopyright =
+    copyright ??
+    (initialState?.settings as { copyright?: React.ReactNode } | undefined)
+      ?.copyright ??
+    defaultSettings.copyright ??
+    `Ant Design Pro © ${year}`;
 
   return (
     <div className={styles.footer}>
-      <div className={styles.copyright}>Ant Design Pro &copy; {year}</div>
+      {resolvedCopyright && (
+        <div className={styles.copyright}>{resolvedCopyright}</div>
+      )}
       <div className={styles.meta}>
         <span className={styles.group}>
           <span className={styles.label}>ver</span>
