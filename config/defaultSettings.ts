@@ -22,7 +22,6 @@ const Settings: ProLayoutProps & {
   subTitle: 'This is subTitle',
   copyright: `Power by PKAQ © ${new Date().getFullYear()}`,
   version: '6.0',
-  pwa: true,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
   token: {
