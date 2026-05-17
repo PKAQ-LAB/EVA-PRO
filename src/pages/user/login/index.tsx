@@ -31,6 +31,8 @@ const useStyles = createStyles(({ token }) => {
       lineHeight: '42px',
       position: 'fixed',
       right: 16,
+      top: 16,
+      zIndex: 1,
       borderRadius: token.borderRadius,
       ':hover': {
         backgroundColor: token.colorBgTextHover,
@@ -38,12 +40,51 @@ const useStyles = createStyles(({ token }) => {
     },
     container: {
       display: 'flex',
-      flexDirection: 'column',
       height: '100vh',
-      overflow: 'auto',
+      minHeight: 600,
+      overflow: 'hidden',
       backgroundImage:
         "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
-      backgroundSize: '100% 100%',
+      backgroundPosition: 'center',
+      backgroundSize: 'cover',
+      '@media (max-width: 900px)': {
+        overflow: 'auto',
+      },
+    },
+    brandPanel: {
+      flex: 1,
+      minWidth: 0,
+      '@media (max-width: 900px)': {
+        display: 'none',
+      },
+    },
+    loginPanel: {
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '30%',
+      minWidth: 420,
+      padding: '64px 48px',
+      borderLeft: `1px solid ${token.colorBorderSecondary}`,
+      backgroundColor: token.colorBgContainer,
+      boxShadow: token.boxShadowSecondary,
+      '@media (max-width: 900px)': {
+        width: '100%',
+        minWidth: 0,
+        minHeight: '100vh',
+        borderLeft: 0,
+      },
+    },
+    formWrap: {
+      width: '100%',
+    },
+    footer: {
+      position: 'absolute',
+      right: 0,
+      bottom: 24,
+      left: 0,
+      padding: '0 24px',
     },
   };
 });
@@ -168,110 +209,110 @@ const Login: React.FC = () => {
         </title>
       </Helmet>
       <Lang />
-      <div
-        style={{
-          flex: '1',
-          padding: '32px 0',
-        }}
-      >
-        <LoginForm
-          contentStyle={{
-            minWidth: 280,
-            maxWidth: '75vw',
-          }}
-          logo={<img alt="logo" src="/logo.svg" />}
-          title={Settings.title || 'Ant Design'}
-          subTitle={
-            Settings.subTitle ||
-            intl.formatMessage({
-              id: 'pages.layouts.userLayout.title',
-            })
-          }
-          initialValues={{
-            autoLogin: true,
-          }}
-          onFinish={async (values) => {
-            await handleSubmit(values as LoginFormValues);
-          }}
-        >
-          {status === 'error' && (
-            <LoginMessage
-              content={intl.formatMessage({
-                id: 'pages.login.accountLogin.errorMessage',
-                defaultMessage: '账户或密码错误(admin/ant.design)',
-              })}
-            />
-          )}
-          <ProFormText
-            name="account"
-            fieldProps={{
-              size: 'large',
-              prefix: <UserOutlined />,
+      <div className={styles.brandPanel} />
+      <div className={styles.loginPanel}>
+        <div className={styles.formWrap}>
+          <LoginForm
+            contentStyle={{
+              minWidth: 280,
+              maxWidth: '100%',
             }}
-            placeholder={intl.formatMessage({
-              id: 'pages.login.account.placeholder',
-              defaultMessage: '账号: admin or user',
-            })}
-            rules={[
-              {
-                required: true,
-                message: (
-                  <FormattedMessage
-                    id="pages.login.account.required"
-                    defaultMessage="请输入账号!"
-                  />
-                ),
-              },
-            ]}
-          />
-          <ProFormText.Password
-            name="password"
-            fieldProps={{
-              size: 'large',
-              prefix: <LockOutlined />,
+            logo={<img alt="logo" src="/logo.svg" />}
+            title={Settings.title || 'Ant Design'}
+            subTitle={
+              Settings.subTitle ||
+              intl.formatMessage({
+                id: 'pages.layouts.userLayout.title',
+              })
+            }
+            initialValues={{
+              autoLogin: true,
             }}
-            placeholder={intl.formatMessage({
-              id: 'pages.login.password.placeholder',
-              defaultMessage: '密码: ant.design',
-            })}
-            rules={[
-              {
-                required: true,
-                message: (
-                  <FormattedMessage
-                    id="pages.login.password.required"
-                    defaultMessage="请输入密码！"
-                  />
-                ),
-              },
-            ]}
-          />
-          <div
-            style={{
-              marginBottom: 24,
+            onFinish={async (values) => {
+              await handleSubmit(values as LoginFormValues);
             }}
           >
-            <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage
-                id="pages.login.rememberMe"
-                defaultMessage="自动登录"
+            {status === 'error' && (
+              <LoginMessage
+                content={intl.formatMessage({
+                  id: 'pages.login.accountLogin.errorMessage',
+                  defaultMessage: '账户或密码错误(admin/ant.design)',
+                })}
               />
-            </ProFormCheckbox>
-            <a
-              href="#"
+            )}
+            <ProFormText
+              name="account"
+              fieldProps={{
+                size: 'large',
+                prefix: <UserOutlined />,
+              }}
+              placeholder={intl.formatMessage({
+                id: 'pages.login.account.placeholder',
+                defaultMessage: '账号: admin or user',
+              })}
+              rules={[
+                {
+                  required: true,
+                  message: (
+                    <FormattedMessage
+                      id="pages.login.account.required"
+                      defaultMessage="请输入账号!"
+                    />
+                  ),
+                },
+              ]}
+            />
+            <ProFormText.Password
+              name="password"
+              fieldProps={{
+                size: 'large',
+                prefix: <LockOutlined />,
+              }}
+              placeholder={intl.formatMessage({
+                id: 'pages.login.password.placeholder',
+                defaultMessage: '密码: ant.design',
+              })}
+              rules={[
+                {
+                  required: true,
+                  message: (
+                    <FormattedMessage
+                      id="pages.login.password.required"
+                      defaultMessage="请输入密码！"
+                    />
+                  ),
+                },
+              ]}
+            />
+            <div
               style={{
-                float: 'right',
+                marginBottom: 24,
               }}
             >
-              <FormattedMessage
-                id="pages.login.forgotPassword"
-                defaultMessage="忘记密码"
-              />
-            </a>
-          </div>
-        </LoginForm>
+              <ProFormCheckbox noStyle name="autoLogin">
+                <FormattedMessage
+                  id="pages.login.rememberMe"
+                  defaultMessage="自动登录"
+                />
+              </ProFormCheckbox>
+              <a
+                href="#"
+                style={{
+                  float: 'right',
+                }}
+              >
+                <FormattedMessage
+                  id="pages.login.forgotPassword"
+                  defaultMessage="忘记密码"
+                />
+              </a>
+            </div>
+          </LoginForm>
+        </div>
+        <div className={styles.footer}>
+          <Footer />
+        </div>
       </div>
-      <Footer />
     </div>
   );
 };
