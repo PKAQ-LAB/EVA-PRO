@@ -52,11 +52,20 @@ const useStyles = createStyles(({ token }) => {
       },
     },
     brandPanel: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       flex: 1,
       minWidth: 0,
+      padding: '64px',
       '@media (max-width: 900px)': {
         display: 'none',
       },
+    },
+    brandImage: {
+      width: 'min(58vw, 720px)',
+      maxHeight: '78vh',
+      objectFit: 'contain',
     },
     loginPanel: {
       position: 'relative',
@@ -209,7 +218,14 @@ const Login: React.FC = () => {
         </title>
       </Helmet>
       <Lang />
-      <div className={styles.brandPanel} />
+      <div className={styles.brandPanel}>
+        <img
+          alt=""
+          aria-hidden="true"
+          className={styles.brandImage}
+          src="/login-illustration.svg"
+        />
+      </div>
       <div className={styles.loginPanel}>
         <div className={styles.formWrap}>
           <LoginForm
