@@ -6,18 +6,18 @@ Ant Design Pro — React enterprise boilerplate on Umi Max v4, antd v6, ProCompo
 
 ## Commands
 
-`npm start` (dev+mock), `npm run dev` (no mock), `npm run build` (utoopack), `npm run lint` (Biome+tsc), `npm run test` (Jest), `npx antd lint ./src` (antd-specific checks).
+`pnpm start` (dev+mock), `pnpm dev` (no mock), `pnpm build` (utoopack), `pnpm lint` (Biome+tsc), `pnpm test` (Jest), `pnpm dlx antd lint ./src` (antd-specific checks).
 
-Other: `npm run openapi` (regenerate `src/services/`), `npm run simple` (**irreversible** — commit first), `npm run biome` (auto-fix), `npm run tsc` (type-check only).
+Other: `pnpm openapi` (regenerate `src/services/`), `pnpm simple` (**irreversible** — commit first), `pnpm biome` (auto-fix), `pnpm tsc` (type-check only).
 
 ## Critical Rules
 
-- **Never edit `src/services/ant-design-pro/`** — auto-generated, regenerate with `npm run openapi`
-- **Biome only** — no ESLint, no Prettier. Both `npm run lint` and `npx antd lint ./src` must pass before commit
-- **Always `npx antd info <Component>` before writing antd code** — don't guess APIs from memory
-- **`npm run simple` is irreversible** — always commit/branch first
+- **Never edit `src/services/ant-design-pro/`** — auto-generated, regenerate with `pnpm openapi`
+- **Biome only** — no ESLint, no Prettier. Both `pnpm lint` and `pnpm dlx antd lint ./src` must pass before commit
+- **Always `pnpm dlx antd info <Component>` before writing antd code** — don't guess APIs from memory
+- **`pnpm simple` is irreversible** — always commit/branch first
 - **Conventional commits** required (commitlint enforced)
-- **TypeScript strict** · **Node ≥ 22** · **`package-lock.json`** (not yarn/pnpm)
+- **TypeScript strict** · **Node ≥ 22** · **`pnpm-lock.yaml`** (not npm/yarn)
 - **`.umi` dir is auto-generated** — delete `src/.umi` and restart if dev server acts up
 
 ## Architecture Essentials
@@ -38,11 +38,11 @@ Other: `npm run openapi` (regenerate `src/services/`), `npm run simple` (**irrev
 
 **Mock**: `mock/` (global) + `src/pages/**/_mock.ts` (co-located). Express-style handlers.
 
-**Cloudflare Worker**: `cloudflare-worker/` — separate Hono app, own `package.json`, not an npm workspace.
+**Cloudflare Worker**: `cloudflare-worker/` — separate Hono app, own `package.json`, not a pnpm workspace.
 
 ## AI Skills
 
-This project ships with two built-in Claude Code Skills (`.claude/skills/`). If you already have these skills in your project, no installation is needed — just run them directly. To update to the latest skill definitions, run `npx skills add ant-design/ant-design-pro`.
+This project ships with two built-in Claude Code Skills (`.claude/skills/`). If you already have these skills in your project, no installation is needed — just run them directly. To update to the latest skill definitions, run `pnpm dlx skills add ant-design/ant-design-pro`.
 
 ### `/pro-upgrade` — Project Upgrade
 
@@ -52,10 +52,10 @@ Run `/pro-upgrade` in Claude Code to auto-upgrade the project to the latest Ant 
 
 Run `/antd` in Claude Code for any antd-related work. It provides access to `@ant-design/cli` with offline metadata for antd v3/v4/v5/v6. Key commands:
 
-- `npx antd info <Component>` — look up props/API before writing code (mandatory)
-- `npx antd lint ./src` — check for deprecated or problematic usage (must pass before commit)
-- `npx antd demo <Component> <demo>` — get working code examples
-- `npx antd migrate <from> <to>` — migration checklist between major versions
+- `pnpm dlx antd info <Component>` — look up props/API before writing code (mandatory)
+- `pnpm dlx antd lint ./src` — check for deprecated or problematic usage (must pass before commit)
+- `pnpm dlx antd demo <Component> <demo>` — get working code examples
+- `pnpm dlx antd migrate <from> <to>` — migration checklist between major versions
 
 ## Page Co-location
 
