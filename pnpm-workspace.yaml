@@ -1,0 +1,6 @@
+allowBuilds:
+  '@scarf/scarf': true
+  core-js: true
+  core-js-pure: true
+  es5-ext: true
+  esbuild: true
