@@ -263,6 +263,10 @@ const useStyles = createStyles(({ token, css }) => ({
       font-weight: 700;
     }
 
+    .ant-form-item-required::before {
+      display: none !important;
+    }
+
     .ant-input,
     .ant-input-affix-wrapper {
       height: 48px;
@@ -776,13 +780,10 @@ const Login: React.FC = () => {
               ]}
             >
               <Input
-                autoComplete="username"
+                autoComplete="off"
                 onBlur={() => setIsTyping(false)}
                 onFocus={triggerLookAtEachOther}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.account.placeholder',
-                  defaultMessage: '账号: admin',
-                })}
+                placeholder="请输入账号"
               />
             </Form.Item>
 
@@ -800,15 +801,12 @@ const Login: React.FC = () => {
               ]}
             >
               <Input
-                autoComplete="current-password"
+                autoComplete="new-password"
                 type={showPassword ? 'text' : 'password'}
                 onBlur={() => setIsTyping(false)}
                 onChange={(event) => setPasswordLen(event.target.value.length)}
                 onFocus={triggerLookAtEachOther}
-                placeholder={intl.formatMessage({
-                  id: 'pages.login.password.placeholder',
-                  defaultMessage: '密码: admin123',
-                })}
+                placeholder="请输入密码"
                 suffix={
                   <button
                     aria-label={showPassword ? '隐藏密码' : '显示密码'}
