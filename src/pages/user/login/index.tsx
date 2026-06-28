@@ -4,7 +4,7 @@ import {
   EyeOutlined,
 } from '@ant-design/icons';
 import { Helmet, SelectLang, useIntl, useModel } from '@umijs/max';
-import { Alert, App, Button, Checkbox, Form, Input } from 'antd';
+import { Alert, App, Button, Form, Input } from 'antd';
 import { createStyles } from 'antd-style';
 import { MD5 } from 'jscrypto/es6/MD5';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -334,42 +334,22 @@ const useStyles = createStyles(({ token, css }) => ({
       color: #f5f5f5;
     }
   `,
-  formRow: css`
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    margin: 0 0 20px;
-    gap: 16px;
-    color: #e5e7eb;
-    font-size: 14px;
-
-    .ant-checkbox-wrapper {
-      color: #e5e7eb;
-      font-size: 14px;
-    }
-
-    .ant-checkbox-inner {
-      border-color: #3150c8;
-      background: transparent;
-    }
-
-  `,
   submitButton: css`
     position: relative;
     width: 100%;
     height: 48px;
     overflow: hidden;
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: #4b5ec6;
     border-radius: 999px;
-    background: #000;
+    background: #4b5ec6;
     color: #fff;
     font-weight: 800;
     box-shadow: none;
 
     &:hover,
     &:focus {
-      border-color: #fff !important;
-      background: #111 !important;
+      border-color: #5368dc !important;
+      background: #5368dc !important;
       color: #fff !important;
     }
 
@@ -386,8 +366,8 @@ const useStyles = createStyles(({ token, css }) => ({
       justify-content: center;
       gap: 8px;
       border-radius: 999px;
-      background: #fff;
-      color: #050505;
+      background: #5368dc;
+      color: #fff;
       opacity: 0;
       transition: opacity 0.25s ease;
     }
@@ -422,7 +402,6 @@ const LoginMessage: React.FC<{ content: string; className?: string }> = ({
 interface LoginFormValues {
   account?: string;
   password?: string;
-  autoLogin?: boolean;
 }
 
 const Login: React.FC = () => {
@@ -781,7 +760,6 @@ const Login: React.FC = () => {
           <Form<LoginFormValues>
             className={styles.form}
             layout="vertical"
-            initialValues={{ autoLogin: true }}
             onFinish={handleSubmit}
           >
             <Form.Item
@@ -843,12 +821,6 @@ const Login: React.FC = () => {
                 }
               />
             </Form.Item>
-
-            <div className={styles.formRow}>
-              <Form.Item name="autoLogin" valuePropName="checked" noStyle>
-                <Checkbox>30天内记住我</Checkbox>
-              </Form.Item>
-            </div>
 
             <Button
               className={styles.submitButton}
