@@ -7,7 +7,7 @@ export async function queryUsers() {
 
 /** 获取登录用户的菜单树 GET /api/auth/fetchMenus */
 export async function fetchMenus(options?: Record<string, unknown>) {
-  return request<{ data?: unknown[] }>('/api/auth/fetchMenus', {
+  return request<{ data?: unknown }>('/api/auth/fetchMenus', {
     method: 'GET',
     ...(options || {}),
   });

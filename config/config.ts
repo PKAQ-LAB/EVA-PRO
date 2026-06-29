@@ -44,6 +44,10 @@ export default defineConfig({
    */
   hash: true,
 
+  history: {
+    type: 'hash',
+  },
+
   publicPath: PUBLIC_PATH,
 
   /**
@@ -232,7 +236,6 @@ export default defineConfig({
     },
   },
   requestRecord: {},
-  exportStatic: {},
   define: {
     'process.env.CI': process.env.CI,
     'process.env.COMMIT_HASH': commitHash,

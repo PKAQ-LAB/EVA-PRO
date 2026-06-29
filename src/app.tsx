@@ -23,9 +23,13 @@ import {
   PageLoading,
   VersionDropdown,
 } from '@/components';
-import { access_token } from '@/constant';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
+import { user_key } from '@/constant';
 import { fetchDict, fetchMenus } from '@/services/user';
+import {
+  clearAuthState,
+  isAuthExpiredError,
+  redirectToLogin,
+} from '@/utils/authState';
 import { loopMenuItem } from '@/utils/DataHelper';
 import { printANSI } from '@/utils/screenlog';
 import defaultSettings from '../config/defaultSettings';
@@ -34,10 +38,132 @@ import { errorConfig } from './requestErrorConfig';
 // 启动时打印 ASCII 欢迎语 (TASK-11)
 printANSI();
 
-const cookies = new Cookies();
-
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+const loginMenuCacheKey = 'eva_login_menus';
+const currentUserCacheKey = 'eva_current_user';
+const registeredMenuRoutes = new Set([
+  '/welcome',
+  '/admin/sub-page',
+  '/list',
+  '/sys/account',
+  '/sys/organization',
+  '/sys/role',
+  '/sys/module',
+  '/sys/dictionary',
+  '/log/online',
+  '/log/biz',
+  '/log/error',
+  '/dev/generator',
+  '/dev/workflow',
+]);
+
+function extractMenus(data: unknown): unknown[] {
+  if (Array.isArray(data)) return data;
+  const payload = (data || {}) as Record<string, unknown>;
+  const candidates = [
+    payload.menus,
+    payload.menu,
+    payload.routes,
+    payload.modules,
+    payload.resources,
+  ];
+  return (candidates.find(Array.isArray) as unknown[]) || [];
+}
+
+function normalizeMenuPaths(menus: unknown[]): unknown[] {
+  return menus
+    .map((menu) => {
+      const item = menu as Record<string, unknown>;
+      const path = item.path ?? item.routeurl ?? item.routeUrl;
+      const normalizedPath =
+        typeof path === 'string' && path
+          ? path.startsWith('/')
+            ? path
+            : `/${path}`
+          : undefined;
+      const children = Array.isArray(item.children)
+        ? normalizeMenuPaths(item.children)
+        : undefined;
+      return {
+        ...item,
+        ...(normalizedPath ? { path: normalizedPath } : {}),
+        ...(children?.length ? { children } : {}),
+      };
+    })
+    .filter((menu) => {
+      const item = menu as Record<string, unknown>;
+      return (
+        (typeof item.path === 'string' &&
+          registeredMenuRoutes.has(item.path)) ||
+        (Array.isArray(item.children) && item.children.length > 0)
+      );
+    });
+}
+
+function normalizeCurrentUser(
+  data: unknown,
+  fallbackUser?: Record<string, unknown>,
+): API.CurrentUser | undefined {
+  const menus = extractMenus(data);
+  const baseUser = fallbackUser || {};
+  if (Array.isArray(data)) {
+    return {
+      ...baseUser,
+      name:
+        (baseUser.name as string | undefined) ??
+        (baseUser.nickName as string | undefined) ??
+        (baseUser.account as string | undefined) ??
+        (baseUser.username as string | undefined) ??
+        'Admin',
+      access: (baseUser.access as string | undefined) ?? 'admin',
+      menus,
+    } as API.CurrentUser;
+  }
+  const payload = (data || {}) as Record<string, unknown>;
+  const user =
+    (payload.user as Record<string, unknown> | undefined) ??
+    (payload.currentUser as Record<string, unknown> | undefined) ??
+    (payload.account as Record<string, unknown> | undefined) ??
+    (payload.profile as Record<string, unknown> | undefined) ??
+    payload;
+  const mergedUser = { ...baseUser, ...user };
+  if (!mergedUser || Object.keys(mergedUser).length === 0) return undefined;
+  return {
+    ...mergedUser,
+    menus,
+    name:
+      (mergedUser.name as string | undefined) ??
+      (mergedUser.nickName as string | undefined) ??
+      (mergedUser.account as string | undefined) ??
+      (mergedUser.username as string | undefined) ??
+      'Admin',
+    access: (mergedUser.access as string | undefined) ?? 'admin',
+  } as API.CurrentUser;
+}
+
+function getCachedCurrentUser() {
+  const cookies = new Cookies();
+  const cookieUser = cookies.get(user_key);
+  if (cookieUser) {
+    if (typeof cookieUser === 'object') {
+      return cookieUser as Record<string, unknown>;
+    }
+    try {
+      return JSON.parse(cookieUser) as Record<string, unknown>;
+    } catch {
+      cookies.remove(user_key, { maxAge: -1, path: '/' });
+    }
+  }
+  const cachedUser = window.sessionStorage.getItem(currentUserCacheKey);
+  if (!cachedUser) return undefined;
+  try {
+    return JSON.parse(cachedUser) as Record<string, unknown>;
+  } catch {
+    window.sessionStorage.removeItem(currentUserCacheKey);
+    return undefined;
+  }
+}
 
 /**
  * @see https://umijs.org/docs/api/runtime-config#getinitialstate
@@ -53,15 +179,25 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await queryCurrentUser({
+      const cachedUser = getCachedCurrentUser();
+      const cachedMenus = window.sessionStorage.getItem(loginMenuCacheKey);
+      if (cachedMenus) {
+        window.sessionStorage.removeItem(loginMenuCacheKey);
+        try {
+          return normalizeCurrentUser(JSON.parse(cachedMenus), cachedUser);
+        } catch {
+          // 缓存只用于登录后首屏加速，异常时继续走后端接口。
+        }
+      }
+      const msg = await fetchMenus({
         skipErrorHandler: true,
       });
-      return msg.data;
-    } catch (_error) {
-      const { pathname, search, hash } = history.location;
-      history.replace(
-        `${loginPath}?redirect=${encodeURIComponent(pathname + search + hash)}`,
-      );
+      return normalizeCurrentUser(msg.data, cachedUser);
+    } catch (error) {
+      if (isAuthExpiredError(error)) {
+        clearAuthState();
+        redirectToLogin();
+      }
     }
     return undefined;
   };
@@ -73,30 +209,16 @@ export async function getInitialState(): Promise<{
     try {
       const res = await fetchDict({ skipErrorHandler: true });
       return (res?.data as Record<string, unknown>) ?? {};
-    } catch {
+    } catch (error) {
+      if (isAuthExpiredError(error)) {
+        clearAuthState();
+        redirectToLogin();
+      }
       return undefined;
     }
   };
-  // 判断本地是否有 access_token，没有就直接跳到登录页，避免无谓的接口请求
   const { location } = history;
-  const hasToken = !!cookies.get(access_token);
-  if (
-    !hasToken &&
-    ![loginPath, '/user/register', '/user/register-result'].includes(
-      location.pathname,
-    )
-  ) {
-    history.replace(
-      `${loginPath}?redirect=${encodeURIComponent(location.pathname + location.search + location.hash)}`,
-    );
-    return {
-      fetchUserInfo,
-      fetchDict: initDict,
-      settings: defaultSettings as Partial<LayoutSettings>,
-      settingDrawerOpen: false,
-    };
-  }
-  // 如果不是登录页面，且本地存在 token，则同时获取用户信息 + 字典
+  // 非登录页始终请求后端初始化登录态，只有后端 401/鉴权失效码才跳登录。
   if (
     ![loginPath, '/user/register', '/user/register-result'].includes(
       location.pathname,
@@ -145,12 +267,30 @@ export const layout: RunTimeLayoutConfig = ({
      * 后端不可达时落空菜单（不会影响 layout 渲染）。
      */
     menu: {
-      locale: false,
+      locale: true,
       request: async () => {
         try {
+          const currentMenus = (
+            initialState?.currentUser as
+              | (API.CurrentUser & { menus?: unknown[] })
+              | undefined
+          )?.menus;
+          if (Array.isArray(currentMenus) && currentMenus.length > 0) {
+            return loopMenuItem(
+              normalizeMenuPaths(currentMenus) as never[],
+              IconMap,
+            ) as never[];
+          }
           const res = await fetchMenus({ skipErrorHandler: true });
-          return loopMenuItem((res?.data as never[]) || [], IconMap) as never[];
-        } catch {
+          return loopMenuItem(
+            normalizeMenuPaths(extractMenus(res?.data)) as never[],
+            IconMap,
+          ) as never[];
+        } catch (error) {
+          if (isAuthExpiredError(error)) {
+            clearAuthState();
+            redirectToLogin();
+          }
           return [];
         }
       },
@@ -172,19 +312,6 @@ export const layout: RunTimeLayoutConfig = ({
     //   content: initialState?.currentUser?.name,
     // },
     footerRender: () => <Footer />,
-    onPageChange: () => {
-      const { location } = history;
-      // 路由切换时再校验一次 cookie，未登录直接跳登录页
-      const hasToken = !!cookies.get(access_token);
-      if (
-        (!hasToken || !initialState?.currentUser) &&
-        location.pathname !== loginPath
-      ) {
-        history.replace(
-          `${loginPath}?redirect=${encodeURIComponent(location.pathname + location.search + location.hash)}`,
-        );
-      }
-    },
     bgLayoutImgList: [
       {
         src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr',
