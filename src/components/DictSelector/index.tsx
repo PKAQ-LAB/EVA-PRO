@@ -3,7 +3,7 @@ import { Select, type SelectProps } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 export interface DictSelectorProps extends Omit<SelectProps, 'options'> {
-  /** 字典编码，用于走 /api/sys/dict/query/{code} 远程拉取 */
+  /** 字典编码，用于走 /api/sys/dictionary/query/{code} 远程拉取 */
   code?: string;
   /** 直接传入的字典数据，优先于 code */
   data?: Record<string, string> | string;
@@ -34,15 +34,26 @@ const DictSelector: React.FC<DictSelectorProps> = ({
       return;
     }
     if (code) {
-      request<{ data?: Record<string, string> }>(`/api/sys/dict/query/${code}`)
+      request<{
+        data?: Record<string, string> | Array<Record<string, unknown>>;
+      }>(`/api/sys/dictionary/query/${code}`)
         .then((response) => {
           if (response?.data) {
-            setOptions(
-              Object.keys(response.data).map((value) => ({
-                value,
-                label: (response.data as Record<string, string>)[value],
-              })),
-            );
+            if (Array.isArray(response.data)) {
+              setOptions(
+                response.data.map((item) => ({
+                  value: String(item.value ?? item.code ?? item.id ?? ''),
+                  label: String(item.name ?? item.label ?? item.value ?? ''),
+                })),
+              );
+            } else {
+              setOptions(
+                Object.keys(response.data).map((value) => ({
+                  value,
+                  label: (response.data as Record<string, string>)[value],
+                })),
+              );
+            }
           }
         })
         .catch(() => {
