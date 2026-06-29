@@ -1,25 +1,16 @@
 import {
   BookOutlined,
-  CheckOutlined,
-  ForkOutlined,
   FullscreenExitOutlined,
   FullscreenOutlined,
-  GlobalOutlined,
 } from '@ant-design/icons';
-import { getAllLocales, getLocale, history, setLocale } from '@umijs/max';
-import type { MenuProps } from 'antd';
+import { history } from '@umijs/max';
 import { Button, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import screenfull from 'screenfull';
-import HeaderDropdown from '../HeaderDropdown';
-
-export const localeLabelMap: Record<string, { emoji: string; label: string }> =
-  {
-    'zh-CN': { emoji: '🇨🇳', label: '简体中文' },
-    'zh-TW': { emoji: '🇭🇰', label: '繁體中文' },
-    'en-US': { emoji: '🇺🇸', label: 'English' },
-  };
+import { LangDropdown } from './LangDropdown';
+import useHeaderActionStyles from './style';
+import { VersionDropdown } from './VersionDropdown';
 
 const useStyles = createStyles(({ token, css }) => ({
   action: css`
