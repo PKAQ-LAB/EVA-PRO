@@ -7,21 +7,32 @@ export interface AuthLoginParams {
 }
 
 export interface AuthLoginResult {
+  success?: boolean;
+  code?: string;
+  message?: string;
   status?: string;
   type?: string;
   currentAuthority?: string;
   data?: {
     access_token?: string;
+    accessToken?: string;
     refresh_token?: string;
+    refreshToken?: string;
+    user_info?: Record<string, unknown>;
+    userInfo?: Record<string, unknown>;
   };
 }
 
 /** 账号密码登录 POST /api/auth/login */
-export async function login(body: AuthLoginParams) {
+export async function login(
+  body: AuthLoginParams,
+  options?: Record<string, unknown>,
+) {
   return request<AuthLoginResult>('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: body,
+    ...(options || {}),
   });
 }
 

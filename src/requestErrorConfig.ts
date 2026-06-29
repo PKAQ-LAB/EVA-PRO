@@ -2,6 +2,12 @@
 import type { RequestConfig } from '@umijs/max';
 import { getIntl } from '@umijs/max';
 import { message, notification } from 'antd';
+import {
+  clearAuthState,
+  getStoredAccessToken,
+  isAuthExpiredCode,
+  redirectToLogin,
+} from '@/utils/authState';
 import defaultSettings from '../config/defaultSettings';
 
 // 错误处理方案： 错误类型
@@ -16,7 +22,9 @@ enum ErrorShowType {
 interface ResponseStructure {
   success: boolean;
   data: unknown;
-  errorCode?: number;
+  code?: string;
+  message?: string;
+  errorCode?: number | string;
   errorMessage?: string;
   showType?: ErrorShowType;
 }
@@ -32,18 +40,28 @@ interface ResponseStructure {
 export const errorConfig: RequestConfig = {
   errorConfig: {
     errorThrower: (res) => {
-      const { success, data, errorCode, errorMessage, showType } =
-        res as unknown as ResponseStructure;
+      const {
+        success,
+        data,
+        code,
+        message,
+        errorCode,
+        errorMessage,
+        showType,
+      } = res as unknown as ResponseStructure;
       if (!success) {
+        const bizMessage = errorMessage || message || '操作失败';
         const error: Error & {
           info?: ResponseStructure;
-        } = new Error(errorMessage);
+        } = new Error(bizMessage);
         error.name = 'BizError';
         error.info = {
           success,
           data,
-          errorCode,
-          errorMessage,
+          code,
+          message,
+          errorCode: errorCode ?? code,
+          errorMessage: bizMessage,
           showType,
         };
         throw error;
@@ -56,6 +74,12 @@ export const errorConfig: RequestConfig = {
         const errorInfo = error.info;
         if (errorInfo) {
           const { errorMessage, errorCode } = errorInfo;
+          if (isAuthExpiredCode(errorCode)) {
+            clearAuthState();
+            message.error(errorMessage || '登录已失效，请重新登录');
+            redirectToLogin();
+            return;
+          }
           switch (errorInfo.showType) {
             case ErrorShowType.SILENT:
               break;
@@ -82,6 +106,12 @@ export const errorConfig: RequestConfig = {
         // HTTP 状态码异常
         const { status, data } = error.response;
         const detail = data?.message;
+        if (status === 401) {
+          clearAuthState();
+          message.error(detail || '登录已失效，请重新登录');
+          redirectToLogin();
+          return;
+        }
         message.error(detail || `[${status}] 网络错误，无法连接服务器`);
       } else if (typeof navigator !== 'undefined' && !navigator.onLine) {
         message.error(
@@ -106,6 +136,7 @@ export const errorConfig: RequestConfig = {
   // 请求拦截器：补全标准 Header（Accept / Content-Type / device / version）
   requestInterceptors: [
     (config: RequestOptions) => {
+      const token = getStoredAccessToken();
       const headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
@@ -113,25 +144,16 @@ export const errorConfig: RequestConfig = {
         'Cache-Control': 'no-cache',
         device: 'pc',
         version: defaultSettings.version ?? '',
+        ...(token ? { Authorization: `Bearer${token}` } : {}),
         ...(config.headers || {}),
       };
       return { ...config, headers };
     },
   ],
 
-  // 响应拦截器：业务约定 data.success 为 false 时弹错误
+  // 业务错误由 errorThrower/errorHandler 统一处理，这里只保留响应透传。
   responseInterceptors: [
     (response) => {
-      const data = response?.data as ResponseStructure | undefined;
-      // 仅在响应体形如 { success, data } 时才介入，避免误伤直接返回数组等场景
-      if (
-        data &&
-        typeof data === 'object' &&
-        'success' in data &&
-        data.success === false
-      ) {
-        message.error(data.errorMessage || '操作失败');
-      }
       return response;
     },
   ],
