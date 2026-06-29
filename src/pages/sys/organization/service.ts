@@ -1,5 +1,11 @@
 import APIS from '@/apis';
 import http from '@/utils/http';
+import {
+  frozenToOrgStatus,
+  normalizeTree,
+  orgStatusToFrozen,
+  toBackendTreePayload,
+} from '../adapter';
 import type { OrgItem, OrgStatus } from './data.d';
 
 export interface OrgListResponse {
@@ -13,22 +19,45 @@ export interface MutationResult {
 }
 
 export const queryOrgs = (params?: Record<string, unknown>) =>
-  http.list<OrgListResponse>(APIS.ORG_LIST, params);
+  http.list<OrgListResponse>(APIS.ORG_LIST, params).then((res) => ({
+    ...res,
+    data: normalizeTree(res.data, frozenToOrgStatus) as OrgItem[],
+  }));
 
 export const getOrg = (id: string) =>
-  http.get<{ data?: OrgItem; success?: boolean }>(APIS.ORG_GET, id);
+  http
+    .get<{ data?: OrgItem; success?: boolean }>(APIS.ORG_GET, id)
+    .then((res) => ({
+      ...res,
+      data: res.data
+        ? (normalizeTree([res.data], frozenToOrgStatus)[0] as OrgItem)
+        : res.data,
+    }));
 
 export const editOrg = (data: Partial<OrgItem>) =>
-  http.post<MutationResult>(APIS.ORG_EDIT, data);
+  http.post<MutationResult>(
+    APIS.ORG_EDIT,
+    toBackendTreePayload(data as OrgItem),
+  );
 
 export const deleteOrgs = (ids: string[]) =>
   http.post<MutationResult>(APIS.ORG_DEL, { param: ids });
 
 export const switchOrgStatus = (id: string, status: OrgStatus) =>
-  http.post<MutationResult>(APIS.ORG_STATUS, { id, status });
+  http.post<MutationResult>(APIS.ORG_STATUS, {
+    param: [id],
+    frozen: orgStatusToFrozen(status),
+  });
 
 export const sortOrgs = (rows: Array<{ id: string; orders: number }>) =>
-  http.post<MutationResult>(APIS.ORG_SORT, rows);
+  http.post<MutationResult>(
+    APIS.ORG_SORT,
+    rows.map((row) => ({
+      id: row.id,
+      oldSort: row.orders,
+      newSort: row.orders,
+    })),
+  );
 
 export const checkOrgUnique = (code: string) =>
   http.post<MutationResult>(APIS.ORG_CHECKUNIQUE, { code });
