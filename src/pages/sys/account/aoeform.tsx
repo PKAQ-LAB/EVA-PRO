@@ -28,6 +28,11 @@ export interface AOEFormProps {
   onSuccess: () => void;
 }
 
+type AccountFormValues = Omit<AccountItem, 'locked'> & {
+  locked?: boolean;
+  repassword?: string;
+};
+
 const TITLE: Record<Exclude<OperateType, ''>, string> = {
   create: '新增',
   edit: '编辑',
@@ -46,7 +51,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [form] = Form.useForm<AccountItem & { repassword?: string }>();
+  const [form] = Form.useForm<AccountFormValues>();
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
   const [avatar, setAvatar] = useState<UploadFile[]>([]);
@@ -58,7 +63,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
     form.resetFields();
     form.setFieldsValue({
       ...(currentItem ?? ({} as AccountItem)),
-      locked: currentItem?.locked === '0001' ? '0001' : '0000',
+      locked: currentItem?.locked === '0001',
       roles: currentItem?.roles?.map((r) => ({ id: r.id })),
     });
     setAvatar(

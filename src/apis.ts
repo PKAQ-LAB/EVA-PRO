@@ -9,16 +9,16 @@ const APIS = {
   ORG_LIST: '/api/sys/organization/list',
   ORG_SORT: '/api/sys/organization/sort',
   ORG_EDIT: '/api/sys/organization/edit',
-  ORG_STATUS: '/api/sys/organization/switchStatus',
+  ORG_STATUS: '/api/sys/organization/switch',
   ORG_DEL: '/api/sys/organization/del',
   ORG_CHECKUNIQUE: '/api/sys/organization/checkUnique',
   // 模块管理
   MODULE_GET: '/api/sys/module/get',
-  MODULE_LIST: '/api/sys/module/listNoPage',
+  MODULE_LIST: '/api/sys/module/list',
   MODULE_EDIT: '/api/sys/module/edit',
   MODULE_SORT: '/api/sys/module/sort',
   MODULE_DEL: '/api/sys/module/del',
-  MODULE_STATUS: '/api/sys/module/switchStatus',
+  MODULE_STATUS: '/api/sys/module/frozen',
   MODULE_CHECKUNIQUE: '/api/sys/module/checkUnique',
   // 字典管理
   DICT_GET: '/api/sys/dictionary/get',
@@ -29,12 +29,12 @@ const APIS = {
   ROLE_GET: '/api/sys/role/get',
   ROLE_LIST: '/api/sys/role/list',
   ROLE_DEL: '/api/sys/role/del',
-  ROLE_SAVE: '/api/sys/role/save',
-  ROLE_LOCK: '/api/sys/role/lock',
-  ROLE_SAVEUSER: '/api/sys/role/saveUser',
-  ROLE_SAVEMODULE: '/api/sys/role/saveModule',
+  ROLE_SAVE: '/api/sys/role/edit',
+  ROLE_LOCK: '/api/sys/role/switch',
+  ROLE_SAVEUSER: '/api/sys/role/grantUser',
+  ROLE_SAVEMODULE: '/api/sys/role/grantResource',
   ROLE_CHECKUNIQUE: '/api/sys/role/checkUnique',
-  ROLE_LISTMOUDLE: '/api/sys/role/listModule',
+  ROLE_LISTMOUDLE: '/api/sys/role/fetchResource',
   ROLE_LISTUSER: '/api/sys/role/listUser',
   // 用户管理
   ACCOUNT_GET: '/api/sys/account/get',
@@ -43,7 +43,7 @@ const APIS = {
   ACCOUNT_EDIT: '/api/sys/account/edit',
   ACCOUNT_GRANT: '/api/sys/account/grant',
   ACCOUNT_DEL: '/api/sys/account/del',
-  ACCOUNT_LOCK: '/api/sys/account/lock',
+  ACCOUNT_LOCK: '/api/sys/account/switch',
 
   /**  系统日志 * */
   // 在线用户
