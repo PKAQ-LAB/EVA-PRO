@@ -5,7 +5,7 @@ import { createFromIconfontCN } from '@ant-design/icons';
  * 用法：<BizIcon type="icon-xxx" />
  */
 const BizIcon = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_597299_cfjebjaqyc0rizfr.css',
+  scriptUrl: '//at.alicdn.com/t/font_597299_cfjebjaqyc0rizfr.js',
 });
 
 export default BizIcon;

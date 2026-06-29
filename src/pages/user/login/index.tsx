@@ -3,18 +3,27 @@ import {
   EyeInvisibleOutlined,
   EyeOutlined,
 } from '@ant-design/icons';
-import { Helmet, SelectLang, useIntl, useModel } from '@umijs/max';
-import { Alert, App, Button, Form, Input } from 'antd';
+import { Helmet, history, SelectLang, useIntl, useModel } from '@umijs/max';
+import { App, Button, Form, Input } from 'antd';
 import { createStyles } from 'antd-style';
 import { MD5 } from 'jscrypto/es6/MD5';
 import React, { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import Cookies from 'universal-cookie';
-import { access_token, refresh_token } from '@/constant';
+import { refresh_token, user_key } from '@/constant';
 import { type AuthLoginResult, login } from '@/services/auth';
+import { fetchDict, fetchMenus } from '@/services/user';
+import {
+  clearAuthState,
+  getErrorMessage,
+  isAuthExpiredError,
+  redirectToLogin,
+  setStoredAccessToken,
+} from '@/utils/authState';
 import Settings from '../../../../config/defaultSettings';
 
-const cookies = new Cookies();
+const loginMenuCacheKey = 'eva_login_menus';
+const currentUserCacheKey = 'eva_current_user';
 
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
@@ -38,8 +47,8 @@ const useStyles = createStyles(({ token, css }) => ({
     min-height: 100vh;
     overflow: hidden;
     background:
-      radial-gradient(circle at 62% 34%, rgba(255, 255, 255, 0.55), transparent 0 16%, transparent 36%),
-      linear-gradient(135deg, #f5f6f7 0%, #d8dadd 52%, #c6c8cb 100%);
+      radial-gradient(circle at 56% 38%, #dedede 0%, #d4d4d4 18%, transparent 38%),
+      #d1d1d1;
 
     @media (max-width: 960px) {
       min-height: 360px;
@@ -398,18 +407,135 @@ const useStyles = createStyles(({ token, css }) => ({
   `,
 }));
 
-const LoginMessage: React.FC<{ content: string; className?: string }> = ({
-  content,
-  className,
-}) => <Alert className={className} title={content} type="error" showIcon />;
-
 interface LoginFormValues {
   account?: string;
   password?: string;
 }
 
+interface LoginMenuItem {
+  routeurl?: string;
+  routeUrl?: string;
+  path?: string;
+  children?: LoginMenuItem[];
+}
+
+const routeFallbacks = ['/sys/account', '/welcome'];
+const registeredRoutes = new Set([
+  '/welcome',
+  '/admin/sub-page',
+  '/list',
+  '/sys/account',
+  '/sys/organization',
+  '/sys/role',
+  '/sys/module',
+  '/sys/dictionary',
+  '/log/online',
+  '/log/biz',
+  '/log/error',
+  '/dev/generator',
+  '/dev/workflow',
+]);
+
+function getLoginErrorMessage(error: unknown) {
+  const payload = error as {
+    info?: { message?: string; errorMessage?: string };
+    data?: { message?: string; errorMessage?: string };
+    response?: { data?: { message?: string; errorMessage?: string } };
+    message?: string;
+  };
+  return (
+    payload.info?.message ||
+    payload.info?.errorMessage ||
+    payload.data?.message ||
+    payload.data?.errorMessage ||
+    payload.response?.data?.message ||
+    payload.response?.data?.errorMessage ||
+    payload.message
+  );
+}
+
+function normalizeRoutePath(path: string) {
+  if (!path) return '';
+  return path.startsWith('/') ? path : `/${path}`;
+}
+
+function isRegisteredRoute(path: string) {
+  return registeredRoutes.has(path);
+}
+
+function extractLoginMenus(data: unknown): LoginMenuItem[] {
+  if (Array.isArray(data)) return data as LoginMenuItem[];
+  const payload = (data || {}) as Record<string, unknown>;
+  const candidates = [
+    payload.menus,
+    payload.menu,
+    payload.routes,
+    payload.modules,
+    payload.resources,
+  ];
+  return (candidates.find(Array.isArray) as LoginMenuItem[]) || [];
+}
+
+function findFirstMenuPath(menus: LoginMenuItem[]): string {
+  for (const menu of menus) {
+    if (menu.children?.length) {
+      const childPath = findFirstMenuPath(menu.children);
+      if (childPath) return childPath;
+    }
+    const path = menu.path || menu.routeurl || menu.routeUrl;
+    if (path && path !== '/user/login') {
+      const normalizedPath = normalizeRoutePath(path);
+      if (isRegisteredRoute(normalizedPath)) return normalizedPath;
+    }
+  }
+  return '';
+}
+
+function getFirstMenuPath(menus: LoginMenuItem[]): string {
+  return (
+    findFirstMenuPath(menus) ||
+    routeFallbacks.find((path) => isRegisteredRoute(path)) ||
+    '/'
+  );
+}
+
+function getLoginToken(
+  msg: AuthLoginResult,
+  snakeKey: 'access_token' | 'refresh_token',
+  camelKey: 'accessToken' | 'refreshToken',
+) {
+  const payload = msg as AuthLoginResult & Record<string, unknown>;
+  return (
+    msg.data?.[snakeKey] ||
+    msg.data?.[camelKey] ||
+    (payload[snakeKey] as string | undefined) ||
+    (payload[camelKey] as string | undefined)
+  );
+}
+
+function getLoginUserInfo(msg: AuthLoginResult) {
+  return msg.data?.user_info || msg.data?.userInfo;
+}
+
+function normalizeLoginUser(
+  userInfo: Record<string, unknown> | undefined,
+  menus: LoginMenuItem[],
+) {
+  const user = userInfo || {};
+  return {
+    ...user,
+    menus,
+    name:
+      (user.name as string | undefined) ||
+      (user.nickName as string | undefined) ||
+      (user.account as string | undefined) ||
+      (user.username as string | undefined) ||
+      'Admin',
+    access: (user.access as string | undefined) || 'admin',
+  } as API.CurrentUser & { menus?: LoginMenuItem[] };
+}
+
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<AuthLoginResult>({});
   const [submitting, setSubmitting] = useState(false);
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const [isTyping, setIsTyping] = useState(false);
@@ -417,7 +543,7 @@ const Login: React.FC = () => {
   const [passwordLen, setPasswordLen] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [blink, setBlink] = useState({ purple: false, black: false });
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { setInitialState } = useModel('@@initialState');
   const { styles } = useStyles();
   const { message } = App.useApp();
   const intl = useIntl();
@@ -501,34 +627,6 @@ const Login: React.FC = () => {
     };
   }, [isTyping, lookingAtEachOther, mouse, passwordLen, showPassword]);
 
-  const getSafeRedirectUrl = (redirect: string | null): string => {
-    if (!redirect?.startsWith('/')) return '/';
-    if (redirect.startsWith('//')) return '/';
-    try {
-      const parsed = new URL(redirect, window.location.origin);
-      if (parsed.origin !== window.location.origin) return '/';
-      return `${parsed.pathname}${parsed.search}${parsed.hash}`;
-    } catch {
-      return '/';
-    }
-  };
-
-  const fetchUserInfo = async () => {
-    const [userInfo, dict] = await Promise.all([
-      initialState?.fetchUserInfo?.(),
-      initialState?.fetchDict?.(),
-    ]);
-    if (userInfo) {
-      flushSync(() => {
-        setInitialState((s) => ({
-          ...s,
-          currentUser: userInfo,
-          dict,
-        }));
-      });
-    }
-  };
-
   const handleSubmit = async (values: LoginFormValues) => {
     setSubmitting(true);
     try {
@@ -536,45 +634,88 @@ const Login: React.FC = () => {
       if (payload.password) {
         payload.password = MD5.hash(payload.password).toString();
       }
-      const msg = await login(payload);
-      if (msg.status === 'ok') {
-        const tokenValue = msg.data?.access_token;
+      const msg = await login(payload, { skipErrorHandler: true });
+      if (msg.success !== false && (msg.success || msg.status === 'ok')) {
+        const cookies = new Cookies();
+        const tokenValue = getLoginToken(msg, 'access_token', 'accessToken');
         if (!tokenValue) {
           message.error('登录响应缺少访问令牌，请联系管理员');
           return;
         }
-        cookies.set(access_token, tokenValue, { path: '/' });
-        if (msg.data?.refresh_token) {
-          cookies.set(refresh_token, msg.data.refresh_token, { path: '/' });
+        setStoredAccessToken(tokenValue);
+        const refreshTokenValue = getLoginToken(
+          msg,
+          'refresh_token',
+          'refreshToken',
+        );
+        if (refreshTokenValue) {
+          cookies.set(refresh_token, refreshTokenValue, {
+            path: '/',
+            sameSite: 'lax',
+          });
         }
+        const userInfo = getLoginUserInfo(msg);
+        if (userInfo) {
+          cookies.set(user_key, JSON.stringify(userInfo), {
+            path: '/',
+            sameSite: 'lax',
+          });
+          window.sessionStorage.setItem(
+            currentUserCacheKey,
+            JSON.stringify(userInfo),
+          );
+        }
+
+        let menus: LoginMenuItem[] = [];
+        let dict: Record<string, unknown> | undefined;
+        try {
+          const authHeaders = { Authorization: `Bearer${tokenValue}` };
+          const [menuResponse, dictResponse] = await Promise.all([
+            fetchMenus({ headers: authHeaders, skipErrorHandler: true }),
+            fetchDict({ headers: authHeaders, skipErrorHandler: true }),
+          ]);
+          menus = extractLoginMenus(menuResponse?.data);
+          dict = dictResponse?.data;
+          window.sessionStorage.setItem(
+            loginMenuCacheKey,
+            JSON.stringify(menuResponse?.data ?? []),
+          );
+        } catch (error) {
+          if (isAuthExpiredError(error)) {
+            clearAuthState();
+            message.error(getErrorMessage(error) || '登录已失效，请重新登录');
+            redirectToLogin();
+            return;
+          }
+          message.error(getErrorMessage(error) || '初始化菜单或字典失败');
+          return;
+        }
+
+        const currentUser = normalizeLoginUser(userInfo, menus);
+        flushSync(() => {
+          setInitialState((state) => ({
+            ...state,
+            currentUser,
+            dict,
+          }));
+        });
         message.success(
           intl.formatMessage({
             id: 'pages.login.success',
             defaultMessage: '登录成功！',
           }),
         );
-        await fetchUserInfo();
-        const urlParams = new URL(window.location.href).searchParams;
-        const redirectUrl = getSafeRedirectUrl(urlParams.get('redirect'));
-        setTimeout(() => {
-          window.location.href = redirectUrl;
-        }, 50);
+        history.replace(getFirstMenuPath(menus));
         return;
       }
-      setUserLoginState(msg);
-    } catch {
-      message.error(
-        intl.formatMessage({
-          id: 'pages.login.failure',
-          defaultMessage: '登录失败，请重试！',
-        }),
-      );
+      message.error(msg.message || '登录失败');
+    } catch (error) {
+      message.error(getLoginErrorMessage(error) || '登录失败');
     } finally {
       setSubmitting(false);
     }
   };
 
-  const { status } = userLoginState;
   const title = Settings.title || 'Eva Admin Pro';
 
   return (
@@ -750,16 +891,6 @@ const Login: React.FC = () => {
             <h1>欢迎回来！</h1>
             <p>请输入你的登录信息</p>
           </header>
-
-          {status === 'error' && (
-            <LoginMessage
-              className={styles.alert}
-              content={intl.formatMessage({
-                id: 'pages.login.accountLogin.errorMessage',
-                defaultMessage: '账户或密码错误(admin/admin123)',
-              })}
-            />
-          )}
 
           <Form<LoginFormValues>
             className={styles.form}
