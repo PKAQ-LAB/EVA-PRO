@@ -53,7 +53,7 @@ const SysDictionaryPage: React.FC = () => {
           title="字典分组"
           width={400}
           bodyStyle={{ padding: 0 }}
-          layoutStyle={{ minHeight: 'calc(100vh - 215px)' }}
+          layoutStyle={{ height: 'calc(100vh - 215px)' }}
           body={
             <DictListView
               data={data}

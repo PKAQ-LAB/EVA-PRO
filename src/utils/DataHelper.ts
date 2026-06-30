@@ -21,6 +21,9 @@ interface ModuleLike {
   [k: string]: unknown;
 }
 
+const isSameTreeId = (left: TreeLike['id'], right: TreeLike['id']) =>
+  String(left) === String(right);
+
 /**
  * 将后端返回的菜单 JSON 中字符串图标名替换为对应的 React 图标节点。
  * iconMap 可以由 src/appicon 提供（TASK-13 中迁入）。
@@ -50,7 +53,7 @@ const filterID = (
   itemArray: string[],
 ): void => {
   data.forEach((item) => {
-    if (item.id === id) {
+    if (isSameTreeId(item.id, id)) {
       if (item.children && item.name) itemArray.push(item.name);
     } else if (item.children) {
       filterID(item.children, id, itemArray);
@@ -93,7 +96,7 @@ export function getNodeBorther(
   let dude: TreeLike[] = [];
   if (data && data.length > 0) {
     data.forEach((item) => {
-      if (item.id === targetPid && item.children) {
+      if (isSameTreeId(item.id, targetPid) && item.children) {
         dude = [...item.children];
       } else if (item.children) {
         const found = getNodeBorther(item.children, targetPid);

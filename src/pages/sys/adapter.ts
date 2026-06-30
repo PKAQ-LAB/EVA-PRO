@@ -16,6 +16,9 @@ type TreeNode = {
   children?: TreeNode[];
 };
 
+const normalizeTreeId = (value?: string | number) =>
+  value != null ? String(value) : undefined;
+
 export const frozenToEnabledStatus = (frozen?: BackendFrozen): FrontStatus => {
   if (frozen === -1) return '9999';
   return frozen === 1 ? '0001' : '0000';
@@ -60,10 +63,13 @@ export const normalizeTree = <T extends TreeNode>(
   statusMapper: (frozen?: BackendFrozen) => FrontStatus = frozenToEnabledStatus,
 ): T[] =>
   (rows ?? []).map((row) => {
+    const pid = normalizeTreeId(row.pid);
+    const parentId = normalizeTreeId(row.parentId ?? row.pid);
     const next = {
       ...row,
-      id: row.id != null ? String(row.id) : row.id,
-      parentId: row.parentId ?? (row.pid != null ? String(row.pid) : undefined),
+      id: normalizeTreeId(row.id),
+      pid,
+      parentId,
       orders: row.orders ?? row.sort,
       status: row.status ?? statusMapper(row.frozen),
       locked: row.locked ?? frozenToEnabledStatus(row.frozen),
