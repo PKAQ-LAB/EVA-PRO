@@ -168,26 +168,26 @@ const SysAccountPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="eva-alert" style={{ marginTop: 12, marginBottom: 12 }}>
-        <Alert
-          showIcon
-          type="info"
-          message={
-            <div>
-              已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a>{' '}
-              项
-              {selectedRowKeys.length > 0 && (
+      {selectedRowKeys.length > 0 && (
+        <div className="eva-alert">
+          <Alert
+            showIcon
+            type="info"
+            message={
+              <div>
+                已选择{' '}
+                <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项
                 <a
                   style={{ marginLeft: 24 }}
                   onClick={() => setSelectedRowKeys([])}
                 >
                   清空选择
                 </a>
-              )}
-            </div>
-          }
-        />
-      </div>
+              </div>
+            }
+          />
+        </div>
+      )}
 
       <div className="eva-body">
         <SideLayout

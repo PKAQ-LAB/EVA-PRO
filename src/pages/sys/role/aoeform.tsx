@@ -113,7 +113,7 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       onOk={handleSaveClick}
       title={`${TITLE[modalType as 'create' | 'edit' | 'view'] ?? ''}角色`}
     >
-      <Form colon form={form} {...formItemLayout}>
+      <Form colon form={form} layout="horizontal" {...formItemLayout}>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item

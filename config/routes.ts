@@ -52,6 +52,7 @@ export default [
     routes: [
       { path: '/sys', redirect: '/sys/account' },
       { name: 'sys.account', path: '/sys/account', component: './sys/account' },
+      { name: 'sys.user', path: '/sys/user', component: './sys/account' },
       {
         name: 'sys.organization',
         path: '/sys/organization',
