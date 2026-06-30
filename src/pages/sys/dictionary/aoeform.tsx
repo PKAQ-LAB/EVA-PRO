@@ -70,7 +70,7 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
 
   return (
     <>
-      <Form colon form={form} {...formItemLayout}>
+      <Form colon form={form} layout="horizontal" {...formItemLayout}>
         <Card
           title={`${TITLE[operateType as 'create' | 'edit' | 'view'] ?? ''}字典信息`}
           extra={

@@ -419,12 +419,13 @@ interface LoginMenuItem {
   children?: LoginMenuItem[];
 }
 
-const routeFallbacks = ['/sys/account', '/welcome'];
+const routeFallbacks = ['/sys/user', '/sys/account', '/welcome'];
 const registeredRoutes = new Set([
   '/welcome',
   '/admin/sub-page',
   '/list',
   '/sys/account',
+  '/sys/user',
   '/sys/organization',
   '/sys/role',
   '/sys/module',
@@ -435,6 +436,22 @@ const registeredRoutes = new Set([
   '/dev/generator',
   '/dev/workflow',
 ]);
+const menuRouteAliases: Record<string, string> = {
+  sys: '/sys',
+  'sys.account': '/sys/user',
+  'sys.user': '/sys/user',
+  'sys.organization': '/sys/organization',
+  'sys.role': '/sys/role',
+  'sys.module': '/sys/module',
+  'sys.dictionary': '/sys/dictionary',
+  log: '/log',
+  'log.online': '/log/online',
+  'log.biz': '/log/biz',
+  'log.error': '/log/error',
+  dev: '/dev',
+  'dev.generator': '/dev/generator',
+  'dev.workflow': '/dev/workflow',
+};
 
 function getLoginErrorMessage(error: unknown) {
   const payload = error as {
@@ -463,6 +480,33 @@ function isRegisteredRoute(path: string) {
   return registeredRoutes.has(path);
 }
 
+function getMenuCandidates(menu: LoginMenuItem & Record<string, unknown>) {
+  return [
+    menu.code,
+    menu.name,
+    menu.title,
+    menu.menuCode,
+    menu.moduleCode,
+    menu.permission,
+    menu.authority,
+  ];
+}
+
+function getLoginMenuPath(menu: LoginMenuItem) {
+  const record = menu as LoginMenuItem & Record<string, unknown>;
+  for (const identity of getMenuCandidates(record)) {
+    if (typeof identity !== 'string') continue;
+    if (menuRouteAliases[identity]) return menuRouteAliases[identity];
+    if (identity.startsWith('menu.') && menuRouteAliases[identity.slice(5)]) {
+      return menuRouteAliases[identity.slice(5)];
+    }
+  }
+  const path = menu.routeurl || menu.routeUrl || menu.path;
+  if (!path || path === '/user/login') return '';
+  const normalizedPath = normalizeRoutePath(path);
+  return isRegisteredRoute(normalizedPath) ? normalizedPath : '';
+}
+
 function extractLoginMenus(data: unknown): LoginMenuItem[] {
   if (Array.isArray(data)) return data as LoginMenuItem[];
   const payload = (data || {}) as Record<string, unknown>;
@@ -482,11 +526,8 @@ function findFirstMenuPath(menus: LoginMenuItem[]): string {
       const childPath = findFirstMenuPath(menu.children);
       if (childPath) return childPath;
     }
-    const path = menu.path || menu.routeurl || menu.routeUrl;
-    if (path && path !== '/user/login') {
-      const normalizedPath = normalizeRoutePath(path);
-      if (isRegisteredRoute(normalizedPath)) return normalizedPath;
-    }
+    const path = getLoginMenuPath(menu);
+    if (path) return path;
   }
   return '';
 }

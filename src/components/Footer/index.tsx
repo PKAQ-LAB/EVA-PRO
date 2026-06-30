@@ -1,67 +1,23 @@
-import { GithubOutlined } from '@ant-design/icons';
-import packageJson from '@root/package.json';
 import { useModel } from '@umijs/max';
-import { Divider } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
 import defaultSettings from '../../../config/defaultSettings';
 
-const getRepoUrl = () => {
-  if (!packageJson.repository)
-    return 'https://github.com/ant-design/ant-design-pro';
-  const repo =
-    typeof packageJson.repository === 'string'
-      ? packageJson.repository
-      : (packageJson.repository as { url: string }).url;
-  const match = repo.match(/github\.com[:/]([^/]+)\/([^/.]+)/);
-  if (!match) return 'https://github.com/ant-design/ant-design-pro';
-  return `https://github.com/${match[1]}/${match[2]}`;
-};
-
-const REPO_URL = getRepoUrl();
-const COMMIT_HASH = process.env.COMMIT_HASH || '';
-
 const useStyles = createStyles(({ token, css }) => ({
   footer: css`
-    padding: 16px 24px;
-    text-align: center;
-    color: ${token.colorTextDescription};
-    font-size: ${token.fontSizeSM}px;
-    line-height: ${token.lineHeight};
-    background: transparent;
-  `,
-  copyright: css`
-    margin-bottom: 6px;
-  `,
-  link: css`
-    color: ${token.colorTextDescription};
-    text-decoration: none;
-    transition: color ${token.motionDurationMid};
-
-    &:hover {
-      color: ${token.colorText};
-    }
-  `,
-  meta: css`
     display: flex;
+    height: 30px;
+    flex: 0 0 30px;
     align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 6px 12px;
-    font-family: ${token.fontFamilyCode};
-    font-size: ${token.fontSizeSM - 1}px;
-  `,
-  group: css`
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  `,
-  label: css`
-    color: ${token.colorTextQuaternary};
-  `,
-  divider: css`
-    display: inline-block;
-    vertical-align: middle;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 0 24px;
+    border-top: 1px solid ${token.colorBorderSecondary};
+    background: #fff;
+    color: ${token.colorTextDescription};
+    font-size: 12px;
+    line-height: 30px;
+    white-space: nowrap;
   `,
 }));
 
@@ -77,76 +33,18 @@ export interface FooterProps {
 const Footer: React.FC<FooterProps> = ({ copyright }) => {
   const { styles } = useStyles();
   const { initialState } = useModel('@@initialState');
-  const year = new Date().getFullYear();
+  const settings = initialState?.settings as
+    | { copyright?: React.ReactNode; version?: string }
+    | undefined;
   const resolvedCopyright =
-    copyright ??
-    (initialState?.settings as { copyright?: React.ReactNode } | undefined)
-      ?.copyright ??
-    defaultSettings.copyright ??
-    `Ant Design Pro © ${year}`;
+    copyright ?? settings?.copyright ?? defaultSettings.copyright ?? '';
+  const version =
+    settings?.version ?? defaultSettings.version ?? __APP_VERSION__;
 
   return (
     <div className={styles.footer}>
-      {resolvedCopyright && (
-        <div className={styles.copyright}>{resolvedCopyright}</div>
-      )}
-      <div className={styles.meta}>
-        <span className={styles.group}>
-          <span className={styles.label}>ver</span>
-          <a
-            className={styles.link}
-            href={REPO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {__APP_VERSION__}
-          </a>
-          {COMMIT_HASH && (
-            <a
-              className={styles.link}
-              href={`${REPO_URL}/commit/${COMMIT_HASH}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {COMMIT_HASH.slice(0, 7)}
-            </a>
-          )}
-        </span>
-        <Divider orientation="vertical" className={styles.divider} />
-        <span className={styles.group}>
-          <span className={styles.label}>Umi</span>
-          <a
-            className={styles.link}
-            href="https://umijs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {__UMI_VERSION__}
-          </a>
-        </span>
-        <Divider orientation="vertical" className={styles.divider} />
-        <span className={styles.group}>
-          <span className={styles.label}>Utoo</span>
-          <a
-            className={styles.link}
-            href="https://utoo.land"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {__UTOO_VERSION__}
-          </a>
-        </span>
-        <Divider orientation="vertical" className={styles.divider} />
-        <a
-          className={styles.link}
-          href={REPO_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <GithubOutlined style={{ marginRight: 4 }} />
-          GitHub
-        </a>
-      </div>
+      {resolvedCopyright && <span>{resolvedCopyright}</span>}
+      {version && <span>系统版本：{version}</span>}
     </div>
   );
 };

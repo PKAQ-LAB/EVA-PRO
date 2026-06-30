@@ -6,6 +6,7 @@
   font-weight: bold;
   line-height: 45px;
   background-color: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .title > div {
@@ -25,14 +26,32 @@
 }
 
 .body {
+  height: calc(100% - 45px);
   padding: 15px;
+  overflow: auto;
+  background: #fff;
 }
 
 .content {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
   background-color: #fff;
 }
 
-.layout :global(.ant-layout-sider-children) {
-  background-color: #fefefe;
+.layout {
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
   border: 1px solid #e8e8e8;
+}
+
+.layout :global(.ant-layout-sider-children) {
+  height: 100%;
+  overflow: hidden;
+  background-color: #fefefe;
+}
+
+:global(.eva-side-layout) {
+  background: #fff;
 }

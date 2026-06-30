@@ -21,27 +21,193 @@ canvas {
   display: block;
 }
 
+.ant-pro-layout .ant-layout-header.ant-pro-layout-header,
+.ant-pro-layout .ant-pro-layout-header .ant-pro-layout-header-action,
+.ant-pro-layout .ant-pro-layout-header .ant-pro-layout-header-header {
+  background: #141414;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ant-pro-layout .ant-pro-layout-header a,
+.ant-pro-layout .ant-pro-layout-header .anticon,
+.ant-pro-layout .ant-pro-layout-header button {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ant-pro-layout .ant-pro-layout-header a:hover,
+.ant-pro-layout .ant-pro-layout-header .anticon:hover,
+.ant-pro-layout .ant-pro-layout-header button:hover {
+  color: #fff;
+}
+
+.ant-pro-sider .ant-pro-sider-logo h1,
+.ant-pro-sider .ant-pro-sider-logo a {
+  color: #fff;
+}
+
+.ant-pro-sider,
+.ant-pro-sider .ant-layout-sider-children,
+.ant-pro-sider .ant-pro-sider-menu,
+.ant-pro-sider .ant-menu,
+.ant-pro-sider .ant-menu-light,
+.ant-pro-sider .ant-menu-sub {
+  background: #242424;
+}
+
+.ant-pro-sider .ant-menu-item,
+.ant-pro-sider .ant-menu-submenu-title {
+  height: 48px;
+  margin: 0;
+  border-radius: 0;
+  color: #b8c1c7;
+  line-height: 48px;
+}
+
+.ant-pro-sider .ant-menu-submenu-title .ant-menu-title-content,
+.ant-pro-sider .ant-menu-item .ant-menu-title-content,
+.ant-pro-sider .ant-menu-item .anticon,
+.ant-pro-sider .ant-menu-submenu-title .anticon,
+.ant-pro-sider .ant-menu-submenu-arrow {
+  color: inherit;
+}
+
+.ant-pro-layout .ant-pro-sider .ant-layout-sider-children {
+  padding-inline: 0;
+}
+
+.ant-pro-layout .ant-pro-sider.ant-layout-sider .ant-menu {
+  padding-inline: 0;
+}
+
+.ant-pro-layout .ant-pro-sider.ant-layout-sider .ant-menu .ant-menu-item,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-submenu-title {
+  width: 100%;
+  margin-inline: 0;
+  border-radius: 0;
+}
+
+.ant-pro-layout .ant-pro-sider.ant-layout-sider .ant-menu .ant-menu-item:hover,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-submenu-title:hover {
+  background: #2b2b2b;
+  color: #fff;
+}
+
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-item:hover
+  .ant-menu-title-content,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-item:hover
+  a,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-item:hover
+  .anticon,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-submenu-title:hover
+  .ant-menu-title-content,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-submenu-title:hover
+  .anticon,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-submenu-title:hover
+  .ant-menu-submenu-arrow {
+  color: #fff;
+}
+
+.ant-pro-sider .ant-menu-submenu-open > .ant-menu-submenu-title {
+  background: #1f1f1f;
+  color: #d7dde2;
+}
+
+.ant-pro-sider .ant-menu-submenu .ant-menu-sub {
+  background: #2b2b2b;
+}
+
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-item.ant-menu-item-selected,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu.ant-menu-light
+  .ant-menu-item.ant-menu-item-selected {
+  background: rgba(24, 144, 255, 0.5);
+  color: #fff;
+}
+
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-item.ant-menu-item-selected
+  a,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-item.ant-menu-item-selected
+  .ant-menu-title-content,
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-item.ant-menu-item-selected
+  .anticon {
+  color: #fff;
+}
+
+.ant-pro-layout
+  .ant-pro-sider.ant-layout-sider
+  .ant-menu
+  .ant-menu-item.ant-menu-item-selected::after {
+  display: none;
+}
+
 /* ============== EVA 业务通用容器类 ============== */
 /* 操作按钮 + 搜索条所在的 ribbon */
 .eva-ribbon {
   display: flex;
   justify-content: space-between;
-  padding: 15px 5px 0 5px;
+  padding: 16px 0;
+  border-bottom: 2px solid #f0f2f5;
 }
 
 /* 主内容区 */
 .eva-body {
-  padding: 15px 5px;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: 16px 0 0;
+  background: #fff;
 }
 
 /* 选中项提示条 */
 .eva-alert {
-  padding: 15px 15px 0 10px;
+  padding: 16px 0 0;
+}
+
+.ant-pro-table-list-toolbar-container {
+  padding-block: 6px;
 }
 
 /* SideLayout 默认高度 */
 .eva-side-layout {
-  min-height: calc(100vh - 175px);
+  background: #fff;
 }
 
 /* 锁定行（橙色淡背景） */
@@ -52,6 +218,177 @@ canvas {
 /* 系统用户（不可操作）行（灰背景） */
 .eva-disabled {
   background-color: #f5f5f5;
+}
+
+.ant-btn,
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector,
+.ant-picker,
+.ant-input-number,
+.ant-alert,
+.ant-card,
+.ant-table-container,
+.ant-table,
+.ant-modal-content,
+.ant-popover-inner,
+.ant-dropdown-menu,
+.ant-pro-card {
+  border-radius: 2px;
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector,
+.ant-picker,
+.ant-input-number,
+.ant-input-number-input,
+.ant-input-group-addon,
+textarea.ant-input {
+  background-color: #fff;
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector,
+.ant-picker,
+.ant-input-number {
+  border-color: #d9d9d9;
+  box-shadow: 0 0 0 1px rgba(5, 5, 5, 0.06) inset;
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-select-selector:hover,
+.ant-picker:hover,
+.ant-input-number:hover {
+  border-color: var(--ant-color-primary, #1890ff);
+}
+
+.ant-modal .ant-form-horizontal .ant-form-item-row,
+.ant-drawer .ant-form-horizontal .ant-form-item-row {
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.ant-modal .ant-form-item-label,
+.ant-drawer .ant-form-item-label {
+  flex-shrink: 0;
+  max-width: none;
+  white-space: nowrap;
+}
+
+.ant-modal .ant-form-item-control,
+.ant-drawer .ant-form-item-control {
+  min-width: 0;
+}
+
+/* ============== EVA 工作区布局 ============== */
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+.ant-pro-layout,
+.ant-pro-layout .ant-layout,
+.ant-pro-layout-container {
+  height: 100%;
+  min-height: 100%;
+}
+
+.ant-pro-layout .ant-layout-content {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+}
+
+.ant-pro-layout .ant-pro-layout-content {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.eva-workspace {
+  display: flex;
+  height: 100vh;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f0f2f5;
+}
+
+.eva-workspace-page {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ant-pro-page-container {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  background: #f0f2f5;
+}
+
+.eva-workspace-page > .ant-pro-page-container {
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.eva-workspace-page .ant-pro-page-container-warp,
+.eva-workspace-page .ant-page-header {
+  flex: 0 0 auto;
+}
+
+.ant-pro-page-container .ant-pro-page-container-warp,
+.ant-pro-page-container .ant-page-header {
+  margin: 0 0 3px 0;
+  background: #fff;
+}
+
+.eva-workspace-page .ant-pro-grid-content,
+.eva-workspace-page .ant-pro-page-container-children-content {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+}
+
+.ant-pro-page-container .ant-pro-page-container-children-container {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  margin: 0;
+  padding: 16px 24px;
+  overflow: auto;
+  background: #fff;
+}
+
+.ant-pro-page-container .ant-pro-page-container-children-container > * {
+  flex-shrink: 0;
+}
+
+.ant-pro-page-container .ant-pro-page-container-children-container > .eva-body {
+  flex: 1 1 auto;
+}
+
+.ant-pro-global-footer {
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  background: #fff;
 }
 
 /* ============== 全局滚动条 ============== */

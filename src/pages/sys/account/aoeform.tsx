@@ -150,7 +150,13 @@ const AOEForm: React.FC<AOEFormProps> = ({
       onOk={handleSaveClick}
       title={`${TITLE[operateType as 'create' | 'edit'] ?? '查看'}用户信息`}
     >
-      <Form size="middle" form={form} labelAlign="left" {...formItemLayout}>
+      <Form
+        size="middle"
+        form={form}
+        labelAlign="left"
+        layout="horizontal"
+        {...formItemLayout}
+      >
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item label="　" name="file" colon={false}>

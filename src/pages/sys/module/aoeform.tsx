@@ -106,7 +106,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
         </div>
       }
     >
-      <Form colon form={form} {...formItemLayout}>
+      <Form colon form={form} layout="horizontal" {...formItemLayout}>
         <Form.Item
           label="模块名称"
           name="name"

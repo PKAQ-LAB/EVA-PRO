@@ -1,4 +1,4 @@
-import { LinkOutlined } from '@ant-design/icons';
+import { LinkOutlined, UserOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
@@ -14,14 +14,12 @@ import Cookies from 'universal-cookie';
 import IconMap from '@/appicon';
 import {
   AvatarDropdown,
-  DocLink,
   ErrorBoundary,
   Footer,
   FullscreenToggle,
   LangDropdown,
   OfflineBanner,
   PageLoading,
-  VersionDropdown,
 } from '@/components';
 import { user_key } from '@/constant';
 import { fetchDict, fetchMenus } from '@/services/user';
@@ -47,6 +45,7 @@ const registeredMenuRoutes = new Set([
   '/admin/sub-page',
   '/list',
   '/sys/account',
+  '/sys/user',
   '/sys/organization',
   '/sys/role',
   '/sys/module',
@@ -57,6 +56,94 @@ const registeredMenuRoutes = new Set([
   '/dev/generator',
   '/dev/workflow',
 ]);
+const menuDisplayNames: Record<string, string> = {
+  sys: '系统管理',
+  'sys.account': '用户管理',
+  'sys.user': '用户管理',
+  'sys.organization': '组织管理',
+  'sys.role': '角色管理',
+  'sys.module': '模块管理',
+  'sys.dictionary': '字典管理',
+  log: '系统日志',
+  'log.online': '在线用户',
+  'log.biz': '业务日志',
+  'log.error': '错误日志',
+  dev: '开发工具',
+  'dev.generator': '代码生成',
+  'dev.workflow': '工作流',
+};
+const menuRouteAliases: Record<string, string> = {
+  sys: '/sys',
+  'sys.account': '/sys/user',
+  'sys.user': '/sys/user',
+  'sys.organization': '/sys/organization',
+  'sys.role': '/sys/role',
+  'sys.module': '/sys/module',
+  'sys.dictionary': '/sys/dictionary',
+  log: '/log',
+  'log.online': '/log/online',
+  'log.biz': '/log/biz',
+  'log.error': '/log/error',
+  dev: '/dev',
+  'dev.generator': '/dev/generator',
+  'dev.workflow': '/dev/workflow',
+};
+
+function normalizeRoutePath(path?: unknown) {
+  if (typeof path !== 'string' || !path) return undefined;
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return registeredMenuRoutes.has(normalizedPath) ? normalizedPath : undefined;
+}
+
+function getCurrentRoutePath() {
+  if (typeof window === 'undefined') return history.location.pathname;
+  const hashPath = window.location.hash.replace(/^#/, '').split('?')[0];
+  return hashPath || history.location.pathname;
+}
+
+function getMenuCandidates(item: Record<string, unknown>) {
+  return [
+    item.code,
+    item.name,
+    item.title,
+    item.menuCode,
+    item.moduleCode,
+    item.permission,
+    item.authority,
+  ];
+}
+
+function getMenuDisplayName(item: Record<string, unknown>) {
+  for (const identity of getMenuCandidates(item)) {
+    if (typeof identity !== 'string') continue;
+    if (menuDisplayNames[identity]) return menuDisplayNames[identity];
+    if (identity.startsWith('menu.') && menuDisplayNames[identity.slice(5)]) {
+      return menuDisplayNames[identity.slice(5)];
+    }
+  }
+  return typeof item.title === 'string'
+    ? item.title
+    : typeof item.name === 'string'
+      ? item.name
+      : undefined;
+}
+
+function getMenuPath(item: Record<string, unknown>) {
+  for (const identity of getMenuCandidates(item)) {
+    if (typeof identity !== 'string') continue;
+    if (menuRouteAliases[identity]) return menuRouteAliases[identity];
+    if (identity.startsWith('menu.') && menuRouteAliases[identity.slice(5)]) {
+      return menuRouteAliases[identity.slice(5)];
+    }
+  }
+  return (
+    normalizeRoutePath(item.routeurl) ||
+    normalizeRoutePath(item.routeUrl) ||
+    normalizeRoutePath(item.url) ||
+    normalizeRoutePath(item.router) ||
+    normalizeRoutePath(item.path)
+  );
+}
 
 function extractMenus(data: unknown): unknown[] {
   if (Array.isArray(data)) return data;
@@ -75,19 +162,17 @@ function normalizeMenuPaths(menus: unknown[]): unknown[] {
   return menus
     .map((menu) => {
       const item = menu as Record<string, unknown>;
-      const path = item.path ?? item.routeurl ?? item.routeUrl;
-      const normalizedPath =
-        typeof path === 'string' && path
-          ? path.startsWith('/')
-            ? path
-            : `/${path}`
-          : undefined;
+      const normalizedPath = getMenuPath(item);
+      const displayName = getMenuDisplayName(item);
       const children = Array.isArray(item.children)
         ? normalizeMenuPaths(item.children)
         : undefined;
       return {
         ...item,
-        ...(normalizedPath ? { path: normalizedPath } : {}),
+        ...(displayName ? { name: displayName } : {}),
+        ...(normalizedPath
+          ? { key: normalizedPath, path: normalizedPath }
+          : {}),
         ...(children?.length ? { children } : {}),
       };
     })
@@ -163,6 +248,15 @@ function getCachedCurrentUser() {
     window.sessionStorage.removeItem(currentUserCacheKey);
     return undefined;
   }
+}
+
+function getCurrentUserDisplayName(currentUser?: API.CurrentUser) {
+  const user = (currentUser || {}) as API.CurrentUser & {
+    nickName?: string;
+    account?: string;
+    username?: string;
+  };
+  return user.name || user.nickName || user.account || user.username || '用户';
 }
 
 /**
@@ -250,7 +344,13 @@ export const layout: RunTimeLayoutConfig = ({
   initialState,
   setInitialState,
 }) => {
+  const currentRoutePath = getCurrentRoutePath();
   return {
+    location: {
+      ...history.location,
+      pathname: currentRoutePath,
+    },
+    selectedKeys: [currentRoutePath],
     menuItemRender: (item, dom) => {
       if (item.path) {
         return (
@@ -267,7 +367,7 @@ export const layout: RunTimeLayoutConfig = ({
      * 后端不可达时落空菜单（不会影响 layout 渲染）。
      */
     menu: {
-      locale: true,
+      locale: false,
       request: async () => {
         try {
           const currentMenus = (
@@ -296,14 +396,12 @@ export const layout: RunTimeLayoutConfig = ({
       },
     },
     actionsRender: () => [
-      <DocLink key="doc" />,
       <FullscreenToggle key="fullscreen" />,
-      <VersionDropdown key="version" />,
       <LangDropdown key="lang" />,
     ],
     avatarProps: {
-      src: initialState?.currentUser?.avatar,
-      title: 'ProUser',
+      icon: <UserOutlined />,
+      title: getCurrentUserDisplayName(initialState?.currentUser),
       render: (_, avatarChildren) => (
         <AvatarDropdown>{avatarChildren}</AvatarDropdown>
       ),
@@ -311,7 +409,7 @@ export const layout: RunTimeLayoutConfig = ({
     // waterMarkProps: {
     //   content: initialState?.currentUser?.name,
     // },
-    footerRender: () => <Footer />,
+    footerRender: false,
     bgLayoutImgList: [
       {
         src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr',
@@ -351,7 +449,10 @@ export const layout: RunTimeLayoutConfig = ({
       if (initialState?.loading) return <PageLoading />;
       return (
         <>
-          {children}
+          <div className="eva-workspace">
+            <div className="eva-workspace-page">{children}</div>
+            <Footer />
+          </div>
           <SettingDrawer
             disableUrlParams
             enableDarkTheme
