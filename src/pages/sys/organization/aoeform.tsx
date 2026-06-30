@@ -90,7 +90,13 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
       onOk={handleSaveClick}
       title={`${TITLE[operateType as 'create' | 'edit'] ?? '查看'}部门信息`}
     >
-      <Form colon form={form} labelAlign="left" {...formItemLayout}>
+      <Form
+        colon
+        form={form}
+        labelAlign="left"
+        layout="horizontal"
+        {...formItemLayout}
+      >
         <Form.Item name="name" label="部门名称" rules={[{ required: true }]}>
           <Input maxLength={30} />
         </Form.Item>

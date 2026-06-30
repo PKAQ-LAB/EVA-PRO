@@ -155,6 +155,10 @@ export default defineConfig({
       theme: {
         token: {
           fontFamily: 'AlibabaSans, sans-serif',
+          borderRadius: 2,
+          borderRadiusLG: 2,
+          borderRadiusSM: 2,
+          borderRadiusXS: 2,
         },
       },
     },

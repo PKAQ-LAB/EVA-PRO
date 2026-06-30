@@ -234,8 +234,8 @@ const SysRolePage: React.FC = () => {
         </div>
       </div>
 
-      <div className="eva-alert" style={{ marginTop: 12, marginBottom: 12 }}>
-        {selectedRowKeys.length > 0 && (
+      {selectedRowKeys.length > 0 && (
+        <div className="eva-alert">
           <Alert
             showIcon
             type="info"
@@ -252,8 +252,8 @@ const SysRolePage: React.FC = () => {
               </div>
             }
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="eva-body">
         <ProTable<RoleItem>
