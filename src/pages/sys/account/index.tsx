@@ -192,7 +192,7 @@ const SysAccountPage: React.FC = () => {
       <div className="eva-body">
         <SideLayout
           title="所属部门"
-          layoutStyle={{ minHeight: 'calc(100vh - 332px)' }}
+          layoutStyle={{ height: 'calc(100vh - 332px)' }}
           body={
             <Tree
               showLine

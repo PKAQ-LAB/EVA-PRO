@@ -27,6 +27,7 @@
 
 .body {
   height: calc(100% - 45px);
+  min-height: 0;
   padding: 15px;
   overflow: auto;
   background: #fff;
