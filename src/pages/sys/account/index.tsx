@@ -5,16 +5,7 @@ import {
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Alert,
-  App,
-  Button,
-  Divider,
-  Form,
-  Input,
-  Popconfirm,
-  Tree,
-} from 'antd';
+import { Alert, App, Button, Divider, Form, Input, Tree } from 'antd';
 import React, { useRef, useState } from 'react';
 import { SideLayout } from '@/components';
 import AOEForm, { type OperateType } from './aoeform';
@@ -24,7 +15,7 @@ import RoleModal from './rolemodal';
 import { deleteAccounts, lockAccounts, queryOrgs, queryRoles } from './service';
 
 const SysAccountPage: React.FC = () => {
-  const { message: msg } = App.useApp();
+  const { message: msg, modal } = App.useApp();
   const [searchForm] = Form.useForm();
   const [operateType, setOperateType] = useState<OperateType>('');
   const [roleModalOpen, setRoleModalOpen] = useState(false);
@@ -79,6 +70,17 @@ const SysAccountPage: React.FC = () => {
     }
   };
 
+  const confirmBatchDelete = () => {
+    modal.confirm({
+      title: '确定要删除所选用户吗?',
+      centered: true,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: handleBatchDelete,
+    });
+  };
+
   const handleSearch = async () => {
     const values = await searchForm.validateFields();
     setQuery({ ...values });
@@ -118,15 +120,13 @@ const SysAccountPage: React.FC = () => {
           {selectedRowKeys.length > 0 && (
             <>
               <Divider type="vertical" />
-              <Popconfirm
-                title="确定要删除所选用户吗?"
-                placement="top"
-                onConfirm={handleBatchDelete}
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={confirmBatchDelete}
               >
-                <Button danger icon={<DeleteOutlined />}>
-                  删除用户
-                </Button>
-              </Popconfirm>
+                删除用户
+              </Button>
               <Divider type="vertical" />
               <Button
                 icon={<LockOutlined />}

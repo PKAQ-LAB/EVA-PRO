@@ -242,6 +242,47 @@ body,
   background: #fff;
 }
 
+.eva-locked {
+  background-color: #fff5ee;
+}
+
+.eva-disabled {
+  background-color: #f5f5f5;
+}
+
+.ant-table-tbody > tr.eva-disabled > td {
+  background-color: #f5f5f5;
+  color: #8c8c8c;
+}
+
+.ant-table-tbody > tr.eva-disabled:hover > td {
+  background-color: #f5f5f5;
+}
+
+.eva-delete-link,
+.eva-delete-link:hover {
+  color: var(--ant-color-error, #ff4d4f);
+}
+
+.eva-link-disabled,
+.eva-link-disabled:hover {
+  color: rgba(0, 0, 0, 0.25);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ant-btn-link.eva-delete-link-disabled:disabled,
+.ant-btn-link.eva-delete-link-disabled[disabled] {
+  color: var(--ant-color-error, #ff4d4f);
+  opacity: 0.45;
+}
+
+.eva-delete-link.eva-delete-link-disabled,
+.eva-delete-link.eva-delete-link-disabled:hover {
+  color: var(--ant-color-error, #ff4d4f);
+  opacity: 0.45;
+}
+
 .ant-btn,
 .ant-input,
 .ant-input-affix-wrapper,
@@ -276,7 +317,7 @@ textarea.ant-input {
 .ant-picker,
 .ant-input-number {
   border-color: #d9d9d9;
-  box-shadow: 0 0 0 1px rgba(5, 5, 5, 0.06) inset;
+  box-shadow: none;
 }
 
 .ant-input:hover,

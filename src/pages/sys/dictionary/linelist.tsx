@@ -1,10 +1,4 @@
-import {
-  Button,
-  Divider,
-  Popconfirm,
-  Table,
-  type TableColumnsType,
-} from 'antd';
+import { App, Button, Divider, Table, type TableColumnsType } from 'antd';
 import React, { useState } from 'react';
 import type { DictLine } from './data.d';
 import LineAOEForm, { type LineModalType } from './lineaoeform';
@@ -21,6 +15,7 @@ const LineList: React.FC<LineListProps> = ({
   setLines,
   operateType,
 }) => {
+  const { modal } = App.useApp();
   const [modalType, setModalType] = useState<LineModalType>('');
   const [editIndex, setEditIndex] = useState<number | ''>('');
 
@@ -42,6 +37,17 @@ const LineList: React.FC<LineListProps> = ({
     setLines(next);
   };
 
+  const confirmDelete = (index: number) => {
+    modal.confirm({
+      title: '确定要删除吗？',
+      centered: true,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: () => handleDelete(index),
+    });
+  };
+
   const columns: TableColumnsType<DictLine> = [
     { title: '编码', dataIndex: 'keyName' },
     { title: '描述', dataIndex: 'keyValue' },
@@ -54,14 +60,9 @@ const LineList: React.FC<LineListProps> = ({
           <>
             <a onClick={() => handleEdit(index)}>编辑</a>
             <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => handleDelete(index)}
-            >
-              <a>删除</a>
-            </Popconfirm>
+            <a className="eva-delete-link" onClick={() => confirmDelete(index)}>
+              删除
+            </a>
           </>
         ),
     },

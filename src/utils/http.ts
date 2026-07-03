@@ -1,10 +1,13 @@
 import { request } from '@umijs/max';
 import { stringify } from 'qs';
+import { trimRequestPayload } from './requestPayload';
 import { getNoUndefinedString } from './utils';
 
 /** GET /{url}/{id-or-empty} */
 async function get<T = unknown>(url: string, params?: string) {
-  return request<T>(`${url}/${getNoUndefinedString(params)}`);
+  return request<T>(
+    `${url}/${getNoUndefinedString(trimRequestPayload(params))}`,
+  );
 }
 
 /** GET 列表，自动序列化 params 为 query string */
@@ -12,13 +15,15 @@ async function list<T = unknown>(
   url: string,
   params?: Record<string, unknown>,
 ) {
-  const finalUrl = params ? `${url}?${stringify(params)}` : url;
+  const finalUrl = params
+    ? `${url}?${stringify(trimRequestPayload(params))}`
+    : url;
   return request<T>(finalUrl);
 }
 
 /** POST 通用方法 */
 async function post<T = unknown>(url: string, params?: unknown) {
-  return request<T>(url, { method: 'POST', data: params });
+  return request<T>(url, { method: 'POST', data: trimRequestPayload(params) });
 }
 
 /** 新增 / 编辑：底层走 POST */

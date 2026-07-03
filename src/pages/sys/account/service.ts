@@ -6,6 +6,7 @@ import {
   normalizePageParams,
   normalizeTree,
 } from '../adapter';
+import { normalizeFrozen } from '../status';
 import type {
   AccountItem,
   AccountLockStatus,
@@ -112,6 +113,7 @@ function normalizeAccount(row: AccountItem) {
   return {
     ...row,
     id: row.id != null ? String(row.id) : row.id,
+    frozen: normalizeFrozen(record.frozen),
     locked: row.locked ?? frozenToEnabledStatus(record.frozen as never),
     roles:
       row.roles ??

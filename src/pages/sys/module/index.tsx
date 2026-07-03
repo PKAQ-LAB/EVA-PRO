@@ -1,20 +1,17 @@
 import {
   CaretDownOutlined,
   CaretUpOutlined,
-  CheckOutlined,
-  CloseOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useQuery } from '@tanstack/react-query';
+import { useIntl } from '@umijs/max';
 import {
   Alert,
   App,
   Button,
   Divider,
   Input,
-  Popconfirm,
-  Switch,
   Table,
   type TableColumnsType,
 } from 'antd';
@@ -22,19 +19,15 @@ import clsx from 'clsx';
 import React, { useState } from 'react';
 import IconMap from '@/appicon';
 import { getNodeBorther, hasChildren } from '@/utils/DataHelper';
+import { frozenText } from '../status';
 import ModuleAOEForm, { type OperateType } from './aoeform';
 import type { ModuleItem } from './data.d';
-import {
-  deleteModules,
-  getModule,
-  queryModules,
-  sortModules,
-  switchModuleStatus,
-} from './service';
+import { deleteModules, getModule, queryModules, sortModules } from './service';
 
 const { Search } = Input;
 
 const SysModulePage: React.FC = () => {
+  const intl = useIntl();
   const { message: msg, modal } = App.useApp();
   const [operateType, setOperateType] = useState<OperateType>('');
   const [currentItem, setCurrentItem] = useState<Partial<ModuleItem>>({});
@@ -71,12 +64,6 @@ const SysModulePage: React.FC = () => {
     }
   };
 
-  const handleEnable = async (record: ModuleItem, checked: boolean) => {
-    if (!record.id) return;
-    const res = await switchModuleStatus(record.id, checked ? '0000' : '0001');
-    if (res.success) refresh();
-  };
-
   const handleDelete = async (record: ModuleItem) => {
     const blockItem = hasChildren(data as never, [record.id]);
     if (record.isLeaf || blockItem) {
@@ -98,6 +85,28 @@ const SysModulePage: React.FC = () => {
       setSelectedRowKeys([]);
       refresh();
     }
+  };
+
+  const confirmDelete = (record: ModuleItem) => {
+    modal.confirm({
+      title: '确定要删除吗？',
+      centered: true,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: () => handleDelete(record),
+    });
+  };
+
+  const confirmBatchDelete = () => {
+    modal.confirm({
+      title: '确定要删除选中的条目吗?',
+      centered: true,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: handleBatchDelete,
+    });
   };
 
   const handleSort = async (
@@ -161,17 +170,9 @@ const SysModulePage: React.FC = () => {
       },
     },
     {
-      title: '是否启用',
-      dataIndex: 'status',
-      render: (_, record) =>
-        record.status !== '9999' && (
-          <Switch
-            onChange={(checked) => handleEnable(record, checked)}
-            checkedChildren={<CheckOutlined />}
-            unCheckedChildren={<CloseOutlined />}
-            checked={record.status === '0000'}
-          />
-        ),
+      title: '状态',
+      dataIndex: 'frozen',
+      render: (_, record) => frozenText(intl, record.frozen),
     },
     {
       title: '操作',
@@ -183,14 +184,12 @@ const SysModulePage: React.FC = () => {
           {record.status !== '9999' && record.status !== '0000' && (
             <>
               <Divider type="vertical" />
-              <Popconfirm
-                title="确定要删除吗？"
-                okText="确定"
-                cancelText="取消"
-                onConfirm={() => handleDelete(record)}
+              <a
+                className="eva-delete-link"
+                onClick={() => confirmDelete(record)}
               >
-                <a>删除</a>
-              </Popconfirm>
+                删除
+              </a>
             </>
           )}
         </div>
@@ -213,13 +212,9 @@ const SysModulePage: React.FC = () => {
           {selectedRowKeys.length > 0 && (
             <>
               <Divider type="vertical" />
-              <Popconfirm
-                title="确定要删除选中的条目吗?"
-                placement="top"
-                onConfirm={handleBatchDelete}
-              >
-                <Button danger>删除模块</Button>
-              </Popconfirm>
+              <Button danger onClick={confirmBatchDelete}>
+                删除模块
+              </Button>
             </>
           )}
         </div>
@@ -262,13 +257,13 @@ const SysModulePage: React.FC = () => {
             selectedRowKeys,
             onChange: (keys) => setSelectedRowKeys(keys.map(String)),
             getCheckboxProps: (record) => ({
-              disabled: record.status === '9999',
+              disabled: record.frozen === 9999,
             }),
           }}
           rowClassName={(record) =>
             clsx({
-              'eva-locked': record.status === '0001',
-              'eva-disabled': record.status === '9999',
+              'eva-locked': record.frozen === 1,
+              'eva-disabled': record.frozen === 9999,
             })
           }
           expandable={{ defaultExpandAllRows: true }}

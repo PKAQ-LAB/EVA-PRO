@@ -49,15 +49,11 @@ export const switchOrgStatus = (id: string, status: OrgStatus) =>
     frozen: orgStatusToFrozen(status),
   });
 
-export const sortOrgs = (rows: Array<{ id: string; orders: number }>) =>
-  http.post<MutationResult>(
-    APIS.ORG_SORT,
-    rows.map((row) => ({
-      id: row.id,
-      oldSort: row.orders,
-      newSort: row.orders,
-    })),
-  );
+export const sortOrgs = (row: {
+  id: string;
+  oldSort?: number | string;
+  newSort?: number | string;
+}) => http.post<MutationResult>(APIS.ORG_SORT, row);
 
 export const checkOrgUnique = (code: string) =>
   http.post<MutationResult>(APIS.ORG_CHECKUNIQUE, { code });

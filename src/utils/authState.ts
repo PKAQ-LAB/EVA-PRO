@@ -10,6 +10,7 @@ export const authExpiredCodes = new Set([
 ]);
 
 const accessTokenCacheKey = 'eva_access_token';
+const refreshTokenCacheKey = 'eva_refresh_token';
 
 export function isAuthExpiredCode(code?: string | number) {
   return code !== undefined && authExpiredCodes.has(String(code));
@@ -80,6 +81,23 @@ export function setStoredAccessToken(token: string) {
   }
 }
 
+export function getStoredRefreshToken() {
+  return (
+    new Cookies().get(refresh_token) ||
+    (typeof window !== 'undefined'
+      ? window.sessionStorage.getItem(refreshTokenCacheKey)
+      : '') ||
+    ''
+  );
+}
+
+export function setStoredRefreshToken(token: string) {
+  new Cookies().set(refresh_token, token, { path: '/', sameSite: 'lax' });
+  if (typeof window !== 'undefined') {
+    window.sessionStorage.setItem(refreshTokenCacheKey, token);
+  }
+}
+
 export function clearAuthState() {
   const cookies = new Cookies();
   cookies.remove(access_token, { maxAge: -1, path: '/' });
@@ -87,6 +105,7 @@ export function clearAuthState() {
   cookies.remove(user_key, { maxAge: -1, path: '/' });
   if (typeof window !== 'undefined') {
     window.sessionStorage.removeItem(accessTokenCacheKey);
+    window.sessionStorage.removeItem(refreshTokenCacheKey);
     window.sessionStorage.removeItem('eva_current_user');
     window.sessionStorage.removeItem('eva_login_menus');
   }

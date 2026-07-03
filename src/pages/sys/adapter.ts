@@ -1,4 +1,4 @@
-export type BackendFrozen = -1 | 0 | 1;
+export type BackendFrozen = 0 | 1 | 9999;
 export type FrontStatus = '0000' | '0001' | '9999';
 
 type TreeNode = {
@@ -20,12 +20,12 @@ const normalizeTreeId = (value?: string | number) =>
   value != null ? String(value) : undefined;
 
 export const frozenToEnabledStatus = (frozen?: BackendFrozen): FrontStatus => {
-  if (frozen === -1) return '9999';
+  if (frozen === 9999) return '9999';
   return frozen === 1 ? '0001' : '0000';
 };
 
 export const frozenToOrgStatus = (frozen?: BackendFrozen): FrontStatus => {
-  if (frozen === -1) return '9999';
+  if (frozen === 9999) return '9999';
   return frozen === 1 ? '0000' : '0001';
 };
 
@@ -61,13 +61,17 @@ export const normalizePageData = <T>(data: unknown) => {
 export const normalizeTree = <T extends TreeNode>(
   rows: T[] | undefined,
   statusMapper: (frozen?: BackendFrozen) => FrontStatus = frozenToEnabledStatus,
+  ancestorIds = new Set<string>(),
 ): T[] =>
-  (rows ?? []).map((row) => {
+  (rows ?? []).flatMap((row) => {
     const pid = normalizeTreeId(row.pid);
     const parentId = normalizeTreeId(row.parentId ?? row.pid);
+    const id = normalizeTreeId(row.id);
+    if (id && ancestorIds.has(id)) return [];
+
     const next = {
       ...row,
-      id: normalizeTreeId(row.id),
+      id,
       pid,
       parentId,
       orders: row.orders ?? row.sort,
@@ -76,12 +80,15 @@ export const normalizeTree = <T extends TreeNode>(
       isLeaf: row.isLeaf ?? row.isleaf,
     } as T;
     if (row.children) {
+      const nextAncestorIds = new Set(ancestorIds);
+      if (id) nextAncestorIds.add(id);
       next.children = normalizeTree(
         row.children,
         statusMapper,
+        nextAncestorIds,
       ) as T['children'];
     }
-    return next;
+    return [next];
   });
 
 export const toBackendTreePayload = <T extends TreeNode>(

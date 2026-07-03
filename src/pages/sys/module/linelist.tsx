@@ -1,11 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Divider,
-  Popconfirm,
-  Table,
-  type TableColumnsType,
-} from 'antd';
+import { useModel } from '@umijs/max';
+import { App, Button, Divider, Table, type TableColumnsType } from 'antd';
 import React, { useEffect, useState } from 'react';
 import type { ModuleResource } from './data.d';
 import ModuleLineAOEForm, { type LineModalType } from './lineaoeform';
@@ -16,14 +11,19 @@ export interface ModuleLineListProps {
 }
 
 const ModuleLineList: React.FC<ModuleLineListProps> = ({ lines, setLines }) => {
+  const { modal } = App.useApp();
+  const { initialState } = useModel('@@initialState');
   const [modalType, setModalType] = useState<LineModalType>('');
   const [editIndex, setEditIndex] = useState<number | ''>('');
+  const resourceTypeDict = (
+    initialState?.dict as Record<string, unknown> | undefined
+  )?.RESOURCE_TYPE as Record<string, string> | undefined;
 
   // V5 行为：lines 为空时插入一条 "全部资源" 默认行
   useEffect(() => {
     if (!lines || lines.length === 0) {
       setLines([
-        { resourceDesc: '全部资源', resourceUrl: '/**', resourceType: '9999' },
+        { resourceDesc: '全部资源', resourceUrl: '/**', resourceType: '*' },
       ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,25 +45,37 @@ const ModuleLineList: React.FC<ModuleLineListProps> = ({ lines, setLines }) => {
     setLines(next);
   };
 
+  const confirmDelete = (index: number) => {
+    modal.confirm({
+      title: '确定要删除吗？',
+      centered: true,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: () => handleDelete(index),
+    });
+  };
+
   const columns: TableColumnsType<ModuleResource> = [
     { title: '资源描述', dataIndex: 'resourceDesc' },
     { title: '资源路径', dataIndex: 'resourceUrl' },
     {
+      title: '资源类型',
+      dataIndex: 'resourceType',
+      render: (_, record) =>
+        resourceTypeDict?.[record.resourceType ?? ''] ?? record.resourceType,
+    },
+    {
       title: '操作',
       width: 160,
       render: (_, record, index) =>
-        record.resourceType !== '9999' && (
+        record.resourceType !== '*' && (
           <>
             <a onClick={() => handleEdit(index)}>编辑</a>
             <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => handleDelete(index)}
-            >
-              <a>删除</a>
-            </Popconfirm>
+            <a className="eva-delete-link" onClick={() => confirmDelete(index)}>
+              删除
+            </a>
           </>
         ),
     },
@@ -96,6 +108,7 @@ const ModuleLineList: React.FC<ModuleLineListProps> = ({ lines, setLines }) => {
           setLines={setLines}
           editIndex={editIndex}
           setEditIndex={setEditIndex}
+          resourceTypeDict={resourceTypeDict}
         />
       )}
     </>

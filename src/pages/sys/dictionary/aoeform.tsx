@@ -1,7 +1,5 @@
-import { useModel } from '@umijs/max';
 import { App, Button, Card, Col, Form, Input, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { DictSelector } from '@/components';
 import type { DictItem, DictLine } from './data.d';
 import LineList from './linelist';
 import { editDict } from './service';
@@ -12,7 +10,7 @@ export interface DictAOEFormProps {
   operateType: OperateType;
   setOperateType: (v: OperateType) => void;
   currentItem: Partial<DictItem>;
-  onSuccess: () => void;
+  onSuccess: () => Promise<void> | void;
 }
 
 const TITLE: Record<Exclude<OperateType, ''>, string> = {
@@ -36,10 +34,6 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
   const [lines, setLines] = useState<DictLine[]>(currentItem?.lines ?? []);
-  const { initialState } = useModel('@@initialState');
-  const dictTypeMap = (
-    initialState?.dict as Record<string, unknown> | undefined
-  )?.dict_type as Record<string, string> | undefined;
 
   useEffect(() => {
     setLines(currentItem?.lines ?? []);
@@ -61,7 +55,7 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
       if (res.success) {
         msg.success('保存成功');
         setOperateType('view');
-        onSuccess();
+        await onSuccess();
       }
     } finally {
       setSubmitting(false);
@@ -84,17 +78,6 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
             </Button>
           }
         >
-          <Row>
-            <Col span={12}>
-              <Form.Item
-                label="所属分类"
-                name="parentId"
-                rules={[{ required: true }]}
-              >
-                <DictSelector data={dictTypeMap} disabled={isReadOnly} />
-              </Form.Item>
-            </Col>
-          </Row>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item

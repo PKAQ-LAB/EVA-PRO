@@ -1,13 +1,9 @@
 import APIS from '@/apis';
 import http from '@/utils/http';
-import {
-  frozenToEnabledStatus,
-  normalizePageData,
-  normalizePageParams,
-} from '../adapter';
+import { normalizePageData, normalizePageParams } from '../adapter';
 import type {
+  RoleFrozen,
   RoleItem,
-  RoleLocked,
   RoleModuleResponse,
   RoleUserResponse,
 } from './data.d';
@@ -18,11 +14,18 @@ export interface MutationResult {
   data?: unknown;
 }
 
+const normalizeRoleListParams = (params: Record<string, unknown>) =>
+  Object.fromEntries(
+    Object.entries(normalizePageParams(params) ?? {}).filter(
+      ([, value]) => value !== undefined && value !== '',
+    ),
+  );
+
 export const queryRoles = (params: Record<string, unknown>) =>
   http
     .list<{ data?: unknown; success?: boolean }>(
       APIS.ROLE_LIST,
-      normalizePageParams(params),
+      normalizeRoleListParams(params),
     )
     .then((res) => {
       const page = normalizePageData<RoleItem>(res.data);
@@ -44,16 +47,20 @@ export const getRole = (id: string) =>
 export const saveRole = (data: Partial<RoleItem>) =>
   http.post<MutationResult>(APIS.ROLE_SAVE, {
     ...data,
-    frozen: data.locked === '0001' ? 1 : 0,
+    frozen: normalizeFrozen(data.frozen),
+    dataScope: data.dataScope ?? data.dataPermissionType ?? '0000',
+    dataOrgIds: Array.isArray(data.dataOrgIds)
+      ? data.dataOrgIds.join(',')
+      : data.dataOrgIds,
   });
 
 export const deleteRoles = (ids: string[]) =>
   http.post<MutationResult>(APIS.ROLE_DEL, { param: ids });
 
-export const lockRoles = (ids: string[], status: RoleLocked) =>
+export const lockRoles = (ids: string[], frozen: Exclude<RoleFrozen, 9999>) =>
   http.post<MutationResult>(APIS.ROLE_LOCK, {
     param: ids,
-    frozen: status === '0001' ? 1 : 0,
+    frozen,
   });
 
 export const checkRoleUnique = (code: string) =>
@@ -97,13 +104,29 @@ export const saveRoleUsers = (id: string, users: Array<{ userId: string }>) =>
 
 function normalizeRole(row: RoleItem) {
   const record = row as RoleItem & Record<string, unknown>;
-  const locked = row.locked ?? frozenToEnabledStatus(record.frozen as never);
+  const frozen = normalizeFrozen(record.frozen);
+  const dataScope = String(
+    record.dataScope ?? record.dataPermissionType ?? '0000',
+  );
+  const dataOrgIds = record.dataOrgIds ?? record.dataPermissionDeptid;
   return {
     ...row,
     id: row.id != null ? String(row.id) : row.id,
-    locked,
-    status: row.status ?? locked,
+    frozen,
+    status:
+      row.status ?? (frozen === 9999 ? '9999' : frozen === 1 ? '0001' : '0000'),
+    dataScope,
+    dataOrgIds:
+      typeof dataOrgIds === 'string' && dataOrgIds
+        ? dataOrgIds.split(',')
+        : dataOrgIds,
   } as RoleItem;
+}
+
+function normalizeFrozen(value: unknown): RoleFrozen {
+  if (value === 9999 || value === '9999') return 9999;
+  if (value === 1 || value === '1') return 1;
+  return 0;
 }
 
 function normalizeRoleModules(

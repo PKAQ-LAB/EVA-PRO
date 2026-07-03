@@ -4,6 +4,7 @@ import {
   type ProColumns,
   ProTable,
 } from '@ant-design/pro-components';
+import { useModel } from '@umijs/max';
 import {
   Button,
   DatePicker,
@@ -23,6 +24,7 @@ const fmt = (val?: string) =>
   val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '-';
 
 const BizLogPage: React.FC = () => {
+  const { initialState } = useModel('@@initialState');
   const [searchForm] = Form.useForm<{ operateDatetime?: [Dayjs, Dayjs] }>();
   const actionRef = useRef<ActionType | undefined>(undefined);
   const [detail, setDetail] = useState<BizLogItem | null>(null);
@@ -49,6 +51,11 @@ const BizLogPage: React.FC = () => {
     const res = await getBizLog(record.id);
     if (res.success && res.data) setDetail(res.data);
   };
+  const operateTypeDict = (
+    initialState?.dict as Record<string, unknown> | undefined
+  )?.BIZ_OPERATE_TYPE as Record<string, string> | undefined;
+  const getOperateTypeText = (value?: string) =>
+    value ? (operateTypeDict?.[value] ?? value) : '-';
 
   const columns: ProColumns<BizLogItem>[] = [
     {
@@ -56,7 +63,11 @@ const BizLogPage: React.FC = () => {
       dataIndex: 'operateDatetime',
       render: (_, r) => fmt(r.operateDatetime),
     },
-    { title: '操作类型', dataIndex: 'operateType' },
+    {
+      title: '操作类型',
+      dataIndex: 'operateType',
+      render: (_, record) => getOperateTypeText(record.operateType),
+    },
     { title: '操作人', dataIndex: 'operator' },
     { title: '描述', dataIndex: 'description', ellipsis: true },
     {
@@ -124,7 +135,7 @@ const BizLogPage: React.FC = () => {
               {detail.operator}
             </Descriptions.Item>
             <Descriptions.Item label="操作类型">
-              {detail.operateType}
+              {getOperateTypeText(detail.operateType)}
             </Descriptions.Item>
             <Descriptions.Item label="描述">
               {detail.description}

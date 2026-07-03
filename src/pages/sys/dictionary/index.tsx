@@ -1,5 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components';
 import { useQuery } from '@tanstack/react-query';
+import { useModel } from '@umijs/max';
 import { App } from 'antd';
 import React, { useState } from 'react';
 import { SideLayout } from '@/components';
@@ -9,6 +10,7 @@ import DictListView from './list';
 import { deleteDict, getDict, queryDicts } from './service';
 
 const SysDictionaryPage: React.FC = () => {
+  const { initialState, setInitialState } = useModel('@@initialState');
   const { message: msg } = App.useApp();
   const [operateType, setOperateType] = useState<OperateType>('');
   const [currentItem, setCurrentItem] = useState<Partial<DictItem>>({});
@@ -24,13 +26,23 @@ const SysDictionaryPage: React.FC = () => {
   const data = dictsQuery.data ?? [];
   const refresh = () => dictsQuery.refetch();
 
+  const refreshDictState = async () => {
+    await refresh();
+    const dict = await initialState?.fetchDict?.();
+    if (dict) {
+      setInitialState((state) => ({
+        ...state,
+        dict,
+      }));
+    }
+  };
+
   const handleCreate = () => {
     setCurrentItem({});
     setOperateType('create');
   };
 
   const handleEdit = async (record: DictItem) => {
-    if (record.parentId === '0' || !record.parentId) return;
     const res = await getDict(record.id);
     if (res.data) {
       setCurrentItem(res.data);
@@ -42,7 +54,7 @@ const SysDictionaryPage: React.FC = () => {
     const res = await deleteDict(record.id);
     if (res.success) {
       msg.success('删除成功');
-      refresh();
+      await refreshDictState();
     }
   };
 
@@ -68,7 +80,7 @@ const SysDictionaryPage: React.FC = () => {
             operateType={operateType}
             setOperateType={setOperateType}
             currentItem={currentItem}
-            onSuccess={refresh}
+            onSuccess={refreshDictState}
           />
         </SideLayout>
       </div>

@@ -1,16 +1,20 @@
-/** 角色锁定状态：0000 启用、0001 停用、9999 系统 */
-export type RoleLocked = '0000' | '0001' | '9999';
+/** 角色冻结状态：0 启用、1 锁定、9999 系统只读 */
+export type RoleFrozen = 0 | 1 | 9999;
 
 export interface RoleItem {
   id: string;
   name: string;
   code?: string;
   remark?: string;
-  locked?: RoleLocked;
+  frozen?: RoleFrozen;
   status?: string;
-  /** 数据权限类型 */
+  /** 数据权限范围，字典类型 DATA_SCOPE */
+  dataScope?: string;
+  /** 当 dataScope=0003 时，限定的部门 id 列表（后端用逗号串） */
+  dataOrgIds?: string | string[];
+  /** 兼容旧字段：数据权限类型 */
   dataPermissionType?: string;
-  /** 当 dataPermissionType=0003 时，限定的部门 id 列表（后端用逗号串） */
+  /** 兼容旧字段：当 dataPermissionType=0003 时，限定的部门 id 列表 */
   dataPermissionDeptid?: string | string[];
 }
 
