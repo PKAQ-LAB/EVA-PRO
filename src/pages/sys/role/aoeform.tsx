@@ -1,8 +1,9 @@
-import { useModel } from '@umijs/max';
-import { App, Col, Form, Input, Modal, Row, TreeSelect } from 'antd';
+import { useIntl } from '@umijs/max';
+import { App, Col, Form, Input, Modal, Row, Switch, TreeSelect } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { DictSelector } from '@/components';
 import { queryOrgs } from '../organization/service';
+import { sysText } from '../status';
 import type { RoleItem } from './data.d';
 import { checkRoleUnique, saveRole } from './service';
 
@@ -15,16 +16,13 @@ export interface RoleAOEFormProps {
   onSuccess: () => void;
 }
 
-const TITLE: Record<Exclude<ModalType, ''>, string> = {
-  create: '新增',
-  edit: '编辑',
-  view: '查看',
-};
-
 const formItemLayout = {
   labelCol: { flex: '0 0 120px' },
   wrapperCol: { flex: 'auto' },
 };
+
+const isSystemRole = (record: Partial<RoleItem>) =>
+  record.code === '9999' || record.frozen === 9999 || record.status === '9999';
 
 const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   modalType,
@@ -32,12 +30,9 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   currentItem,
   onSuccess,
 }) => {
+  const intl = useIntl();
   const [form] = Form.useForm<RoleItem>();
   const { message: msg } = App.useApp();
-  const { initialState } = useModel('@@initialState');
-  const dataPermissionDict = (
-    initialState?.dict as Record<string, unknown> | undefined
-  )?.data_permission as Record<string, string> | undefined;
 
   const [submitting, setSubmitting] = useState(false);
   const [orgs, setOrgs] = useState<unknown[]>([]);
@@ -47,16 +42,24 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   useEffect(() => {
     if (modalType === '') return;
     form.resetFields();
-    const init: Partial<RoleItem> = { ...currentItem };
-    if (
-      typeof init.dataPermissionDeptid === 'string' &&
-      init.dataPermissionDeptid
-    ) {
-      init.dataPermissionDeptid = init.dataPermissionDeptid.split(',');
+    const init: Partial<RoleItem> = {
+      frozen: 0,
+      dataScope: '0000',
+      ...currentItem,
+    };
+    if (!init.dataScope && init.dataPermissionType) {
+      init.dataScope = init.dataPermissionType;
+    }
+    if (!init.dataOrgIds && init.dataPermissionDeptid) {
+      init.dataOrgIds = init.dataPermissionDeptid;
+    }
+    if (typeof init.dataOrgIds === 'string' && init.dataOrgIds) {
+      init.dataOrgIds = init.dataOrgIds.split(',');
     }
     form.setFieldsValue(init as RoleItem);
 
-    const isCustomDept = currentItem.dataPermissionType === '0003';
+    const isCustomDept =
+      (currentItem.dataScope ?? currentItem.dataPermissionType) === '0003';
     setShowDepts(isCustomDept);
     if (isCustomDept) {
       queryOrgs().then((res) => {
@@ -68,7 +71,12 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   const checkCode = async (_: unknown, code: string) => {
     if (currentItem?.id && code === currentItem.code) return;
     const res = await checkRoleUnique(code);
-    if (!res.success) throw new Error(res.message ?? '编码已存在');
+    if (!res.success) {
+      throw new Error(
+        res.message ??
+          sysText(intl, 'pages.sys.role.codeDuplicated', '编码已存在'),
+      );
+    }
   };
 
   const handleDataPermissionChange = async (v: string) => {
@@ -87,13 +95,28 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       const formData: Partial<RoleItem> = {
         ...values,
         id: currentItem.id,
-        dataPermissionDeptid: Array.isArray(values.dataPermissionDeptid)
-          ? values.dataPermissionDeptid.join(',')
-          : values.dataPermissionDeptid,
+        dataOrgIds: Array.isArray(values.dataOrgIds)
+          ? values.dataOrgIds.join(',')
+          : values.dataOrgIds,
       };
       const res = await saveRole(formData);
       if (res.success) {
-        msg.success(`${TITLE[modalType as Exclude<ModalType, ''>]}成功`);
+        const action = sysText(
+          intl,
+          modalType === 'edit'
+            ? 'pages.sys.action.edit'
+            : 'pages.sys.action.add',
+          modalType === 'edit' ? '编辑' : '新增',
+        );
+        msg.success(
+          intl.formatMessage(
+            {
+              id: 'pages.sys.role.saveSuccess',
+              defaultMessage: '{action}成功',
+            },
+            { action },
+          ),
+        );
         setModalType('');
         onSuccess();
       }
@@ -101,6 +124,9 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       setSubmitting(false);
     }
   };
+
+  const readOnly = isSystemRole(currentItem);
+  const disabled = modalType === 'view' || readOnly;
 
   return (
     <Modal
@@ -111,66 +137,120 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       width={700}
       centered
       onOk={handleSaveClick}
-      title={`${TITLE[modalType as 'create' | 'edit' | 'view'] ?? ''}角色`}
+      okButtonProps={{
+        disabled,
+        style: readOnly ? { display: 'none' } : undefined,
+      }}
+      title={sysText(
+        intl,
+        modalType === 'edit'
+          ? 'pages.sys.role.editTitle'
+          : modalType === 'view'
+            ? 'pages.sys.role.viewTitle'
+            : 'pages.sys.role.createTitle',
+        modalType === 'edit'
+          ? '编辑角色'
+          : modalType === 'view'
+            ? '查看角色'
+            : '新增角色',
+      )}
     >
       <Form colon form={form} layout="horizontal" {...formItemLayout}>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              label="角色名称"
+              label={sysText(intl, 'pages.sys.role.name', '角色名称')}
               name="name"
-              rules={[{ required: true }]}
+              rules={[
+                {
+                  required: true,
+                  message: sysText(
+                    intl,
+                    'pages.sys.role.nameRequired',
+                    '请输入角色名称',
+                  ),
+                },
+              ]}
             >
-              <Input maxLength={30} disabled={modalType === 'view'} />
+              <Input maxLength={30} disabled={disabled} />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              label="角色编码"
+              label={sysText(intl, 'pages.sys.role.code', '角色编码')}
               name="code"
               validateTrigger="onBlur"
               hasFeedback
               rules={[
                 {
                   required: true,
-                  message: '仅允许使用 4-30 位字母或数字',
+                  message: sysText(
+                    intl,
+                    'pages.sys.role.codeRule',
+                    '仅允许使用 4-30 位字母或数字',
+                  ),
                   whitespace: true,
                   pattern: /^[0-9a-zA-Z_]{4,30}$/,
                 },
                 { validator: checkCode },
               ]}
             >
-              <Input
-                minLength={4}
-                maxLength={30}
-                disabled={modalType === 'view'}
-              />
+              <Input minLength={4} maxLength={30} disabled={disabled} />
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item label="角色描述" name="remark">
-          <Input.TextArea maxLength={60} disabled={modalType === 'view'} />
+        {modalType !== 'create' && (
+          <Form.Item
+            label={sysText(intl, 'pages.sys.column.locked', '是否锁定')}
+            name="frozen"
+            getValueProps={(value) => ({ checked: value === 1 })}
+            normalize={(checked) => (checked ? 1 : 0)}
+          >
+            <Switch
+              checkedChildren={sysText(
+                intl,
+                'pages.sys.status.locked',
+                '已锁定',
+              )}
+              unCheckedChildren={sysText(
+                intl,
+                'pages.sys.status.unlocked',
+                '未锁定',
+              )}
+              disabled={disabled}
+            />
+          </Form.Item>
+        )}
+        <Form.Item
+          label={sysText(intl, 'pages.sys.role.remark', '角色描述')}
+          name="remark"
+        >
+          <Input.TextArea maxLength={60} disabled={disabled} />
         </Form.Item>
         <Form.Item
-          label="数据权限"
-          name="dataPermissionType"
+          label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
+          name="dataScope"
           rules={[{ required: true }]}
         >
           <DictSelector
-            data={dataPermissionDict}
-            disabled={modalType === 'view'}
+            code="DATA_SCOPE"
+            disabled={disabled}
+            showall={false}
             onChange={(v) => handleDataPermissionChange(String(v))}
           />
         </Form.Item>
         {showDepts && (
-          <Form.Item label="选择部门" name="dataPermissionDeptid">
+          <Form.Item
+            label={sysText(intl, 'pages.sys.role.dataOrgIds', '选择部门')}
+            name="dataOrgIds"
+          >
             <TreeSelect
               treeData={orgs as never}
               fieldNames={{ label: 'name', value: 'id', children: 'children' }}
               treeCheckable
               allowClear
               multiple
-              disabled={modalType === 'view'}
+              disabled={disabled}
             />
           </Form.Item>
         )}

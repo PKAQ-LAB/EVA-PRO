@@ -33,7 +33,7 @@ const tree: ModuleRow[] = [
     status: '0000',
     isLeaf: false,
     resources: [
-      { resourceDesc: '全部资源', resourceUrl: '/**', resourceType: '9999' },
+      { resourceDesc: '全部资源', resourceUrl: '/**', resourceType: '*' },
     ],
     children: [
       {
@@ -50,7 +50,7 @@ const tree: ModuleRow[] = [
           {
             resourceDesc: '全部资源',
             resourceUrl: '/**',
-            resourceType: '9999',
+            resourceType: '*',
           },
         ],
       },

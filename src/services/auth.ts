@@ -23,6 +23,18 @@ export interface AuthLoginResult {
   };
 }
 
+export interface AuthRefreshResult {
+  success?: boolean;
+  code?: string;
+  message?: string;
+  data?: {
+    access_token?: string;
+    accessToken?: string;
+    refresh_token?: string;
+    refreshToken?: string;
+  };
+}
+
 /** 账号密码登录 POST /api/auth/login */
 export async function login(
   body: AuthLoginParams,

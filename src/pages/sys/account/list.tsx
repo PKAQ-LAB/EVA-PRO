@@ -3,10 +3,12 @@ import {
   type ProColumns,
   ProTable,
 } from '@ant-design/pro-components';
-import { App, Divider, Popconfirm } from 'antd';
+import { useIntl } from '@umijs/max';
+import { App, Divider } from 'antd';
 import clsx from 'clsx';
 import React, { useImperativeHandle } from 'react';
-import type { AccountItem, AccountLockStatus } from './data.d';
+import { frozenText } from '../status';
+import type { AccountItem } from './data.d';
 import {
   type AccountListResponse,
   deleteAccounts,
@@ -29,19 +31,6 @@ export interface AccountListProps {
   query?: Record<string, unknown>;
 }
 
-const lockedLabel = (status?: AccountLockStatus) => {
-  switch (status) {
-    case '0000':
-      return '正常';
-    case '0001':
-      return '已锁定';
-    case '9999':
-      return '系统用户';
-    default:
-      return '-';
-  }
-};
-
 const AccountList: React.FC<AccountListProps> = ({
   selectedRowKeys,
   setSelectedRowKeys,
@@ -50,6 +39,7 @@ const AccountList: React.FC<AccountListProps> = ({
   innerRef,
   query,
 }) => {
+  const intl = useIntl();
   const { message: msg, modal } = App.useApp();
   const actionRef = React.useRef<ActionType | undefined>(undefined);
 
@@ -66,6 +56,17 @@ const AccountList: React.FC<AccountListProps> = ({
       msg.success('删除成功');
       actionRef.current?.reload();
     }
+  };
+
+  const confirmDelete = (record: AccountItem) => {
+    modal.confirm({
+      title: '确定要删除吗？',
+      centered: true,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: () => handleDelete(record),
+    });
   };
 
   const handleEdit = async (record: AccountItem) => {
@@ -90,29 +91,28 @@ const AccountList: React.FC<AccountListProps> = ({
     { title: '手机', dataIndex: 'tel' },
     {
       title: '账号状态',
-      dataIndex: 'locked',
+      dataIndex: 'frozen',
       search: false,
-      render: (_, record) => lockedLabel(record.locked),
+      render: (_, record) => frozenText(intl, record.frozen),
     },
     {
       title: '操作',
       width: 180,
       search: false,
       render: (_, record) =>
-        record.locked === '0000' && (
+        record.frozen !== 9999 &&
+        record.frozen !== 1 && (
           <>
             <a onClick={() => handleGrant(record)}>角色授权</a>
             <Divider type="vertical" />
             <a onClick={() => handleEdit(record)}>编辑</a>
             <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => handleDelete(record)}
+            <a
+              className="eva-delete-link"
+              onClick={() => confirmDelete(record)}
             >
-              <a>删除</a>
-            </Popconfirm>
+              删除
+            </a>
           </>
         ),
     },
@@ -129,14 +129,14 @@ const AccountList: React.FC<AccountListProps> = ({
         selectedRowKeys,
         onChange: (keys) => setSelectedRowKeys(keys.map(String)),
         getCheckboxProps: (record) => ({
-          disabled: record.locked === '9999' || record.locked === '0001',
+          disabled: record.frozen === 9999 || record.frozen === 1,
           name: record.name,
         }),
       }}
       rowClassName={(record) =>
         clsx({
-          'eva-locked': record.locked === '0001',
-          'eva-disabled': record.locked === '9999',
+          'eva-locked': record.frozen === 1,
+          'eva-disabled': record.frozen === 9999,
         })
       }
       onRow={(record) => ({

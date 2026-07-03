@@ -1,39 +1,32 @@
 import {
   CaretDownOutlined,
   CaretUpOutlined,
-  CheckOutlined,
-  CloseOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useQuery } from '@tanstack/react-query';
+import { useIntl } from '@umijs/max';
 import {
   Alert,
   App,
   Button,
   Divider,
   Input,
-  Popconfirm,
-  Switch,
   Table,
   type TableColumnsType,
 } from 'antd';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { getNodeBorther, hasChildren } from '@/utils/DataHelper';
+import { frozenText } from '../status';
 import OrgAOEForm, { type OperateType } from './aoeform';
 import type { OrgItem } from './data.d';
-import {
-  deleteOrgs,
-  getOrg,
-  queryOrgs,
-  sortOrgs,
-  switchOrgStatus,
-} from './service';
+import { deleteOrgs, getOrg, queryOrgs, sortOrgs } from './service';
 
 const { Search } = Input;
 
 const SysOrganizationPage: React.FC = () => {
+  const intl = useIntl();
   const { message: msg, modal } = App.useApp();
   const [operateType, setOperateType] = useState<OperateType>('');
   const [currentItem, setCurrentItem] = useState<Partial<OrgItem>>({});
@@ -70,12 +63,6 @@ const SysOrganizationPage: React.FC = () => {
     }
   };
 
-  const handleEnable = async (record: OrgItem, checked: boolean) => {
-    if (!record.id) return;
-    const res = await switchOrgStatus(record.id, checked ? '0001' : '0000');
-    if (res.success) refresh();
-  };
-
   const handleDelete = async (record: OrgItem) => {
     const blockItem = hasChildren(data as never, [record.id]);
     if (record.isLeaf || blockItem) {
@@ -99,20 +86,42 @@ const SysOrganizationPage: React.FC = () => {
     }
   };
 
+  const confirmDelete = (record: OrgItem) => {
+    modal.confirm({
+      title: '确定要删除吗？',
+      centered: true,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: () => handleDelete(record),
+    });
+  };
+
+  const confirmBatchDelete = () => {
+    modal.confirm({
+      title: '确定要删除选中的条目吗?',
+      centered: true,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: { danger: true },
+      onOk: handleBatchDelete,
+    });
+  };
+
   const handleSort = async (
     nodes: OrgItem[],
-    index: number,
+    record: OrgItem,
     direction: 'up' | 'down',
   ) => {
+    const index = nodes.findIndex((node) => node.id === record.id);
+    if (index < 0) return;
     const target = direction === 'up' ? nodes[index - 1] : nodes[index + 1];
     if (!target) return;
-    const res = await sortOrgs([
-      {
-        id: nodes[index].id,
-        orders: direction === 'up' ? index - 1 : index + 1,
-      },
-      { id: target.id, orders: index },
-    ]);
+    const res = await sortOrgs({
+      id: record.id,
+      oldSort: record.orders,
+      newSort: target.orders,
+    });
     if (res.success) refresh();
   };
 
@@ -122,29 +131,36 @@ const SysOrganizationPage: React.FC = () => {
     {
       title: '排序',
       dataIndex: 'orders',
-      render: (text, record, index) => {
+      render: (text, record) => {
         if (record.status !== '0001') return '';
         const brother = getNodeBorther(
           data as never,
           record.parentId ?? '',
         ) as OrgItem[];
+        const index = brother.findIndex((node) => node.id === record.id);
         const size = brother.length;
         return (
           <div>
             {text}
             <Divider type="vertical" />
-            {size !== 0 && index !== size - 1 ? (
+            {index >= 0 && size !== 0 && index !== size - 1 ? (
               <CaretDownOutlined
-                onClick={() => handleSort(brother, index, 'down')}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleSort(brother, record, 'down');
+                }}
                 style={{ color: '#098FFF', cursor: 'pointer' }}
               />
             ) : (
               <CaretDownOutlined style={{ opacity: 0.3 }} />
             )}
             <Divider type="vertical" />
-            {size !== 0 && index !== 0 ? (
+            {index >= 0 && size !== 0 && index !== 0 ? (
               <CaretUpOutlined
-                onClick={() => handleSort(brother, index, 'up')}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleSort(brother, record, 'up');
+                }}
                 style={{ color: '#098FFF', cursor: 'pointer' }}
               />
             ) : (
@@ -156,16 +172,8 @@ const SysOrganizationPage: React.FC = () => {
     },
     {
       title: '状态',
-      dataIndex: 'status',
-      render: (_, record) =>
-        record.status !== '9999' && (
-          <Switch
-            onChange={(checked) => handleEnable(record, checked)}
-            checkedChildren={<CheckOutlined />}
-            unCheckedChildren={<CloseOutlined />}
-            checked={record.status === '0001'}
-          />
-        ),
+      dataIndex: 'frozen',
+      render: (_, record) => frozenText(intl, record.frozen),
     },
     {
       title: '操作',
@@ -176,14 +184,12 @@ const SysOrganizationPage: React.FC = () => {
             <Divider type="vertical" />
             <a onClick={() => handleEdit(record)}>编辑</a>
             <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => handleDelete(record)}
+            <a
+              className="eva-delete-link"
+              onClick={() => confirmDelete(record)}
             >
-              <a>删除</a>
-            </Popconfirm>
+              删除
+            </a>
           </div>
         ),
     },
@@ -204,13 +210,9 @@ const SysOrganizationPage: React.FC = () => {
           {selectedRowKeys.length > 0 && (
             <>
               <Divider type="vertical" />
-              <Popconfirm
-                title="确定要删除选中的条目吗?"
-                placement="top"
-                onConfirm={handleBatchDelete}
-              >
-                <Button danger>删除部门</Button>
-              </Popconfirm>
+              <Button danger onClick={confirmBatchDelete}>
+                删除部门
+              </Button>
             </>
           )}
         </div>
@@ -248,11 +250,12 @@ const SysOrganizationPage: React.FC = () => {
           loading={orgsQuery.isLoading}
           columns={columns}
           rowKey="id"
+          scroll={{ y: 'calc(100vh - 360px)' }}
           rowSelection={{
             selectedRowKeys,
             onChange: (keys) => setSelectedRowKeys(keys.map(String)),
             getCheckboxProps: (record) => ({
-              disabled: record.status === '9999',
+              disabled: record.frozen === 9999,
             }),
           }}
           onRow={(record) => ({
@@ -260,8 +263,8 @@ const SysOrganizationPage: React.FC = () => {
           })}
           rowClassName={(record) =>
             clsx({
-              'eva-locked': record.status === '0000',
-              'eva-disabled': record.status === '9999',
+              'eva-locked': record.frozen === 1,
+              'eva-disabled': record.frozen === 9999,
             })
           }
         />

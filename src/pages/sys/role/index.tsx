@@ -1,6 +1,4 @@
 import {
-  CheckOutlined,
-  CloseOutlined,
   DeleteOutlined,
   LockOutlined,
   PlusOutlined,
@@ -12,18 +10,11 @@ import {
   type ProColumns,
   ProTable,
 } from '@ant-design/pro-components';
-import {
-  Alert,
-  App,
-  Button,
-  Divider,
-  Form,
-  Input,
-  Popconfirm,
-  Switch,
-} from 'antd';
+import { useIntl } from '@umijs/max';
+import { Alert, App, Button, Divider, Form, Input, Space } from 'antd';
 import clsx from 'clsx';
 import React, { useRef, useState } from 'react';
+import { frozenText, sysText } from '../status';
 import RoleAOEForm, { type ModalType } from './aoeform';
 import RoleConfigModal from './component/roleconfig';
 import RoleModuleModal from './component/rolemodule';
@@ -33,8 +24,14 @@ import { deleteRoles, getRole, lockRoles, queryRoles } from './service';
 
 type AuthOperate = '' | 'Module' | 'User' | 'Config';
 
+const isSystemRole = (record: RoleItem) =>
+  record.code === '9999' || record.frozen === 9999 || record.status === '9999';
+
+const canOperateRole = (record: RoleItem) => !isSystemRole(record);
+
 const SysRolePage: React.FC = () => {
-  const { message: msg } = App.useApp();
+  const intl = useIntl();
+  const { message: msg, modal } = App.useApp();
   const actionRef = useRef<ActionType | undefined>(undefined);
   const [searchForm] = Form.useForm<{ name?: string; code?: string }>();
 
@@ -63,33 +60,55 @@ const SysRolePage: React.FC = () => {
   const handleDelete = async (record: RoleItem) => {
     const res = await deleteRoles([record.id]);
     if (res.success) {
-      msg.success('删除成功');
+      msg.success(sysText(intl, 'pages.sys.message.deleteSuccess', '删除成功'));
       refresh();
     }
+  };
+
+  const confirmDelete = (record: RoleItem) => {
+    if (!canOperateRole(record)) return;
+    modal.confirm({
+      title: sysText(intl, 'pages.sys.action.deleteConfirm', '确定要删除吗？'),
+      centered: true,
+      okText: sysText(intl, 'pages.sys.action.confirm', '确定'),
+      cancelText: sysText(intl, 'pages.sys.action.cancel', '取消'),
+      okButtonProps: { danger: true },
+      onOk: () => handleDelete(record),
+    });
+  };
+
+  const confirmBatchDelete = () => {
+    modal.confirm({
+      title: sysText(
+        intl,
+        'pages.sys.action.deleteSelectedConfirm',
+        '确定要删除选中的条目吗?',
+      ),
+      centered: true,
+      okText: sysText(intl, 'pages.sys.action.confirm', '确定'),
+      cancelText: sysText(intl, 'pages.sys.action.cancel', '取消'),
+      okButtonProps: { danger: true },
+      onOk: handleBatchDelete,
+    });
   };
 
   const handleBatchDelete = async () => {
     if (selectedRowKeys.length === 0) return;
     const res = await deleteRoles(selectedRowKeys);
     if (res.success) {
-      msg.success('删除成功');
+      msg.success(sysText(intl, 'pages.sys.message.deleteSuccess', '删除成功'));
       setSelectedRowKeys([]);
       refresh();
     }
   };
 
-  const handleLockSwitch = async (status: '0000' | '0001') => {
+  const handleLockSwitch = async (frozen: 0 | 1) => {
     if (selectedRowKeys.length === 0) return;
-    const res = await lockRoles(selectedRowKeys, status);
+    const res = await lockRoles(selectedRowKeys, frozen);
     if (res.success) {
       setSelectedRowKeys([]);
       refresh();
     }
-  };
-
-  const handleEnable = async (record: RoleItem, checked: boolean) => {
-    const res = await lockRoles([record.id], checked ? '0000' : '0001');
-    if (res.success) refresh();
   };
 
   const handleSearch = async () => {
@@ -108,126 +127,165 @@ const SysRolePage: React.FC = () => {
   };
 
   const columns: ProColumns<RoleItem>[] = [
-    { title: '角色名称', dataIndex: 'name' },
-    { title: '角色编码', dataIndex: 'code' },
-    { title: '角色描述', dataIndex: 'remark', ellipsis: true },
     {
-      title: '状态',
-      dataIndex: 'locked',
-      search: false,
-      render: (_, record) =>
-        record.locked !== '9999' && (
-          <Switch
-            onChange={(checked) => handleEnable(record, checked)}
-            checkedChildren={<CheckOutlined />}
-            unCheckedChildren={<CloseOutlined />}
-            checked={record.locked === '0000'}
-          />
-        ),
+      title: sysText(intl, 'pages.sys.role.name', '角色名称'),
+      dataIndex: 'name',
     },
     {
-      title: '模块授权',
+      title: sysText(intl, 'pages.sys.role.code', '角色编码'),
+      dataIndex: 'code',
+    },
+    {
+      title: sysText(intl, 'pages.sys.role.remark', '角色描述'),
+      dataIndex: 'remark',
+      ellipsis: true,
+    },
+    {
+      title: sysText(intl, 'pages.sys.column.locked', '是否锁定'),
+      dataIndex: 'frozen',
+      search: false,
+      render: (_, record) => (
+        <Space size={8}>
+          <span>{frozenText(intl, record.frozen)}</span>
+        </Space>
+      ),
+    },
+    {
+      title: sysText(intl, 'pages.sys.role.moduleAuth', '模块授权'),
       align: 'center',
       width: 100,
       search: false,
-      render: (_, record) =>
-        record.locked === '0000' && (
-          <a onClick={() => handleAction(record, 'Module')}>模块授权</a>
-        ),
+      render: (_, record) => (
+        <Button
+          type="link"
+          disabled={!canOperateRole(record)}
+          onClick={() => handleAction(record, 'Module')}
+        >
+          {sysText(intl, 'pages.sys.role.moduleAuth', '模块授权')}
+        </Button>
+      ),
     },
     {
-      title: '用户授权',
+      title: sysText(intl, 'pages.sys.role.userAuth', '用户授权'),
       align: 'center',
       width: 100,
       search: false,
-      render: (_, record) =>
-        record.locked === '0000' && (
-          <a onClick={() => handleAction(record, 'User')}>用户授权</a>
-        ),
+      render: (_, record) => (
+        <Button
+          type="link"
+          disabled={!canOperateRole(record)}
+          onClick={() => handleAction(record, 'User')}
+        >
+          {sysText(intl, 'pages.sys.role.userAuth', '用户授权')}
+        </Button>
+      ),
     },
     {
-      title: '配置授权',
+      title: sysText(intl, 'pages.sys.role.configAuth', '配置授权'),
       align: 'center',
       width: 100,
       search: false,
-      render: (_, record) =>
-        record.locked === '0000' && (
-          <a onClick={() => handleAction(record, 'Config')}>配置授权</a>
-        ),
+      render: (_, record) => (
+        <Button
+          type="link"
+          disabled={!canOperateRole(record)}
+          onClick={() => handleAction(record, 'Config')}
+        >
+          {sysText(intl, 'pages.sys.role.configAuth', '配置授权')}
+        </Button>
+      ),
     },
     {
-      title: '操作',
+      title: sysText(intl, 'pages.searchTable.titleOption', '操作'),
       width: 140,
       search: false,
-      render: (_, record) =>
-        record.locked === '0000' && (
-          <>
-            <a onClick={() => handleEdit(record)}>编辑</a>
-            <Divider type="vertical" />
-            <Popconfirm
-              title="确定要删除吗？"
-              okText="确定"
-              cancelText="取消"
-              onConfirm={() => handleDelete(record)}
-            >
-              <a>删除</a>
-            </Popconfirm>
-          </>
-        ),
+      render: (_, record) => (
+        <Space size={8} align="center">
+          <a
+            className={clsx({ 'eva-link-disabled': !canOperateRole(record) })}
+            onClick={() => {
+              if (canOperateRole(record)) handleEdit(record);
+            }}
+          >
+            {sysText(intl, 'pages.sys.action.edit', '编辑')}
+          </a>
+          <Divider type="vertical" />
+          <a
+            className={clsx('eva-delete-link', {
+              'eva-link-disabled': !canOperateRole(record),
+              'eva-delete-link-disabled': !canOperateRole(record),
+            })}
+            onClick={() => confirmDelete(record)}
+          >
+            {sysText(intl, 'pages.sys.action.delete', '删除')}
+          </a>
+        </Space>
+      ),
     },
   ];
 
   return (
-    <PageContainer title="角色管理" subTitle="系统用户角色权限管理维护">
+    <PageContainer
+      title={sysText(intl, 'pages.sys.role.title', '角色管理')}
+      subTitle={sysText(
+        intl,
+        'pages.sys.role.subtitle',
+        '系统用户角色权限管理维护',
+      )}
+    >
       <div className="eva-ribbon">
         <div>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            新增角色
+            {sysText(intl, 'pages.sys.role.add', '新增角色')}
           </Button>
           {selectedRowKeys.length > 0 && (
             <>
               <Divider type="vertical" />
-              <Popconfirm
-                title="确定要删除所选角色吗?"
-                placement="top"
-                onConfirm={handleBatchDelete}
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={confirmBatchDelete}
               >
-                <Button danger icon={<DeleteOutlined />}>
-                  删除角色
-                </Button>
-              </Popconfirm>
+                {sysText(intl, 'pages.sys.role.delete', '删除角色')}
+              </Button>
               <Divider type="vertical" />
               <Button
                 icon={<LockOutlined />}
-                onClick={() => handleLockSwitch('0001')}
+                onClick={() => handleLockSwitch(1)}
               >
-                停用角色
+                {sysText(intl, 'pages.sys.role.disable', '停用角色')}
               </Button>
               <Divider type="vertical" />
               <Button
                 icon={<UnlockOutlined />}
-                onClick={() => handleLockSwitch('0000')}
+                onClick={() => handleLockSwitch(0)}
               >
-                启用角色
+                {sysText(intl, 'pages.sys.role.enable', '启用角色')}
               </Button>
             </>
           )}
         </div>
         <div>
           <Form form={searchForm} layout="inline" onFinish={handleSearch}>
-            <Form.Item label="角色名称" name="name">
-              <Input />
+            <Form.Item
+              label={sysText(intl, 'pages.sys.role.name', '角色名称')}
+              name="name"
+            >
+              <Input allowClear />
             </Form.Item>
-            <Form.Item label="角色编码" name="code">
-              <Input />
+            <Form.Item
+              label={sysText(intl, 'pages.sys.role.code', '角色编码')}
+              name="code"
+            >
+              <Input allowClear />
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit">
-                查询
+                {sysText(intl, 'pages.sys.action.query', '查询')}
               </Button>
               <Divider type="vertical" />
               <Button htmlType="button" onClick={handleReset}>
-                重置
+                {sysText(intl, 'pages.sys.action.reset', '重置')}
               </Button>
             </Form.Item>
           </Form>
@@ -241,13 +299,14 @@ const SysRolePage: React.FC = () => {
             type="info"
             message={
               <div>
-                已选择{' '}
-                <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项
+                {sysText(intl, 'pages.sys.role.selected', '已选择')}{' '}
+                <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a>{' '}
+                {sysText(intl, 'pages.sys.role.item', '项')}
                 <a
                   style={{ marginLeft: 24 }}
                   onClick={() => setSelectedRowKeys([])}
                 >
-                  清空选择
+                  {sysText(intl, 'pages.sys.action.clearSelected', '清空选择')}
                 </a>
               </div>
             }
@@ -267,17 +326,19 @@ const SysRolePage: React.FC = () => {
             selectedRowKeys,
             onChange: (keys) => setSelectedRowKeys(keys.map(String)),
             getCheckboxProps: (record) => ({
-              disabled: record.status === '9999',
+              disabled: isSystemRole(record),
             }),
           }}
           rowClassName={(record) =>
             clsx({
-              'eva-locked': record.status === '0001',
-              'eva-disabled': record.status === '9999',
+              'eva-locked': record.frozen === 1,
+              'eva-disabled': isSystemRole(record),
             })
           }
           onRow={(record) => ({
-            onDoubleClick: () => handleEdit(record),
+            onDoubleClick: () => {
+              if (canOperateRole(record)) handleEdit(record);
+            },
           })}
           request={async (params) => {
             const res = await queryRoles({ ...query, ...params });

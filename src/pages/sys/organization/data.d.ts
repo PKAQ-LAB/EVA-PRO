@@ -8,6 +8,7 @@ export interface OrgItem {
   parentId?: string;
   parentName?: string;
   orders?: number;
+  frozen?: 0 | 1 | 9999;
   status?: OrgStatus;
   remark?: string;
   isLeaf?: boolean;

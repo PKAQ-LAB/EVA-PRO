@@ -18,6 +18,7 @@ export interface AccountItem {
   password?: string;
   repassword?: string;
   remark?: string;
+  frozen?: 0 | 1 | 9999;
   locked?: AccountLockStatus;
   roles?: AccountRoleRef[];
 }

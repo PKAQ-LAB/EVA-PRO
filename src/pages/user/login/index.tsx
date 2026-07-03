@@ -10,7 +10,7 @@ import { MD5 } from 'jscrypto/es6/MD5';
 import React, { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import Cookies from 'universal-cookie';
-import { refresh_token, user_key } from '@/constant';
+import { user_key } from '@/constant';
 import { type AuthLoginResult, login } from '@/services/auth';
 import { fetchDict, fetchMenus } from '@/services/user';
 import {
@@ -19,6 +19,7 @@ import {
   isAuthExpiredError,
   redirectToLogin,
   setStoredAccessToken,
+  setStoredRefreshToken,
 } from '@/utils/authState';
 import Settings from '../../../../config/defaultSettings';
 
@@ -690,10 +691,7 @@ const Login: React.FC = () => {
           'refreshToken',
         );
         if (refreshTokenValue) {
-          cookies.set(refresh_token, refreshTokenValue, {
-            path: '/',
-            sameSite: 'lax',
-          });
+          setStoredRefreshToken(refreshTokenValue);
         }
         const userInfo = getLoginUserInfo(msg);
         if (userInfo) {
@@ -710,7 +708,7 @@ const Login: React.FC = () => {
         let menus: LoginMenuItem[] = [];
         let dict: Record<string, unknown> | undefined;
         try {
-          const authHeaders = { Authorization: `Bearer${tokenValue}` };
+          const authHeaders = { Authorization: `Bearer ${tokenValue}` };
           const [menuResponse, dictResponse] = await Promise.all([
             fetchMenus({ headers: authHeaders, skipErrorHandler: true }),
             fetchDict({ headers: authHeaders, skipErrorHandler: true }),
