@@ -5,8 +5,8 @@ interface RoleRow {
   name: string;
   code: string;
   remark: string;
-  locked: '0000' | '0001' | '9999';
-  dataPermissionType?: string;
+  frozen: 0 | 1 | 9999;
+  dataScope?: string;
 }
 
 const roles: RoleRow[] = [
@@ -15,32 +15,32 @@ const roles: RoleRow[] = [
     name: '超级管理员',
     code: 'SUPER_ADMIN',
     remark: '系统内置，不可修改',
-    locked: '9999',
-    dataPermissionType: '9999',
+    frozen: 9999,
+    dataScope: '0000',
   },
   {
     id: 'role-2',
     name: '研发',
     code: 'RD',
     remark: '研发同学',
-    locked: '0000',
-    dataPermissionType: '0001',
+    frozen: 0,
+    dataScope: '0001',
   },
   {
     id: 'role-3',
     name: '设计',
     code: 'DESIGN',
     remark: '设计同学',
-    locked: '0000',
-    dataPermissionType: '0001',
+    frozen: 0,
+    dataScope: '0001',
   },
   {
     id: 'role-4',
     name: '客服',
     code: 'SUPPORT',
     remark: '已停用示例',
-    locked: '0001',
-    dataPermissionType: '0000',
+    frozen: 1,
+    dataScope: '0000',
   },
 ];
 

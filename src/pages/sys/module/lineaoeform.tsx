@@ -1,5 +1,6 @@
 import { Form, Input, Modal } from 'antd';
 import React, { useEffect } from 'react';
+import { DictSelector } from '@/components';
 import type { ModuleResource } from './data.d';
 
 export type LineModalType = '' | 'create' | 'edit';
@@ -11,6 +12,7 @@ export interface ModuleLineAOEFormProps {
   setLines: (lines: ModuleResource[]) => void;
   editIndex: number | '';
   setEditIndex: (v: number | '') => void;
+  resourceTypeDict?: Record<string, string>;
 }
 
 const TITLE: Record<Exclude<LineModalType, ''>, string> = {
@@ -30,6 +32,7 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
   setLines,
   editIndex,
   setEditIndex,
+  resourceTypeDict,
 }) => {
   const [form] = Form.useForm<ModuleResource>();
 
@@ -38,7 +41,9 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
     form.resetFields();
     if (editIndex !== '' && lines[editIndex]) {
       form.setFieldsValue(lines[editIndex]);
+      return;
     }
+    form.setFieldsValue({ resourceType: 'GET' } as ModuleResource);
   }, [modalType, editIndex, lines, form]);
 
   const handleSaveClick = async () => {
@@ -80,6 +85,17 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
           rules={[{ required: true, max: 30 }]}
         >
           <Input />
+        </Form.Item>
+        <Form.Item
+          label="资源类型"
+          name="resourceType"
+          rules={[{ required: true }]}
+        >
+          <DictSelector
+            code="RESOURCE_TYPE"
+            data={resourceTypeDict}
+            showall={false}
+          />
         </Form.Item>
         <Form.Item
           label="资源路径"

@@ -16,6 +16,7 @@ export interface ModuleItem {
   parentId?: string;
   parentName?: string;
   orders?: number | string;
+  frozen?: 0 | 1 | 9999;
   status?: ModuleStatus;
   remark?: string;
   isLeaf?: boolean;

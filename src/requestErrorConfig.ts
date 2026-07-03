@@ -8,6 +8,8 @@ import {
   isAuthExpiredCode,
   redirectToLogin,
 } from '@/utils/authState';
+import { trimRequestPayload } from '@/utils/requestPayload';
+import { refreshAccessToken, replayRequest } from '@/utils/tokenRefresh';
 import defaultSettings from '../config/defaultSettings';
 
 // 错误处理方案： 错误类型
@@ -27,6 +29,59 @@ interface ResponseStructure {
   errorCode?: number | string;
   errorMessage?: string;
   showType?: ErrorShowType;
+}
+
+type RetryableRequestOptions = RequestOptions & {
+  url?: string;
+  method?: string;
+  _retryAuth?: boolean;
+  _retryCount?: number;
+};
+
+const authRequestPaths = [
+  '/api/auth/login',
+  '/api/auth/logout',
+  '/api/auth/getAlpha',
+];
+
+const wait = (timeout: number) =>
+  new Promise((resolve) => globalThis.setTimeout(resolve, timeout));
+
+function getAuthErrorCode(payload?: ResponseStructure) {
+  return payload?.errorCode ?? payload?.code;
+}
+
+function isAuthRequest(url?: string) {
+  if (!url) return false;
+  return authRequestPaths.some((path) => url.includes(path));
+}
+
+async function refreshAndReplayRequest(
+  config: RetryableRequestOptions,
+  fallbackError?: unknown,
+) {
+  try {
+    const token = await refreshAccessToken();
+    return replayRequest(
+      {
+        ...config,
+        _retryAuth: true,
+      },
+      token,
+    );
+  } catch {
+    clearAuthState();
+    redirectToLogin();
+    throw fallbackError ?? new Error('登录已失效，请重新登录');
+  }
+}
+
+async function retryGetRequest(config: RetryableRequestOptions) {
+  await wait(300);
+  return replayRequest({
+    ...config,
+    _retryCount: (config._retryCount ?? 0) + 1,
+  });
 }
 
 /**
@@ -144,17 +199,62 @@ export const errorConfig: RequestConfig = {
         'Cache-Control': 'no-cache',
         device: 'pc',
         version: defaultSettings.version ?? '',
-        ...(token ? { Authorization: `Bearer${token}` } : {}),
         ...(config.headers || {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
-      return { ...config, headers };
+      return {
+        ...config,
+        data: trimRequestPayload(config.data),
+        params: trimRequestPayload(config.params),
+        headers,
+      };
     },
   ],
 
-  // 业务错误由 errorThrower/errorHandler 统一处理，这里只保留响应透传。
+  // 响应拦截器：鉴权失效时尝试刷新 token 并重放原请求；GET 网络无响应时做一次轻量重试。
   responseInterceptors: [
-    (response) => {
-      return response;
-    },
-  ],
+    [
+      async (response: any) => {
+        const payload = response?.data as ResponseStructure | undefined;
+        const config = response?.config as RetryableRequestOptions | undefined;
+        if (
+          payload?.success === false &&
+          isAuthExpiredCode(getAuthErrorCode(payload)) &&
+          config &&
+          !config._retryAuth &&
+          !isAuthRequest(config.url)
+        ) {
+          return refreshAndReplayRequest(config, response);
+        }
+        return response;
+      },
+      async (error: any) => {
+        const config = (error?.config || error?.response?.config) as
+          | RetryableRequestOptions
+          | undefined;
+        const status = error?.response?.status;
+        if (
+          status === 401 &&
+          config &&
+          !config._retryAuth &&
+          !isAuthRequest(config.url)
+        ) {
+          return refreshAndReplayRequest(config, error);
+        }
+        const method = (config?.method || 'GET').toUpperCase();
+        const canRetryGet =
+          config &&
+          method === 'GET' &&
+          !error?.response &&
+          error?.request &&
+          (config._retryCount ?? 0) < 1 &&
+          !isAuthRequest(config.url) &&
+          (typeof navigator === 'undefined' || navigator.onLine);
+        if (canRetryGet) {
+          return retryGetRequest(config);
+        }
+        throw error;
+      },
+    ] as any,
+  ] as any,
 };
