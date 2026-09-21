@@ -153,6 +153,7 @@ export default defineConfig({
     configProvider: {
       variant: 'filled',
       theme: {
+        cssVar: true,
         token: {
           fontFamily: 'AlibabaSans, sans-serif',
           borderRadius: 2,

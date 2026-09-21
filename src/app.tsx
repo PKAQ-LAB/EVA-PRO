@@ -450,7 +450,13 @@ export const layout: RunTimeLayoutConfig = ({
       if (initialState?.loading) return <PageLoading />;
       return (
         <>
-          <div className="eva-workspace">
+          <div
+            className={
+              initialState?.settings?.navTheme === 'realDark'
+                ? 'eva-workspace eva-theme-dark'
+                : 'eva-workspace'
+            }
+          >
             <div className="eva-workspace-page">{children}</div>
             <Footer />
           </div>

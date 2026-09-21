@@ -13,7 +13,7 @@ const useStyles = createStyles(({ token, css }) => ({
     gap: 16px;
     padding: 0 24px;
     border-top: 1px solid ${token.colorBorderSecondary};
-    background: #fff;
+    background: ${token.colorBgContainer};
     color: ${token.colorTextDescription};
     font-size: 12px;
     line-height: 30px;
