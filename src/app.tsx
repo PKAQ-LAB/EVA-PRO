@@ -37,6 +37,7 @@ import { errorConfig } from './requestErrorConfig';
 printANSI();
 
 const isDev = process.env.NODE_ENV === 'development';
+const showDevelopmentLinks = isDev && process.env.UMI_ENV === 'dev';
 const loginPath = '/user/login';
 const loginMenuCacheKey = 'eva_login_menus';
 const currentUserCacheKey = 'eva_current_user';
@@ -430,7 +431,7 @@ export const layout: RunTimeLayoutConfig = ({
         width: '331px',
       },
     ],
-    links: isDev
+    links: showDevelopmentLinks
       ? [
           <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
             <LinkOutlined />
