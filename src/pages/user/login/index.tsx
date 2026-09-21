@@ -202,20 +202,6 @@ const useStyles = createStyles(({ token, css }) => ({
       left 0.2s ease,
       top 0.2s ease;
   `,
-  leftLinks: css`
-    position: absolute;
-    bottom: 38px;
-    left: 40px;
-    display: flex;
-    gap: 34px;
-    color: #6b7280;
-    font-size: 13px;
-    font-weight: 600;
-
-    a {
-      color: inherit;
-    }
-  `,
   rightPane: css`
     position: relative;
     display: flex;
@@ -393,17 +379,6 @@ const useStyles = createStyles(({ token, css }) => ({
 
     &:hover .hover-label {
       opacity: 1;
-    }
-  `,
-  helper: css`
-    margin-top: 32px;
-    color: #737373;
-    font-size: 14px;
-    text-align: center;
-
-    span {
-      color: #fff;
-      font-weight: 700;
     }
   `,
 }));
@@ -915,10 +890,6 @@ const Login: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className={styles.leftLinks}>
-          <span>Privacy Policy</span>
-          <span>Terms of Service</span>
-        </div>
       </section>
 
       <section className={styles.rightPane}>
@@ -1001,10 +972,6 @@ const Login: React.FC = () => {
               </span>
             </Button>
           </Form>
-
-          <div className={styles.helper}>
-            没有账号？<span>请联系管理员</span>
-          </div>
         </div>
       </section>
     </main>
