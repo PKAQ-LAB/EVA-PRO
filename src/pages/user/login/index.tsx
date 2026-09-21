@@ -208,6 +208,7 @@ const useStyles = createStyles(({ token, css }) => ({
     min-height: 100vh;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     padding: 56px 32px;
     background: #050505;
 
@@ -216,7 +217,44 @@ const useStyles = createStyles(({ token, css }) => ({
       padding: 40px 20px 56px;
     }
   `,
+  gridBackdrop: css`
+    position: absolute;
+    z-index: 0;
+    inset: 0 0 0 auto;
+    width: 50%;
+    overflow: hidden;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 56%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 56%);
+
+    @media (max-width: 640px) {
+      opacity: 0.72;
+    }
+  `,
+  gridTexture: css`
+    position: absolute;
+    inset: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Crect x='10' width='2' height='2' fill='%235eead4' fill-opacity='.32'/%3E%3C/svg%3E"),
+      radial-gradient(
+        ellipse at 100% 45%,
+        rgba(45, 212, 191, 0.12),
+        transparent 68%
+      );
+    background-position: right top;
+    background-size:
+      12px 12px,
+      100% 100%;
+
+    @media (max-width: 640px) {
+      background-size:
+        10px 10px,
+        100% 100%;
+    }
+  `,
   formBox: css`
+    position: relative;
+    z-index: 1;
     width: min(100%, 440px);
   `,
   header: css`
@@ -893,6 +931,9 @@ const Login: React.FC = () => {
       </section>
 
       <section className={styles.rightPane}>
+        <div aria-hidden="true" className={styles.gridBackdrop}>
+          <div className={styles.gridTexture} />
+        </div>
         <div className={styles.language} data-lang>
           {SelectLang && <SelectLang />}
         </div>
