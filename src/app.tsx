@@ -485,7 +485,6 @@ export const layout: RunTimeLayoutConfig = ({
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const request: RequestConfig = {
-  baseURL: isDev ? '' : 'https://pro-api.ant-design-demo.workers.dev',
   // 默认请求带上同源 cookie（包含 access_token）
   withCredentials: true,
   ...errorConfig,

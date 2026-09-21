@@ -21,9 +21,9 @@ export default {
    * @doc https://github.com/chimurai/http-proxy-middleware
    */
   test: {
-    // localhost:8000/api/** -> https://pro-api.ant-design-demo.workers.dev/api/**
+    // localhost:8000/api/** -> localhost:9016/api/**
     '/api/': {
-      target: 'https://pro-api.ant-design-demo.workers.dev',
+      target: 'http://localhost:9016',
       changeOrigin: true,
     },
   },
