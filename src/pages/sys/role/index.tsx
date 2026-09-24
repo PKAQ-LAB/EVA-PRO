@@ -10,16 +10,18 @@ import {
   type ProColumns,
   ProTable,
 } from '@ant-design/pro-components';
-import { useIntl } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import { Alert, App, Button, Divider, Form, Input, Space } from 'antd';
 import clsx from 'clsx';
 import React, { useRef, useState } from 'react';
+import { canInspectPlatformTenants } from '@/productMode';
 import { frozenText, sysText } from '../status';
 import RoleAOEForm, { type ModalType } from './aoeform';
 import RoleConfigModal from './component/roleconfig';
 import RoleModuleModal from './component/rolemodule';
 import RoleUserModal from './component/roleuser';
 import type { RoleItem } from './data.d';
+import PlatformRolePage from './platform';
 import { deleteRoles, getRole, lockRoles, queryRoles } from './service';
 
 type AuthOperate = '' | 'Module' | 'User' | 'Config';
@@ -29,7 +31,7 @@ const isSystemRole = (record: RoleItem) =>
 
 const canOperateRole = (record: RoleItem) => !isSystemRole(record);
 
-const SysRolePage: React.FC = () => {
+const TenantRolePage: React.FC = () => {
   const intl = useIntl();
   const { message: msg, modal } = App.useApp();
   const actionRef = useRef<ActionType | undefined>(undefined);
@@ -383,6 +385,16 @@ const SysRolePage: React.FC = () => {
         onClose={() => setAuthOperate('')}
       />
     </PageContainer>
+  );
+};
+
+const SysRolePage: React.FC = () => {
+  const { initialState } = useModel('@@initialState');
+
+  return canInspectPlatformTenants(initialState?.currentUser) ? (
+    <PlatformRolePage />
+  ) : (
+    <TenantRolePage />
   );
 };
 

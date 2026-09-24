@@ -5,7 +5,7 @@ import {
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useQuery } from '@tanstack/react-query';
-import { useIntl } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import {
   Alert,
   App,
@@ -17,15 +17,17 @@ import {
 } from 'antd';
 import clsx from 'clsx';
 import React, { useState } from 'react';
+import { canInspectPlatformTenants } from '@/productMode';
 import { getNodeBorther, hasChildren } from '@/utils/DataHelper';
 import { frozenText } from '../status';
 import OrgAOEForm, { type OperateType } from './aoeform';
 import type { OrgItem } from './data.d';
+import PlatformOrganizationPage from './platform';
 import { deleteOrgs, getOrg, queryOrgs, sortOrgs } from './service';
 
 const { Search } = Input;
 
-const SysOrganizationPage: React.FC = () => {
+const TenantOrganizationPage: React.FC = () => {
   const intl = useIntl();
   const { message: msg, modal } = App.useApp();
   const [operateType, setOperateType] = useState<OperateType>('');
@@ -280,6 +282,16 @@ const SysOrganizationPage: React.FC = () => {
         />
       )}
     </PageContainer>
+  );
+};
+
+const SysOrganizationPage: React.FC = () => {
+  const { initialState } = useModel('@@initialState');
+
+  return canInspectPlatformTenants(initialState?.currentUser) ? (
+    <PlatformOrganizationPage />
+  ) : (
+    <TenantOrganizationPage />
   );
 };
 

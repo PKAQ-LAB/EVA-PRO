@@ -12,6 +12,11 @@ const APIS = {
   ORG_STATUS: '/api/sys/organization/switch',
   ORG_DEL: '/api/sys/organization/del',
   ORG_CHECKUNIQUE: '/api/sys/organization/checkUnique',
+  // 平台租户只读查询
+  PLATFORM_TENANT_OPTIONS: '/api/sys/platform/tenants/options',
+  PLATFORM_TENANT_ORGANIZATIONS:
+    '/api/sys/platform/tenants/{tenantId}/organizations',
+  PLATFORM_TENANT_ROLES: '/api/sys/platform/tenants/{tenantId}/roles',
   // 模块管理
   MODULE_GET: '/api/sys/module/get',
   MODULE_LIST: '/api/sys/module/list',
