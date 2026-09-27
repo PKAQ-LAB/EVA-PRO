@@ -29,6 +29,11 @@ import {
   redirectToLogin,
 } from '@/utils/authState';
 import { loopMenuItem } from '@/utils/DataHelper';
+import {
+  extractMenus,
+  type MenuNavigationItem,
+  normalizeMenuPaths,
+} from '@/utils/menuNavigation';
 import { printANSI } from '@/utils/screenlog';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
@@ -41,150 +46,11 @@ const showDevelopmentLinks = isDev && process.env.UMI_ENV === 'dev';
 const loginPath = '/user/login';
 const loginMenuCacheKey = 'eva_login_menus';
 const currentUserCacheKey = 'eva_current_user';
-const registeredMenuRoutes = new Set([
-  '/welcome',
-  '/admin/sub-page',
-  '/list',
-  '/sys/account',
-  '/sys/user',
-  '/sys/organization',
-  '/sys/role',
-  '/sys/module',
-  '/sys/dictionary',
-  '/log/online',
-  '/log/biz',
-  '/log/error',
-  '/dev/generator',
-  '/dev/workflow',
-]);
-const menuDisplayNames: Record<string, string> = {
-  sys: '系统管理',
-  'sys.account': '用户管理',
-  'sys.user': '用户管理',
-  'sys.organization': '组织管理',
-  'sys.role': '角色管理',
-  'sys.module': '模块管理',
-  'sys.dictionary': '字典管理',
-  log: '系统日志',
-  'log.online': '在线用户',
-  'log.biz': '业务日志',
-  'log.error': '错误日志',
-  dev: '开发工具',
-  'dev.generator': '代码生成',
-  'dev.workflow': '工作流',
-};
-const menuRouteAliases: Record<string, string> = {
-  sys: '/sys',
-  'sys.account': '/sys/user',
-  'sys.user': '/sys/user',
-  'sys.organization': '/sys/organization',
-  'sys.role': '/sys/role',
-  'sys.module': '/sys/module',
-  'sys.dictionary': '/sys/dictionary',
-  log: '/log',
-  'log.online': '/log/online',
-  'log.biz': '/log/biz',
-  'log.error': '/log/error',
-  dev: '/dev',
-  'dev.generator': '/dev/generator',
-  'dev.workflow': '/dev/workflow',
-};
-
-function normalizeRoutePath(path?: unknown) {
-  if (typeof path !== 'string' || !path) return undefined;
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return registeredMenuRoutes.has(normalizedPath) ? normalizedPath : undefined;
-}
 
 function getCurrentRoutePath() {
   if (typeof window === 'undefined') return history.location.pathname;
   const hashPath = window.location.hash.replace(/^#/, '').split('?')[0];
   return hashPath || history.location.pathname;
-}
-
-function getMenuCandidates(item: Record<string, unknown>) {
-  return [
-    item.code,
-    item.name,
-    item.title,
-    item.menuCode,
-    item.moduleCode,
-    item.permission,
-    item.authority,
-  ];
-}
-
-function getMenuDisplayName(item: Record<string, unknown>) {
-  for (const identity of getMenuCandidates(item)) {
-    if (typeof identity !== 'string') continue;
-    if (menuDisplayNames[identity]) return menuDisplayNames[identity];
-    if (identity.startsWith('menu.') && menuDisplayNames[identity.slice(5)]) {
-      return menuDisplayNames[identity.slice(5)];
-    }
-  }
-  return typeof item.title === 'string'
-    ? item.title
-    : typeof item.name === 'string'
-      ? item.name
-      : undefined;
-}
-
-function getMenuPath(item: Record<string, unknown>) {
-  for (const identity of getMenuCandidates(item)) {
-    if (typeof identity !== 'string') continue;
-    if (menuRouteAliases[identity]) return menuRouteAliases[identity];
-    if (identity.startsWith('menu.') && menuRouteAliases[identity.slice(5)]) {
-      return menuRouteAliases[identity.slice(5)];
-    }
-  }
-  return (
-    normalizeRoutePath(item.routeurl) ||
-    normalizeRoutePath(item.routeUrl) ||
-    normalizeRoutePath(item.url) ||
-    normalizeRoutePath(item.router) ||
-    normalizeRoutePath(item.path)
-  );
-}
-
-function extractMenus(data: unknown): unknown[] {
-  if (Array.isArray(data)) return data;
-  const payload = (data || {}) as Record<string, unknown>;
-  const candidates = [
-    payload.menus,
-    payload.menu,
-    payload.routes,
-    payload.modules,
-    payload.resources,
-  ];
-  return (candidates.find(Array.isArray) as unknown[]) || [];
-}
-
-function normalizeMenuPaths(menus: unknown[]): unknown[] {
-  return menus
-    .map((menu) => {
-      const item = menu as Record<string, unknown>;
-      const normalizedPath = getMenuPath(item);
-      const displayName = getMenuDisplayName(item);
-      const children = Array.isArray(item.children)
-        ? normalizeMenuPaths(item.children)
-        : undefined;
-      return {
-        ...item,
-        ...(displayName ? { name: displayName } : {}),
-        ...(normalizedPath
-          ? { key: normalizedPath, path: normalizedPath }
-          : {}),
-        ...(children?.length ? { children } : {}),
-      };
-    })
-    .filter((menu) => {
-      const item = menu as Record<string, unknown>;
-      return (
-        (typeof item.path === 'string' &&
-          registeredMenuRoutes.has(item.path)) ||
-        (Array.isArray(item.children) && item.children.length > 0)
-      );
-    });
 }
 
 function normalizeCurrentUser(
@@ -346,11 +212,18 @@ export const layout: RunTimeLayoutConfig = ({
   setInitialState,
 }) => {
   const currentRoutePath = getCurrentRoutePath();
+  const currentMenus = (
+    initialState?.currentUser as
+      | (API.CurrentUser & { menus?: MenuNavigationItem[] })
+      | undefined
+  )?.menus;
   return {
     location: {
       ...history.location,
       pathname: currentRoutePath,
     },
+    // 登录跳转到子模块后，ProComponents 会按当前路径生成 matchMenuKeys 并自动展开父级；
+    // 不传 openKeys，保留菜单折叠状态为非受控，允许用户手动折叠。
     selectedKeys: [currentRoutePath],
     menuItemRender: (item, dom) => {
       if (item.path) {
@@ -371,11 +244,6 @@ export const layout: RunTimeLayoutConfig = ({
       locale: false,
       request: async () => {
         try {
-          const currentMenus = (
-            initialState?.currentUser as
-              | (API.CurrentUser & { menus?: unknown[] })
-              | undefined
-          )?.menus;
           if (Array.isArray(currentMenus) && currentMenus.length > 0) {
             return loopMenuItem(
               normalizeMenuPaths(currentMenus) as never[],

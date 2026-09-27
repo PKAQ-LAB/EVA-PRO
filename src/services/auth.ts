@@ -49,6 +49,8 @@ export async function login(
 }
 
 /** 退出登录 GET /api/auth/logout */
-export async function outLogin() {
-  return request<unknown>('/api/auth/logout');
+export async function outLogin(options?: Record<string, unknown>) {
+  return request<unknown>('/api/auth/logout', {
+    ...(options || {}),
+  });
 }
