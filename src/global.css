@@ -41,8 +41,12 @@ canvas {
   min-height: 0;
   flex: 1;
   flex-direction: column;
-  padding: 16px 0 0;
   background: var(--ant-color-bg-container, #fff);
+}
+
+/* 仅消除 EVA 列表区内 ProTable 的卡片横向留白，使其与上方操作区对齐。 */
+.eva-body .ant-pro-table .ant-pro-card-body {
+  padding-inline: 0;
 }
 
 /* 选中项提示条 */

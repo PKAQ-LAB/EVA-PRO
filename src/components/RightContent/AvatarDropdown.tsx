@@ -7,16 +7,13 @@ import { history, useModel } from '@umijs/max';
 import type { MenuProps } from 'antd';
 import { Spin } from 'antd';
 import React, { startTransition } from 'react';
-import Cookies from 'universal-cookie';
-import { access_token, refresh_token, user_key } from '@/constant';
 import { outLogin } from '@/services/auth';
+import { clearAuthState } from '@/utils/authState';
 import HeaderDropdown from '../HeaderDropdown';
 
 type GlobalHeaderRightProps = {
   children?: React.ReactNode;
 };
-
-const cookies = new Cookies();
 
 const menuItems: MenuProps['items'] = [
   {
@@ -41,13 +38,11 @@ const menuItems: MenuProps['items'] = [
 
 const loginOut = async () => {
   try {
-    await outLogin();
+    await outLogin({ skipErrorHandler: true });
   } catch {
-    // Local logout has already cleared user state; redirect should still proceed.
+    // 服务端退出失败不影响本地退出流程。
   }
-  cookies.remove(access_token, { maxAge: -1, path: '/' });
-  cookies.remove(refresh_token, { maxAge: -1, path: '/' });
-  cookies.remove(user_key, { maxAge: -1, path: '/' });
+  clearAuthState();
 
   const { search, pathname } = window.location;
   const urlParams = new URL(window.location.href).searchParams;

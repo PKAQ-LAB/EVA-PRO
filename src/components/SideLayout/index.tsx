@@ -15,7 +15,7 @@ export interface SideLayoutProps {
   className?: string;
   children?: React.ReactNode;
   title?: React.ReactNode;
-  width?: number;
+  width?: number | string;
   layoutStyle?: React.CSSProperties;
   body?: React.ReactNode;
   bodyStyle?: React.CSSProperties;
