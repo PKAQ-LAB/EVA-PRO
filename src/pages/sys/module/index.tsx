@@ -16,9 +16,13 @@ import {
   type TableColumnsType,
 } from 'antd';
 import clsx from 'clsx';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import IconMap from '@/appicon';
-import { getNodeBorther, hasChildren } from '@/utils/DataHelper';
+import {
+  filterTree,
+  getDeleteBlockers,
+  getSiblingMove,
+} from '@/utils/treeOperations';
 import { frozenText } from '../status';
 import ModuleAOEForm, { type OperateType } from './aoeform';
 import type { ModuleItem } from './data.d';
@@ -35,16 +39,24 @@ const SysModulePage: React.FC = () => {
   const [searchName, setSearchName] = useState<string>('');
 
   const modulesQuery = useQuery<ModuleItem[]>({
-    queryKey: ['sys', 'modules', { name: searchName }],
+    queryKey: ['sys', 'modules'],
     queryFn: async () => {
-      const res = await queryModules(
-        searchName ? { name: searchName } : undefined,
-      );
+      const res = await queryModules();
       return (res?.data ?? []) as ModuleItem[];
     },
   });
 
-  const data = modulesQuery.data ?? [];
+  const allData = modulesQuery.data ?? [];
+  const data = useMemo(
+    () =>
+      searchName
+        ? filterTree(
+            allData,
+            (node) => node.name?.includes(searchName) ?? false,
+          )
+        : allData,
+    [allData, searchName],
+  );
   const refresh = () => modulesQuery.refetch();
 
   const handleAdd = (record?: ModuleItem) => {
@@ -65,19 +77,22 @@ const SysModulePage: React.FC = () => {
   };
 
   const handleDelete = async (record: ModuleItem) => {
-    const blockItem = hasChildren(data as never, [record.id]);
-    if (record.isLeaf || blockItem) {
+    const [blockItem] = getDeleteBlockers(allData, [record.id]);
+    if (blockItem) {
       msg.error(`错误：[${record.name}] 存在子节点，无法删除`);
       return;
     }
     const res = await deleteModules([record.id]);
-    if (res.success) refresh();
+    if (res.success) {
+      setSelectedRowKeys((keys) => keys.filter((key) => key !== record.id));
+      refresh();
+    }
   };
 
   const handleBatchDelete = async () => {
-    const blockItem = hasChildren(data as never, selectedRowKeys);
+    const [blockItem] = getDeleteBlockers(allData, selectedRowKeys);
     if (blockItem) {
-      msg.error(`错误：[${blockItem}] 存在子节点，无法删除`);
+      msg.error(`错误：[${blockItem.name}] 存在子节点，无法删除`);
       return;
     }
     const res = await deleteModules(selectedRowKeys);
@@ -109,20 +124,14 @@ const SysModulePage: React.FC = () => {
     });
   };
 
-  const handleSort = async (
-    nodes: ModuleItem[],
-    index: number,
-    direction: 'up' | 'down',
-  ) => {
-    const target = direction === 'up' ? nodes[index - 1] : nodes[index + 1];
-    if (!target) return;
-    const res = await sortModules([
-      {
-        id: nodes[index].id,
-        orders: direction === 'up' ? index - 1 : index + 1,
-      },
-      { id: target.id, orders: index },
-    ]);
+  const handleSort = async (record: ModuleItem, direction: 'up' | 'down') => {
+    const move = getSiblingMove(allData, record.id, direction);
+    if (!move) return;
+    const res = await sortModules({
+      id: record.id,
+      oldSort: record.orders,
+      newSort: move.target.orders,
+    });
     if (res.success) refresh();
   };
 
@@ -133,33 +142,41 @@ const SysModulePage: React.FC = () => {
       dataIndex: 'icon',
       render: (text) => (text ? (IconMap[text as string] ?? text) : null),
     },
-    { title: 'Path', dataIndex: 'path' },
+    {
+      title: 'Path',
+      dataIndex: 'path',
+      render: (_, record) => record.path,
+    },
     { title: '上级模块', dataIndex: 'parentName' },
     {
       title: '排序',
       dataIndex: 'orders',
-      render: (text, record, index) => {
-        const brother = getNodeBorther(
-          data as never,
-          record.parentId ?? '',
-        ) as ModuleItem[];
-        const size = brother?.length ?? 0;
+      render: (text, record) => {
+        if (searchName) return text;
+        const moveDown = getSiblingMove(allData, record.id, 'down');
+        const moveUp = getSiblingMove(allData, record.id, 'up');
         return (
           <div>
             {text}
             <Divider type="vertical" />
-            {size !== 0 && index !== size - 1 ? (
+            {moveDown ? (
               <CaretDownOutlined
-                onClick={() => handleSort(brother, index, 'down')}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleSort(record, 'down');
+                }}
                 style={{ color: '#098FFF', cursor: 'pointer' }}
               />
             ) : (
               <CaretDownOutlined style={{ opacity: 0.3 }} />
             )}
             <Divider type="vertical" />
-            {size !== 0 && index !== 0 ? (
+            {moveUp ? (
               <CaretUpOutlined
-                onClick={() => handleSort(brother, index, 'up')}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleSort(record, 'up');
+                }}
                 style={{ color: '#098FFF', cursor: 'pointer' }}
               />
             ) : (
@@ -221,7 +238,10 @@ const SysModulePage: React.FC = () => {
         <div>
           <Search
             placeholder="输入模块名称以搜索"
-            onSearch={(value) => setSearchName(value)}
+            onSearch={(value) => {
+              setSelectedRowKeys([]);
+              setSearchName(value.trim());
+            }}
             style={{ width: 280 }}
           />
         </div>
@@ -253,13 +273,17 @@ const SysModulePage: React.FC = () => {
           loading={modulesQuery.isLoading}
           rowKey="id"
           pagination={false}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: (keys) => setSelectedRowKeys(keys.map(String)),
-            getCheckboxProps: (record) => ({
-              disabled: record.frozen === 9999,
-            }),
-          }}
+          rowSelection={
+            searchName
+              ? undefined
+              : {
+                  selectedRowKeys,
+                  onChange: (keys) => setSelectedRowKeys(keys.map(String)),
+                  getCheckboxProps: (record) => ({
+                    disabled: record.frozen === 9999,
+                  }),
+                }
+          }
           rowClassName={(record) =>
             clsx({
               'eva-locked': record.frozen === 1,
@@ -274,7 +298,7 @@ const SysModulePage: React.FC = () => {
         <ModuleAOEForm
           operateType={operateType}
           currentItem={currentItem}
-          data={data}
+          data={allData}
           onClose={() => setOperateType('')}
           onSuccess={refresh}
         />

@@ -44,10 +44,10 @@ const normalizeModuleFields = (
       record.menuName,
       record.resourceName,
     );
-    const path = firstString(
-      record.path,
-      record.routeurl,
+    const code = firstString(record.code);
+    const routeUrl = firstString(
       record.routeUrl,
+      record.routeurl,
       record.url,
       record.router,
     );
@@ -71,7 +71,8 @@ const normalizeModuleFields = (
     const next: ModuleItem = {
       ...row,
       ...(name ? { name } : {}),
-      ...(path ? { path } : {}),
+      ...(code ? { code } : {}),
+      ...(routeUrl ? { routeUrl } : {}),
       ...(icon ? { icon } : {}),
       ...(parentName ? { parentName } : {}),
     };
@@ -100,11 +101,17 @@ export const getModule = (id: string) =>
       data: res.data ? normalizeModules([res.data])[0] : undefined,
     }));
 
-export const editModule = (data: Partial<ModuleItem>) =>
-  http.post<MutationResult>(
+export const editModule = (data: Partial<ModuleItem>) => {
+  const { path: _path, ...editableData } = data;
+  return http.post<MutationResult>(
     APIS.MODULE_EDIT,
-    toBackendTreePayload(data as ModuleItem, 'status', enabledStatusToFrozen),
+    toBackendTreePayload(
+      editableData as ModuleItem,
+      'status',
+      enabledStatusToFrozen,
+    ),
   );
+};
 
 export const deleteModules = (ids: string[]) =>
   http.post<MutationResult>(APIS.MODULE_DEL, { param: ids });
@@ -115,11 +122,19 @@ export const switchModuleStatus = (id: string, status: ModuleStatus) =>
     frozen: enabledStatusToFrozen(status),
   });
 
-export const sortModules = (rows: Array<{ id: string; orders: number }>) =>
-  http.post<MutationResult>(APIS.MODULE_SORT, rows);
+export const sortModules = (row: {
+  id: string;
+  oldSort?: number | string;
+  newSort?: number | string;
+}) => http.post<MutationResult>(APIS.MODULE_SORT, row);
 
 export const checkModuleUnique = (
-  path: string,
+  code: string,
   parentId?: string,
   id?: string,
-) => http.post<MutationResult>(APIS.MODULE_CHECKUNIQUE, { path, parentId, id });
+) =>
+  http.post<MutationResult>(APIS.MODULE_CHECKUNIQUE, {
+    id,
+    pid: parentId,
+    code,
+  });

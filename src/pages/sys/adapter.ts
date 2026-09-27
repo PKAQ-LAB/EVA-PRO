@@ -62,12 +62,14 @@ export const normalizeTree = <T extends TreeNode>(
   rows: T[] | undefined,
   statusMapper: (frozen?: BackendFrozen) => FrontStatus = frozenToEnabledStatus,
   ancestorIds = new Set<string>(),
-): T[] =>
-  (rows ?? []).flatMap((row) => {
+  seenIds = new Set<string>(),
+): T[] => {
+  return (rows ?? []).flatMap((row) => {
     const pid = normalizeTreeId(row.pid);
     const parentId = normalizeTreeId(row.parentId ?? row.pid);
     const id = normalizeTreeId(row.id);
-    if (id && ancestorIds.has(id)) return [];
+    if (id && (ancestorIds.has(id) || seenIds.has(id))) return [];
+    if (id) seenIds.add(id);
 
     const next = {
       ...row,
@@ -86,10 +88,12 @@ export const normalizeTree = <T extends TreeNode>(
         row.children,
         statusMapper,
         nextAncestorIds,
+        seenIds,
       ) as T['children'];
     }
     return [next];
   });
+};
 
 export const toBackendTreePayload = <T extends TreeNode>(
   row: T,

@@ -16,8 +16,12 @@ import {
   type TableColumnsType,
 } from 'antd';
 import clsx from 'clsx';
-import React, { useState } from 'react';
-import { getNodeBorther, hasChildren } from '@/utils/DataHelper';
+import React, { useMemo, useState } from 'react';
+import {
+  filterTree,
+  getDeleteBlockers,
+  getSiblingMove,
+} from '@/utils/treeOperations';
 import { frozenText } from '../status';
 import OrgAOEForm, { type OperateType } from './aoeform';
 import type { OrgItem } from './data.d';
@@ -34,16 +38,24 @@ const SysOrganizationPage: React.FC = () => {
   const [searchName, setSearchName] = useState<string>('');
 
   const orgsQuery = useQuery<OrgItem[]>({
-    queryKey: ['sys', 'orgs', { name: searchName }],
+    queryKey: ['sys', 'orgs'],
     queryFn: async () => {
-      const res = await queryOrgs(
-        searchName ? { name: searchName } : undefined,
-      );
+      const res = await queryOrgs();
       return (res?.data ?? []) as OrgItem[];
     },
   });
 
-  const data = orgsQuery.data ?? [];
+  const allData = orgsQuery.data ?? [];
+  const data = useMemo(
+    () =>
+      searchName
+        ? filterTree(
+            allData,
+            (node) => node.name?.includes(searchName) ?? false,
+          )
+        : allData,
+    [allData, searchName],
+  );
   const refresh = () => orgsQuery.refetch();
 
   const handleAdd = (record?: OrgItem) => {
@@ -64,19 +76,22 @@ const SysOrganizationPage: React.FC = () => {
   };
 
   const handleDelete = async (record: OrgItem) => {
-    const blockItem = hasChildren(data as never, [record.id]);
-    if (record.isLeaf || blockItem) {
+    const [blockItem] = getDeleteBlockers(allData, [record.id]);
+    if (blockItem) {
       msg.error(`错误：[${record.name}] 存在子节点，无法删除`);
       return;
     }
     const res = await deleteOrgs([record.id]);
-    if (res.success) refresh();
+    if (res.success) {
+      setSelectedRowKeys((keys) => keys.filter((key) => key !== record.id));
+      refresh();
+    }
   };
 
   const handleBatchDelete = async () => {
-    const blockItem = hasChildren(data as never, selectedRowKeys);
+    const [blockItem] = getDeleteBlockers(allData, selectedRowKeys);
     if (blockItem) {
-      msg.error(`错误：[${blockItem}] 存在子节点，无法删除`);
+      msg.error(`错误：[${blockItem.name}] 存在子节点，无法删除`);
       return;
     }
     const res = await deleteOrgs(selectedRowKeys);
@@ -108,19 +123,13 @@ const SysOrganizationPage: React.FC = () => {
     });
   };
 
-  const handleSort = async (
-    nodes: OrgItem[],
-    record: OrgItem,
-    direction: 'up' | 'down',
-  ) => {
-    const index = nodes.findIndex((node) => node.id === record.id);
-    if (index < 0) return;
-    const target = direction === 'up' ? nodes[index - 1] : nodes[index + 1];
-    if (!target) return;
+  const handleSort = async (record: OrgItem, direction: 'up' | 'down') => {
+    const move = getSiblingMove(allData, record.id, direction);
+    if (!move) return;
     const res = await sortOrgs({
       id: record.id,
       oldSort: record.orders,
-      newSort: target.orders,
+      newSort: move.target.orders,
     });
     if (res.success) refresh();
   };
@@ -133,21 +142,18 @@ const SysOrganizationPage: React.FC = () => {
       dataIndex: 'orders',
       render: (text, record) => {
         if (record.status !== '0001') return '';
-        const brother = getNodeBorther(
-          data as never,
-          record.parentId ?? '',
-        ) as OrgItem[];
-        const index = brother.findIndex((node) => node.id === record.id);
-        const size = brother.length;
+        if (searchName) return text;
+        const moveDown = getSiblingMove(allData, record.id, 'down');
+        const moveUp = getSiblingMove(allData, record.id, 'up');
         return (
           <div>
             {text}
             <Divider type="vertical" />
-            {index >= 0 && size !== 0 && index !== size - 1 ? (
+            {moveDown ? (
               <CaretDownOutlined
                 onClick={(event) => {
                   event.stopPropagation();
-                  handleSort(brother, record, 'down');
+                  handleSort(record, 'down');
                 }}
                 style={{ color: '#098FFF', cursor: 'pointer' }}
               />
@@ -155,11 +161,11 @@ const SysOrganizationPage: React.FC = () => {
               <CaretDownOutlined style={{ opacity: 0.3 }} />
             )}
             <Divider type="vertical" />
-            {index >= 0 && size !== 0 && index !== 0 ? (
+            {moveUp ? (
               <CaretUpOutlined
                 onClick={(event) => {
                   event.stopPropagation();
-                  handleSort(brother, record, 'up');
+                  handleSort(record, 'up');
                 }}
                 style={{ color: '#098FFF', cursor: 'pointer' }}
               />
@@ -179,7 +185,7 @@ const SysOrganizationPage: React.FC = () => {
       title: '操作',
       render: (_, record) =>
         record.status === '0001' && (
-          <div>
+          <div onDoubleClick={(event) => event.stopPropagation()}>
             <a onClick={() => handleAdd(record)}>添加下级</a>
             <Divider type="vertical" />
             <a onClick={() => handleEdit(record)}>编辑</a>
@@ -219,7 +225,10 @@ const SysOrganizationPage: React.FC = () => {
         <div>
           <Search
             placeholder="输入组织名称以搜索"
-            onSearch={(value) => setSearchName(value)}
+            onSearch={(value) => {
+              setSelectedRowKeys([]);
+              setSearchName(value.trim());
+            }}
             style={{ width: 280 }}
           />
         </div>
@@ -251,15 +260,23 @@ const SysOrganizationPage: React.FC = () => {
           columns={columns}
           rowKey="id"
           scroll={{ y: 'calc(100vh - 360px)' }}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: (keys) => setSelectedRowKeys(keys.map(String)),
-            getCheckboxProps: (record) => ({
-              disabled: record.frozen === 9999,
-            }),
-          }}
+          rowSelection={
+            searchName
+              ? undefined
+              : {
+                  selectedRowKeys,
+                  onChange: (keys) => setSelectedRowKeys(keys.map(String)),
+                  getCheckboxProps: (record) => ({
+                    disabled: record.frozen === 9999,
+                  }),
+                }
+          }
           onRow={(record) => ({
-            onDoubleClick: () => handleEdit(record),
+            onDoubleClick: () => {
+              if (record.status === '0001') {
+                handleEdit(record);
+              }
+            },
           })}
           rowClassName={(record) =>
             clsx({
@@ -274,7 +291,7 @@ const SysOrganizationPage: React.FC = () => {
         <OrgAOEForm
           operateType={operateType}
           currentItem={currentItem}
-          data={data}
+          data={allData}
           onClose={() => setOperateType('')}
           onSuccess={refresh}
         />

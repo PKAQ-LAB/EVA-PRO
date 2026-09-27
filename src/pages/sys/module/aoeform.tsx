@@ -10,8 +10,12 @@ import {
   Switch,
   Tooltip,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { IconSelect, TreeSelector } from '@/components';
+import {
+  excludeTreeSubtree,
+  isTreeParentAllowed,
+} from '@/utils/treeOperations';
 import type { ModuleItem, ModuleResource } from './data.d';
 import ModuleLineList from './linelist';
 import { checkModuleUnique, editModule } from './service';
@@ -49,6 +53,10 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
   const [lines, setLines] = useState<ModuleResource[]>(
     currentItem?.resources ?? [],
   );
+  const parentOptions = useMemo(
+    () => excludeTreeSubtree(data, currentItem.id),
+    [data, currentItem.id],
+  );
 
   useEffect(() => {
     if (operateType === '') return;
@@ -61,16 +69,20 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
     } as never);
   }, [operateType, currentItem, form]);
 
-  const checkPath = async (_: unknown, value: string) => {
+  const checkCode = async (_: unknown, value: string) => {
     const parentId = form.getFieldValue('parentId');
     const res = await checkModuleUnique(value, parentId, currentItem?.id);
-    if (!res.success) throw new Error(res.message ?? '路径已存在');
+    if (!res.success) throw new Error(res.message ?? '模块编码已存在');
   };
 
   const handleSaveClick = async () => {
     setSubmitting(true);
     try {
       const values = await form.validateFields();
+      if (!isTreeParentAllowed(data, currentItem.id, values.parentId)) {
+        msg.error('不能选择当前模块或其下级作为上级模块');
+        return;
+      }
       const res = await editModule({
         ...(values as ModuleItem),
         id: currentItem.id,
@@ -115,17 +127,33 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
           <Input maxLength={30} />
         </Form.Item>
         <Form.Item
-          label="Path"
-          name="path"
+          label="模块编码"
+          name="code"
           validateTrigger="onBlur"
+          rules={[
+            {
+              max: 40,
+              min: 2,
+              required: true,
+              whitespace: true,
+              validator: checkCode,
+              message: '编码格式错误，仅允许使用字母、数字或下划线',
+              pattern: /^[a-zA-Z_0-9]{2,40}$/,
+            },
+          ]}
+        >
+          <Input maxLength={40} />
+        </Form.Item>
+        <Form.Item
+          label="路由地址"
+          name="routeUrl"
           rules={[
             {
               max: 40,
               min: 5,
               required: true,
               whitespace: true,
-              validator: checkPath,
-              message: '路径格式错误，必须以 / 开头，仅允许使用字母或数字',
+              message: '路由地址格式错误，必须以 / 开头，仅允许使用字母或数字',
               pattern: /^\/[a-zA-Z_]*[/a-zA-Z_0-9]{2,40}$/,
             },
           ]}
@@ -148,7 +176,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
         >
           <TreeSelector
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            data={data as never}
+            data={parentOptions as never}
             keys={['id', 'name', 'children']}
             allowClear
             showSearch

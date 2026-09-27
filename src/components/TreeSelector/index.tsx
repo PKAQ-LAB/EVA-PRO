@@ -8,6 +8,22 @@ interface TreeNode {
   children?: TreeNode[];
 }
 
+const deduplicateTreeNodes = (
+  nodes: TreeNode[],
+  seenValues = new Set<string>(),
+): TreeNode[] =>
+  nodes.flatMap((node) => {
+    const value = String(node.value);
+    if (seenValues.has(value)) return [];
+    seenValues.add(value);
+
+    const next = { ...node };
+    if (node.children) {
+      next.children = deduplicateTreeNodes(node.children, seenValues);
+    }
+    return [next];
+  });
+
 export interface TreeSelectorProps
   extends Omit<TreeSelectProps, 'treeData' | 'treeNodeFilterProp'> {
   /** 远程数据 URL；若提供则忽略 data prop 中的初始值 */
@@ -27,8 +43,12 @@ const travelTreeData = (
   valueKey: string,
   titleKey: string,
   childrenKey: string,
+  ancestorObjects = new WeakSet<object>(),
 ): TreeNode[] =>
-  nodes.map((item) => {
+  nodes.flatMap((item) => {
+    if (ancestorObjects.has(item)) return [];
+    ancestorObjects.add(item);
+
     const node: TreeNode = {
       title: item[titleKey] as React.ReactNode,
       value: item[valueKey] as string | number,
@@ -40,8 +60,10 @@ const travelTreeData = (
         valueKey,
         titleKey,
         childrenKey,
+        ancestorObjects,
       );
     }
+    ancestorObjects.delete(item);
     return node;
   });
 
@@ -56,15 +78,17 @@ const TreeSelector: React.FC<TreeSelectorProps> = ({
   search = false,
   ...rest
 }) => {
-  const [treeData, setTreeData] = useState<TreeNode[]>(data ?? []);
+  const [treeData, setTreeData] = useState<TreeNode[]>(() => [...(data ?? [])]);
 
   useEffect(() => {
     if (url) {
       request<{ success?: boolean; data?: TreeNode[] }>(url)
         .then((response) => {
           if (response?.success) {
-            const nodes = response.data ?? [];
-            if (showAll) nodes.unshift({ title: '全部', value: '0' });
+            const nodes = [
+              ...(showAll ? [{ title: '全部', value: '0' }] : []),
+              ...(response.data ?? []),
+            ];
             setTreeData(nodes);
           }
         })
@@ -72,11 +96,11 @@ const TreeSelector: React.FC<TreeSelectorProps> = ({
           /* swallow */
         });
     } else if (data) {
-      setTreeData(data);
+      setTreeData([...data]);
     }
   }, [url, data, showAll]);
 
-  const finalData = keys
+  const mappedData = keys
     ? travelTreeData(
         treeData as unknown as Array<Record<string, unknown>>,
         keys[0],
@@ -84,8 +108,9 @@ const TreeSelector: React.FC<TreeSelectorProps> = ({
         keys[2],
       )
     : treeData;
+  const finalData = deduplicateTreeNodes(mappedData);
 
-  if (!treeData.length) return null;
+  if (!finalData.length) return null;
 
   const searchProps: Pick<TreeSelectProps, 'showSearch' | 'filterTreeNode'> =
     search
