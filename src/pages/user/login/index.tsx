@@ -21,6 +21,11 @@ import {
   setStoredAccessToken,
   setStoredRefreshToken,
 } from '@/utils/authState';
+import {
+  extractMenus,
+  type MenuNavigationItem,
+  resolveMenuNavigation,
+} from '@/utils/menuNavigation';
 import Settings from '../../../../config/defaultSettings';
 
 const loginMenuCacheKey = 'eva_login_menus';
@@ -426,47 +431,6 @@ interface LoginFormValues {
   password?: string;
 }
 
-interface LoginMenuItem {
-  routeurl?: string;
-  routeUrl?: string;
-  path?: string;
-  children?: LoginMenuItem[];
-}
-
-const routeFallbacks = ['/sys/user', '/sys/account', '/welcome'];
-const registeredRoutes = new Set([
-  '/welcome',
-  '/admin/sub-page',
-  '/list',
-  '/sys/account',
-  '/sys/user',
-  '/sys/organization',
-  '/sys/role',
-  '/sys/module',
-  '/sys/dictionary',
-  '/log/online',
-  '/log/biz',
-  '/log/error',
-  '/dev/generator',
-  '/dev/workflow',
-]);
-const menuRouteAliases: Record<string, string> = {
-  sys: '/sys',
-  'sys.account': '/sys/user',
-  'sys.user': '/sys/user',
-  'sys.organization': '/sys/organization',
-  'sys.role': '/sys/role',
-  'sys.module': '/sys/module',
-  'sys.dictionary': '/sys/dictionary',
-  log: '/log',
-  'log.online': '/log/online',
-  'log.biz': '/log/biz',
-  'log.error': '/log/error',
-  dev: '/dev',
-  'dev.generator': '/dev/generator',
-  'dev.workflow': '/dev/workflow',
-};
-
 function getLoginErrorMessage(error: unknown) {
   const payload = error as {
     info?: { message?: string; errorMessage?: string };
@@ -482,75 +446,6 @@ function getLoginErrorMessage(error: unknown) {
     payload.response?.data?.message ||
     payload.response?.data?.errorMessage ||
     payload.message
-  );
-}
-
-function normalizeRoutePath(path: string) {
-  if (!path) return '';
-  return path.startsWith('/') ? path : `/${path}`;
-}
-
-function isRegisteredRoute(path: string) {
-  return registeredRoutes.has(path);
-}
-
-function getMenuCandidates(menu: LoginMenuItem & Record<string, unknown>) {
-  return [
-    menu.code,
-    menu.name,
-    menu.title,
-    menu.menuCode,
-    menu.moduleCode,
-    menu.permission,
-    menu.authority,
-  ];
-}
-
-function getLoginMenuPath(menu: LoginMenuItem) {
-  const record = menu as LoginMenuItem & Record<string, unknown>;
-  for (const identity of getMenuCandidates(record)) {
-    if (typeof identity !== 'string') continue;
-    if (menuRouteAliases[identity]) return menuRouteAliases[identity];
-    if (identity.startsWith('menu.') && menuRouteAliases[identity.slice(5)]) {
-      return menuRouteAliases[identity.slice(5)];
-    }
-  }
-  const path = menu.routeurl || menu.routeUrl || menu.path;
-  if (!path || path === '/user/login') return '';
-  const normalizedPath = normalizeRoutePath(path);
-  return isRegisteredRoute(normalizedPath) ? normalizedPath : '';
-}
-
-function extractLoginMenus(data: unknown): LoginMenuItem[] {
-  if (Array.isArray(data)) return data as LoginMenuItem[];
-  const payload = (data || {}) as Record<string, unknown>;
-  const candidates = [
-    payload.menus,
-    payload.menu,
-    payload.routes,
-    payload.modules,
-    payload.resources,
-  ];
-  return (candidates.find(Array.isArray) as LoginMenuItem[]) || [];
-}
-
-function findFirstMenuPath(menus: LoginMenuItem[]): string {
-  for (const menu of menus) {
-    if (menu.children?.length) {
-      const childPath = findFirstMenuPath(menu.children);
-      if (childPath) return childPath;
-    }
-    const path = getLoginMenuPath(menu);
-    if (path) return path;
-  }
-  return '';
-}
-
-function getFirstMenuPath(menus: LoginMenuItem[]): string {
-  return (
-    findFirstMenuPath(menus) ||
-    routeFallbacks.find((path) => isRegisteredRoute(path)) ||
-    '/'
   );
 }
 
@@ -574,7 +469,7 @@ function getLoginUserInfo(msg: AuthLoginResult) {
 
 function normalizeLoginUser(
   userInfo: Record<string, unknown> | undefined,
-  menus: LoginMenuItem[],
+  menus: MenuNavigationItem[],
 ) {
   const user = userInfo || {};
   return {
@@ -587,7 +482,7 @@ function normalizeLoginUser(
       (user.username as string | undefined) ||
       'Admin',
     access: (user.access as string | undefined) || 'admin',
-  } as API.CurrentUser & { menus?: LoginMenuItem[] };
+  } as API.CurrentUser & { menus?: MenuNavigationItem[] };
 }
 
 const Login: React.FC = () => {
@@ -718,7 +613,7 @@ const Login: React.FC = () => {
           );
         }
 
-        let menus: LoginMenuItem[] = [];
+        let menus: MenuNavigationItem[] = [];
         let dict: Record<string, unknown> | undefined;
         try {
           const authHeaders = { Authorization: `Bearer ${tokenValue}` };
@@ -726,7 +621,7 @@ const Login: React.FC = () => {
             fetchMenus({ headers: authHeaders, skipErrorHandler: true }),
             fetchDict({ headers: authHeaders, skipErrorHandler: true }),
           ]);
-          menus = extractLoginMenus(menuResponse?.data);
+          menus = extractMenus(menuResponse?.data);
           dict = dictResponse?.data;
           window.sessionStorage.setItem(
             loginMenuCacheKey,
@@ -757,7 +652,7 @@ const Login: React.FC = () => {
             defaultMessage: '登录成功！',
           }),
         );
-        history.replace(getFirstMenuPath(menus));
+        history.replace(resolveMenuNavigation(menus).path);
         return;
       }
       message.error(msg.message || '登录失败');
