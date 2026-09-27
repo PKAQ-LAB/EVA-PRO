@@ -55,5 +55,9 @@ export const sortOrgs = (row: {
   newSort?: number | string;
 }) => http.post<MutationResult>(APIS.ORG_SORT, row);
 
-export const checkOrgUnique = (code: string) =>
-  http.post<MutationResult>(APIS.ORG_CHECKUNIQUE, { code });
+export const checkOrgUnique = (code: string, parentId?: string, id?: string) =>
+  http.post<MutationResult>(APIS.ORG_CHECKUNIQUE, {
+    id,
+    pid: parentId,
+    code,
+  });

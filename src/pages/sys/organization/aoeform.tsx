@@ -10,7 +10,11 @@ import {
   Tooltip,
   TreeSelect,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  excludeTreeSubtree,
+  isTreeParentAllowed,
+} from '@/utils/treeOperations';
 import type { OrgItem } from './data.d';
 import { checkOrgUnique, editOrg } from './service';
 
@@ -44,6 +48,10 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
   const [form] = Form.useForm<OrgItem & { enable?: boolean }>();
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
+  const parentOptions = useMemo(
+    () => excludeTreeSubtree(data, currentItem.id),
+    [data, currentItem.id],
+  );
 
   useEffect(() => {
     if (operateType === '') return;
@@ -55,8 +63,15 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
   }, [operateType, currentItem, form]);
 
   const checkCode = async (_: unknown, value: string) => {
-    if (currentItem?.id && value === currentItem.code) return;
-    const res = await checkOrgUnique(value);
+    const parentId = form.getFieldValue('parentId');
+    if (
+      currentItem?.id &&
+      value === currentItem.code &&
+      String(parentId ?? '') === String(currentItem.parentId ?? '')
+    ) {
+      return;
+    }
+    const res = await checkOrgUnique(value, parentId, currentItem.id);
     if (!res.success) throw new Error(res.message ?? '编码已存在');
   };
 
@@ -64,6 +79,10 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
     setSubmitting(true);
     try {
       const values = await form.validateFields();
+      if (!isTreeParentAllowed(data, currentItem.id, values.parentId)) {
+        msg.error('不能选择当前部门或其下级作为上级部门');
+        return;
+      }
       const res = await editOrg({
         ...values,
         id: currentItem.id,
@@ -130,7 +149,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
         >
           <TreeSelect
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            treeData={data as never}
+            treeData={parentOptions as never}
             fieldNames={{ label: 'name', value: 'id', children: 'children' }}
             treeNodeFilterProp="name"
             treeDefaultExpandAll

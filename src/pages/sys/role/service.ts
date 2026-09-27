@@ -4,6 +4,7 @@ import { normalizePageData, normalizePageParams } from '../adapter';
 import type {
   RoleFrozen,
   RoleItem,
+  RoleModuleNode,
   RoleModuleResponse,
   RoleUserResponse,
 } from './data.d';
@@ -133,21 +134,42 @@ function normalizeRoleModules(
   data: unknown,
 ): NonNullable<RoleModuleResponse['data']> {
   if (Array.isArray(data)) {
-    return { modules: data as never[], checked: [], checkedResource: {} };
+    return {
+      modules: deduplicateRoleModuleTree(data as RoleModuleNode[]),
+      checked: [],
+      checkedResource: {},
+    };
   }
   const payload = (data || {}) as Record<string, unknown>;
   const modules =
-    (payload.modules as never[] | undefined) ??
-    (payload.resources as never[] | undefined) ??
-    (payload.list as never[] | undefined) ??
+    (payload.modules as RoleModuleNode[] | undefined) ??
+    (payload.resources as RoleModuleNode[] | undefined) ??
+    (payload.list as RoleModuleNode[] | undefined) ??
     [];
   return {
-    modules,
+    modules: deduplicateRoleModuleTree(modules),
     checked:
       ((payload.checked ?? payload.checkedIds) as string[] | undefined) ?? [],
     checkedResource:
       (payload.checkedResource as Record<string, string[]> | undefined) ?? {},
   };
+}
+
+function deduplicateRoleModuleTree(
+  modules: RoleModuleNode[],
+  seenIds = new Set<string>(),
+): RoleModuleNode[] {
+  return modules.flatMap((module) => {
+    const id = String(module.id);
+    if (seenIds.has(id)) return [];
+    seenIds.add(id);
+
+    const next = { ...module };
+    if (module.children) {
+      next.children = deduplicateRoleModuleTree(module.children, seenIds);
+    }
+    return [next];
+  });
 }
 
 function normalizeRoleUsers(
