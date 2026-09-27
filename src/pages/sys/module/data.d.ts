@@ -11,7 +11,9 @@ export interface ModuleResource {
 export interface ModuleItem {
   id: string;
   name: string;
+  code?: string;
   path?: string;
+  routeUrl?: string;
   icon?: string;
   parentId?: string;
   parentName?: string;

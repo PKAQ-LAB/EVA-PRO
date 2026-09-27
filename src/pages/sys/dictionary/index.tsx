@@ -63,7 +63,7 @@ const SysDictionaryPage: React.FC = () => {
       <div className="eva-body">
         <SideLayout
           title="字典分组"
-          width={440}
+          width="40%"
           bodyStyle={{ padding: 0 }}
           layoutStyle={{ height: 'calc(100vh - 215px)' }}
           body={

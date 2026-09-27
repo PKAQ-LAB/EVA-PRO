@@ -10,7 +10,9 @@ interface ModuleResource {
 interface ModuleRow {
   id: string;
   name: string;
+  code: string;
   path: string;
+  routeUrl: string;
   icon: string;
   parentId: string;
   parentName?: string;
@@ -26,7 +28,9 @@ const tree: ModuleRow[] = [
   {
     id: 'm-sys',
     name: '系统管理',
+    code: 'sys',
     path: '/sys',
+    routeUrl: '/sys',
     icon: 'setting',
     parentId: '0',
     orders: 1,
@@ -39,7 +43,9 @@ const tree: ModuleRow[] = [
       {
         id: 'm-sys-account',
         name: '用户管理',
+        code: 'account',
         path: '/sys/account',
+        routeUrl: '/sys/account',
         icon: 'usergroup-add',
         parentId: 'm-sys',
         parentName: '系统管理',
@@ -57,7 +63,9 @@ const tree: ModuleRow[] = [
       {
         id: 'm-sys-org',
         name: '组织管理',
+        code: 'organization',
         path: '/sys/organization',
+        routeUrl: '/sys/organization',
         icon: 'profile',
         parentId: 'm-sys',
         parentName: '系统管理',
@@ -70,7 +78,9 @@ const tree: ModuleRow[] = [
   {
     id: 'm-log',
     name: '系统日志',
+    code: 'log',
     path: '/log',
+    routeUrl: '/log',
     icon: 'profile',
     parentId: '0',
     orders: 2,
@@ -80,7 +90,9 @@ const tree: ModuleRow[] = [
       {
         id: 'm-log-online',
         name: '在线用户',
+        code: 'online',
         path: '/log/online',
+        routeUrl: '/log/online',
         icon: 'usergroup-add',
         parentId: 'm-log',
         parentName: '系统日志',
@@ -128,8 +140,14 @@ export default {
     res.send({ success: true });
   },
   'POST /api/sys/module/checkUnique': (req: Request, res: Response) => {
-    const { path, id } = req.body as { path?: string; id?: string };
-    const dup = flatten(tree).find((n) => n.path === path && n.id !== id);
-    res.send({ success: !dup, message: dup ? '路径已存在' : undefined });
+    const { code, id, pid } = req.body as {
+      code?: string;
+      id?: string;
+      pid?: string;
+    };
+    const dup = flatten(tree).find(
+      (node) => node.code === code && node.parentId === pid && node.id !== id,
+    );
+    res.send({ success: !dup, message: dup ? '模块编码已存在' : undefined });
   },
 };
