@@ -7,7 +7,6 @@
  */
 import Footer from './Footer';
 import {
-  DocLink,
   FullscreenToggle,
   LangDropdown,
   VersionDropdown,
@@ -43,7 +42,6 @@ export { default as WaterFall } from './WaterFall';
 
 export {
   AvatarDropdown,
-  DocLink,
   Footer,
   FullscreenToggle,
   LangDropdown,

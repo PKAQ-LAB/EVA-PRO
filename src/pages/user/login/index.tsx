@@ -78,7 +78,7 @@ const useStyles = createStyles(({ token, css }) => ({
     justify-content: center;
     width: 28px;
     height: 28px;
-    border-radius: 999px;
+    border-radius: 4px;
     background: #050505;
     color: #fff;
     font-size: 14px;
@@ -288,6 +288,8 @@ const useStyles = createStyles(({ token, css }) => ({
     color: #fecaca;
   `,
   form: css`
+    --login-input-bg: #141414;
+
     .ant-form-item {
       margin-bottom: 22px;
     }
@@ -310,8 +312,9 @@ const useStyles = createStyles(({ token, css }) => ({
     .ant-input-affix-wrapper {
       height: 48px;
       border-color: rgba(255, 255, 255, 0.1);
-      border-radius: 999px;
-      background: #000;
+      border-radius: 4px;
+      // 固定登录背景，防止 filled/outlined 的状态样式覆盖。
+      background: var(--login-input-bg) !important;
       color: #fff;
       box-shadow: none;
     }
@@ -327,7 +330,7 @@ const useStyles = createStyles(({ token, css }) => ({
     .ant-input-affix-wrapper > input.ant-input {
       height: auto;
       padding-inline: 0;
-      background: #000;
+      background: transparent !important;
     }
 
     .ant-input-affix-wrapper .ant-input-suffix {
@@ -340,25 +343,30 @@ const useStyles = createStyles(({ token, css }) => ({
       color: #71717a;
     }
 
-    .ant-input:hover,
-    .ant-input:focus,
-    .ant-input-affix-wrapper:hover,
-    .ant-input-affix-wrapper-focused {
+    .ant-input:not(.ant-input-status-error):hover,
+    .ant-input:not(.ant-input-status-error):focus,
+    .ant-input-affix-wrapper:not(.ant-input-status-error):hover,
+    .ant-input-affix-wrapper-focused:not(.ant-input-status-error) {
       border-color: rgba(255, 255, 255, 0.28);
-      background: #000;
     }
 
     .ant-input-affix-wrapper:hover > input.ant-input,
     .ant-input-affix-wrapper-focused > input.ant-input {
-      background: #000;
+      background: transparent !important;
     }
 
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover,
-    input:-webkit-autofill:focus {
+    .ant-input.ant-input-status-error,
+    .ant-input-affix-wrapper.ant-input-status-error {
+      // 错误状态的红边在悬浮和聚焦时也必须保留。
+      border-color: ${token.colorError} !important;
+    }
+
+    input.ant-input:-webkit-autofill,
+    input.ant-input:-webkit-autofill:hover,
+    input.ant-input:-webkit-autofill:focus {
       -webkit-text-fill-color: #fff;
-      box-shadow: 0 0 0 1000px #000 inset;
-      transition: background-color 9999s ease-out;
+      // 覆盖内层聚焦时的原生阴影重置，保持自动填充背景一致。
+      box-shadow: 0 0 0 1000px var(--login-input-bg) inset !important;
     }
   `,
   passwordToggle: css`
@@ -383,7 +391,7 @@ const useStyles = createStyles(({ token, css }) => ({
     height: 48px;
     overflow: hidden;
     border-color: #4b5ec6;
-    border-radius: 999px;
+    border-radius: 4px;
     background: #4b5ec6;
     color: #fff;
     font-weight: 800;
@@ -408,7 +416,7 @@ const useStyles = createStyles(({ token, css }) => ({
       align-items: center;
       justify-content: center;
       gap: 8px;
-      border-radius: 999px;
+      border-radius: 4px;
       background: #5368dc;
       color: #fff;
       opacity: 0;
@@ -844,7 +852,6 @@ const Login: React.FC = () => {
             onFinish={handleSubmit}
           >
             <Form.Item
-              label="账号"
               name="account"
               rules={[
                 {
@@ -857,6 +864,10 @@ const Login: React.FC = () => {
               ]}
             >
               <Input
+                aria-label={intl.formatMessage({
+                  id: 'pages.login.account.placeholder',
+                  defaultMessage: '请输入账号',
+                })}
                 autoComplete="off"
                 onBlur={() => setIsTyping(false)}
                 onFocus={triggerLookAtEachOther}
@@ -865,7 +876,6 @@ const Login: React.FC = () => {
             </Form.Item>
 
             <Form.Item
-              label="密码"
               name="password"
               rules={[
                 {
@@ -878,6 +888,10 @@ const Login: React.FC = () => {
               ]}
             >
               <Input
+                aria-label={intl.formatMessage({
+                  id: 'pages.login.password.placeholder',
+                  defaultMessage: '请输入密码',
+                })}
                 autoComplete="new-password"
                 type={showPassword ? 'text' : 'password'}
                 onBlur={() => setIsTyping(false)}

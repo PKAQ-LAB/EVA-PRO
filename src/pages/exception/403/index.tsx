@@ -1,4 +1,4 @@
-import { Link } from '@umijs/max';
+import { FormattedMessage, Link } from '@umijs/max';
 import { Button, Card, Result } from 'antd';
 
 export default () => (
@@ -8,8 +8,10 @@ export default () => (
       title="403"
       subTitle="Sorry, you are not authorized to access this page."
       extra={
-        <Link to="/" prefetch>
-          <Button type="primary">Back to home</Button>
+        <Link to="/user/login" prefetch>
+          <Button type="primary">
+            <FormattedMessage id="menu.login" defaultMessage="登录" />
+          </Button>
         </Link>
       }
     />

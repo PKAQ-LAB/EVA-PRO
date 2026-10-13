@@ -31,8 +31,50 @@ canvas {
 .eva-ribbon {
   display: flex;
   justify-content: space-between;
-  padding: 16px 0;
+  padding: 8px 0;
   border-bottom: 2px solid var(--ant-color-border-secondary, #f0f0f0);
+}
+
+/* 搜索操作与 EVA 列表区的零水平卡片内距对齐。 */
+.eva-ribbon:has(.eva-table-search) {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eva-ribbon > div:has(> .eva-table-search) {
+  min-width: 0;
+  max-width: 100%;
+  margin-inline-start: auto;
+}
+
+.eva-table-search {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding-inline-end: 0;
+}
+
+.eva-ribbon > .eva-table-search {
+  min-width: 0;
+  flex: 1;
+}
+
+.eva-table-search > .ant-row {
+  width: 100%;
+}
+
+.eva-table-search > .ant-form-item,
+.eva-table-search > .ant-row > .ant-form-item {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.eva-table-search > .ant-form-item:last-child,
+.eva-table-search > .ant-row > .ant-form-item:last-child {
+  margin-inline-end: 0;
+}
+
+.eva-table-search > .ant-row > .ant-form-item:last-child {
+  margin-inline-start: auto;
 }
 
 /* 主内容区 */
@@ -245,6 +287,13 @@ body:has(#root .eva-theme-dark)
   margin: 0 0 3px 0;
 }
 
+.eva-workspace:not(.eva-theme-dark)
+  .eva-workspace-page
+  .ant-pro-page-container-warp,
+.eva-workspace:not(.eva-theme-dark) .eva-workspace-page .ant-page-header {
+  background-color: var(--ant-color-bg-container, #fff);
+}
+
 .eva-workspace-page .ant-pro-grid-content,
 .eva-workspace-page .ant-pro-page-container-children-content {
   display: flex;
@@ -315,6 +364,15 @@ body:has(#root .eva-theme-dark)
 
 .ant-table-tbody > tr.eva-disabled > td {
   background-color: var(--ant-color-bg-container-disabled, #f5f5f5);
+  color: var(--ant-color-text-disabled, rgba(0, 0, 0, 0.25));
+}
+
+/* 只读行仅文字置灰，背景沿用表格主题及交互状态。 */
+.ant-table-tbody > tr.eva-readonly > td {
+  color: var(--ant-color-text-disabled, rgba(0, 0, 0, 0.25));
+}
+
+.ant-table-tbody > tr.eva-readonly > td span.ant-typography {
   color: var(--ant-color-text-disabled, rgba(0, 0, 0, 0.25));
 }
 

@@ -60,7 +60,4 @@ export default {
   'menu.log.online': '在線用戶',
   'menu.log.biz': '業務日誌',
   'menu.log.error': '錯誤日誌',
-  'menu.dev': '開發工具',
-  'menu.dev.generator': '代碼生成',
-  'menu.dev.workflow': '工作流',
 };

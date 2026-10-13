@@ -1,15 +1,9 @@
-import {
-  BookOutlined,
-  FullscreenExitOutlined,
-  FullscreenOutlined,
-} from '@ant-design/icons';
-import { history } from '@umijs/max';
+import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useState } from 'react';
 import screenfull from 'screenfull';
 import { LangDropdown } from './LangDropdown';
-import useHeaderActionStyles from './style';
 import { VersionDropdown } from './VersionDropdown';
 
 const useStyles = createStyles(({ token, css }) => ({
@@ -52,23 +46,6 @@ export const FullscreenToggle: React.FC = () => {
         }
         aria-label={isFullscreen ? '退出全屏' : '全屏'}
         onClick={toggle}
-      />
-    </Tooltip>
-  );
-};
-
-export const DocLink: React.FC = () => {
-  const { styles } = useHeaderActionStyles();
-  return (
-    <Tooltip title="使用文档">
-      <Button
-        type="text"
-        className={styles.action}
-        icon={<BookOutlined />}
-        aria-label="使用文档"
-        onClick={() => {
-          history.push('/welcome');
-        }}
       />
     </Tooltip>
   );

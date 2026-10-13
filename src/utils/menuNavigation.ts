@@ -6,12 +6,11 @@ export interface MenuNavigationTarget {
   path: string;
 }
 
-const routeFallbacks = ['/sys/user', '/sys/account', '/welcome'];
+const noPermissionPath = '/exception/403';
+
+const redirectOnlyRoutes = new Set(['/sys', '/log']);
 
 const registeredMenuRoutes = new Set([
-  '/welcome',
-  '/admin/sub-page',
-  '/list',
   '/sys',
   '/sys/account',
   '/sys/user',
@@ -23,9 +22,6 @@ const registeredMenuRoutes = new Set([
   '/log/online',
   '/log/biz',
   '/log/error',
-  '/dev',
-  '/dev/generator',
-  '/dev/workflow',
 ]);
 
 const menuDisplayNames: Record<string, string> = {
@@ -40,9 +36,6 @@ const menuDisplayNames: Record<string, string> = {
   'log.online': '在线用户',
   'log.biz': '业务日志',
   'log.error': '错误日志',
-  dev: '开发工具',
-  'dev.generator': '代码生成',
-  'dev.workflow': '工作流',
 };
 
 const menuRouteAliases: Record<string, string> = {
@@ -57,9 +50,6 @@ const menuRouteAliases: Record<string, string> = {
   'log.online': '/log/online',
   'log.biz': '/log/biz',
   'log.error': '/log/error',
-  dev: '/dev',
-  'dev.generator': '/dev/generator',
-  'dev.workflow': '/dev/workflow',
 };
 
 function normalizeRoutePath(path?: unknown) {
@@ -82,6 +72,26 @@ function getMenuCandidates(item: MenuNavigationItem) {
   ];
 }
 
+// 移除整个开发工具分组，避免后台遗留菜单继续提供访问入口。
+function isRemovedDevMenu(item: MenuNavigationItem) {
+  const hasDevPath = [
+    item.routeurl,
+    item.routeUrl,
+    item.url,
+    item.router,
+    item.path,
+  ].some(
+    (value) => typeof value === 'string' && /^\/?dev(?:\/|$|[?#])/.test(value),
+  );
+  return (
+    hasDevPath ||
+    getMenuCandidates(item).some(
+      (value) =>
+        typeof value === 'string' && /^(?:menu\.)?dev(?:\.|$)/.test(value),
+    )
+  );
+}
+
 export function getMenuDisplayName(item: MenuNavigationItem) {
   for (const identity of getMenuCandidates(item)) {
     if (typeof identity !== 'string') continue;
@@ -98,6 +108,7 @@ export function getMenuDisplayName(item: MenuNavigationItem) {
 }
 
 export function getMenuPath(item: MenuNavigationItem) {
+  if (isRemovedDevMenu(item)) return undefined;
   const explicitPath =
     normalizeRoutePath(item.routeurl) ||
     normalizeRoutePath(item.routeUrl) ||
@@ -131,54 +142,50 @@ export function extractMenus(data: unknown): MenuNavigationItem[] {
 
 export function normalizeMenuPaths(menus: MenuNavigationItem[]): unknown[] {
   return menus
-    .map((item) => {
+    .flatMap((item) => {
+      if (isRemovedDevMenu(item)) return [];
       const { children: originalChildren, ...itemWithoutChildren } = item;
       const normalizedPath = getMenuPath(item);
       const displayName = getMenuDisplayName(item);
       const children = Array.isArray(originalChildren)
         ? normalizeMenuPaths(originalChildren)
         : undefined;
-      return {
-        ...itemWithoutChildren,
-        ...(displayName ? { name: displayName } : {}),
-        ...(normalizedPath
-          ? { key: normalizedPath, path: normalizedPath }
-          : {}),
-        ...(children?.length ? { children } : {}),
-      };
+      if (originalChildren?.length && !children?.length) return [];
+      return [
+        {
+          ...itemWithoutChildren,
+          ...(displayName ? { name: displayName } : {}),
+          ...(normalizedPath
+            ? { key: normalizedPath, path: normalizedPath }
+            : {}),
+          ...(children?.length ? { children } : {}),
+        },
+      ];
     })
     .filter((item) => {
+      const hasChildren =
+        Array.isArray(item.children) && item.children.length > 0;
       return (
         (typeof item.path === 'string' &&
-          registeredMenuRoutes.has(item.path)) ||
-        (Array.isArray(item.children) && item.children.length > 0)
+          registeredMenuRoutes.has(item.path) &&
+          !redirectOnlyRoutes.has(item.path)) ||
+        hasChildren
       );
     });
 }
 
-function findFirstAccessiblePath(
+function findFirstAccessibleLeafPath(
   items: MenuNavigationItem[],
 ): string | undefined {
   for (const item of items) {
+    if (isRemovedDevMenu(item)) continue;
+    if (Array.isArray(item.children) && item.children.length > 0) {
+      const descendantPath = findFirstAccessibleLeafPath(item.children);
+      if (descendantPath) return descendantPath;
+      continue;
+    }
     const path = getMenuPath(item);
-    if (path) return path;
-    if (Array.isArray(item.children)) {
-      const descendantPath = findFirstAccessiblePath(item.children);
-      if (descendantPath) return descendantPath;
-    }
-  }
-  return undefined;
-}
-
-function findPreferredChildPath(root: MenuNavigationItem) {
-  if (!Array.isArray(root.children)) return undefined;
-  for (const child of root.children) {
-    const directPath = getMenuPath(child);
-    if (directPath) return directPath;
-    if (Array.isArray(child.children)) {
-      const descendantPath = findFirstAccessiblePath(child.children);
-      if (descendantPath) return descendantPath;
-    }
+    if (path && !redirectOnlyRoutes.has(path)) return path;
   }
   return undefined;
 }
@@ -186,12 +193,5 @@ function findPreferredChildPath(root: MenuNavigationItem) {
 export function resolveMenuNavigation(
   menus: MenuNavigationItem[],
 ): MenuNavigationTarget {
-  for (const root of menus) {
-    const path = findPreferredChildPath(root) || getMenuPath(root);
-    if (!path) continue;
-    return { path };
-  }
-  return {
-    path: routeFallbacks.find((path) => registeredMenuRoutes.has(path)) || '/',
-  };
+  return { path: findFirstAccessibleLeafPath(menus) || noPermissionPath };
 }

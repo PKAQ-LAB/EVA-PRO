@@ -14,35 +14,6 @@ export default [
       },
     ],
   },
-  {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
-  },
-  {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    access: 'canAdmin',
-    routes: [
-      {
-        path: '/admin',
-        redirect: '/admin/sub-page',
-      },
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        component: './Admin',
-      },
-    ],
-  },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './table-list',
-  },
   // EVA-PRO 业务模块：菜单由 /api/auth/fetchMenus 动态提供，
   // 这里只注册路由→组件映射，让 React Router 知道这些 URL 该渲染谁。
   {
@@ -79,26 +50,16 @@ export default [
     ],
   },
   {
-    name: 'dev',
-    icon: 'rocket',
-    path: '/dev',
-    routes: [
-      { path: '/dev', redirect: '/dev/generator' },
-      {
-        name: 'dev.generator',
-        path: '/dev/generator',
-        component: './dev/generator',
-      },
-      {
-        name: 'dev.workflow',
-        path: '/dev/workflow',
-        component: './dev/workflow',
-      },
-    ],
+    path: '/',
+    component: './index',
+    layout: false,
+    hideInMenu: true,
   },
   {
-    path: '/',
-    redirect: '/welcome',
+    path: '/exception/403',
+    component: './exception/403',
+    layout: false,
+    hideInMenu: true,
   },
   {
     component: './exception/404',

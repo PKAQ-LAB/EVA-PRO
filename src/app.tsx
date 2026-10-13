@@ -3,6 +3,7 @@ import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
 import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
+import { ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import React from 'react';
@@ -318,16 +319,24 @@ export const layout: RunTimeLayoutConfig = ({
       if (initialState?.loading) return <PageLoading />;
       return (
         <>
-          <div
-            className={
+          <ConfigProvider
+            variant={
               initialState?.settings?.navTheme === 'realDark'
-                ? 'eva-workspace eva-theme-dark'
-                : 'eva-workspace'
+                ? 'filled'
+                : 'outlined'
             }
           >
-            <div className="eva-workspace-page">{children}</div>
-            <Footer />
-          </div>
+            <div
+              className={
+                initialState?.settings?.navTheme === 'realDark'
+                  ? 'eva-workspace eva-theme-dark'
+                  : 'eva-workspace'
+              }
+            >
+              <div className="eva-workspace-page">{children}</div>
+              <Footer />
+            </div>
+          </ConfigProvider>
           <SettingDrawer
             disableUrlParams
             enableDarkTheme

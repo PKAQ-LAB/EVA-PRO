@@ -61,7 +61,4 @@ export default {
   'menu.log.online': 'Online Users',
   'menu.log.biz': 'Business Log',
   'menu.log.error': 'Error Log',
-  'menu.dev': 'Dev Tools',
-  'menu.dev.generator': 'Code Generator',
-  'menu.dev.workflow': 'Workflow',
 };

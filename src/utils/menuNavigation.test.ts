@@ -2,16 +2,27 @@ import { describe, expect, it } from 'vitest';
 import { normalizeMenuPaths, resolveMenuNavigation } from './menuNavigation';
 
 describe('normalizeMenuPaths', () => {
-  it('保留有路径父节点并彻底移除全无效 children', () => {
-    const [parent] = normalizeMenuPaths([
+  it('有业务路径的中间节点在后代全部无效后也移除', () => {
+    const menus = [
       {
-        path: '/sys',
+        code: 'sys.organization',
         children: [{ path: '/not-registered' }],
       },
-    ]) as Record<string, unknown>[];
+    ];
 
-    expect(parent).toEqual({ key: '/sys', path: '/sys' });
-    expect(parent).not.toHaveProperty('children');
+    expect(normalizeMenuPaths(menus)).toEqual([]);
+    expect(resolveMenuNavigation(menus)).toEqual({ path: '/exception/403' });
+  });
+
+  it('移除子节点全无效的重定向分组', () => {
+    expect(
+      normalizeMenuPaths([
+        {
+          path: '/sys',
+          children: [{ path: '/not-registered' }],
+        },
+      ]),
+    ).toEqual([]);
   });
 
   it('移除无路径且子节点全无效的父节点', () => {
@@ -44,10 +55,96 @@ describe('normalizeMenuPaths', () => {
         routeUrl: '/sys/role',
       },
     ]);
+    expect(parent).toMatchObject({ key: '/sys', path: '/sys' });
   });
 });
 
 describe('resolveMenuNavigation', () => {
+  it('整个开发工具分组移除，后代路径不能重新成为登录目标', () => {
+    const menus = [
+      { code: 'dev', children: [{ path: '/sys/role' }] },
+      {
+        code: 'sys',
+        children: [{ code: 'dev.generator' }, { code: 'sys.dictionary' }],
+      },
+      { code: 'log', children: [{ code: 'log.online' }] },
+    ];
+    const snapshot = JSON.stringify(menus);
+    expect(resolveMenuNavigation(menus)).toEqual({ path: '/sys/dictionary' });
+    expect(normalizeMenuPaths(menus)).toEqual([
+      {
+        code: 'sys',
+        name: '系统管理',
+        key: '/sys',
+        path: '/sys',
+        children: [
+          {
+            code: 'sys.dictionary',
+            name: '字典管理',
+            key: '/sys/dictionary',
+            path: '/sys/dictionary',
+          },
+        ],
+      },
+      {
+        code: 'log',
+        name: '系统日志',
+        key: '/log',
+        path: '/log',
+        children: [
+          {
+            code: 'log.online',
+            name: '在线用户',
+            key: '/log/online',
+            path: '/log/online',
+          },
+        ],
+      },
+    ]);
+    expect(JSON.stringify(menus)).toBe(snapshot);
+  });
+
+  it('后台开发工具编码和路由残留全部过滤，没有真实菜单时进入403', () => {
+    const menus = [
+      { name: 'menu.dev', children: [{ code: 'sys.role' }] },
+      { moduleCode: 'dev.workflow', routeUrl: '/sys/role' },
+      { code: 'sys.role', routeurl: '/dev/generator' },
+      { router: 'dev/workflow' },
+      { url: '/dev/other' },
+      { path: '/dev' },
+    ];
+    expect(normalizeMenuPaths(menus)).toEqual([]);
+    expect(resolveMenuNavigation(menus)).toEqual({ path: '/exception/403' });
+  });
+
+  it('删除匹配有边界，保留其他合法业务叶子和后台顺序', () => {
+    const menus = [
+      { code: 'developer', path: '/sys/role' },
+      { code: 'log.online' },
+    ];
+    expect(resolveMenuNavigation(menus)).toEqual({ path: '/sys/role' });
+    expect(normalizeMenuPaths(menus)).toHaveLength(2);
+  });
+
+  it('过滤后台遗留示例菜单并保留后续业务入口', () => {
+    const menus = [
+      { path: '/welcome' },
+      { path: '/admin', children: [{ path: '/admin/sub-page' }] },
+      { path: '/list' },
+      { code: 'sys.role' },
+    ];
+
+    expect(resolveMenuNavigation(menus)).toEqual({ path: '/sys/role' });
+    expect(normalizeMenuPaths(menus)).toEqual([
+      {
+        code: 'sys.role',
+        name: '角色管理',
+        key: '/sys/role',
+        path: '/sys/role',
+      },
+    ]);
+  });
+
   it('优先锁定第一个存在可访问目标的一级菜单', () => {
     expect(
       resolveMenuNavigation([
@@ -63,7 +160,7 @@ describe('resolveMenuNavigation', () => {
     ).toEqual({ path: '/sys/organization' });
   });
 
-  it('优先导航到一级菜单的第一个直接可访问子模块', () => {
+  it('优先导航到一级菜单的第一个可访问叶子模块', () => {
     expect(
       resolveMenuNavigation([
         {
@@ -120,8 +217,15 @@ describe('resolveMenuNavigation', () => {
     ).toBe('/log/online');
   });
 
-  it('一级菜单没有可访问子模块时回退到一级菜单自身', () => {
-    expect(resolveMenuNavigation([{ code: 'sys' }])).toEqual({ path: '/sys' });
+  it('不把无子节点的重定向分组当作可访问叶子', () => {
+    expect(
+      resolveMenuNavigation([
+        { code: 'sys' },
+        { code: 'log' },
+        { code: 'dev' },
+        { code: 'sys.role' },
+      ]),
+    ).toEqual({ path: '/sys/role' });
   });
 
   it('首个直接子模块没有路径时降级到其首个可访问后代', () => {
@@ -139,5 +243,29 @@ describe('resolveMenuNavigation', () => {
         },
       ]).path,
     ).toBe('/sys/dictionary');
+  });
+
+  it('有路径的中间节点仍按后台顺序深度优先选择叶子', () => {
+    expect(
+      resolveMenuNavigation([
+        {
+          code: 'sys',
+          children: [
+            {
+              code: 'sys.organization',
+              children: [{ code: 'sys.dictionary' }],
+            },
+            { code: 'sys.role' },
+          ],
+        },
+      ]),
+    ).toEqual({ path: '/sys/dictionary' });
+  });
+
+  it('无可访问叶子时进入无权限页而不是固定业务页', () => {
+    expect(
+      resolveMenuNavigation([{ code: 'sys' }, { path: '/not-registered' }]),
+    ).toEqual({ path: '/exception/403' });
+    expect(resolveMenuNavigation([])).toEqual({ path: '/exception/403' });
   });
 });

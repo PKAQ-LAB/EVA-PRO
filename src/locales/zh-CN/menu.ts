@@ -61,7 +61,4 @@ export default {
   'menu.log.online': '在线用户',
   'menu.log.biz': '业务日志',
   'menu.log.error': '错误日志',
-  'menu.dev': '开发工具',
-  'menu.dev.generator': '代码生成',
-  'menu.dev.workflow': '工作流',
 };
