@@ -38,6 +38,7 @@ const SysAccountPage: React.FC = () => {
     queryKey: ['sys', 'roles'],
     queryFn: async () => {
       const res = await queryRoles();
+      if (res.success === false) throw new Error('角色列表加载失败');
       return (res?.data?.list ?? []) as RoleItem[];
     },
     staleTime: 5 * 60 * 1000,
@@ -229,6 +230,11 @@ const SysAccountPage: React.FC = () => {
           currentItem={currentItem}
           orgs={orgs}
           roles={roles}
+          rolesLoading={rolesQuery.isLoading}
+          rolesError={rolesQuery.isError}
+          onRetryRoles={() => {
+            void rolesQuery.refetch();
+          }}
           onClose={() => setOperateType('')}
           onSuccess={refreshList}
         />

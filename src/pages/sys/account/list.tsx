@@ -1,18 +1,20 @@
+import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import {
   type ActionType,
   type ProColumns,
   ProTable,
 } from '@ant-design/pro-components';
 import { useIntl } from '@umijs/max';
-import { App, Divider } from 'antd';
+import { App, Button, Divider } from 'antd';
 import clsx from 'clsx';
-import React, { useImperativeHandle } from 'react';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 import { frozenText } from '../status';
 import type { AccountItem } from './data.d';
 import {
   type AccountListResponse,
   deleteAccounts,
   getAccount,
+  lockAccounts,
   queryAccountList,
 } from './service';
 
@@ -42,6 +44,8 @@ const AccountList: React.FC<AccountListProps> = ({
   const intl = useIntl();
   const { message: msg, modal } = App.useApp();
   const actionRef = React.useRef<ActionType | undefined>(undefined);
+  const lockingRef = useRef(false);
+  const [lockingId, setLockingId] = useState<string | null>(null);
 
   useImperativeHandle(
     innerRef,
@@ -70,6 +74,7 @@ const AccountList: React.FC<AccountListProps> = ({
   };
 
   const handleEdit = async (record: AccountItem) => {
+    if (record.frozen === 9999 || record.frozen === 1) return;
     if (!record.id) {
       modal.warning({ title: '提示', content: '没有选择记录' });
       return;
@@ -79,9 +84,32 @@ const AccountList: React.FC<AccountListProps> = ({
   };
 
   const handleGrant = async (record: AccountItem) => {
+    if (record.frozen === 9999 || record.frozen === 1) return;
     if (!record.id) return;
     const res = await getAccount(record.id);
     if (res.data) onGrant(res.data);
+  };
+
+  const handleLock = async (record: AccountItem) => {
+    if (!record.id || record.frozen === 9999 || lockingRef.current) return;
+    lockingRef.current = true;
+    setLockingId(record.id);
+    const unlock = record.frozen === 1;
+    try {
+      // 现有接口按账号切换锁定状态，单行操作仅传当前账号ID。
+      const res = await lockAccounts([record.id], unlock ? '0000' : '0001');
+      if (res.success) {
+        msg.success(unlock ? '解锁成功' : '锁定成功');
+        actionRef.current?.reload();
+      } else {
+        msg.error(res.message ?? '操作失败，请重试');
+      }
+    } catch {
+      msg.error('操作失败，请重试');
+    } finally {
+      lockingRef.current = false;
+      setLockingId(null);
+    }
   };
 
   const columns: ProColumns<AccountItem>[] = [
@@ -98,23 +126,40 @@ const AccountList: React.FC<AccountListProps> = ({
     {
       title: '操作',
       align: 'center',
-      width: 180,
+      width: 260,
       search: false,
       render: (_, record) =>
-        record.frozen !== 9999 &&
-        record.frozen !== 1 && (
-          <>
-            <a onClick={() => handleGrant(record)}>角色授权</a>
-            <Divider type="vertical" />
-            <a onClick={() => handleEdit(record)}>编辑</a>
-            <Divider type="vertical" />
-            <a
-              className="eva-delete-link"
-              onClick={() => confirmDelete(record)}
+        record.frozen !== 9999 && (
+          <div onDoubleClick={(event) => event.stopPropagation()}>
+            <Button
+              type="link"
+              size="small"
+              icon={record.frozen === 1 ? <UnlockOutlined /> : <LockOutlined />}
+              loading={lockingId === record.id}
+              disabled={lockingId !== null}
+              onClick={(event) => {
+                event.stopPropagation();
+                void handleLock(record);
+              }}
             >
-              删除
-            </a>
-          </>
+              {record.frozen === 1 ? '解锁' : '锁定'}
+            </Button>
+            {record.frozen !== 1 && (
+              <>
+                <Divider type="vertical" />
+                <a onClick={() => handleGrant(record)}>角色授权</a>
+                <Divider type="vertical" />
+                <a onClick={() => handleEdit(record)}>编辑</a>
+                <Divider type="vertical" />
+                <a
+                  className="eva-delete-link"
+                  onClick={() => confirmDelete(record)}
+                >
+                  删除
+                </a>
+              </>
+            )}
+          </div>
         ),
     },
   ];
