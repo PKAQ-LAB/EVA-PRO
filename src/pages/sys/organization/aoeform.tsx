@@ -11,6 +11,7 @@ import {
   TreeSelect,
 } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
+import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import {
   excludeTreeSubtree,
   isTreeParentAllowed,
@@ -46,6 +47,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
   onSuccess,
 }) => {
   const [form] = Form.useForm<OrgItem & { enable?: boolean }>();
+  const dialogStyles = useFormDialogStyles();
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
   const parentOptions = useMemo(
@@ -100,6 +102,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
 
   return (
     <Modal
+      styles={dialogStyles}
       maskClosable={false}
       confirmLoading={submitting}
       onCancel={onClose}

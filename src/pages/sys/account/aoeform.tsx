@@ -14,6 +14,7 @@ import {
 import { MD5 } from 'jscrypto/es6/MD5';
 import React, { useEffect, useState } from 'react';
 import { Selector, TreeSelector } from '@/components';
+import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import type { AccountItem, OrgNode, RoleItem } from './data.d';
 import { checkAccountUnique, editAccount } from './service';
 
@@ -52,6 +53,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
   onSuccess,
 }) => {
   const [form] = Form.useForm<AccountFormValues>();
+  const dialogStyles = useFormDialogStyles();
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
   const [avatar, setAvatar] = useState<UploadFile[]>([]);
@@ -139,6 +141,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
 
   return (
     <Modal
+      styles={dialogStyles}
       maskClosable={false}
       confirmLoading={submitting}
       cancelText="取消"

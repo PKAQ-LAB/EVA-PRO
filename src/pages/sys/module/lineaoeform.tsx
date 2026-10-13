@@ -1,6 +1,7 @@
 import { Form, Input, Modal } from 'antd';
 import React, { useEffect } from 'react';
 import { DictSelector } from '@/components';
+import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import type { ModuleResource } from './data.d';
 
 export type LineModalType = '' | 'create' | 'edit';
@@ -35,6 +36,7 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
   resourceTypeDict,
 }) => {
   const [form] = Form.useForm<ModuleResource>();
+  const dialogStyles = useFormDialogStyles();
 
   useEffect(() => {
     if (modalType === '') return;
@@ -68,6 +70,7 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
 
   return (
     <Modal
+      styles={dialogStyles}
       maskClosable={false}
       cancelText="取消"
       okText="提交"

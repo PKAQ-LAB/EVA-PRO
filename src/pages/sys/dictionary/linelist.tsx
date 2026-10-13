@@ -54,6 +54,7 @@ const LineList: React.FC<LineListProps> = ({
     { title: '排序', dataIndex: 'orders' },
     {
       title: '操作',
+      align: 'center',
       width: 160,
       render: (_, _record, index) =>
         !isReadOnly && (
@@ -79,6 +80,7 @@ const LineList: React.FC<LineListProps> = ({
         </div>
       </div>
       <Table<DictLine>
+        size="small"
         rowKey={(_record, index) => `${index}-${_record.keyName}`}
         dataSource={lines}
         columns={columns}

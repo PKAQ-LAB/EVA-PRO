@@ -67,6 +67,7 @@ const ModuleLineList: React.FC<ModuleLineListProps> = ({ lines, setLines }) => {
     },
     {
       title: '操作',
+      align: 'center',
       width: 160,
       render: (_, record, index) =>
         record.resourceType !== '*' && (
@@ -95,6 +96,7 @@ const ModuleLineList: React.FC<ModuleLineListProps> = ({ lines, setLines }) => {
         </Button>
       </div>
       <Table<ModuleResource>
+        size="small"
         rowKey={(_record, index) => `${index}-${_record.resourceUrl}`}
         columns={columns}
         dataSource={lines}

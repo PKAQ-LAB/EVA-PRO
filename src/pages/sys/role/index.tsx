@@ -197,6 +197,7 @@ const SysRolePage: React.FC = () => {
     },
     {
       title: sysText(intl, 'pages.searchTable.titleOption', '操作'),
+      align: 'center',
       width: 140,
       search: false,
       render: (_, record) => (
@@ -226,6 +227,7 @@ const SysRolePage: React.FC = () => {
 
   return (
     <PageContainer
+      header={{ title: false, subTitle: false }}
       title={sysText(intl, 'pages.sys.role.title', '角色管理')}
       subTitle={sysText(
         intl,
@@ -235,12 +237,8 @@ const SysRolePage: React.FC = () => {
     >
       <div className="eva-ribbon">
         <div>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-            {sysText(intl, 'pages.sys.role.add', '新增角色')}
-          </Button>
           {selectedRowKeys.length > 0 && (
             <>
-              <Divider type="vertical" />
               <Button
                 danger
                 icon={<DeleteOutlined />}
@@ -266,7 +264,12 @@ const SysRolePage: React.FC = () => {
           )}
         </div>
         <div>
-          <Form form={searchForm} layout="inline" onFinish={handleSearch}>
+          <Form
+            className="eva-table-search"
+            form={searchForm}
+            layout="inline"
+            onFinish={handleSearch}
+          >
             <Form.Item
               label={sysText(intl, 'pages.sys.role.name', '角色名称')}
               name="name"
@@ -316,6 +319,12 @@ const SysRolePage: React.FC = () => {
 
       <div className="eva-body">
         <ProTable<RoleItem>
+          headerTitle={
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+              {sysText(intl, 'pages.sys.role.add', '新增角色')}
+            </Button>
+          }
+          defaultSize="small"
           actionRef={actionRef}
           columns={columns}
           rowKey="id"
@@ -331,8 +340,8 @@ const SysRolePage: React.FC = () => {
           }}
           rowClassName={(record) =>
             clsx({
-              'eva-locked': record.frozen === 1,
-              'eva-disabled': isSystemRole(record),
+              'eva-locked': record.frozen === 1 && !isSystemRole(record),
+              'eva-readonly': isSystemRole(record),
             })
           }
           onRow={(record) => ({

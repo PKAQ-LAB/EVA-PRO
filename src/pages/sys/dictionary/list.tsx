@@ -55,6 +55,7 @@ const DictListView: React.FC<DictListProps> = ({
     { title: '字典编码', dataIndex: 'code' },
     {
       title: '操作',
+      align: 'center',
       width: 100,
       render: (_, record) =>
         record.status !== '9999' && (
@@ -82,6 +83,7 @@ const DictListView: React.FC<DictListProps> = ({
         </Col>
       </Row>
       <Table<DictItem>
+        size="small"
         bordered
         columns={columns}
         rowKey="id"

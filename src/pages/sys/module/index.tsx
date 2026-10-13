@@ -193,8 +193,9 @@ const SysModulePage: React.FC = () => {
     },
     {
       title: '操作',
+      align: 'center',
       render: (_, record) => (
-        <div>
+        <div style={{ textAlign: 'center' }}>
           <a onClick={() => handleAdd(record)}>添加下级</a>
           <Divider type="vertical" />
           <a onClick={() => handleEdit(record)}>编辑</a>
@@ -215,7 +216,11 @@ const SysModulePage: React.FC = () => {
   ];
 
   return (
-    <PageContainer title="模块管理" subTitle="系统模块（菜单）管理维护">
+    <PageContainer
+      header={{ title: false, subTitle: false }}
+      title="模块管理"
+      subTitle="系统模块（菜单）管理维护"
+    >
       <div className="eva-ribbon">
         <div>
           <Button
@@ -287,7 +292,7 @@ const SysModulePage: React.FC = () => {
           rowClassName={(record) =>
             clsx({
               'eva-locked': record.frozen === 1,
-              'eva-disabled': record.frozen === 9999,
+              'eva-readonly': record.frozen === 9999,
             })
           }
           expandable={{ defaultExpandAllRows: true }}

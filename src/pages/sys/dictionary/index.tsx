@@ -59,7 +59,11 @@ const SysDictionaryPage: React.FC = () => {
   };
 
   return (
-    <PageContainer title="字典管理" subTitle="系统字典（码表）管理维护">
+    <PageContainer
+      header={{ title: false, subTitle: false }}
+      title="字典管理"
+      subTitle="系统字典（码表）管理维护"
+    >
       <div className="eva-body">
         <SideLayout
           title="字典分组"

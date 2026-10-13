@@ -69,8 +69,9 @@ const OnlinePage: React.FC = () => {
   ];
 
   return (
-    <PageContainer>
+    <PageContainer header={{ title: false, subTitle: false }}>
       <ProTable<OnlineUserItem>
+        defaultSize="small"
         columns={columns}
         headerTitle="在线用户名单"
         rowKey="id"

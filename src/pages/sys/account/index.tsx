@@ -111,7 +111,11 @@ const SysAccountPage: React.FC = () => {
   };
 
   return (
-    <PageContainer title="用户管理" subTitle="系统用户账号管理维护">
+    <PageContainer
+      header={{ title: false, subTitle: false }}
+      title="用户管理"
+      subTitle="系统用户账号管理维护"
+    >
       <div className="eva-ribbon">
         <div>
           <Button type="primary" onClick={openCreate}>
@@ -145,7 +149,12 @@ const SysAccountPage: React.FC = () => {
           )}
         </div>
         <div>
-          <Form form={searchForm} layout="inline" onFinish={handleSearch}>
+          <Form
+            className="eva-table-search"
+            form={searchForm}
+            layout="inline"
+            onFinish={handleSearch}
+          >
             <Form.Item label="账号" name="account">
               <Input placeholder="输入账号搜索" />
             </Form.Item>

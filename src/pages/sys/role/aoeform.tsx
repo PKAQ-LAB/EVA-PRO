@@ -2,6 +2,7 @@ import { useIntl } from '@umijs/max';
 import { App, Col, Form, Input, Modal, Row, Switch, TreeSelect } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { DictSelector } from '@/components';
+import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import { queryOrgs } from '../organization/service';
 import { sysText } from '../status';
 import type { RoleItem } from './data.d';
@@ -31,6 +32,7 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   onSuccess,
 }) => {
   const intl = useIntl();
+  const dialogStyles = useFormDialogStyles();
   const [form] = Form.useForm<RoleItem>();
   const { message: msg } = App.useApp();
 
@@ -130,6 +132,7 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
 
   return (
     <Modal
+      styles={dialogStyles}
       maskClosable={false}
       confirmLoading={submitting}
       onCancel={() => setModalType('')}

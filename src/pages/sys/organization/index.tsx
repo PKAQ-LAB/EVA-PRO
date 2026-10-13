@@ -183,9 +183,13 @@ const SysOrganizationPage: React.FC = () => {
     },
     {
       title: '操作',
+      align: 'center',
       render: (_, record) =>
         record.status === '0001' && (
-          <div onDoubleClick={(event) => event.stopPropagation()}>
+          <div
+            style={{ textAlign: 'center' }}
+            onDoubleClick={(event) => event.stopPropagation()}
+          >
             <a onClick={() => handleAdd(record)}>添加下级</a>
             <Divider type="vertical" />
             <a onClick={() => handleEdit(record)}>编辑</a>
@@ -202,7 +206,11 @@ const SysOrganizationPage: React.FC = () => {
   ];
 
   return (
-    <PageContainer title="组织（部门）管理" subTitle="系统组织架构管理维护">
+    <PageContainer
+      header={{ title: false, subTitle: false }}
+      title="组织（部门）管理"
+      subTitle="系统组织架构管理维护"
+    >
       <div className="eva-ribbon">
         <div>
           <Button
@@ -254,6 +262,7 @@ const SysOrganizationPage: React.FC = () => {
           />
         )}
         <Table<OrgItem>
+          size="small"
           pagination={false}
           dataSource={data}
           loading={orgsQuery.isLoading}
@@ -281,7 +290,7 @@ const SysOrganizationPage: React.FC = () => {
           rowClassName={(record) =>
             clsx({
               'eva-locked': record.frozen === 1,
-              'eva-disabled': record.frozen === 9999,
+              'eva-readonly': record.frozen === 9999,
             })
           }
         />

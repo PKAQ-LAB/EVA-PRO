@@ -57,15 +57,17 @@ const ErrorLogPage: React.FC = () => {
     { title: '请求耗时', dataIndex: 'spendTime' },
     {
       title: '操作',
+      align: 'center',
       width: 100,
       render: (_, record) => <a onClick={() => handleView(record)}>查看</a>,
     },
   ];
 
   return (
-    <PageContainer>
+    <PageContainer header={{ title: false, subTitle: false }}>
       <div className="eva-ribbon">
         <Form
+          className="eva-table-search"
           form={searchForm}
           layout="inline"
           initialValues={{
@@ -88,6 +90,7 @@ const ErrorLogPage: React.FC = () => {
       </div>
       <div className="eva-body">
         <ProTable<ErrorLogItem>
+          defaultSize="small"
           actionRef={actionRef}
           columns={columns}
           rowKey="id"

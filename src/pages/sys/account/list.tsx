@@ -97,6 +97,7 @@ const AccountList: React.FC<AccountListProps> = ({
     },
     {
       title: '操作',
+      align: 'center',
       width: 180,
       search: false,
       render: (_, record) =>
@@ -120,6 +121,7 @@ const AccountList: React.FC<AccountListProps> = ({
 
   return (
     <ProTable<AccountItem>
+      defaultSize="small"
       actionRef={actionRef}
       columns={columns}
       rowKey="id"
@@ -136,7 +138,7 @@ const AccountList: React.FC<AccountListProps> = ({
       rowClassName={(record) =>
         clsx({
           'eva-locked': record.frozen === 1,
-          'eva-disabled': record.frozen === 9999,
+          'eva-readonly': record.frozen === 9999,
         })
       }
       onRow={(record) => ({

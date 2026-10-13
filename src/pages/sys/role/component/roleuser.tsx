@@ -105,6 +105,7 @@ const RoleUserModal: React.FC<RoleUserProps> = ({
         </Col>
         <Col span={18}>
           <Table<RoleUserItem>
+            size="small"
             columns={columns}
             rowKey="id"
             rowSelection={{

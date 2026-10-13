@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { IconSelect, TreeSelector } from '@/components';
+import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import {
   excludeTreeSubtree,
   isTreeParentAllowed,
@@ -48,6 +49,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
   onSuccess,
 }) => {
   const [form] = Form.useForm<ModuleItem & { status?: boolean }>();
+  const dialogStyles = useFormDialogStyles();
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
   const [lines, setLines] = useState<ModuleResource[]>(
@@ -101,6 +103,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
 
   return (
     <Drawer
+      styles={dialogStyles}
       width={640}
       maskClosable={false}
       onClose={onClose}

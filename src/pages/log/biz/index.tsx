@@ -72,15 +72,17 @@ const BizLogPage: React.FC = () => {
     { title: '描述', dataIndex: 'description', ellipsis: true },
     {
       title: '操作',
+      align: 'center',
       width: 120,
       render: (_, record) => <a onClick={() => handleView(record)}>查看明细</a>,
     },
   ];
 
   return (
-    <PageContainer>
+    <PageContainer header={{ title: false, subTitle: false }}>
       <div className="eva-ribbon">
         <Form
+          className="eva-table-search"
           form={searchForm}
           layout="inline"
           initialValues={{
@@ -103,6 +105,7 @@ const BizLogPage: React.FC = () => {
       </div>
       <div className="eva-body">
         <ProTable<BizLogItem>
+          defaultSize="small"
           actionRef={actionRef}
           columns={columns}
           rowKey="id"
