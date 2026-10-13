@@ -29,7 +29,7 @@
 | 角色 | 固定聊天名称 | 会话 ID | 当前状态 | 范围 |
 | --- | --- | --- | --- | --- |
 | frontend_developer | EVA｜前端开发 | 01a132b1-0e33-7a73-9344-4ccaee63479c | 完成 | 全部当前前端任务实现、QA及代码发布完成，文档收口记录随后封存 |
-| quality_reviewer | EVA｜质量审查 | 01a132b1-1500-72e0-a34c-aa9d72fd5200 | 完成 | 四项独立复验通过，命令结束 |
+| quality_reviewer | EVA｜质量审查 | 01a132b1-1500-72e0-a34c-aa9d72fd5200 | 完成 | 最新用户管理整体独立QA通过，三个P2关闭，85项合并回归通过 |
 
 后台开发、技术设计等角色暂无本次任务，未创建新聊天。已有内部子代理仅作历史交接来源，不视为固定独立成员。
 
@@ -38,7 +38,8 @@
 - [菜单、首页和亮色页头任务卡](tasks/2026-10-13-trunk-navigation-header.md)。登记及任务卡仅由总控写入。
 - 任务主卡及登记仅由总控写入；成员各自的 `status/frontend_developer.md` 或 `status/quality_reviewer.md` 是共享任务卡的状态子卡，由对应成员先更新再主动回报，避免多成员同时覆盖主卡。
 - 实现完成交出写入锁后，审查才执行检查；发现缺陷由总控重新分配实现，审查不自行改生产代码。
-- 全部当前前端任务及表单分隔线间距补修均已独立QA通过，未持有业务写锁。最终10文件60/60测试通过、精准Biome通过、build成功（7508ms、34assets）；antd既有警告及全仓tsc失败保留，浏览器视觉未验收。代码已分两组普通推送到origin/trunk：9158042a（导航、登录、工作区主题）和107edd1d（表格、搜索、面包屑、表单分隔线及间距）；远端107edd1d0224f728c9a7df73d482e06447dc0cd0已核验，ahead/behind=0/0，原型stash完整。文档随后最后单独提交封存，最终文档SHA及推送核验由发布回报记录，详见[TRUNK-PUBLISH-20261013](tasks/2026-10-13-trunk-publish.md)。异步切换记录见[LEGION-ASYNC-20261013](tasks/2026-10-13-async-dispatch.md)。
+- 最新[ACCOUNT-FORM-ROLES-LOCK-20261013](tasks/2026-10-13-account-form-roles-lock.md)整体独立QA通过，P2-1/2/3关闭；最终15文件85/85、Biome10通过，build成功（11716ms、34assets）。用户管理Modal右侧角色选择、无额外授权标题、等高区域、角色同步保存及独立锁定与离开/上传/过期校验保护已经普通推送origin/trunk，代码提交d238d26a29b7f59a48bb7ba328b247f7902ec06b，远端同SHA/0-0已核验。最后文档提交封存及其SHA见发布回报。全仓tsc既有失败、GitNexus UNKNOWN、弃用警告及真实浏览器/持久化未验收限制保留；原型stash完整，当前无业务写锁。
+- 历史发布批次：前端任务及表单分隔线间距补修均已独立QA通过，未持有业务写锁。最终10文件60/60测试通过、精准Biome通过、build成功（7508ms、34assets）；antd既有警告及全仓tsc失败保留，浏览器视觉未验收。代码已分两组普通推送到origin/trunk：9158042a（导航、登录、工作区主题）和107edd1d（表格、搜索、面包屑、表单分隔线及间距）；远端107edd1d0224f728c9a7df73d482e06447dc0cd0已核验，ahead/behind=0/0，原型stash完整。文档随后最后单独提交封存，最终文档SHA及推送核验由发布回报记录，详见[TRUNK-PUBLISH-20261013](tasks/2026-10-13-trunk-publish.md)。异步切换记录见[LEGION-ASYNC-20261013](tasks/2026-10-13-async-dispatch.md)。
 
 ## 迁移交接（历史记录）
 

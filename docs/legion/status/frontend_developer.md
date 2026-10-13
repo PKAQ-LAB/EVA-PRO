@@ -1,6 +1,6 @@
 # frontend_developer 状态
 
-状态：完成；全部当前任务独立QA通过，代码已正常提交推送，最后文档记录随后封存，最终核验见主动发布回报。
+状态：完成；用户管理整体独立QA通过、P2-1/2/3关闭，代码已正常提交推送。本记录随后最后独立文档提交封存，最终文档SHA及推送核验见发布回报。
 
 ## 接收与范围
 
@@ -277,3 +277,63 @@
 - 普通push origin trunk成功，远端ls-remote确认107edd1d0224f728c9a7df73d482e06447dc0cd0，ahead/behind0/0。代码working/index clean，仅docs/legion待最后单独提交。已获授权最小更新README登记及发布主卡，其余主卡不扩大改动。
 - 本status/README/发布主卡在最后docs commit前封存，避免写入最终SHA自引用制造额外dirty；随后核验最终docs SHA、远端、本地0/0、worktree及stash并主动回报总控，本文件不再追加写入。
 - GitNexus复查仍storage43/runtime42错误，risk UNKNOWN；原tsc exit1、antd既有警告、真实浏览器/像素/窄屏视觉未验收限制保留。无后端/vault/deps/upstream/其他分支写入、服务浏览器或子代理。
+
+## ACCOUNT-FORM-ROLES-LOCK-20261013
+
+状态：实现完成，所有命令结束，交回写锁供总控安排独立QA；本轮尚未stage/commit/push。
+
+- 用户在本成员聊天直接给参考截图，要求新增/编辑右侧角色列表、新增同步授权，移除表单锁定并改列表独立按钮；已有AntD/React密码强度能力才展示。遵循EVA/AntD/Obsidian技能、实时权威前端规则与当前代码；仅用户管理范围，未复制截图中缺契约的工号/岗位或示例角色。
+- aoeform改共用右侧Drawer（size1040，安装原生maxWidth100vw），左资料右角色列表，800px以下单列，字段xs24/sm12。角色Table small/bordered、序号与可排序名称、复选框、固定滚动区；Form管理AccountRoleRef[]，编辑回填、清空提交[]，保留未加载列表之外的已选ID。当前queryRoles已有200条查询未改，不新增接口或依赖。
+- 新增/编辑用户与角色继续editAccount单请求；现有service将roles转换roleIds，未修改service、APIS、数据契约或后端。显式payload仅允许原业务字段，删除锁定Form项/Switch，新增默认locked0000，编辑保留currentItem.locked（缺失按frozen回退），不因保存资料解锁或锁定。不回填原密码；沿用原密码格式与MD5协议，确认密码同步校验，未引入自制密码评分/强度条。
+- 当前AntD6.6.3 Input.Password metadata/本地实现无密码强度API，React/项目无现成评分依赖或组件，用户条件分支采用不显示强度；原格式校验保留。CLI升级提示未升级。
+- 列表单行正常账号显示锁定、已锁定显示解锁；直接复用lockAccounts([id],status)既有切换接口（实际body仍param IDs），不伪造状态字段。9999无操作、冻结1保留其他操作限制；单行pending/ref防重复、成功reload、失败反馈并可重试；操作容器截断doubleClick，按钮click止冒泡，正常行双击编辑保留，9999/1双击不绕过限制。原批量工具栏未扩大改动。
+- 新rolelist支持loading/empty/error重试；入口传React Query加载错误及refetch，successfalse进入错误分支。加载/错误/上传期间及9999禁用保存。提交中防重复、禁止关闭，失败保留内容；资料/角色更改取消时确认放弃。六表单共享灰线16px样式不改，仅账号表单从Modal换Drawer沿用。
+- 变更源文件：account/aoeform.tsx、index.tsx、list.tsx、新rolelist.tsx；新增aoeform.test.tsx、list.test.tsx、service.test.ts；无service/data/API修改。自身status仅追加本任务记录，不代改总控主卡。
+- 定向3文件13/13测试通过（11.09s）：真实亮暗Drawer/Table角色勾选与用户一次保存、角色回填/清空/锁定保持、密码不一致/旧密码不回填、失败保留、角色重试/loading/9999限制、防重复提交/关闭、未保存确认；单行锁定/解锁参数、只读限制/冒泡/reload/失败重试；现有service实际角色ID适配与单保存请求。最终合并13文件73/73、16.40s；未延长超时。
+- 测试初始失败仅断言：AntD中文两字按钮含空格；确认标题在header/confirm body重复，dialog名称查询也不适配当前测试环境ID，改为真实语义ant-modal-confirm-title及实际放弃按钮行为验证，未修改生产行为掩盖测试失败。
+- 精准7文件Biome check exit0，无修复；4生产文件AntD逐文件lint exit0/no skip/partial false，最终aoeform1条既有addonBefore、list3条Divider（1新增分隔符继承旧属性用法）、index5条既有Divider/Alert、rolelist0issues。新Drawer使用mask.closable替代弃用maskClosable，不能称全仓零warnings。
+- 最终tsc明确exit1，account7文件无诊断；缺hono/config TS2883/appicon/旧测试或生成类型等既有错误保留。最新build exit0、27019ms、34assets，账号chunk c7457cc4；最后修改仅测试断言，没有重复构建。diffcheck通过，仅LF/CRLF提示。
+- GitNexus两影响查询AOEForm/AccountList因storage43/runtime42不兼容riskUNKNOWN，按技能退回直接导入/调用/请求/事件源码核对，未重建索引。HEAD仍dd4a3345ebadb3216f95de0a3531faf06e82cf59，index空，原型stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25保持。
+- 无真实浏览器/截图/窄屏像素验收或实际服务器写入；测试mock请求和真实AntD DOM不能称生产授权持久化联调成功。无服务/浏览器/后端/vault/deps/其他分支/upstream/stash操作/子代理，本次新任务未重新自动提交推送。下一步主动向总控报告本ID/覆盖/证据/限制，结束而不轮询。
+
+## ACCOUNT-FORM-ROLES-LOCK-20261013 两P2及Modal呈现追加补修
+
+状态：补修已实现，全部命令结束，交回写锁待独立QA；不将开发检查视为QA已关闭P2。用户最新明确授权本批提交push，通过独立QA后由总控唤起发布，不再重复询问，当前没有stage/commit/push。
+
+- 已读quality_reviewer首轮两个P2、最新主卡及完整相关源码。前轮仅handleClose保护不足的结论接受，按实时权威规则补页面离开和上传关闭保护。GitNexus AOEForm影响查询仍storage43/runtime42风险UNKNOWN，直接核对现有源码/API及调用，无索引/依赖重建。
+- 用户最新明确要求保持弹窗、去掉右侧“角色授权”标题、角色少时左右视觉等高；这条明确指令优先于全局默认Drawer。账号表单属于EVA定制，并非上游示例，最终恢复原生Modal（width1040、centered），保留角色勾选及同步授权，不把去掉标题解释为删除能力。
+- 角色区域与左资料在同一grid行align-items:stretch；右section有主题边框、minHeight320，Table wrapper绝对inset0且overflowauto，不参与父行高度计算，区域由左侧资料高度撑开。取消固定scroll.y440和额外标题，少角色/无角色仍保留完整外框，不制造空记录；多角色滚动。800px以下单列，右区minHeight320可正常浏览。样式计算测试不是浏览器左右像素等高验收。
+- 新模块内useLeaveGuard：核对实际Umi生成history（只读）导出底层history5.3.0 block/transition.retry；不是猜useBlocker或另引依赖。dirty或busy时注册history.block与原生beforeunload，路由点击先确认，继续编辑保持阻断，确认放弃后解绑再retry原目标。干净、保存成功、确认放弃、切换对象或卸载均清理自身监听，不污染其他页面；beforeunload只preventDefault/returnValue空字符串，不声称浏览器允许自定义提示文本或可禁止强制刷新。
+- uploadingRef即时记录Upload状态，closeBlocked=submitting||uploading用于Modal closable/keyboard/cancel disabled；mask.closablefalse保持。handleClose统一guard，保存或上传时拒绝离开；已打开确认的onOk再次检查当前busy，忙碌不调用onClose、不release或retry，保护原表单。
+- 每个用户/操作上下文有独立session token（useMemo identity），切换A→B→A仍不接受旧A回调；layout cleanup立即失活、拆监听、destroy当前确认。旧onOk/onCancel、上传回调、保存结果均检查当前会话，避免卸载后写状态、过期确认解除新会话保护。Upload按操作/用户key隔离、卸载时沿用原控件abort；新对象初始化重置忙碌/dirty，旧请求finally不清除新会话状态。
+- 生产补修仅account/aoeform.tsx、rolelist.tsx、新useLeaveGuard.ts；原index/list/roles→roleIds/锁定API不追加契约改变。AOE测试适配Modal/单角色区域策略；新增useLeaveGuard.test.tsx和uploadClose.test.tsx。真实history取项目现成createHistory memory实现；上传测试用实际AntD Upload/file input/onChange，仅customRequest网络边界接管，无真实服务请求。
+- 定向3文件最终15/15、8.45s：Modal亮暗角色保存/角色状态，少角色无标题/不制造空行及模拟computedStyle的relative/minHeight/stretch/absolute/overflow；实际history路由阻断/继续编辑/放弃retry、native beforeunload/干净/保存解除/卸载清理、确认后忙碌二次校验、切换回原用户仍旧回调失效；实际Upload启动后取消/X/ESC/route保护、完成后恢复关闭、确认弹出后上传禁止放弃、卸载abort及旧回调不提交。
+- 最终合并15文件81/81 exit0、24.17s；精准10支持文件Biome check exit0/No fixes；AntD aoeform/useLeaveGuard/rolelist逐文件exit0/no skip/partial，最终分别1条既有addonBefore/0/0 issues，前轮list3/index5警告记录保留。antd Modal精确版本metadata查closable/keyboard/mask/width/styles/onCancel；CLI提示不升级。
+- 最终tsc明确exit1，account范围0diag，仍hono/config/appicon/旧生成类型等既有失败。因为中途用户改回Modal，先前Drawer补修build12797ms、80tests已被最终替代；最终Modal build exit0、14191ms、34assets，账号chunk053e88af，最新全量81tests不沿用旧形态证据。
+- diffcheck通过，仅Git LF/CRLF提示；HEAD仍dd4a3345ebadb3216f95de0a3531faf06e82cf59、index空、唯一原型stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25不变。自身status追加，无总控/QA主卡覆盖。
+- 无服务/浏览器/真实视觉或生产角色持久化联调，无后端/vault/deps/upstream/其他分支/stash操作、子代理。真实浏览器原生提示/窄屏/角色区域像素等高仍待现场验收。已交锁，下一步由总控独立QA及通过后正式恢复授权发布，默认异步不轮询。
+
+## ACCOUNT-FORM-ROLES-LOCK-20261013 P2-3异步校验补修
+
+状态：补修已实现，全部命令结束，交回写锁待独立QA整体验收；P2-1/P2-2已由QA确认关闭，本次不得仅凭开发通过宣布整体QA通过。用户本批commitpush授权保留，尚未stage/commit/push。
+
+- 完整读取quality_reviewer复验细证：仅响应后isCurrent不足，await validateFields期间切对象或卸载，旧handler仍可能调用editAccount。接受该发现，不修改QA文件或绕过复现。
+- 生产相对此前补修仅aoeform一行：const values = await form.validateFields()后立即if (!leaveGuard.isCurrent()) return，在密码处理/反馈/payload/写请求之前拒绝过期会话。已有catch/finally、响应后session检查保留，不重构其他保护、UI、接口或保存协议。
+- 新4个真实handle回归：真实AntD Form实例，仅validateFields边界注入延迟Promise；点击实际保存按钮后保持同一AOE挂载，分别A→B、卸载、A→B→A，再让旧校验成功，editAccount/onClose/onSuccess均0调用，当前字段/可关闭状态正常。旧校验值password为undefined，确保不能由密码不一致提前返回伪装阻止写入。
+- 第4个回归在A校验等待时切B并启动B保存，再完成A校验：editAccount仍0，B取消仍disabled，证明旧finally不清掉新保存状态；B校验完成仅提交user-b一次。不是旧请求发出后忽略响应的测试。
+- 定向aoeform/useLeaveGuard/uploadClose 3files19/19、9.49s；最终合并15files85/85、23.25s，未延长超时。全量后测试Form.useForm<AccountItem>类型与vi.spyOn泛型unknown出现2条新诊断，已将测试注入实例泛型修正为unknown，无any/双断言且不改变执行逻辑；最后tsc明确exit1、account0diag，既有hono/config/appicon/旧生成类型失败保留，不称全仓类型通过。
+- 最终精准10文件Biome exit0/no fixes；AntD aoeform exit0/no skip/partial false，仅1条既有addonBefore，其他生产检查复用此前不变证据。diffcheck通过，仅LF/CRLF提示。最终build exit0、11716ms、34assets，账号chunk a15d878d；替代此前14191ms构建作为最新运行时代码证据。
+- GitNexus AOEForm影响查询仍storage43/runtime42错误/riskUNKNOWN，源码调用关系直接核对、未重建索引。HEADdd4a3345ebadb3216f95de0a3531faf06e82cf59、index空、唯一stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25保持。
+- 本次只追加aoeform源1行、对应测试及自身status；无backend/API/data/vault/deps/其他分支/upstream/stash操作、服务浏览器/子代理。没有真实服务器请求或浏览器视觉验收，所有会话写入证明为真实组件/模拟校验和service边界。主动报告总控后结束，待独立QA通过再按既有授权唤起发布，不轮询。
+
+## ACCOUNT-FORM-ROLES-LOCK-20261013 正式发布收口
+
+状态：完成（整体QA通过且代码已推送，最后文档记录随后独立提交封存，最终文档SHA/远端/clean核验由主动回报确认）。
+
+- 正式发布授权与QA最终结果已核验：三P2全部关闭，独立15files85/85、Biome10与build11716ms34assets均确认；fetch origin后HEAD/origin/trunk为dd4a3345同SHA0/0，没有远端新增/分叉。
+- 秘密模式扫描无命中，完整范围仅本任务account10源/测试与本项目docs/legion。精确逐文件暂存，无git add .。代码与真实相关测试作为完整一组，避免没有异步或上传保护的中间提交。
+- 代码提交d238d26a29b7f59a48bb7ba328b247f7902ec06b：aoeform/index/list、rolelist/useLeaveGuard、aoeform/list/service/useLeaveGuard/uploadClose测试共10files，1386insertions/195deletions。服务实现、APIS、data/deps/后端/vault均无发布改动。
+- 原pre-commit lint-staged/Biome及commit-msg commitlint全部正常通过；自动临时备份319ed8dd由hook清理，原型stashdf210始终为唯一stash，无手动stash或hook绕过。10文件SHA256提交前后全一致，复用最终85回归及build，不重复未变全仓检查。
+- 普通push origin trunk成功dd4a→d238d26a；远端ls-remote确认d238d26a29b7f59a48bb7ba328b247f7902ec06b、0/0。代码worktree/index clean，剩余仅本任务docs记录收口。
+- 已按总控授权最小更新README登记及本主卡和自身status，QA status原样纳入；最后文档4文件独立提交前封存，不为自引用最终SHA再写文件。最终文档commit/push、HEAD/远端/0-0/worktree/index/stash验证将由主动发布回报确认。
+- 全仓tsc exit1（account0diag）、GitNexus43/42 UNKNOWN、aoeform1/index5/list3等warning继续披露，list含1新增Divider沿旧type用法；未声称全部既有或零issues。真实浏览器/等高像素/窄屏及生产用户角色持久化未验收，无服务浏览器/其他分支/upstream/deps/子代理。

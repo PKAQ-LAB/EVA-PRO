@@ -334,3 +334,65 @@ DOM回归直接核对inline border与指定padding、未覆盖paddingInline/另�
 Git现场HEAD8ae2a4fee75601085cd3e713770846bc7f77c8b0、本地origin引用0/0、index空、唯一stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25不变。发布仍待总控正式恢复，当前无新stage/commit/push。
 
 全部命令结束；仅写本status，无业务/vault/后端/deps/dist写入，无服务浏览器/分支stash/子代理。下一步主动回报总控补修通过，按用户已授权“全部完成后提交push”由总控正式唤起发布，本角色不自行发布。
+
+## ACCOUNT-FORM-ROLES-LOCK-20261013 首轮独立审查发现
+
+状态：等待依赖（P2关闭保护缺口，需前端修补后再完整验收）。
+
+已读取任务卡/前端status、4生产文件源码/真实差异、service/data现有契约及3新测试；已通过固定前端聊天读取用户原文，并直接查看本地截图codex-clipboard-a6d77c48-e1b1-4e9f-9c87-da624b922774.png，需求来源可核实。截图仅作为布局参考，不凭参考复制缺契约的工号/岗位或示例角色，也不等同成品视觉验收。
+
+独立精准3文件13/13通过（9.07s），Biome7文件通过（14ms/No fixes）；角色一次保存、roles清空[]、原locked/MD5/确认密码、不回填旧密码、角色加载与重试、pending锁定/解锁/9999限制、按钮双击隔离的当前测试均通过。
+
+P2-1：未保存的页面离开/刷新无保护。aoeform仅handleClose检查dirty，没有路由阻断、beforeunload或页面离开处理；account入口/app也未找到相关保护。用户编辑资料/角色后切换菜单或刷新，组件会卸载，未保存值直接丢失。权威eva-web-development第3节明确“存在未保存修改时，取消、关闭、页面离开均应保护；确认放弃后才清除离开拦截。”现有取消确认测试不能证明页面离开保护。
+
+P2-2：上传中仍可关闭丢失操作。保存按钮已检测avatar uploading，但handleClose仅检查savingRef，Drawer closable/keyboard及取消disabled仅依submitting；头像上传中dirty=true，点击取消/关闭/ESC仍弹放弃确认，onOk直接onClose，没有取消/等待上传或阻止关闭。权威同节要求“保存及附件读取期间防止重复提交，并阻止会丢失当前操作的关闭行为。”当前实现只保护保存，不保护上传；需复用上传状态保护关闭入口或显式取消且隔离过期回调。
+
+本成员不改源码、不自行加测试文件。当前没有运行中的命令，先保存本状态并向总控主动报告P2；待修补交锁再执行受影响/必要合并验证。HEADdd4a3345、index空、唯一stashdf210不变，本新任务无发布授权，未提交推送。
+
+## ACCOUNT-FORM-ROLES-LOCK-20261013 保护复验与新会话隔离发现
+
+状态：等待依赖（原两P2代码修复通过，但新增P2-3过期校验仍发保存请求，整体未通过）。
+
+已读最新主卡/status、最终Modal/rolelist/useLeaveGuard及3相关测试、实际Umi history生成源码。用户明确Modal优先于全局Drawer；最终1040 centered Modal、无右侧角色授权标题、stretch grid及relative/minHeight320/absolute inset0 overflowauto策略、无固定y440/无伪造空行，代码符合本次呈现范围；真实像素等高未验收。
+
+独立定向3文件aoeform/useLeaveGuard/uploadClose：exit0，15/15，9.06s；精准Biome10文件exit0，No fixes。现有角色/密码与保存保护测试保持通过。未改源码或测试文件。
+
+P2-1页面离开保护：原缺口已在代码范围关闭。实际项目createHistory经renderer-react导出history5.3 block，useLeaveGuard dirty/busy注册block及beforeunload，确认放弃先unblock再retry，取消/忙碌保持阻断，清理/干净/保存成功解除；真实memory history/native Event回归通过，A→B→A旧确认/isCurrent失效回归通过。beforeunload是浏览器原生提示请求，不声称能阻止用户强制离开。
+
+P2-2上传关闭保护：原缺口已在代码范围关闭。uploadingRef立即更新，Modal X/ESC/cancel与保存共享busy，maskfalse，旧confirm.onOk二次检查busy/session；实际AntD Upload/file input+customRequest网络模拟回归保护取消/ESC/route并验证卸载abort与旧onChange无效。DOM/模拟边界不是实际上传服务器联调。
+
+P2-3（新增，同一异步会话隔离范围）：aoeform.handleSaveClick在await form.validateFields之后、构建payload并调用editAccount之前，没有leaveGuard.isCurrent检查。现有检查首次出现在await editAccount之后，仅屏蔽旧响应/旧finally，无法阻止旧校验完成后产生实际服务写入。若等待唯一性等异步校验时父上下文切换或组件卸载，会话token已失效，原Promise完成仍向user-a发送editAccount；A→B→A同理不能靠再次相同ID恢复旧token。
+
+独立源码函数复现：node只读提取实际handleSaveClick，去除2处TypeScript类型语法，依赖均注入模拟；启动validateFields延迟Promise，将isCurrent置false后完成校验，实际函数仍调用editAccount一次、payload.id=user-a。输出saveRequests=1，requestsWereMocks=true，exit0；无真实请求/持久化。这是实际控制流复现，不是完整浏览器切换；现有15测试覆盖旧确认/上传，保存pending测试从editAccount阶段开始，未覆盖校验阶段失效。
+
+需最小在校验await返回后、任何密码提示/payload提交前复核当前会话，并为延迟校验+切换/卸载补回归；防止旧会话发请求，而非仅忽略旧响应。本成员不修改生产。当前全部命令结束，后续合并/构建验收等待修补交锁，避免边测试边修改。
+
+HEADdd4a3345/index空/原型stashdf210不变；未提交推送、服务浏览器或业务写入。已保存本状态后主动向总控回报原两P2关闭及新增P2-3；整体仍待复验，不恢复发布。
+
+## ACCOUNT-FORM-ROLES-LOCK-20261013 P2-3及最终整体独立验收
+
+状态：完成；P2-1/P2-2/P2-3均关闭，最终代码范围独立审查通过，无剩余本次P0/P1/P2、无业务阻塞。
+
+本轮读取前端最终status、实际save处理器与4新增真实handler回归。修复在await form.validateFields后立即检查leaveGuard.isCurrent，在密码反馈/MD5/payload/editAccount之前拒绝旧会话；catch/finally及请求响应后既有隔离保留。重复前轮只读提取实际handler的模拟复现，延迟校验期间session失效后旧写请求从1变为0，未发送真实请求。
+
+4新回归使用真实AntD Form/AOE挂载与保存按钮，只对validateFields Promise边界模拟；覆盖A→B、卸载、A→B→A，旧校验值password undefined排除密码不一致假阻断，editAccount/onClose/onSuccess均0；新字段状态仍正确。旧A校验完成后B保存取消按钮仍disabled，B校验完成仅向user-b提交一次，证明旧finally不清除新busy。测试注入Form泛型已为unknown，不改变执行逻辑。
+
+独立实际命令均workdir=C:/home/workspace/lab/eva-web：
+
+- 精确3文件aoeform/useLeaveGuard/uploadClose Vitest：exit0，19/19，9.83s。
+- 必要合并15文件（原10文件+account aoeform/list/service/useLeaveGuard/uploadClose）：exit0，85/85，15.07s，未延长超时。
+- 精准Biome10本任务源码/测试文件：exit0，10file/19ms，No fixes applied。
+- aoeform AntD lint：exit0、1条既有Input addonBefore弃用、无skip/partial；index5、list3、rolelist0、useLeaveGuard0逐文件独立再验均exit0/no skip/partial。list3中2为原Divider用法、1为本任务新增锁定分隔符沿用的deprecated type提示，不误报为全部历史或零issues；均warning无运行阻塞。
+- git diff --check：exit0，仅LF/CRLF提示。
+
+原P2-1页面离开与P2-2上传关闭保护仍通过实际history/nativeEvent和实际AntD Upload/fileInput+customRequest网络边界回归：dirty/busy时block及beforeunload；继续编辑不放行，放弃先unblock再retry；旧确认二次busy/session判断、A→B→A token隔离、layout卸载拆监听/销毁确认。安装history5.3 block/retry实现与Umi导出已直接核实；安装AjaxUploader componentWillUnmount调用abort且请求abort实现已核实。上传中X/ESC/cancel/mask/route保护，上传结束恢复，旧回调不提交。浏览器强制离开仍以原生提示为限，不声称可阻止强制刷新。
+
+账号整体：最终用户明确Modal优先于全局Drawer，1040 centered、无右“角色授权”标题、右侧table区域stretch/absolute/minHeight320策略、800单列/多角色滚动，没有假空行或固定scroll.y440。真实亮暗Modal/Table与少角色模拟布局回归通过；实际左右像素等高/窄屏未视觉验收。
+
+Form roles回填/clear[]/一次editAccount保存经既有service roles→roleIds；新0000、编辑原locked保持，service/data/API/deps无本次差异。角色加载/error重试/保存禁用、提交失败保留、密码确认与格式MD5/不回填旧密码、不新增强度评分条件分支通过。列表现有lockAccounts切换契约param IDs、9999无锁按钮、frozen1解锁/其他操作受限、pending防重/错误重试/成功reload，内部doubleclick隔离与正常行doubleclick保留回归通过。没有实际服务器用户/角色持久化联调，不以mock契约验证宣称授权已真实写入。
+
+最终构建直接记录与产物：exec-c115cef0-e606-4bf3-b081-bf770a829064 build exit0/11716ms/34assets，现场stats34/HTML Eva Admin Pro/账号chunk a15d878d在validateFields后含isCurrent guard；源码11:36:12、产物11:37:49。替代旧14191ms/053e88af与Drawer中途产物，不重复build。前端最后tsc记录account0diag但全仓exit1；本成员未重跑全仓tsc，hono/config/appicon/旧生成类型失败和GitNexus43/42 UNKNOWN仍保留，不能称全仓通过。
+
+现场HEADdd4a3345ebadb3216f95de0a3531faf06e82cf59、本地origin引用0/0、index空、唯一stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25不变。全部验证命令已结束；仅写自己的status，无业务/vault/后端/deps/dist写入，无服务浏览器/分支stash/commitpush/子代理。
+
+下一步：先保存本状态后主动完整回报总控三个P2关闭及整体通过、检查/警告/类型/视觉限制；用户已授权commitpush，由总控正式唤起发布，本角色不自行发布，不要求用户重复确认。
