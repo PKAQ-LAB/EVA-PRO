@@ -396,3 +396,122 @@ Form roles回填/clear[]/一次editAccount保存经既有service roles→roleIds
 现场HEADdd4a3345ebadb3216f95de0a3531faf06e82cf59、本地origin引用0/0、index空、唯一stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25不变。全部验证命令已结束；仅写自己的status，无业务/vault/后端/deps/dist写入，无服务浏览器/分支stash/commitpush/子代理。
 
 下一步：先保存本状态后主动完整回报总控三个P2关闭及整体通过、检查/警告/类型/视觉限制；用户已授权commitpush，由总控正式唤起发布，本角色不自行发布，不要求用户重复确认。
+
+## MODULE-DETAIL-CONVERT-20261013 后端独立质量验收
+
+状态：完成；本次变更的代码范围独立审查通过，未发现新增P0/P1/P2；真实HTTP鉴权和数据库租户隔离未验证，不据此宣称运行时整体通过。
+
+审查根目录C:/home/workspace/lab/EVA-API；生产代码只读。已读取backend_developer状态、当前实际diff、新增ModuleServiceTest、StdService/Convert/RoleConvert/ModuleConvert及生成实现、ModuleCtrl/实体/Mapper、当前MyBatis配置/数据权限处理器/租户schema路由与事务切面、WebSecurityConfig/实际JwtAuthFilter/ResourceAuthorizationService。仅允许写本前端共享quality_reviewer状态；未运行前端验证，未修改后端源码、测试或配置。
+
+唯一生产diff为ModuleService.getModule：直接使用原父类同一个mapper.selectById，显式保持id=0的PARAM_ERROR与实体缺失CAN_NOT_FIND_RECORD，然后调用既有ModuleConvert.entityToDetailVo。父类StdService.get实际仅执行上述两处校验、同一selectById及通用convert.toVo，没有额外权限/租户校验、事务、缓存或上下文操作。因此替换没有省略父类安全逻辑；修复跳过的是父类RoleConvert的通用反射转换。RoleConvert不具有ModuleEntity到详情Vo映射，原通用转换发生在详情专用映射之前；源码链与开发者记录的转换错误一致。本成员未回退源码重跑基线；开发者baseline日志可见4tests/2failed，不冒称独立复现旧版本堆栈。
+
+资源查询仍按main_id等于请求id，无资源保持空列表；零ID不访问Mapper、缺记录不查资源；资源字段转换保持。实体ID/pid/path/code/name/icon/routeUrl/componentUrl/isleaf/frozen/tenantId/revision/sort及资源字段在真实生成MapStruct实现和测试中均检查。ModuleCtrl GET /sys/module/get/{id}及Response未改；path是树节点路径，routeUrl是页面路由，测试分别保留/2/7与/sys/module，不混用。null Long参数原有拆箱行为未改，本次不扩大范围。
+
+当前权限路径：JwtAuthFilter在进入控制器前经ResourceAuthorizationService校验资源权限，并以ThreadUserHelper.runWithUser运行过滤器链；本diff不绕过它。MyBatis条件DataPermissionInterceptor仍作用于同一mappedStatement。当前配置没有TenantLineInnerInterceptor，租户相关为既有schema路由/事务上下文；getModule原新均未添加TenantSchema注解或修改上下文。本结论是静态等价审查，Mockito测试没有实际安全过滤器或租户数据库，不能证明跨租户隔离运行结果。
+
+GitNexus只读context/detect_changes：HIGH，2symbols/6flows/1trackedfile；索引0017a316落后HEAD14commits，未索引新增未跟踪测试，未重建。旧索引getModule仍显示StdService.get，不能作为新源码调用关系；相关模块/StdService/Convert/RoleConvert从索引提交到HEAD差异为空，结合当前真实diff完成范围复核。HIGH/陈旧/未跟踪覆盖限制全部保留，不能称图谱全绿。
+
+独立执行：指定Gradle命令exit0，但22tasks均UP-TO-DATE，明确不当作独立测试执行；随后仅目标test任务加--rerun，实际1executed/21up-to-date，BUILD SUCCESSFUL17s，exit0。
+命令：gradle.bat :eva-web:eva-web-sys:eva-web-sys-service:test --rerun --tests org.pkaq.sys.module.service.ModuleServiceTest --offline --no-daemon --console=plain
+新XML：eva-web/eva-web-sys/eva-web-sys-service/build/test-results/test/TEST-org.pkaq.sys.module.service.ModuleServiceTest.xml，timestamp2026-10-13T04:33:15.042Z，tests4/skipped0/failures0/errors0；覆盖字段与资源mainId、空资源、零ID、缺记录。保留JVM共享/Mockito动态agent/Gradle插件弃用警告，无新增测试失败。不运行全仓测试或实际服务请求。
+
+Git现场：cornerstone，HEAD a17321e9ac5a4f676fa1890d88d161a6986b7b3b；本地origin/cornerstone引用0/0，未fetch；index空，唯一tracked差异ModuleService，新测试/docs/GO_REFACTOR_PLAN未跟踪并保留。git diff --check exit0，仅LF/CRLF提示。无stage/commit/push、分支stash操作、数据库、依赖、vault写入、服务浏览器或子代理。全部执行命令已结束。
+
+下一步：按用户授权先保存本状态后主动完整回报总控；本后端任务没有发布授权，本成员不发布，不追加确认循环或轮询。
+## MODULE-PATH-EDIT-RESOURCES / DICTIONARY-CATEGORIES-LAYOUT / ACCOUNT-PHONE-PREFIX / DRAWER-CLOSE-RIGHT-20261013 独立QA
+
+状态：MODULE代码范围通过；DRAWER代码/真实组件DOM范围通过；DICTIONARY布局与同步只读部分通过，但新增发现P2未关闭，分类仍等待设计；ACCOUNT-PHONE等待设计，未实现、不得计为通过。整批不通过，不恢复发布。
+
+已读前端完整4ID最新status、2主卡、适用AGENTS/CLAUDE、当前eva-frontend/antd/obsidian-memory技能、权威eva-web-development规则和仅eva-web匹配项目上下文；核对实际diff、生产/测试源码与后端真实VO/BO/SQL/service，只读业务。所有前端shell命令workdir=C:/home/workspace/lab/eva-web；未运行后端命令/HTTP/DB/服务浏览器。此前MODULE-DETAIL-CONVERT后端4tests独立QA复用，不重实施。
+
+MODULE-PATH-EDIT-RESOURCES：路由列用routeUrl缺值—，不将树path当路由；新增子模块显示当前真实父routeUrl只读并禁改parent，子路由手填，保存不改父path。getModule拒绝/错误被反馈且不打开编辑，后台通用Convert错误修复由后端负责。ModuleResourcesBo/Vo实际存在code/mainId/resourceType/Double sort、URL无强制非空，BUTTON/OPERATE类型语义有后端定义；按钮资源编码必填/URL可空、HTTP原路径校验保留，不创造CRUD HTTP URL。资源编辑不可变且保留ID/mainId/sort；删除空列表自动/** *广域资源注入。
+
+权限独立契约审查不只依赖mock：RoleGrantedModuleVo为modules+checkedModuleIds，ModuleResourcesVo.checked为Integer；RoleModule.xml LEFT JOIN角色关系并CASE得到1/0，候选没有按checked过滤；RoleService把任一已勾选资源模块加入checkedModuleIds。schema模式fetchSchemaModeResources取租户authorizedIds、资源候选按该集合查，effectiveSelected与上限取交集，再补可见祖先；grantResource接受RoleResourceRefBo.resourceId，去重/合法资源和租户上限校验、diff关系写入。前端保留全部后端允许候选，按每资源checked回填，模块与资源ID字符串化/树全局去重输入不变；保存只取选中模块的资源ID并去重，不混moduleId，不另查全局模块扩大租户候选。真实RoleModuleModal+service+mock HTTP边界回归通过，不能称真实授权持久化/隔离联调通过。既有角色Modal异步上下文风险未在本次扩展修复，不以历史图谱证明其全量安全。
+
+DICTIONARY-CATEGORIES-LAYOUT：DictAoeBo/DictEntity实际type是类型编码、单级默认code，服务setType匹配；没有业务/系统分类字段，不能用type/frozen/名称猜分类。分类及系统默认只读的结构/迁移/权限仍需技术设计，未完成需求全部。已实现frozen9999或status9999的同步主项/明细禁用、删除隐藏及handler拒绝、view模式、父层readOnlyRef拦截setLines；真实3tests覆盖两标识/可编辑恢复/打开编辑弹窗切只读关闭且恢复不重开。后端ensureDictEditable拒绝READ_ONLY仅源码核对。SideLayout原生button30px width+flexbasis0 0 30px，折叠title隐藏且minWidth0，40%/60%和45collapsed保留；真实按钮折叠回归通过。主项明细原生Card默认header title/extra同内距，局部body15承接原表内距；无负margin/删除共享padding，亮暗token保持。像素对齐、窄屏未视觉验收。
+
+P2-DICT-STALE-LINE：本次“切只读关闭旧弹窗/全部写保护”仍缺旧明细回调隔离。linelist.tsx23-29只reset modalType/editIndex，未销毁modal.confirm；42-56删除回调闭包捕获旧isReadOnly=false和旧lines。aoeform.tsx123父setLines只复核当前readOnlyRef布尔值，切换A→只读→可编辑B后会重新允许旧确认把A明细写入B。lineaoeform.tsx46-65的await validateFields完成后也无失效检查，58先Object.assign旧原对象，再调用受拦截setLines；即使当前只读，缓存/原currentItem.lines对象已被修改。该旧代码不是本次新引入，但本次新增只读防护未覆盖，属于本次要求的未完成项。
+
+独立只读Node复现直接提取实际handleSaveClick/handleDelete/confirmDelete函数，依赖均mock且无HTTP：旧明细编辑等待validateFields，currentReadonly=true后resolve，输出originalObject.keyValue=changed-after-readonly且parentWriteBlocked=true，证明父拦截挡不住Object.assign；旧A删除确认经过只读后切B再onOk，currentLines从B变成A2。此为实际源码控制流模拟，非完整React/浏览器切换。现有3字典组件回归没覆盖延迟校验/旧删除确认。需最小令确认与校验完成后同时复核当前字典/会话，切换/只读/卸载销毁旧确认，明细先不可变复制再写，补真实组件延迟回归；本成员不改业务源码或新增测试文件。
+
+ACCOUNT-PHONE-PREFIX：当前UserAoeBo/UserDetailVo/前端仅tel，现有addonBefore86固定呈现，无独立区号存取契约；账号源码本批无diff，不能宣称可编辑区号完成。等待独立字段及迁移或明确国际号码格式/无损旧值规则，不跨仓改后台。
+
+DRAWER-CLOSE-RIGHT：安装antd6.6.3，独立CLI metadata确认closable对象placement end支持，实际DrawerPanel实现标题/extra之后追加closeButton。模块实际组件回归验证ant-drawer-close-end、header.lastElementChild=close；业务/错误日志各只有同一prop差异，table-list closablefalse和账号Modal保持。代码/DOM通过；不声称真实页面像素验收。
+
+独立检查（最终字典effect补修之后）：15files66/66 exit0、15.48s，涵盖module4+role2+dict1+Side1+account5+readonlyRows+FormDialog；没有延长超时。完整命令为pnpm.cmd exec vitest run后依次上述15真实测试文件。Biome实际23文件（额外包含SideLayout CSS）exit0、31ms、No fixes applied。AntD10生产文件逐个exit0、partialfalse/skipped0，issues依次Side0/dictaoe0/dictlist0/dictlines1/moduleaoe2/modulelineaoe1/modulelines1/moduleindex6/logbiz2/logerror2；保留15issues，不称零问题；CLI6.6.3→6.6.6提示未升级。独立tsc --noEmit exit1、输出64行，本次module/role/dict/account/log/Side范围0diagnostics，全仓hono/config/appicon/旧生成类型等失败保留。diff --check exit0仅LF/CRLF提示。
+
+构建：复用前端最新实际记录build4692ms/exit0，不重跑未改build；本成员核对dist/stats.json34assets及12:44时间戳、实际module b811af2c含父路由和按钮资源、dictionary8af8aeb7含明细，不能把构建产物当P2关闭证明。GitNexus独立impact normalizeRoleModules上游再次storage43/runtime42错误/riskUNKNOWN，未重建索引，直接源码调用/契约审查补证。
+
+现场HEAD4bda07d8201ffd9e525651a47bf861176d61f586/trunk，本地origin引用0/0未fetch，index空，唯一stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25保留。所有验证命令已结束。仅追加自己quality_reviewer状态，无业务源码/测试/vault/backend/deps/dist写入，无stage/commit/push/分支stash操作/服务浏览器/子代理。本新批无发布授权；先存status后主动完整回报总控P2与逐ID结论，结束不轮询。
+## DICTIONARY-CATEGORIES-LAYOUT-20261013 P2-DICT-STALE-LINE 正式独立复验
+
+状态：P2-DICT-STALE-LINE关闭；字典可确定布局/现有只读防护及本次旧回调隔离代码范围通过，无剩余本次P0/P1/P2。业务/系统分类仍设计阻塞；ACCOUNT-PHONE区号仍设计阻塞，整项需求不得计为全部完成。MODULE/DRAWER此前通过范围保留，本轮不扩大。
+
+已读完整frontend补修status、实际三组件完整源码/真实diff及staleLines完整9项测试、当前权威规则相关异步/不可变/数据归属条款和Git现场。业务只读，唯一写入本status；所有shell workdir=C:/home/workspace/lab/eva-web。此前使用的eva-frontend/antd/obsidian-memory规则继续执行，GitNexus存储43/42 UNKNOWN限制保留，不重建不重复失败查询。
+
+补修源码核实：父DictAOEForm以currentItem对象+isReadOnly创建独立session，render更新sessionRef，layout setup/cleanup管理active；isCurrent同时检查挂载、token身份及只读。A→B→原A同一对象也新建token，旧A不恢复权限；父setLines闭包绑定其session。主项保存validate await返回后、response成功处理和finally均复核isCurrent，新session清自己的busy，旧finally不清新session。主保存异步守卫在本轮为源码核实，新9项中的主保存只覆盖正常及B当前数据保存，不冒称已单独执行主save所有延迟阶段回归。
+
+LineList layout cleanup在isCurrent切换/卸载时失活并destroy自己实际modal.confirm实例，重置编辑状态；confirm弹出前、旧onOk与handleDelete均canWrite检查，旧引用即使手动调用也不能跨字典写入。LineAOEForm本地session依modalType/editIndex/lines/父isCurrent，renderref和layoutcleanup共同隔离，入口和awaitvalidate返回后、重复反馈/合并/关闭/setLines前复核；取消亦复核。编辑采用新对象spread保留ID而不Object.assign原对象。仅父AOE→LineList→LineAOE两个真实调用点，新增isCurrent传递完整，无其他调用遗漏。
+
+新增9项真实组件回归已独立实际执行，未用旧同步3tests代替：真实AntD Form/Modal/Table/按钮，仅validateFields Promise边界延迟；四校验情景为只读、只读后B、A→B→原A同对象、卸载，原first deep snapshot和second.B1不变、旧值不出现、无旧editDict；只读后B仍正常提交自己B1。四删除情景采用实际App.modal.confirm和实际destroy，只保留实际配置onOk模拟迟到回调，均确认destroy已发生、旧onOk无污染/无旧保存，A→B→A现场DOM两行仍保留，B可保存自己B1。最后1项正常新增编辑删除+主保存，最终payload保留编辑A1及新增A3、删A2，原currentItem.lines始终deep不变。测试HTTP/service为mock，没有真实持久化请求，不称浏览器/服务联调。
+
+独立最终合并命令：pnpm.cmd exec vitest run src/pages/sys/dictionary/staleLines.test.tsx src/pages/sys/dictionary/aoeform.test.tsx src/pages/sys/module/aoeform.test.tsx src/pages/sys/module/index.test.tsx src/pages/sys/module/resources.test.tsx src/pages/sys/module/service.test.ts src/pages/sys/role/service.test.ts src/pages/sys/role/component/rolemodule.test.tsx src/components/SideLayout/index.test.tsx src/pages/sys/account/aoeform.test.tsx src/pages/sys/account/list.test.tsx src/pages/sys/account/service.test.ts src/pages/sys/account/useLeaveGuard.test.tsx src/pages/sys/account/uploadClose.test.tsx src/pages/sys/readonlyRows.test.tsx src/components/FormDialog/useStyles.test.tsx
+结果exit0，16files75/75，15.76s，实际含module/service.test.ts正确路径；本轮不是缓存或前端旧结果复述。新增stale9+原dict3和其余已通过回归均包括，未延长超时。
+
+精准Biome aoeform/linelist/lineaoeform/readonly/staleLines共5files：exit0、20ms、No fixes applied。AntD三生产文件独立逐个exit0、partialfalse/skipped0：aoe0issues；linelist1条Divider type弃用；lineaoeform1条Modal maskClosable弃用，均warning，未升级CLI或依赖。独立tsc --noEmit exit1、dictionary0diagnostics；真实错误文件包括cloudflare-worker、config/config.ts、src/.umi生成文件、appicon以及既有settings/dashboard/form/readonlyRows测试，不能称全仓通过。git diff --check exit0，仅LF/CRLF提示。
+
+最新build6652ms/exit0复用前端实际记录，不重复未改build；本成员核实dist34assets、stats timestamp2026-10-13T04:57:36.873Z、字典_0u3pcprc51a26.64d1014c.async.js包含新active session/父isCurrent保护，替代旧8af8aeb7产物。构建不是真实像素/窄屏/HTTP鉴权或持久化验收。分类仍无契约、PHONE仍tel-only，未伪造字段或系统分类权限。
+
+现场HEAD4bda07d8201ffd9e525651a47bf861176d61f586/trunk，index空、唯一stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25不变。本轮全部验证命令已结束；只写自己status，无业务/测试/backend/deps/vault/dist写入，无服务浏览器/HTTP/DB/分支stash/stagecommitpush/子代理。本新批无发布授权。先status后主动完整回报总控P2关闭、可确定部分通过及未完成设计项，结束不轮询。
+## MODULE / DICTIONARY 最新用户修正及 MODULE-FORM-NAME-ICON-20261013 最终独立QA
+
+状态：最新前端可确定实现代码范围独立QA通过，无新增本次P0/P1/P2；此前P2-DICT-STALE-LINE保持关闭。最新用户修正覆盖前文“字典可折叠/父路由单独只读展示/BUTTON专用入口”等旧效果，旧段落仅历史记录。分类与PHONE仍待设计，不计全部需求完成；数据库BUTTON/OPERATE及开发工具清理由后台成员处理，本前端QA不证明库已清。
+
+已读frontend最新完整修正/name-icon/验证/授权status、最终生产diff/真实测试、权威前端规则和当前适用技能，当前用户要求优先。图谱此前storage43/runtime42 UNKNOWN与eva-web未注册限制保留，不重建。源码与API只读，仅写本status；所有shell workdir=C:/home/workspace/lab/eva-web，不操作执行中的后端或数据库。
+
+DICTIONARY-CATEGORIES-LAYOUT：实际字典入口collapsiblefalse固定40%/剩余60%，没有收起/展开按钮或side-handle，标题/列表/新增浏览保留；SideLayout默认collapsibletrue，实际仅account/dictionary使用，账号未传false，默认折叠45行为和原真实折叠测试保持。会话token、readonly9999、父isCurrent、confirmdestroy/旧onOk检查、line await后拦截/不可变复制均保持，原9项staleLines及3同步只读测试本轮再次实际通过。主明细Card对齐代码保留。分类没有新增字段/假记录，仍设计阻塞。不是实际像素/窄屏验收。
+
+MODULE-PATH-EDIT-RESOURCES：真实handleAdd(record)仅parentId+record.routeUrl（缺值为空）作为子草稿，自身routeUrl直接预填可编辑，无独立父路由栏、不用IDpath/猜拼接、不带父其它字段；指定父不可改，保存子routeUrl/父object不变。模块列表routeUrl缺值—/detail错误反馈保持。RESOURCE_TYPE恢复实际DictSelector(data优先否则既有query接口)，showallfalse；删除本批硬编码类型Select/BUTTON或OPERATE特殊规则/专门新增按钮入口/新增code表列控件，统一资源path必填；同类型+路径判重，HTTP不同方法同路径允许。元数据id/mainId/code/sort以不可变spread保留，普通增改和真实确认删测试通过，未重新注入空列表/** *广域授权。角色checkedModuleIds/资源checked候选回填及resourceIDs-only保存完整原样保留，并在本轮实际组件/service边界测试通过；后端VO/SQL/租户上限此前独立源码审查结论复用，真实DB/HTTP未联调。
+
+资源字典前端不硬编码也不过滤真实数据；恢复DictSelector不保证现有数据库已无BUTTON/OPERATE。本轮HTTP选项测试注入6方法字典证明适配能力，不能当现网数据库类型证据。库清理验收与用户授权发布门禁由总控结合backend当前执行证据处理，本成员不查询或写数据库。
+
+MODULE-FORM-NAME-ICON：name/code同Row gutter16、各xs24/sm12，原字段校验和唯一性不变；实际AntD表单DOM同Row与列class断言、正常保存通过。IconSelect git历史d62c24cc为EVA自写组件迁入，原是白名单Popover/Input addonBefore；新右按钮属于用户最新改变而非上游恢复。icons.ts白名单/Outlined解析保留、实际生产唯一调用moduleAOE；SpaceCompact只读Input+末端真实Button，id传Input保持Form label关联，disabled输入/按钮/图标不交互，aria-label/expanded/controls。Popover6.6.3 CLI metadata支持styles/open/onOpenChange/placement，bottomRight和root外宽按整个anchor实测含按钮；ResizeObserver+windowresize监听与cleanup代码正确，原面板258滚动保留，icon-only margin仅限panel，fieldset边框内距清零。
+
+实际IconSelect/Form/Popover两回归证明末端Button可聚焦、展开选白名单图标回填并关闭；模拟DOMRect/ResizeObserver尺寸440→280令popup外宽同步，卸载disconnect；禁用不选择，恢复后Escape关闭/focus归入口。源码Escape preventDefault/stopPropagation避免穿透；未实际Drawer浏览器键盘Enter/Space端到端或像素尺寸验收。主题保留既有实现，不扩大清理旧CSS。
+
+独立最终必要测试命令：pnpm.cmd exec vitest run src/components/IconSelect/index.test.tsx src/components/SideLayout/index.test.tsx src/pages/sys/module/aoeform.test.tsx src/pages/sys/module/index.test.tsx src/pages/sys/module/resources.test.tsx src/pages/sys/module/service.test.ts src/pages/sys/dictionary/index.test.tsx src/pages/sys/dictionary/aoeform.test.tsx src/pages/sys/dictionary/staleLines.test.tsx src/pages/sys/role/service.test.ts src/pages/sys/role/component/rolemodule.test.tsx src/pages/sys/account/aoeform.test.tsx src/pages/sys/account/list.test.tsx src/pages/sys/account/service.test.ts src/pages/sys/account/useLeaveGuard.test.tsx src/pages/sys/account/uploadClose.test.tsx src/pages/sys/readonlyRows.test.tsx src/components/FormDialog/useStyles.test.tsx
+结果exit0、18files80/80、25.47s，未延长超时，是真实独立运行不是前端旧34.72s记录。旧账号/角色/字典P2及Drawer等必要回归保持。
+
+精准实际tracked+untracked受影响src TS/TSX/CSS共29files，Biome check exit0/50ms/No fixes。AntD7逐个exit0/partialfalse/skipped0：IconSelect0/SideLayout0/dictindex0/moduleindex6/moduleaoe2/modulelines1/modulelineaoe1，共10issues保留，CLI未升级；字典其余三生产前轮0/1/1证据源码不变保留。独立tsc --noEmit exit1，IconSelect/Side/module/dictionary/role/account范围0diagnostics；真实错误文件为cloudflare-worker/config/.umi/appicon/既有settings-dashboard-form-readonlyRows测试，不能称全仓通过。diffcheckexit0仅LF/CRLF提示。
+
+build复用前端最新29354ms/exit0，未重复未变构建；现场stats34assets/2026-10-13T06:22:15.846Z，moduleddbe42f5实际DictSelector RESOURCE_TYPE及xs24sm12、dict3a9b3e30、accounta15d878d保持；共享IconSelect在独立417cdcd8 chunk含Compact/Popover bottomRight/ResizeObserver，而不是modulechunk内联，实际产物核实无遗漏。构建不代表库清理/真实页面/持久化通过。
+
+现场HEAD4bda07d8201ffd9e525651a47bf861176d61f586/trunk、本地origin引用0/0未fetch/index空、唯一stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25保持。所有命令已结束，仅写本status，无业务/测试/backendDB/deps/vault/dist写入，无HTTP/服务浏览器/分支stash/stagecommitpush/子代理。用户已授权本批分步commitpush，无需重复询问；本角色只回报QA通过，须总控结合backend证据正式唤起发布成员，本成员不自行发布。先status后主动完整回报总控各ID结果、限制与命令结束，结束不轮询。
+## MODULE-RESOURCE-SEED-DEV-CLEANUP-20261013 最终独立QA（2026-10-18恢复中断）
+
+状态：本次后端资源/开发工具清理的代码与当前开发DB/精确缓存只读核对通过，未发现本次P0/P1/P2；无新增待修复阻塞。数据库6项不等于浏览器已验收，fetchDicts部分缓存缺项的既有行为及单项lazy回退限制如实保留。用户2026-10-18已授权全部当前前后端任务提交push，授权无需重复询问；本角色只QA，已通过后由总控正式唤起发布。
+
+中断边界：此前只读到backend status与两个Python脚本，尚未完成最终QA、未写本任务最终状态。今日先重新核对Git/完整backend清理status/3候选文件、成功备份与失败尝试目录，再实测目标；未沿用10月13日快照当作当前状态。后端HEAD仍a17321e9ac5a4f676fa1890d88d161a6986b7b3b/cornerstone，唯一tracked生产diff仍getModule9add1del，与已独立QA四测试范围一致；三维护候选和ModuleServiceTest仍未跟踪，无新增其它业务源码diff。前端HEAD4bda07d8及本批文件集合保持；前端80/80为10月13日已完成QA，本轮未重跑前端合并测试，不把旧结果改称今日执行。
+
+只读约束：所有本轮shell workdir=C:/home/workspace/lab/EVA-API；Python -B并禁止pycache。只import维护脚本的配置/连接/纯routes/snapshot/checks；未调用run(--apply)或restore，也未调用会写本地plan/复制backup的默认入口。凭据仅进程读取；PG明确connect(True)/SERIALIZABLE transaction_read_only=on，查询后rollback/close。Redis仅3精确键TYPE/EXISTS/PTTL/DUMP（存在时才允许GET/SMEMBERS分支，本次均none），没有KEYS/SCAN/EVAL/DEL/RESTORE/flush或任何DBRedis业务写入。除授权Gradle验证自动产物，仅追加自己的前端共享status，无源码/测试/配置/依赖/vault写入。
+
+当前DB实测：开发PG指纹d22bc534e71c，database/schema eva，read_only=on；脚本比较prod目标不同。相关表仅eva schema，sys_role_module仍VIEW，未删除view。54条清单ID/mainId/code/method/path/desc逐条与实际DB一致且对应模块code归属正确；22GET/32POST，ID/code/mainId+method+path各54唯一，全库非空资源code及活跃method/path重复均0。原29行清理目标各表全部剩余0；sys_module10、sys_module_resources77、sys_roleres_ref46、sys_tenant_resource23、套餐0、sys_role_resource46、sys_dict_item35；两角色各23授权，新54种子角色/租户/套餐授权均0。dev flat路径剩余0，非HTTP资源0。RESOURCE_TYPE当前精确为*,GET,POST,PUT,DELETE,PATCH。等价只读计划54条均已存在/to_insert0/cleanup0；没有重新执行计划写文件。
+
+今日与10月13日最终只读report另作逐行比较：全77资源的report字段投影完全相同，46条flat权限完整行完全相同；没有把当前计数相同替代这些逐行证据。其它表“原无关行未改”依据开发执行代码中事务前后逐行断言/成功提交记录，及本次当前目标/授权计数与seed无新引用检查；不宣称本成员持有所有表操作前完整独立快照。旧*:/sys、模块前缀与/sys/.../**业务权限未移除，新增精确种子没有收窄这些既有宽匹配，不据此声称逐操作拒绝效果或自动授权扩张。
+
+manifest/代码/脚本安全：3候选为docs/sql/module_resource_seed_dev_cleanup_20261013.py、module_resource_cache_cleanup_20261013.py、module_resource_seed_routes_20261013.json。全部源码hash与清单一致、54真实Controller方法Mapping与manifest一致（User9/Organization7/Post7/Role10/Module7/Dict10/BizLog2/Error2）；独立统计方法注解与生成器结果相符，8类均RestController单一类级Mapping。Role继承StdCtrl的get/checkUnique/del/switch四映射实际已覆写，无漏继承端点。list/edit/del等以真实Mapping为准，保留字典实际GET+POST /del/{id}；岗位沿sys.organization模块，不增模块。不含/api前缀、/**或新增*方法。新脚本AST语法及-O拒绝保护通过；默认applyFalse只读DB，显式--apply才写，PG目标hash/driver/db/schema和prod不同检查、Redis指纹/DB0和prod不同、精确ID/后代/计数/碰撞、锁/备份校验/回滚保护完整。固定维护任务范围，未引入常驻或自动执行。
+
+候选内容SHA256：seed脚本9b707e9b0fcc73881a0920348f9db55e97673d4aba835c0e2cf726fbd59d2520；cache脚本4820cdf173de689f448884d8697814eabee4c82e914b3b2bdc697bd3ea89db9b；manifest3e8a85fba450332282984b86323f0e3fb3f9cae6438af6f252df30ab4c8e6a9b。无password/secret/token字面量赋值，另读取实际dev/prod PG及Redis密码仅内存比较，3候选均不含这些真实值；未输出密码或连接主机。GO_REFACTOR_PLAN及备份不纳发布候选。
+
+备份/恢复：成功目录.gradle/module-resource-backup-20261013T062507Z，rows29行分表3/4/8/4/0/8/2，restore.sql与rows.json SHA256均匹配sha256.json；committed.json明确appliedtrue、54插入和SAVEPOINT恢复演练passed。失败062405无committed，未混为成功。恢复脚本54条精确种子DELETE、29条原行INSERT，列名逐一与当前schema相符，无upsert覆盖，当前系统仅账号profile有FK、不涉及本次表；有原行冲突和新种子后续授权拒绝机制。SAVEPOINT真实恢复/rollback是开发执行记录与已审核执行代码证据，本QA没有重演任何恢复写入。restore.sql自身仅校验DB名，未来恢复必须先通过维护脚本connect(False)指纹校验且复核后续数据，不能裸执行到另一同名数据库。备份/committed/redis-before均git check-ignore确认在.gradle，不入Git。
+
+Redis历史与当前分别核实：成功目录redis-before DUMP内容sha各自有效，redis-before文件sha与redis-invalidated记录一致；历史3键TTL均-1、Lua先逐个DUMP比备份相同再一次DEL3，历史post_exists=[0,0,0]。今日独立精确只读同指纹c2a1d585223c/DB0，dictdata::RESOURCE_TYPE与tenant0两role-resource精确键均TYPE none/EXISTS0/PTTL-2，仍未lazy重建；未将历史TTL-1说成现在TTL，未写缓存。
+
+前后端字典链：真实DictService.fetchDicts在其它缓存非空时确实返回部分字典，不补缺RESOURCE_TYPE；initDict直接保存返回map，module linelist读取initialState.dict.RESOURCE_TYPE缺失即undefined，未用{}遮蔽；真实DictSelector data不存在会请求/api/sys/dictionary/query/RESOURCE_TYPE。DictCtrl GET /sys/dictionary/query/{code}→queryDict，单项cache miss按code查未冻结DB主项/明细并cachePut，当前DB六项能作为该分支来源。独立提取实际DictSelector useEffect，仅擦除3处TS类型语法，依赖mock，缺data时实际请求上述路径并生成6选项；不是完整React/浏览器或真实HTTP。首次尝试直接用前端typescript转译器因MODULE_NOT_FOUND失败，未安装或改依赖，改为上述实际effect控制流模拟成功。未调用queryDict实际HTTP以免触发缓存写，未宣称Redis或页面已显示6项。已打开SPA可能保留旧initialState直到刷新；只读静态链和实际effect模拟表明刷新后的缺项有单项回退，本次不判P2，但fetchDicts本身的既有部分缺项行为继续披露。
+
+鉴权与匹配：application context-path /api，JwtAuthFilter优先servletPath、否则只剥真实contextPath段，避免/apix误剥；ResourceAuthorizationService传规范化method/path给RoleResourceCacheService。源码具体方法精确比较，AntPathMatcher对{id}/{type}/{value}单段模板及额外子层/操作边界用已有.gradle/ResourcePatternProbe.java独立以当前Spring7.0.9运行PASS。SysRoleResourceMapper有效资源筛选检查模块/角色frozen/deleted、HTTP类型、非零租户上限；已有宽匹配仍保留，未做真实拒绝HTTP测试。
+
+独立强制重跑命令：gradle.bat :eva-web:eva-web-auth:test --rerun --tests org.pkaq.core.auth.adapter.mybatis.rbac.service.RoleResourceCacheServiceTest --tests org.pkaq.core.auth.authentication.filter.JwtAuthFilterTest --offline --no-daemon --console=plain
+exit0、BUILD SUCCESSFUL 2m16s，18tasks/1executed17up-to-date，目标test实际执行，不将依赖缓存当重测。新XML3+2=5tests，failures/errors/skipped全0，时间分别2026-10-17T23:02:37.418Z与23:02:44.296Z。前三项覆盖通配模块前缀边界/具体HTTP方法不扩大/同角色跨租户key隔离；两JWT测试仅permVer和可信服务端角色/ThreadUser，并未直接断言/api剥离，纠正开发记录对此测试覆盖过宽表述；context剥离本轮源码核实，不冒称已有专门测试。ModuleService4tests此前独立已通过且本次源码范围未变，复用不重实施。JVM sharing及Gradle插件弃用/Gradle10兼容提示保留，不称零warning；未跑全仓/服务浏览器/实际HTTP。
+
+Git最终：cornerstone HEAD a17321e9ac5a4f676fa1890d88d161a6986b7b3b、本地origin/cornerstone0/0未fetch/index空，原GO_REFACTOR_PLAN保留；git diff --check exit0仅LFCRLF提示。前轮GitNexus对getModule HIGH/旧索引/新未跟踪文件无图覆盖限制保留，本轮3脚本以源码/AST/manifest/真实只读DB补证，不称完整索引已覆盖。所有命令已结束；无--apply/restore/DEL/DBRedis业务写、源码/测试/deps/vault写、服务浏览器/branchstash/commitpush/子代理。先status后主动完整回报总控通过及限制，用户已有全部提交push授权由总控正式唤起发布，本成员结束不轮询。

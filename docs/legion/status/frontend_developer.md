@@ -337,3 +337,95 @@
 - 普通push origin trunk成功dd4a→d238d26a；远端ls-remote确认d238d26a29b7f59a48bb7ba328b247f7902ec06b、0/0。代码worktree/index clean，剩余仅本任务docs记录收口。
 - 已按总控授权最小更新README登记及本主卡和自身status，QA status原样纳入；最后文档4文件独立提交前封存，不为自引用最终SHA再写文件。最终文档commit/push、HEAD/远端/0-0/worktree/index/stash验证将由主动发布回报确认。
 - 全仓tsc exit1（account0diag）、GitNexus43/42 UNKNOWN、aoeform1/index5/list3等warning继续披露，list含1新增Divider沿旧type用法；未声称全部既有或零issues。真实浏览器/等高像素/窄屏及生产用户角色持久化未验收，无服务浏览器/其他分支/upstream/deps/子代理。
+
+## MODULE-PATH-EDIT-RESOURCES-20261013 前端完成待独立QA
+
+状态：已实现、验证命令结束并交回前端写锁；新任务未提交推送。EVA 定制 sys 页面，非上游模板改造。
+
+- 列表 Path 改显示真实 routeUrl；新增子模块展示只读父路由，禁止改指定父节点，子路由仍手工填写，不猜拼接也不把 ID 层级 path 当路由。表单状态类型修正，保存沿现有接口。
+- 模块详情拒绝/失败反馈且不打开编辑，消除前端未捕获 Promise；用户栈 Convert.convert68→StdService.get90→ModuleService.getModule193 指向后台通用转换，不把前端 catch 说成后台根治。后台成员已把 get 改 mapper.selectById 后走原模块转换器，现场只读确认此实现，独立后台 QA 记录 4 测试通过；前端不写后台。
+- 使用真实 ModuleResources 字段 code/mainId/resourceType/sort，新增按钮资源入口，BUTTON/OPERATE 需编码、路径可空；HTTP 保持路径校验，资源编辑不可变且保留 ID/mainId/sort。移除空列表自动创建全部资源 /** *，不制造新增查询修改删除的接口路径或 DB 记录。
+- RoleGrantedModuleVo 实际 checkedModuleIds 和每资源 checked 已映射，保留未勾选候选；角色保存只传被选模块下的 resource IDs，去重，不混 module ID，不查询全局模块绕过租户候选。已只读核对 RoleService/RoleModule.xml 的候选与勾选语义、schema 授权上限。
+- 六定向文件 15 测试通过，涵盖真实 AntD 模块点击失败提示/子路由/BUTTON 配置/不可变编辑及角色候选、勾选与真实保存协议边界；RoleModule 交互等待实际 Checkbox.Group 注册效果后再点击，无业务代码为测试改写。
+
+## DICTIONARY-CATEGORIES-LAYOUT-20261013 可确定部分完成，分类设计待确认
+
+- 实际 DictAoeBo/DictEntity 明确 type 是字典类型编码，默认等于 code；V1 八个种子 type=code 且 frozen=0，不提供业务/系统分类。没有按名称、种子 ID 或 type 猜分类，没有制造分类记录或把 frozen=9999 等同系统分类。两个顶级分类及系统默认只读须技术设计明确分类字段/迁移/权限，当前不宣称已完成分类。
+- 明确现有 frozen=9999/status=9999 的只读防护补齐：列表删除隐藏并拒绝、详情 view、主项字段与保存禁用、保存校验后复查、明细所有写动作禁用且切只读关闭旧弹窗、父 setLines 拒绝当前只读写回。切回可编辑对象不重开旧弹窗。真实接口 backend ensureDictEditable 对 READ_ONLY 有保护，仅静态核对，不等于系统分类已具备权限。
+- SideLayout 原锚点改原生按钮，可访问名称/aria-expanded 保持，30px width+flex 0 0 30px 禁止折叠时被标题压缩，折叠标题隐藏。字典原 40%/60% 与 collapsedWidth45 保留，实际调用仅 account/dictionary。
+- 字典主项及明细统一原生 Card header title/extra 对齐，保留主题默认水平内距与边框，明细表原15内距由局部 Card body 承接。不删共享 ProCard padding、不负 margin；无浏览器像素/窄屏视觉验收。
+- 新真实组件测试3项覆盖双只读标识、无写调用、恢复业务可编辑保存及弹窗跨只读切换；SideLayout 1项真实按钮折叠与40%宽度状态。分类未实现，无伪造分类测试。
+
+## ACCOUNT-PHONE-PREFIX-20261013 契约缺口待技术设计确认
+
+- 只读核对 UserAoeBo、UserDetailVo、用户前端类型/表单，目前仅 tel，无独立区号。现有 addonBefore=86 只是固定呈现。未擅自新增未持久化区号字段、未拼接 86、未拆猜旧 tel、未改现有账号 Modal/角色区域/会话保护。
+- 可编辑区号要保持无损回填需确认新独立字段及后端存取迁移，或明确国际号码统一格式及旧数据规则；当前不把看似可编辑但无法保存的控件当完成。交总控技术设计，不跨仓写后台。
+
+## DRAWER-CLOSE-RIGHT-20261013 完成待独立QA
+
+- 查询实际 AntD6.6.3 metadata 和 DrawerPanel 源码，支持 closable={placement:'end'} 且在标题后真实 DOM 放置按钮。应用到模块新增编辑、业务日志详情、错误日志详情三个真实可关闭 Drawer；上游 table-list 的 closable=false 保留。账号 Modal 不变，mask/ESC/onClose/样式等原行为不改，无 CSS 动态类或视觉重排。
+- 真实模块 Drawer 回归验证 ant-drawer-close-end 及 header 最后元素是关闭按钮，已有保存测试继续通过。两个只读日志只追加同一属性。
+
+## 本批合并验证与交接限制
+
+- 合并15文件66/66 exit0、34.91s，包含原账号 Modal/授权/列表/上传/离开保护、readonlyRows 与共享 FormDialog 回归。最后字典 readonly effect 补修后字典3/3 exit0、3.90s；全量未重复，明确不把旧66当最后补修后的全量运行。
+- 最终22源/测试文件 Biome check exit0 no fixes；diff --check exit0。AntD10生产文件均exit0/partial=false，字典aoe/list、SideLayout0issues，字典明细1、模块aoe2/lineaoe1/linelist1/index6、两个日志各2，均披露 warning，不称零问题。CLI 提示升级未执行。
+- 最后 tsc exit1，module/role/dictionary/account/日志/SideLayout范围零诊断，全仓仍既有 hono/config/appicon/旧生成类型失败。最终补修后 build exit0、4692ms、34assets；替代之前23248ms构建。
+- GitNexus 模块前轮storage43/runtime42 UNKNOWN；本轮 SideLayout/DictAOEForm 查询 eva-web 未注册（可用索引 JW-web/EVA-API/bozen/EVA-PRO），风险 UNKNOWN，直接核对调用/接口，不重建索引。无提交，故没有 detect_changes 发布步骤。
+- HEAD4bda07d8201ffd9e525651a47bf861176d61f586、trunk、index未暂存，唯一原型stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25不动。保留总控任务卡与QA状态他人变化，仅追加自身status。
+- 无服务浏览器/真实接口写入/像素视觉验收、依赖/vault/后端/其他分支/upstream/stash操作或子代理。本批无发布授权，主动报告总控后结束，不轮询。
+
+## DICTIONARY-CATEGORIES-LAYOUT-20261013 P2-DICT-STALE-LINE 补修交接
+
+状态：补修已实现，命令全部结束，交回写锁待独立QA复验；不自行判定P2关闭或整批通过，无提交推送。
+
+- 完整读取quality_reviewer P2复现及当前三字典组件，接受旧确认/旧validate回调和Object.assign污染原currentItem.lines问题。仅本轮修改dictionary/aoeform.tsx、linelist.tsx、lineaoeform.tsx及新增staleLines.test.tsx，不扩大分类/协议/树或其他模块改造。
+- 父AOE按currentItem对象归属和isReadOnly建立useMemo会话token，render的当前token引用及layout active/cleanup双检查；A→B→A仍旧token失效，readonly变化/卸载立即失效。传给明细的isCurrent和setLines闭包绑定原token，不能因为B重新可写恢复旧A写权限。主保存校验后/响应后/finally亦用同一归属检查，切会话reset本会话busy，旧finally不清新状态。
+- LineList用layout cleanup销毁自己保存的实际App.modal.confirm实例，切会话重置编辑上下文，卸载失活。删除弹出前、onOk和实际删除再检查当前会话及挂载状态；旧确认回调即使被保留手动调用也不跨字典写入。
+- 明细AOE有本地modalType/editIndex/lines/父isCurrent token，卸载/变更失活；await validateFields之后、重复提示/合并/关闭/setLines之前检查归属。编辑改为next[index]={...原行,...values}，彻底移除Object.assign原对象；取消也复核会话。重复编码沿App上下文warning，不静态弹窗。
+- 新9个真实组件测试：真实AntD Form/Modal/Table与实际按钮，仅校验Promise边界延迟；只读、A→只读→B、A→B→原A同对象、卸载四情景；原first对象deep snapshot始终不变，旧结果不出现，B仍保存自己B1。删除用实际App modal.confirm调用产生的真实配置和真实destroy，仅保留实际onOk模拟迟到回调，四情景均销毁/无污染，回原A两行仍保留；另1项正常明细新增编辑删除及主项保存，验证原currentItem.lines始终未变。
+- 首轮字典2files12/12 exit0；最后加强A-B-A删除DOM断言后3files18/18（含module/service6）通过；最终完整16files75/75 exit0、16.39s，明确包含正确module/service.test.ts路径，替代中途误用.tsx过滤导致仅15files69的合并记录。原account会话/上传/角色、模块和Drawer等回归保持。
+- 精确5文件Biome check exit0/no fixes，最后新增断言单文件复核同样exit0；AntD三生产文件逐个exit0/partialfalse，aoe0/lines1/lineaoe1 issues，均warning保留（本轮不称零issues）。tsc全仓exit1，dictionary0diagnostics，既有hono/config/appicon/旧生成类型失败保留。
+- 最新生产代码build exit0、6652ms、34assets，字典chunk64d1014c，账号原a15d878d未改变；最后改动仅测试断言，不重复build。diffcheck exit0，仅Git换行提示。GitNexus影响查询eva-web未注册/riskUNKNOWN，实际调用仅父AOE→LineList→LineAOE源码核对，无索引/依赖重建。
+- HEAD仍4bda07d8201ffd9e525651a47bf861176d61f586/trunk，index空，唯一stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25不变。他人QA与任务卡保留，只追加自身status。
+- 分类/可编辑phone区号仍等待技术设计，不因P2补修称整体完成；未服务浏览器/真实请求/像素验收、后台/deps/vault/branch/upstream/stash/commitpush/subagent。按ID主动回报总控交锁再QA，结束不轮询。
+
+## MODULE-PATH-EDIT-RESOURCES / DICTIONARY-CATEGORIES-LAYOUT-20261013 最新用户修正
+
+状态：最新修正完成、命令全部结束、交回写锁待独立QA；不发布。覆盖此前相反呈现，旧status仅历史证据，不作为当前效果。
+
+- 字典SideLayout显式collapsible=false，固定width40%，内容剩余60%，无折叠按钮/入口且分组标题、浏览/新增/详情仍显示。共享SideLayout增加可选collapsible默认true，保留账号折叠和原45collapsed；不删除其他模块功能。已通过真实字典页面无收起展开按钮/40%/非collapsed DOM回归，原共享折叠回归保持。
+- 模块实际handleAdd(record)只带parentId及record.routeUrl到子草稿，缺路由为空，不带path/其他父字段；AOE路由字段直接回填且可编辑自己的值，移除上级路由独立只读栏。指定父节点仍禁止改选，保存不修改父记录。真实入口测试确认routeUrl=/sys/module不是/0/m1，AOE修改子路由后保存与父对象深值不变通过。没有猜子路径拼接。
+- 恢复原DictSelector(code=RESOURCE_TYPE,data=initialState.dict.RESOURCE_TYPE,showall=false)，删除本轮硬编码Select类型、BUTTON/OPERATE特殊校验与defaultType、专用新增按钮资源入口和额外资源编码控件/表列；资源path恢复统一必填，前端resourceUrl类型恢复必需。同HTTP方法+路径判重，不因不同方法同路径误判；保留不可变编辑、id/mainId/code/sort原元数据，普通资源新增/编辑/确认删除可用，未恢复空列表自动 /** *授权。role资源ID-only及候选/checked适配未改。
+- 真实HTTP字典由服务数据决定，不前端硬编码或过滤。只读发现V1种子仍有BUTTON/OPERATE(4057/4058)，已向总控报告，由后台数据任务核对现有真实字典；前端恢复原API不等于已删除数据库类型。真实资源数据批次、开发工具菜单数据库删除均后台负责，未跨仓或DB写入。
+- 字典P2会话/isCurrent/confirmation destroy/await后检查/不可变明细全部原样保持，完整9项staleLines及正常CRUD回归通过；不是以去折叠重写异步逻辑。
+
+## MODULE-FORM-NAME-ICON-20261013
+
+- 已核对真实组件/唯一调用moduleAOE、git历史d62c24cc迁入记录、只读原EVA-PRO IconSelect/index.js；属于用户EVA定制组件，不是上游表单示例。原实现使用白名单+Popover+Input addonBefore，当前按最新要求调整右按钮，不把新右入口谎称原文件本来就有。保留当前迁入的icons.ts白名单/Outlined解析/Popover面板，不加依赖或替代面板。
+- 名称与编码放同Row(gutter16)，各Col xs24/sm12，保留原校验、唯一性检查、长度和字段语义；宽屏两列、窄屏按AntD断点换行。真实表单DOM断言两字段外围响应列同Row/相同xs-sm配置，保存与父路由回归通过。
+- IconSelect以Space.Compact组成只读文本和右侧原生Button，Form自动id透传Input可与label关联，按钮aria-label/expanded/controls及禁用状态可访问。Popover bottomRight锚在整体最右按钮，root宽使用外层实际getBoundingClientRect.width（含文本及按钮），原生ResizeObserver+window resize更新/cleanup，不固定猜值或用动态CSS hash。fieldSet标注原面板，原白名单按钮有名称；选中回填并关闭，Escape关闭且stopPropagation防止穿透关闭模块Drawer，并把焦点还给入口。面板按钮原margin作用域移到iconList，避免右入口也被加8px外距；fieldset局部默认内距/边框清零，旧面板258滚动高度保留。
+- 真实IconSelect/Form/Popover两回归通过，校验右按钮确为最后元素、可焦点、展开/选择回填/关闭、Resize模拟440→280对应popup root外宽、卸载observer disconnect；禁用不选择、恢复后Escape关闭并聚焦入口。尺寸由模拟DOMRect/ResizeObserver边界注入，动画在测试ConfigProvider中关闭，不冒称真实浏览器像素/窄屏或键盘Enter/Space端到端验收。
+
+## 最新合并验证和交接
+
+- 最终18files80/80 exit0、34.72s（IconSelect/SideLayout、module aoe/index/resources/service、dict index/aoe/staleLines、role service/modal、account5、readonlyRows、FormDialog）。原普通HTTP资源创建/实际字典选项/不可变ID保留/真实确认删除，角色授权和字典P2保护均保留。首轮选择器错误已改为实际添加下级文字、含plus图标的button名称正则、外围响应Col；不更改业务行为迎合测试。
+- 最终29源/测试/CSS文件Biome check exit0、55ms、No fixes。中途2formatter问题已在本任务CSS和字典页面测试精准修正，仅格式无语义；不宣称中途失败检查通过。当前AntD7生产文件均exit0/partialfalse：IconSelect0/SideLayout0/dictindex0/moduleindex6/moduleaoe2/modulelinelist1/modulelineaoe1，warnings披露，前批其余文件证据保留。CLI升级提示未执行。
+- tsc全仓exit1，IconSelect/SideLayout/module/dict/role/account范围0diagnostics；全仓hono/config/appicon/旧生成类型等既有错误保留。最终生产build exit0、29354ms、34assets（module ddbe42f5、dict3a9b3e30、账号仍a15d878d）；之后仅无语义formatter，不重复运行未变构建。diffcheck exit0仅换行提示。
+- GitNexus SideLayout/IconSelect查询eva-web未注册/riskUNKNOWN，实际源码搜索IconSelect唯module调用、SideLayout唯account/dict，未重建索引。GitHEAD4bda07d8201ffd9e525651a47bf861176d61f586/trunk/index空，唯一原型stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25保持。他人QA/main卡变化保留，只追加自身status。
+- 无服务浏览器/HTTP/DB/backend/deps/vault/branch/upstream/stash/commitpush/subagent。分类和phone仍待设计，不扩大当前修正。所有命令结束主动交总控各ID/写锁待QA，不轮询。
+
+## 本批最新发布授权记录
+
+用户已授权分步提交并push当前最终前端批次；授权保留，无需重复询问。实现和验证已完成并交锁，仍须最新修改的独立QA最终通过，由总控正式唤起后才精确按逻辑分组提交、普通push origin/trunk；不提前发布旧已QA而最新未QA版本。分类与phone契约未完成须在发布说明准确披露，不制造假字段。远端新提交/分叉或冲突时暂停，原型stash保护及精确暂存边界继续执行。本条仅记录授权，无stage/commit/push/fetch动作。
+
+## 2026-10-18 本批正式分步发布收口
+
+状态：完成。用户10月18日全部提交push授权已执行，前端三完整代码组已普通推送origin/trunk，最后文档独立封存；最终文档SHA/远端/clean核验通过发布回报确认，不为记录自身SHA再改文件。
+
+- 最终QA门禁已核验：前端2026-10-13独立18files80/80、Biome29、build29354ms34assets，以及2026-10-18后台/当前开发DB/精确缓存跨DictSelector最终独立QA均通过，无本次P0/P1/P2。前端80是历史证据，今日未机械重跑；29源/测试/CSS全部与今日预检SHA256相同，三组实际hook后再次比对均无变化。
+- 发布前fetch仅origin/trunk，无远端新增或分叉，HEAD/localorigin/真实远端均4bda07d8、0/0。精确逐文件stage，未git add .；正常pre-commit lint-staged/Biome及commit-msg commitlint执行，没有绕过。
+- 代码组1 f112513a6b9135a2f97235839891a2f9f60e0514：字典布局/readonly/session保护与SideLayout及相应真实回归，12files；代码组2 0ab05915b977a55df5f17cbd921b43e95387baee：模块路由/HTTP资源、名称编码/图标及角色资源授权和测试，15files；代码组3 2c7466f14f6a3ba8dd0682a43e589fb0e345d762：业务/错误日志Drawer右关闭按钮，2files。完整分组避免缺调用或测试的中间态。
+- 三组普通push成功4bda→2c7466f1，真实远端ls-remote=HEAD=localorigin完整SHA已确认，ahead/behind0/0；剩余仅本批文档。自动hook临时备份690ef88c/d43c1026/477f673c正常清理，原型stashdf210e76e0c70ec753800a3d0e52f6d7808a7e25始终唯一原样，无手工stash操作。
+- 按总控本次明确授权最小收口README/两主卡/自身status，去掉主卡旧独立父路由栏、专门BUTTON入口、字典可折叠及未授权发布描述。QA状态原文提交，不代写。字典分类和可编辑phone区号仍设计待定，未冒称完成或制造字段；54真实HTTP资源、开发工具菜单清理及当前六项字典的开发库/缓存证据归独立后台QA，不等于前端真实HTTP已验收。
+- 全仓tsc既有失败、修改范围0diag、GitNexus43/42版本不兼容UNKNOWN与弃用警告保留。无真实浏览器/像素/窄屏或HTTP持久化验收，无服务/依赖更新/后台DB/vault/其他分支/upstream写入或子代理。最终文档提交与普通push之后核验clean/index空/stash和远端一致，主动回报总控全部命令结束。
