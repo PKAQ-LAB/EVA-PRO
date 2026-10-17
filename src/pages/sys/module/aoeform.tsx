@@ -48,7 +48,9 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [form] = Form.useForm<ModuleItem & { status?: boolean }>();
+  const [form] = Form.useForm<
+    Omit<ModuleItem, 'status'> & { status?: boolean }
+  >();
   const dialogStyles = useFormDialogStyles();
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
@@ -59,6 +61,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
     () => excludeTreeSubtree(data, currentItem.id),
     [data, currentItem.id],
   );
+  const fixedParent = operateType === 'create' && Boolean(currentItem.parentId);
 
   useEffect(() => {
     if (operateType === '') return;
@@ -68,7 +71,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
       ...(currentItem as ModuleItem),
       // V5: status 字段为 boolean 形式（true=启用），保存时再映射回 0000/0001
       status: currentItem?.status ? currentItem.status === '0000' : true,
-    } as never);
+    });
   }, [operateType, currentItem, form]);
 
   const checkCode = async (_: unknown, value: string) => {
@@ -81,14 +84,18 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
     setSubmitting(true);
     try {
       const values = await form.validateFields();
+      if (fixedParent && values.parentId !== currentItem.parentId) {
+        msg.error('新增下级时不能修改上级模块');
+        return;
+      }
       if (!isTreeParentAllowed(data, currentItem.id, values.parentId)) {
         msg.error('不能选择当前模块或其下级作为上级模块');
         return;
       }
       const res = await editModule({
-        ...(values as ModuleItem),
+        ...values,
         id: currentItem.id,
-        status: (values as { status?: boolean }).status ? '0000' : '0001',
+        status: values.status ? '0000' : '0001',
         resources: lines,
       });
       if (res.success) {
@@ -103,6 +110,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
 
   return (
     <Drawer
+      closable={{ placement: 'end' }}
       styles={dialogStyles}
       width={640}
       maskClosable={false}
@@ -122,31 +130,37 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
       }
     >
       <Form colon form={form} layout="horizontal" {...formItemLayout}>
-        <Form.Item
-          label="模块名称"
-          name="name"
-          rules={[{ required: true, max: 30, min: 2 }]}
-        >
-          <Input maxLength={30} />
-        </Form.Item>
-        <Form.Item
-          label="模块编码"
-          name="code"
-          validateTrigger="onBlur"
-          rules={[
-            {
-              max: 40,
-              min: 2,
-              required: true,
-              whitespace: true,
-              validator: checkCode,
-              message: '编码格式错误，仅允许使用字母、数字或下划线',
-              pattern: /^[a-zA-Z_0-9]{2,40}$/,
-            },
-          ]}
-        >
-          <Input maxLength={40} />
-        </Form.Item>
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="模块名称"
+              name="name"
+              rules={[{ required: true, max: 30, min: 2 }]}
+            >
+              <Input maxLength={30} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="模块编码"
+              name="code"
+              validateTrigger="onBlur"
+              rules={[
+                {
+                  max: 40,
+                  min: 2,
+                  required: true,
+                  whitespace: true,
+                  validator: checkCode,
+                  message: '编码格式错误，仅允许使用字母、数字或下划线',
+                  pattern: /^[a-zA-Z_0-9]{2,40}$/,
+                },
+              ]}
+            >
+              <Input maxLength={40} />
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item
           label="路由地址"
           name="routeUrl"
@@ -178,10 +192,11 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
           name="parentId"
         >
           <TreeSelector
+            disabled={fixedParent}
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
             data={parentOptions as never}
             keys={['id', 'name', 'children']}
-            allowClear
+            allowClear={!fixedParent}
             showSearch
             placeholder="请选择上级模块（留空为添加顶级模块）"
           />

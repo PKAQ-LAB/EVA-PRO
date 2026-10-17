@@ -3,6 +3,9 @@ export type ModuleStatus = '0000' | '0001' | '9999';
 
 export interface ModuleResource {
   id?: string;
+  mainId?: string;
+  code?: string;
+  sort?: number;
   resourceDesc: string;
   resourceUrl: string;
   resourceType?: string;

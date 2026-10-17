@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { useModel } from '@umijs/max';
 import { App, Button, Divider, Table, type TableColumnsType } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import type { ModuleResource } from './data.d';
 import ModuleLineAOEForm, { type LineModalType } from './lineaoeform';
 
@@ -18,16 +18,6 @@ const ModuleLineList: React.FC<ModuleLineListProps> = ({ lines, setLines }) => {
   const resourceTypeDict = (
     initialState?.dict as Record<string, unknown> | undefined
   )?.RESOURCE_TYPE as Record<string, string> | undefined;
-
-  // V5 行为：lines 为空时插入一条 "全部资源" 默认行
-  useEffect(() => {
-    if (!lines || lines.length === 0) {
-      setLines([
-        { resourceDesc: '全部资源', resourceUrl: '/**', resourceType: '*' },
-      ]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleAdd = () => {
     setEditIndex('');
@@ -90,7 +80,7 @@ const ModuleLineList: React.FC<ModuleLineListProps> = ({ lines, setLines }) => {
           style={{ marginBottom: 10 }}
           type="primary"
           icon={<PlusOutlined />}
-          onClick={handleAdd}
+          onClick={() => handleAdd()}
         >
           新增资源
         </Button>

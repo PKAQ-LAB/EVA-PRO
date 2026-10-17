@@ -81,11 +81,9 @@ export const saveRoleModules = (
 ) =>
   http.post<MutationResult>(APIS.ROLE_SAVEMODULE, {
     roleId: id,
+    // 后端授权参数仅接收资源ID，模块ID不能混入同一集合。
     resourceId: Array.from(
-      new Set([
-        ...Object.values(resources).flat(),
-        ...modules.map((module) => module.moduleId),
-      ]),
+      new Set(modules.flatMap((module) => resources[module.moduleId] ?? [])),
     ),
   });
 
@@ -146,12 +144,27 @@ function normalizeRoleModules(
     (payload.resources as RoleModuleNode[] | undefined) ??
     (payload.list as RoleModuleNode[] | undefined) ??
     [];
+  const normalizedModules = deduplicateRoleModuleTree(modules);
+  const selectedResources: Record<string, string[]> = {};
+  const collectSelected = (nodes: RoleModuleNode[]) => {
+    for (const node of nodes) {
+      selectedResources[node.id] = (node.resources ?? [])
+        .filter((resource) => resource.checked === 1)
+        .map((resource) => resource.id);
+      if (node.children) collectSelected(node.children);
+    }
+  };
+  collectSelected(normalizedModules);
   return {
-    modules: deduplicateRoleModuleTree(modules),
-    checked:
-      ((payload.checked ?? payload.checkedIds) as string[] | undefined) ?? [],
+    modules: normalizedModules,
+    checked: (
+      ((payload.checked ?? payload.checkedModuleIds ?? payload.checkedIds) as
+        | Array<string | number>
+        | undefined) ?? []
+    ).map(String),
     checkedResource:
-      (payload.checkedResource as Record<string, string[]> | undefined) ?? {},
+      (payload.checkedResource as Record<string, string[]> | undefined) ??
+      selectedResources,
   };
 }
 
@@ -164,7 +177,14 @@ function deduplicateRoleModuleTree(
     if (seenIds.has(id)) return [];
     seenIds.add(id);
 
-    const next = { ...module };
+    const next = {
+      ...module,
+      id,
+      resources: module.resources?.map((resource) => ({
+        ...resource,
+        id: String(resource.id),
+      })),
+    };
     if (module.children) {
       next.children = deduplicateRoleModuleTree(module.children, seenIds);
     }

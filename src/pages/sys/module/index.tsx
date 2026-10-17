@@ -60,7 +60,9 @@ const SysModulePage: React.FC = () => {
   const refresh = () => modulesQuery.refetch();
 
   const handleAdd = (record?: ModuleItem) => {
-    setCurrentItem(record ? { parentId: record.id } : {});
+    setCurrentItem(
+      record ? { parentId: record.id, routeUrl: record.routeUrl ?? '' } : {},
+    );
     setOperateType('create');
   };
 
@@ -69,10 +71,16 @@ const SysModulePage: React.FC = () => {
       modal.warning({ title: '提示', content: '没有选择记录' });
       return;
     }
-    const res = await getModule(record.id);
-    if (res.data) {
-      setCurrentItem(res.data);
-      setOperateType('edit');
+    try {
+      const res = await getModule(record.id);
+      if (res.success !== false && res.data) {
+        setCurrentItem(res.data);
+        setOperateType('edit');
+      } else {
+        msg.error('模块详情加载失败，请重试');
+      }
+    } catch {
+      msg.error('模块详情加载失败，请重试');
     }
   };
 
@@ -143,9 +151,9 @@ const SysModulePage: React.FC = () => {
       render: (text) => (text ? (IconMap[text as string] ?? text) : null),
     },
     {
-      title: 'Path',
-      dataIndex: 'path',
-      render: (_, record) => record.path,
+      title: '路由地址',
+      dataIndex: 'routeUrl',
+      render: (_, record) => record.routeUrl || '—',
     },
     { title: '上级模块', dataIndex: 'parentName' },
     {

@@ -1,6 +1,6 @@
-import { Form, Input, Modal } from 'antd';
+import { App, Form, Input, Modal } from 'antd';
 import React, { useEffect } from 'react';
-import { DictSelector } from '@/components';
+import DictSelector from '@/components/DictSelector';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import type { ModuleResource } from './data.d';
 
@@ -36,6 +36,7 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
   resourceTypeDict,
 }) => {
   const [form] = Form.useForm<ModuleResource>();
+  const { modal } = App.useApp();
   const dialogStyles = useFormDialogStyles();
 
   useEffect(() => {
@@ -45,21 +46,31 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
       form.setFieldsValue(lines[editIndex]);
       return;
     }
-    form.setFieldsValue({ resourceType: 'GET' } as ModuleResource);
+    form.setFieldsValue({ resourceType: 'GET' });
   }, [modalType, editIndex, lines, form]);
 
   const handleSaveClick = async () => {
-    const values = await form.validateFields();
+    const values = await form.validateFields().catch(() => undefined);
+    if (!values) return;
     const exist = lines.find(
-      (v, i) => values.resourceUrl === v.resourceUrl && i !== editIndex,
+      (value, index) =>
+        index !== editIndex &&
+        Boolean(
+          values.resourceUrl &&
+            values.resourceUrl === value.resourceUrl &&
+            values.resourceType === value.resourceType,
+        ),
     );
     if (exist) {
-      Modal.warning({ title: '路径重复', content: '资源路径已经存在' });
+      modal.warning({
+        title: '资源重复',
+        content: '同类型资源路径已经存在',
+      });
       return;
     }
     const next = [...lines];
     if (editIndex !== '') {
-      Object.assign(next[editIndex], values);
+      next[editIndex] = { ...next[editIndex], ...values };
     } else {
       next.push(values);
     }
@@ -87,7 +98,7 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
           name="resourceDesc"
           rules={[{ required: true, max: 30 }]}
         >
-          <Input />
+          <Input placeholder="例如：新增、查询、修改、删除" />
         </Form.Item>
         <Form.Item
           label="资源类型"

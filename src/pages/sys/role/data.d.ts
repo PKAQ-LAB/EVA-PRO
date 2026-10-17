@@ -28,6 +28,9 @@ export interface RoleResource {
   id: string;
   resourceDesc: string;
   resourceUrl?: string;
+  code?: string;
+  resourceType?: string;
+  checked?: number;
 }
 
 export interface RoleModuleNode {

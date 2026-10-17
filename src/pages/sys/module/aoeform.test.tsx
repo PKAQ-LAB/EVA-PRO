@@ -13,8 +13,13 @@ vi.mock('@/components', () => ({
   IconSelect: ({ id, value, onChange }: ComponentProps<'input'>) => (
     <input id={id} value={value} onChange={onChange} />
   ),
-  TreeSelector: ({ id, value, onChange }: ComponentProps<'input'>) => (
-    <input id={id} value={value} onChange={onChange} />
+  TreeSelector: ({
+    id,
+    value,
+    onChange,
+    disabled,
+  }: ComponentProps<'input'>) => (
+    <input id={id} value={value} onChange={onChange} disabled={disabled} />
   ),
 }));
 
@@ -57,6 +62,19 @@ describe('ModuleAOEForm', () => {
     );
 
     expect(await screen.findByLabelText('模块编码')).toHaveValue('MODULE_CODE');
+    const nameColumn = screen
+      .getByLabelText('模块名称')
+      .closest('.ant-col-xs-24');
+    const codeColumn = screen
+      .getByLabelText('模块编码')
+      .closest('.ant-col-xs-24');
+    expect(nameColumn?.parentElement).toBe(codeColumn?.parentElement);
+    expect(nameColumn).toHaveClass('ant-col-xs-24', 'ant-col-sm-12');
+    expect(codeColumn).toHaveClass('ant-col-xs-24', 'ant-col-sm-12');
+    const header = document.querySelector('.ant-drawer-header');
+    const close = screen.getByRole('button', { name: 'Close' });
+    expect(close).toHaveClass('ant-drawer-close-end');
+    expect(header?.lastElementChild).toBe(close);
     expect(screen.getByLabelText('路由地址')).toHaveValue('/system/module');
     expect(screen.queryByLabelText('Path')).not.toBeInTheDocument();
     expect(
@@ -73,5 +91,55 @@ describe('ModuleAOEForm', () => {
       routeUrl: '/system/module',
     });
     expect(submitted).not.toHaveProperty('path');
+  });
+});
+
+it('新增下级路由地址预填父routeUrl且可编辑，保存不改父路径', async () => {
+  vi.clearAllMocks();
+  mocks.checkModuleUnique.mockResolvedValue({ success: true });
+  mocks.editModule.mockResolvedValue({ success: true });
+  const parent = {
+    id: 'parent-a',
+    name: '系统管理',
+    path: '/0/parent-a',
+    routeUrl: '/sys',
+  };
+  render(
+    <App>
+      <ModuleAOEForm
+        operateType="create"
+        currentItem={{
+          parentId: 'parent-a',
+          routeUrl: parent.routeUrl,
+          name: '子模块',
+          code: 'CHILD_CODE',
+          icon: 'setting',
+          orders: '1',
+        }}
+        data={[parent]}
+        onClose={vi.fn()}
+        onSuccess={vi.fn()}
+      />
+    </App>,
+  );
+  expect(await screen.findByLabelText('路由地址')).toHaveValue('/sys');
+  expect(screen.queryByLabelText('上级路由地址')).not.toBeInTheDocument();
+  expect(screen.getByLabelText(/上级模块/)).toBeDisabled();
+  expect(screen.getByLabelText('路由地址')).not.toHaveAttribute('readonly');
+  fireEvent.change(screen.getByLabelText('路由地址'), {
+    target: { value: '/sys/child' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: /保\s*存/ }));
+  await waitFor(() => expect(mocks.editModule).toHaveBeenCalledTimes(1));
+  expect(mocks.editModule.mock.calls[0][0]).toMatchObject({
+    parentId: 'parent-a',
+    routeUrl: '/sys/child',
+  });
+  expect(mocks.editModule.mock.calls[0][0]).not.toHaveProperty('path');
+  expect(parent).toEqual({
+    id: 'parent-a',
+    name: '系统管理',
+    path: '/0/parent-a',
+    routeUrl: '/sys',
   });
 });

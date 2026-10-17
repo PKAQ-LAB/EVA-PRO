@@ -1,4 +1,4 @@
-.iconSelect :global(.ant-btn-icon-only) {
+.iconList :global(.ant-btn-icon-only) {
   margin: 8px 0 0 8px;
 }
 
@@ -13,6 +13,10 @@
 }
 
 .iconInner {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
   max-height: 258px;
   overflow-x: hidden;
   overflow-y: auto;
