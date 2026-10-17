@@ -9,6 +9,7 @@ import {
 } from 'antd';
 import React, { useState } from 'react';
 import type { DictItem } from './data.d';
+import { isReadonlyDict } from './readonly';
 
 const { Search } = Input;
 
@@ -40,6 +41,7 @@ const DictListView: React.FC<DictListProps> = ({
   const [search, setSearch] = useState('');
 
   const confirmDelete = (record: DictItem) => {
+    if (isReadonlyDict(record)) return;
     modal.confirm({
       title: '删除后系统中部分数据可能无法正确显示，确定要删除吗？',
       centered: true,
@@ -58,8 +60,14 @@ const DictListView: React.FC<DictListProps> = ({
       align: 'center',
       width: 100,
       render: (_, record) =>
-        record.status !== '9999' && (
-          <a className="eva-delete-link" onClick={() => confirmDelete(record)}>
+        !isReadonlyDict(record) && (
+          <a
+            className="eva-delete-link"
+            onClick={(event) => {
+              event.stopPropagation();
+              confirmDelete(record);
+            }}
+          >
             删除
           </a>
         ),

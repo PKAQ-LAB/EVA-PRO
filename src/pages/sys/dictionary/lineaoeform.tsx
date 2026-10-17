@@ -1,5 +1,5 @@
-import { Form, Input, Modal } from 'antd';
-import React, { useEffect } from 'react';
+import { App, Form, Input, Modal } from 'antd';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import type { DictLine } from './data.d';
 
@@ -12,6 +12,7 @@ export interface LineAOEFormProps {
   setLines: (lines: DictLine[]) => void;
   editIndex: number | '';
   setEditIndex: (v: number | '') => void;
+  isCurrent: () => boolean;
 }
 
 const TITLE: Record<Exclude<LineModalType, ''>, string> = {
@@ -31,9 +32,25 @@ const LineAOEForm: React.FC<LineAOEFormProps> = ({
   setLines,
   editIndex,
   setEditIndex,
+  isCurrent,
 }) => {
   const [form] = Form.useForm<DictLine>();
   const dialogStyles = useFormDialogStyles();
+  const { modal } = App.useApp();
+  const session = useMemo(
+    () => ({ active: false }),
+    [modalType, editIndex, lines, isCurrent],
+  );
+  const sessionRef = useRef(session);
+  sessionRef.current = session;
+  useLayoutEffect(() => {
+    session.active = true;
+    return () => {
+      session.active = false;
+    };
+  }, [session]);
+  const canWrite = () =>
+    session.active && sessionRef.current === session && isCurrent();
 
   useEffect(() => {
     if (modalType === '') return;
@@ -44,18 +61,20 @@ const LineAOEForm: React.FC<LineAOEFormProps> = ({
   }, [modalType, editIndex, lines, form]);
 
   const handleSaveClick = async () => {
-    const values = await form.validateFields();
+    if (!canWrite()) return;
+    const values = await form.validateFields().catch(() => undefined);
+    if (!values || !canWrite()) return;
     // 校验编码是否重复
     const exist = lines.find(
       (v, i) => values.keyName === v.keyName && i !== editIndex,
     );
     if (exist) {
-      Modal.warning({ title: '编码重复', content: '字典编码已经存在' });
+      modal.warning({ title: '编码重复', content: '字典编码已经存在' });
       return;
     }
     const next = [...lines];
     if (editIndex !== '') {
-      Object.assign(next[editIndex], values);
+      next[editIndex] = { ...next[editIndex], ...values };
     } else {
       next.push(values);
     }
@@ -71,7 +90,9 @@ const LineAOEForm: React.FC<LineAOEFormProps> = ({
       cancelText="取消"
       okText="提交"
       centered
-      onCancel={() => setModalType('')}
+      onCancel={() => {
+        if (canWrite()) setModalType('');
+      }}
       open={modalType !== ''}
       width={500}
       onOk={handleSaveClick}

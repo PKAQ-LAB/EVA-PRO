@@ -1,7 +1,15 @@
 import { App, Button, Card, Col, Form, Input, Row } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import type { DictItem, DictLine } from './data.d';
 import LineList from './linelist';
+import { isReadonlyDict } from './readonly';
 import { editDict } from './service';
 
 export type OperateType = '' | 'create' | 'edit' | 'view';
@@ -41,24 +49,42 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
     if (currentItem) form.setFieldsValue(currentItem as DictItem);
   }, [currentItem, form]);
 
-  const isReadOnly = operateType === '' || operateType === 'view';
+  const isReadOnly =
+    operateType === '' || operateType === 'view' || isReadonlyDict(currentItem);
+  // 每次对象或只读上下文切换都建立新会话，返回同一对象也不恢复旧回调。
+  const session = useMemo(() => ({ active: false }), [currentItem, isReadOnly]);
+  const sessionRef = useRef(session);
+  sessionRef.current = session;
+  const isCurrent = useCallback(
+    () => session.active && sessionRef.current === session && !isReadOnly,
+    [session, isReadOnly],
+  );
+  useLayoutEffect(() => {
+    session.active = true;
+    setSubmitting(false);
+    return () => {
+      session.active = false;
+    };
+  }, [session]);
 
   const handleSaveClick = async () => {
+    if (!isCurrent() || submitting) return;
     setSubmitting(true);
     try {
       const values = await form.validateFields();
+      if (!isCurrent()) return;
       const res = await editDict({
         ...values,
         id: currentItem.id,
         lines,
       });
-      if (res.success) {
+      if (isCurrent() && res.success) {
         msg.success('保存成功');
         setOperateType('view');
         await onSuccess();
       }
     } finally {
-      setSubmitting(false);
+      if (isCurrent()) setSubmitting(false);
     }
   };
 
@@ -111,7 +137,14 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
           </Row>
         </Card>
       </Form>
-      <LineList lines={lines} setLines={setLines} operateType={operateType} />
+      <LineList
+        lines={lines}
+        setLines={(next) => {
+          if (isCurrent()) setLines(next);
+        }}
+        isCurrent={isCurrent}
+        operateType={isReadOnly ? 'view' : operateType}
+      />
     </>
   );
 };

@@ -16,6 +16,7 @@ export interface SideLayoutProps {
   children?: React.ReactNode;
   title?: React.ReactNode;
   width?: number | string;
+  collapsible?: boolean;
   layoutStyle?: React.CSSProperties;
   body?: React.ReactNode;
   bodyStyle?: React.CSSProperties;
@@ -30,13 +31,15 @@ const SideLayout: React.FC<SideLayoutProps> = ({
   children,
   title,
   width = 300,
+  collapsible = true,
   layoutStyle,
   body,
   bodyStyle,
 }) => {
   const [openSide, setOpenSide] = useState(true);
+  const sideVisible = !collapsible || openSide;
 
-  const toggle: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+  const toggle: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     e.preventDefault();
     setOpenSide((prev) => !prev);
@@ -46,26 +49,37 @@ const SideLayout: React.FC<SideLayoutProps> = ({
     <Layout className={clsx(prefixCls, className)} style={layoutStyle}>
       <Sider
         trigger={null}
-        collapsible
-        collapsed={!openSide}
+        collapsible={collapsible}
+        collapsed={!sideVisible}
         collapsedWidth={45}
         width={width}
         className={styles.layout}
       >
         <div className={styles.title}>
-          <div>
+          <div
+            style={{
+              visibility: sideVisible ? 'visible' : 'hidden',
+              minWidth: 0,
+              overflow: 'hidden',
+            }}
+          >
             <FolderOutlined />
             &nbsp; {title}
           </div>
-          <a
-            className="side-handle"
-            onClick={toggle}
-            title={openSide ? '收起' : '展开'}
-          >
-            {openSide ? <CaretLeftOutlined /> : <CaretRightOutlined />}
-          </a>
+          {collapsible && (
+            <button
+              type="button"
+              className="side-handle"
+              onClick={toggle}
+              title={openSide ? '收起' : '展开'}
+              aria-label={openSide ? '收起' : '展开'}
+              aria-expanded={openSide}
+            >
+              {openSide ? <CaretLeftOutlined /> : <CaretRightOutlined />}
+            </button>
+          )}
         </div>
-        {openSide && (
+        {sideVisible && (
           <div className={styles.body} style={bodyStyle}>
             {body}
           </div>

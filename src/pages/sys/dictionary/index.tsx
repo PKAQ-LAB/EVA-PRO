@@ -7,6 +7,7 @@ import { SideLayout } from '@/components';
 import DictAOEForm, { type OperateType } from './aoeform';
 import type { DictItem } from './data.d';
 import DictListView from './list';
+import { isReadonlyDict } from './readonly';
 import { deleteDict, getDict, queryDicts } from './service';
 
 const SysDictionaryPage: React.FC = () => {
@@ -46,11 +47,14 @@ const SysDictionaryPage: React.FC = () => {
     const res = await getDict(record.id);
     if (res.data) {
       setCurrentItem(res.data);
-      setOperateType('edit');
+      setOperateType(
+        isReadonlyDict(record) || isReadonlyDict(res.data) ? 'view' : 'edit',
+      );
     }
   };
 
   const handleDelete = async (record: DictItem) => {
+    if (isReadonlyDict(record)) return;
     const res = await deleteDict(record.id);
     if (res.success) {
       msg.success('删除成功');
@@ -66,6 +70,7 @@ const SysDictionaryPage: React.FC = () => {
     >
       <div className="eva-body">
         <SideLayout
+          collapsible={false}
           title="字典分组"
           width="40%"
           bodyStyle={{ padding: 0 }}

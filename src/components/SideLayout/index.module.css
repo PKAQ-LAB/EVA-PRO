@@ -13,15 +13,19 @@
   padding-left: 15px;
 }
 
-.title a {
+.title button {
   display: block;
   width: 30px;
+  flex: 0 0 30px;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
   color: var(--ant-color-text-secondary, #666);
   text-align: center;
   background-color: var(--ant-color-fill-secondary, #e3e3e3);
 }
 
-.title a:hover {
+.title button:hover {
   color: var(--ant-color-primary, #1677ff);
 }
 
