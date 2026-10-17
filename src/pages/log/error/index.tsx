@@ -109,6 +109,7 @@ const ErrorLogPage: React.FC = () => {
       </div>
 
       <Drawer
+        closable={{ placement: 'end' }}
         open={!!detail}
         width={600}
         onClose={() => setDetail(null)}
