@@ -20,15 +20,11 @@ import {
   FullscreenToggle,
   LangDropdown,
   OfflineBanner,
-  PageLoading,
 } from '@/components';
+import AuthBootstrapStatus from '@/components/AuthBootstrapStatus';
 import { user_key } from '@/constant';
 import { fetchDict, fetchMenus } from '@/services/user';
-import {
-  clearAuthState,
-  isAuthExpiredError,
-  redirectToLogin,
-} from '@/utils/authState';
+import { isAuthExpiredError, redirectToLogin } from '@/utils/authState';
 import { loopMenuItem } from '@/utils/DataHelper';
 import {
   extractMenus,
@@ -44,9 +40,22 @@ printANSI();
 
 const isDev = process.env.NODE_ENV === 'development';
 const showDevelopmentLinks = isDev && process.env.UMI_ENV === 'dev';
-const loginPath = '/user/login';
 const loginMenuCacheKey = 'eva_login_menus';
 const currentUserCacheKey = 'eva_current_user';
+const menuSnapshotKeys = new WeakMap<API.CurrentUser, string>();
+const menuCacheScope = `${Date.now()}-${Math.random()}`;
+let menuSnapshotSequence = 0;
+
+function getMenuSnapshotKey(currentUser?: API.CurrentUser) {
+  if (!currentUser) return 'signed-out';
+  let key = menuSnapshotKeys.get(currentUser);
+  if (!key) {
+    // 仅作本地菜单缓存版本，不包含身份/菜单内容，也不是认证凭据。
+    key = `${menuCacheScope}-${++menuSnapshotSequence}`;
+    menuSnapshotKeys.set(currentUser, key);
+  }
+  return key;
+}
 
 function getCurrentRoutePath() {
   if (typeof window === 'undefined') return history.location.pathname;
@@ -140,64 +149,53 @@ export async function getInitialState(): Promise<{
   settingDrawerOpen?: boolean;
 }> {
   const fetchUserInfo = async () => {
-    try {
-      const cachedUser = getCachedCurrentUser();
-      const cachedMenus = window.sessionStorage.getItem(loginMenuCacheKey);
-      if (cachedMenus) {
-        window.sessionStorage.removeItem(loginMenuCacheKey);
-        try {
-          return normalizeCurrentUser(JSON.parse(cachedMenus), cachedUser);
-        } catch {
-          // 缓存只用于登录后首屏加速，异常时继续走后端接口。
-        }
-      }
-      const msg = await fetchMenus({
-        skipErrorHandler: true,
-      });
-      return normalizeCurrentUser(msg.data, cachedUser);
-    } catch (error) {
-      if (isAuthExpiredError(error)) {
-        clearAuthState();
-        redirectToLogin();
-      }
-    }
-    return undefined;
+    const cachedUser = getCachedCurrentUser();
+    window.sessionStorage.removeItem(loginMenuCacheKey);
+    const msg = await fetchMenus({
+      skipErrorHandler: true,
+    });
+    const user = normalizeCurrentUser(msg.data, cachedUser);
+    if (!user) throw new Error('登录状态初始化响应无效');
+    return user;
   };
   /**
    * 加载全量字典：登录后非登录页时会预加载，挂在 initialState.dict
    * 上供下游业务使用。建议字典字段较多时改用 React Query 长缓存。
    */
-  const initDict = async (): Promise<Record<string, unknown> | undefined> => {
+  const initDict = async (
+    failOnUnauthorized = false,
+  ): Promise<Record<string, unknown> | undefined> => {
     try {
       const res = await fetchDict({ skipErrorHandler: true });
       return (res?.data as Record<string, unknown>) ?? {};
     } catch (error) {
       if (isAuthExpiredError(error)) {
-        clearAuthState();
         redirectToLogin();
+        if (failOnUnauthorized) throw error;
       }
       return undefined;
     }
   };
   const { location } = history;
-  // 非登录页始终请求后端初始化登录态，只有后端 401/鉴权失效码才跳登录。
+  // 启动时由服务端验证登录态，菜单缓存不能替代验证。
   if (
-    ![loginPath, '/user/register', '/user/register-result'].includes(
-      location.pathname,
-    )
+    !['/user/register', '/user/register-result'].includes(location.pathname)
   ) {
-    const [currentUser, dict] = await Promise.all([
-      fetchUserInfo(),
-      initDict(),
-    ]);
-    return {
-      fetchUserInfo,
-      fetchDict: initDict,
-      currentUser,
-      dict,
-      settings: defaultSettings as Partial<LayoutSettings>,
-      settingDrawerOpen: false,
-    };
+    try {
+      const currentUser = await fetchUserInfo();
+      const dict = await initDict(true);
+      return {
+        fetchUserInfo,
+        fetchDict: initDict,
+        currentUser,
+        dict,
+        settings: defaultSettings as Partial<LayoutSettings>,
+        settingDrawerOpen: false,
+      };
+    } catch (error) {
+      if (!isAuthExpiredError(error)) throw error;
+      redirectToLogin();
+    }
   }
   return {
     fetchUserInfo,
@@ -226,6 +224,20 @@ export const layout: RunTimeLayoutConfig = ({
     // 登录跳转到子模块后，ProComponents 会按当前路径生成 matchMenuKeys 并自动展开父级；
     // 不传 openKeys，保留菜单折叠状态为非受控，允许用户手动折叠。
     selectedKeys: [currentRoutePath],
+    menuDataRender: (menuData) => {
+      const businessMenus = menuData.filter(
+        (item) => item.path !== '/examples/tanstack',
+      );
+      if (!initialState?.currentUser) return businessMenus;
+      return [
+        ...businessMenus,
+        {
+          key: '/examples/tanstack',
+          path: '/examples/tanstack',
+          name: 'TanStack 示例',
+        },
+      ];
+    },
     menuItemRender: (item, dom) => {
       if (item.path) {
         return (
@@ -243,9 +255,11 @@ export const layout: RunTimeLayoutConfig = ({
      */
     menu: {
       locale: false,
+      params: { snapshot: getMenuSnapshotKey(initialState?.currentUser) },
       request: async () => {
         try {
-          if (Array.isArray(currentMenus) && currentMenus.length > 0) {
+          if (!initialState?.currentUser) return [];
+          if (Array.isArray(currentMenus)) {
             return loopMenuItem(
               normalizeMenuPaths(currentMenus) as never[],
               IconMap,
@@ -258,7 +272,6 @@ export const layout: RunTimeLayoutConfig = ({
           ) as never[];
         } catch (error) {
           if (isAuthExpiredError(error)) {
-            clearAuthState();
             redirectToLogin();
           }
           return [];
@@ -316,7 +329,8 @@ export const layout: RunTimeLayoutConfig = ({
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
     childrenRender: (children) => {
-      if (initialState?.loading) return <PageLoading />;
+      if (initialState?.loading || !initialState?.currentUser)
+        return <AuthBootstrapStatus />;
       return (
         <>
           <ConfigProvider

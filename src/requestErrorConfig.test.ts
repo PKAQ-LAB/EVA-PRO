@@ -9,6 +9,7 @@ vi.mock('antd', () => ({
   },
   notification: {
     open: vi.fn(),
+    error: vi.fn(),
   },
 }));
 
@@ -142,7 +143,7 @@ describe('requestErrorConfig', () => {
       errorHandler(error, {});
 
       expect(notification.open).toHaveBeenCalledWith({
-        title: 1004,
+        title: '1004',
         description: 'This is a notification',
       });
     });
@@ -187,7 +188,9 @@ describe('requestErrorConfig', () => {
 
       errorHandler(error, {});
 
-      expect(message.error).toHaveBeenCalledWith('Response status:500');
+      expect(message.error).toHaveBeenCalledWith(
+        '[500] 网络错误，无法连接服务器',
+      );
     });
 
     it('should handle offline error', () => {
@@ -220,9 +223,10 @@ describe('requestErrorConfig', () => {
 
       errorHandler(error, {});
 
-      expect(message.error).toHaveBeenCalledWith(
-        'None response! Please retry.',
-      );
+      expect(notification.error).toHaveBeenCalledWith({
+        title: '网络异常',
+        description: '您的网络发生异常，无法连接服务器',
+      });
     });
 
     it('should handle generic error', () => {
@@ -230,9 +234,7 @@ describe('requestErrorConfig', () => {
 
       errorHandler(error, {});
 
-      expect(message.error).toHaveBeenCalledWith(
-        'Request error, please retry.',
-      );
+      expect(message.error).toHaveBeenCalledWith('请求异常，请稍后重试');
     });
   });
 

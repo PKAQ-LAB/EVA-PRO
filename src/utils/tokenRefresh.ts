@@ -1,6 +1,6 @@
 import type { RequestOptions } from '@@/plugin-request/request';
-import type { AuthRefreshResult } from '@/services/auth';
 import {
+  getStoredAccessToken,
   getStoredRefreshToken,
   setStoredAccessToken,
   setStoredRefreshToken,
@@ -9,22 +9,33 @@ import {
 let refreshTokenTask: Promise<string> | null = null;
 
 const getTokenValue = (
-  payload: AuthRefreshResult,
+  payload: Record<string, unknown>,
   snakeKey: 'access_token' | 'refresh_token',
   camelKey: 'accessToken' | 'refreshToken',
-) =>
-  payload.data?.[snakeKey] ||
-  payload.data?.[camelKey] ||
-  (payload as AuthRefreshResult & Record<string, string | undefined>)[
-    snakeKey
-  ] ||
-  (payload as AuthRefreshResult & Record<string, string | undefined>)[camelKey];
+) => {
+  const data = payload.data;
+  const tokens =
+    data && typeof data === 'object' && !Array.isArray(data)
+      ? (data as Record<string, unknown>)
+      : {};
+  return [
+    tokens[snakeKey],
+    tokens[camelKey],
+    payload[snakeKey],
+    payload[camelKey],
+  ].find(
+    (value): value is string => typeof value === 'string' && value.length > 0,
+  );
+};
 
 async function requestNewAccessToken() {
   const refreshToken = getStoredRefreshToken();
   if (!refreshToken) {
-    throw new Error('缺少刷新令牌');
+    throw Object.assign(new Error('缺少刷新令牌'), {
+      response: { status: 401 },
+    });
   }
+  const originalAccessToken = getStoredAccessToken();
   const response = await fetch('/api/auth/getAlpha', {
     method: 'POST',
     credentials: 'include',
@@ -35,10 +46,29 @@ async function requestNewAccessToken() {
     },
     body: JSON.stringify({ refreshToken }),
   });
-  const payload = (await response.json()) as AuthRefreshResult;
+  const body: unknown = await response.json().catch(() => undefined);
+  const payload =
+    body && typeof body === 'object' && !Array.isArray(body)
+      ? (body as Record<string, unknown>)
+      : {};
+  // 退出或更换账号后，迟到的刷新结果不能恢复旧登录态。
+  if (
+    getStoredRefreshToken() !== refreshToken ||
+    getStoredAccessToken() !== originalAccessToken
+  )
+    throw new Error('登录状态已变更');
   const accessToken = getTokenValue(payload, 'access_token', 'accessToken');
   if (!response.ok || payload.success === false || !accessToken) {
-    throw new Error(payload.message || '刷新登录令牌失败');
+    throw Object.assign(
+      new Error(
+        typeof payload.message === 'string'
+          ? payload.message
+          : '刷新登录令牌失败',
+      ),
+      {
+        response: { status: response.status, data: payload },
+      },
+    );
   }
   const nextRefreshToken = getTokenValue(
     payload,

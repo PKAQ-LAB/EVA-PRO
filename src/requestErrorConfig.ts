@@ -3,9 +3,10 @@ import type { RequestConfig } from '@umijs/max';
 import { getIntl } from '@umijs/max';
 import { message, notification } from 'antd';
 import {
-  clearAuthState,
   getStoredAccessToken,
+  getStoredRefreshToken,
   isAuthExpiredCode,
+  isAuthExpiredError,
   redirectToLogin,
 } from '@/utils/authState';
 import { trimRequestPayload } from '@/utils/requestPayload';
@@ -55,13 +56,22 @@ function isAuthRequest(url?: string) {
   if (!url) return false;
   return authRequestPaths.some((path) => url.includes(path));
 }
+function isStaleAuthRequest(config: RetryableRequestOptions) {
+  const authorization =
+    config.headers?.Authorization ?? config.headers?.authorization;
+  return (
+    typeof authorization === 'string' &&
+    authorization.startsWith('Bearer ') &&
+    authorization.slice(7) !== getStoredAccessToken()
+  );
+}
 
-async function refreshAndReplayRequest(
-  config: RetryableRequestOptions,
-  fallbackError?: unknown,
-) {
+async function refreshAndReplayRequest(config: RetryableRequestOptions) {
+  const originalAccessToken = getStoredAccessToken();
+  const originalRefreshToken = getStoredRefreshToken();
   try {
     const token = await refreshAccessToken();
+    if (getStoredAccessToken() !== token) throw new Error('登录状态已变更');
     return replayRequest(
       {
         ...config,
@@ -69,10 +79,17 @@ async function refreshAndReplayRequest(
       },
       token,
     );
-  } catch {
-    clearAuthState();
-    redirectToLogin();
-    throw fallbackError ?? new Error('登录已失效，请重新登录');
+  } catch (error) {
+    // 拒绝经 Promise 传播后，失效副作用前必须再次确认仍属于原会话。
+    if (
+      getStoredAccessToken() !== originalAccessToken ||
+      getStoredRefreshToken() !== originalRefreshToken
+    )
+      throw new Error('登录状态已变更');
+    if (isAuthExpiredError(error)) {
+      redirectToLogin();
+    }
+    throw error;
   }
 }
 
@@ -130,8 +147,6 @@ export const errorConfig: RequestConfig = {
         if (errorInfo) {
           const { errorMessage, errorCode } = errorInfo;
           if (isAuthExpiredCode(errorCode)) {
-            clearAuthState();
-            message.error(errorMessage || '登录已失效，请重新登录');
             redirectToLogin();
             return;
           }
@@ -162,8 +177,6 @@ export const errorConfig: RequestConfig = {
         const { status, data } = error.response;
         const detail = data?.message;
         if (status === 401) {
-          clearAuthState();
-          message.error(detail || '登录已失效，请重新登录');
           redirectToLogin();
           return;
         }
@@ -221,10 +234,10 @@ export const errorConfig: RequestConfig = {
           payload?.success === false &&
           isAuthExpiredCode(getAuthErrorCode(payload)) &&
           config &&
-          !config._retryAuth &&
           !isAuthRequest(config.url)
         ) {
-          return refreshAndReplayRequest(config, response);
+          if (isStaleAuthRequest(config)) throw new Error('登录状态已变更');
+          if (!config._retryAuth) return refreshAndReplayRequest(config);
         }
         return response;
       },
@@ -233,13 +246,9 @@ export const errorConfig: RequestConfig = {
           | RetryableRequestOptions
           | undefined;
         const status = error?.response?.status;
-        if (
-          status === 401 &&
-          config &&
-          !config._retryAuth &&
-          !isAuthRequest(config.url)
-        ) {
-          return refreshAndReplayRequest(config, error);
+        if (status === 401 && config && !isAuthRequest(config.url)) {
+          if (isStaleAuthRequest(config)) throw new Error('登录状态已变更');
+          if (!config._retryAuth) return refreshAndReplayRequest(config);
         }
         const method = (config?.method || 'GET').toUpperCase();
         const canRetryGet =

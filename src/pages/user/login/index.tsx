@@ -10,12 +10,14 @@ import { MD5 } from 'jscrypto/es6/MD5';
 import React, { useEffect, useMemo, useState } from 'react';
 import { flushSync } from 'react-dom';
 import Cookies from 'universal-cookie';
+import AuthBootstrapStatus from '@/components/AuthBootstrapStatus';
 import { user_key } from '@/constant';
 import { type AuthLoginResult, login } from '@/services/auth';
 import { fetchDict, fetchMenus } from '@/services/user';
 import {
   clearAuthState,
   getErrorMessage,
+  getLoginReturnPath,
   isAuthExpiredError,
   redirectToLogin,
   setStoredAccessToken,
@@ -28,7 +30,6 @@ import {
 } from '@/utils/menuNavigation';
 import Settings from '../../../../config/defaultSettings';
 
-const loginMenuCacheKey = 'eva_login_menus';
 const currentUserCacheKey = 'eva_current_user';
 
 const clamp = (value: number, min: number, max: number) =>
@@ -501,7 +502,18 @@ const Login: React.FC = () => {
   const [passwordLen, setPasswordLen] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [blink, setBlink] = useState({ purple: false, black: false });
-  const { setInitialState } = useModel('@@initialState');
+  const { initialState, loading, error, setInitialState } =
+    useModel('@@initialState');
+  const currentUser = initialState?.currentUser;
+  useEffect(() => {
+    if (!loading && currentUser) {
+      history.replace(
+        getLoginReturnPath(
+          resolveMenuNavigation(extractMenus(currentUser)).path,
+        ),
+      );
+    }
+  }, [loading, currentUser]);
   const { styles } = useStyles();
   const { message } = App.useApp();
   const intl = useIntl();
@@ -631,10 +643,6 @@ const Login: React.FC = () => {
           ]);
           menus = extractMenus(menuResponse?.data);
           dict = dictResponse?.data;
-          window.sessionStorage.setItem(
-            loginMenuCacheKey,
-            JSON.stringify(menuResponse?.data ?? []),
-          );
         } catch (error) {
           if (isAuthExpiredError(error)) {
             clearAuthState();
@@ -660,7 +668,7 @@ const Login: React.FC = () => {
             defaultMessage: '登录成功！',
           }),
         );
-        history.replace(resolveMenuNavigation(menus).path);
+        history.replace(getLoginReturnPath(resolveMenuNavigation(menus).path));
         return;
       }
       message.error(msg.message || '登录失败');
@@ -672,6 +680,7 @@ const Login: React.FC = () => {
   };
 
   const title = Settings.title || 'Eva Admin Pro';
+  if (loading || error || currentUser) return <AuthBootstrapStatus />;
 
   return (
     <main

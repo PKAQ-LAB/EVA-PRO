@@ -1,5 +1,6 @@
 import { history, useModel } from '@umijs/max';
 import { useEffect } from 'react';
+import AuthBootstrapStatus from '@/components/AuthBootstrapStatus';
 import {
   type MenuNavigationItem,
   resolveMenuNavigation,
@@ -15,7 +16,7 @@ export default function RootPage() {
   const targetPath = resolveMenuNavigation(menus || []).path;
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || !initialState?.currentUser) return;
     const hashPath =
       typeof window === 'undefined'
         ? ''
@@ -23,7 +24,7 @@ export default function RootPage() {
     const currentPath = hashPath || history.location.pathname;
     if ('/' !== currentPath) return;
     history.replace(targetPath);
-  }, [loading, targetPath]);
+  }, [loading, targetPath, initialState?.currentUser]);
 
-  return null;
+  return <AuthBootstrapStatus />;
 }

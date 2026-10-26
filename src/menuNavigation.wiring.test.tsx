@@ -65,6 +65,7 @@ vi.mock('@ant-design/icons', () => ({
   EyeOutlined: () => null,
   LinkOutlined: () => null,
   UserOutlined: () => null,
+  DeploymentUnitOutlined: () => null,
 }));
 
 vi.mock('@ant-design/pro-components', () => ({
@@ -116,6 +117,7 @@ vi.mock('@/services/user', () => ({
 vi.mock('@/utils/authState', () => ({
   clearAuthState: vi.fn(),
   getErrorMessage: () => '',
+  getLoginReturnPath: (fallback: string) => fallback,
   isAuthExpiredError: () => false,
   redirectToLogin: vi.fn(),
   setStoredAccessToken: vi.fn(),
@@ -228,6 +230,17 @@ describe('menu navigation wiring', () => {
     expect(layoutConfig.location?.pathname).toBe('/sys/role');
     expect(layoutConfig.selectedKeys).toEqual(['/sys/role']);
     expect(layoutConfig).not.toHaveProperty('menuProps');
+  });
+  it('已验证会话访问登录页直接恢复业务入口，不闪登录表单', async () => {
+    mocks.rootInitialState = {
+      currentUser: { menus: [{ routeUrl: '/sys/role' }] },
+    };
+    mocks.resolveMenuNavigation.mockReturnValue({ path: '/sys/role' });
+    const { default: Login } = await import('@/pages/user/login');
+    const view = render(<Login />);
+    expect(mocks.historyReplace).toHaveBeenCalledWith('/sys/role');
+    expect(screen.queryByPlaceholderText('请输入密码')).not.toBeInTheDocument();
+    view.unmount();
   });
 
   it('根入口复用初始菜单解析结果跳转且不重复请求菜单', async () => {
@@ -343,7 +356,7 @@ describe('menu navigation wiring', () => {
       ];
       for (const navTheme of ['light', 'realDark'] as const) {
         const config = layout({
-          initialState: { settings: { navTheme } },
+          initialState: { settings: { navTheme }, currentUser: { menus: [] } },
           setInitialState: vi.fn(),
         } as never);
         const children = (
@@ -390,6 +403,46 @@ describe('menu navigation wiring', () => {
     const { default: config } = await import('../config/config');
     const { default: settings } = await import('../config/defaultSettings');
     expect(config.title).toBe(settings.title);
+    expect(config.initialState).toEqual({
+      loading: '@/components/PageLoading',
+    });
     expect(config.title).not.toBe('Ant Design Pro');
+  });
+
+  it('本地示例静态深链保留，不混入后台菜单白名单或重复底部入口', async () => {
+    const { layout } = await import('./app');
+    const { default: routes } = await import('../config/routes');
+    const { normalizeMenuPaths } = await import('./utils/menuNavigation');
+    expect(
+      routes.find((route) => route.path === '/examples/tanstack'),
+    ).toMatchObject({ component: './examples/tanstack', hideInMenu: true });
+    const signedIn = layout({
+      initialState: { currentUser: {} },
+      setInitialState: mocks.setInitialState,
+      loading: false,
+      error: undefined,
+      refresh: async () => {},
+    });
+    const signedOut = layout({
+      initialState: {},
+      setInitialState: mocks.setInitialState,
+      loading: false,
+      error: undefined,
+      refresh: async () => {},
+    });
+    const containsLocalLink = (links: unknown) =>
+      Array.isArray(links) &&
+      links.some(
+        (link) =>
+          React.isValidElement<{ to?: string }>(link) &&
+          link.props.to === '/examples/tanstack',
+      );
+    expect(containsLocalLink(signedIn.links)).toBe(false);
+    expect(containsLocalLink(signedOut.links)).toBe(false);
+    expect(
+      normalizeMenuPaths([
+        { name: '伪造后台菜单', routeUrl: '/examples/tanstack' },
+      ]),
+    ).toEqual([]);
   });
 });
