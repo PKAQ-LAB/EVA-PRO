@@ -50,6 +50,12 @@ export default [
     ],
   },
   {
+    name: 'TanStack Table',
+    path: '/examples/tanstack',
+    component: './examples/tanstack',
+    hideInMenu: true,
+  },
+  {
     path: '/',
     component: './index',
     layout: false,
