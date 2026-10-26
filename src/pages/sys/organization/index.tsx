@@ -17,6 +17,13 @@ import {
 } from 'antd';
 import clsx from 'clsx';
 import React, { useMemo, useState } from 'react';
+import { useRecordView, viewRow } from '@/components/RecordView';
+import {
+  ActionGroup,
+  actionColumn,
+  TextCell,
+  textColumn,
+} from '@/components/TablePresentation';
 import {
   filterTree,
   getDeleteBlockers,
@@ -31,6 +38,12 @@ const { Search } = Input;
 
 const SysOrganizationPage: React.FC = () => {
   const intl = useIntl();
+  const view = useRecordView<OrgItem>();
+  const handleView = (record: OrgItem) => {
+    setCurrentItem({ id: record.id });
+    setOperateType('view');
+    void view.read(record.id, () => getOrg(record.id));
+  };
   const { message: msg, modal } = App.useApp();
   const [operateType, setOperateType] = useState<OperateType>('');
   const [currentItem, setCurrentItem] = useState<Partial<OrgItem>>({});
@@ -59,20 +72,19 @@ const SysOrganizationPage: React.FC = () => {
   const refresh = () => orgsQuery.refetch();
 
   const handleAdd = (record?: OrgItem) => {
+    view.close();
     setCurrentItem(record ? { parentId: record.id } : {});
     setOperateType('create');
   };
 
-  const handleEdit = async (record: OrgItem) => {
+  const handleEdit = (record: OrgItem) => {
     if (!record.id) {
       modal.warning({ title: '提示', content: '没有选择记录' });
       return;
     }
-    const res = await getOrg(record.id);
-    if (res.data) {
-      setCurrentItem(res.data);
-      setOperateType('edit');
-    }
+    setCurrentItem({ id: record.id });
+    setOperateType('edit');
+    void view.read(record.id, () => getOrg(record.id));
   };
 
   const handleDelete = async (record: OrgItem) => {
@@ -135,19 +147,21 @@ const SysOrganizationPage: React.FC = () => {
   };
 
   const columns: TableColumnsType<OrgItem> = [
-    { title: '单位/部门名称', dataIndex: 'name' },
-    { title: '所属单位/部门', dataIndex: 'parentName' },
+    textColumn<OrgItem>('单位/部门名称', 'name', 240),
+    textColumn<OrgItem>('所属单位/部门', 'parentName', 240),
     {
       title: '排序',
       dataIndex: 'orders',
+      width: 150,
+      align: 'right',
       render: (text, record) => {
         if (record.status !== '0001') return '';
         if (searchName) return text;
         const moveDown = getSiblingMove(allData, record.id, 'down');
         const moveUp = getSiblingMove(allData, record.id, 'up');
         return (
-          <div>
-            {text}
+          <div data-no-row-view>
+            <TextCell text={text} maxWidth={48} />
             <Divider type="vertical" />
             {moveDown ? (
               <CaretDownOutlined
@@ -179,29 +193,40 @@ const SysOrganizationPage: React.FC = () => {
     {
       title: '状态',
       dataIndex: 'frozen',
-      render: (_, record) => frozenText(intl, record.frozen),
+      width: 110,
+      align: 'center',
+      ellipsis: { showTitle: false },
+      render: (_, record) => (
+        <TextCell text={frozenText(intl, record.frozen)} />
+      ),
     },
     {
       title: '操作',
-      align: 'center',
-      render: (_, record) =>
-        record.status === '0001' && (
-          <div
-            style={{ textAlign: 'center' }}
-            onDoubleClick={(event) => event.stopPropagation()}
-          >
-            <a onClick={() => handleAdd(record)}>添加下级</a>
-            <Divider type="vertical" />
-            <a onClick={() => handleEdit(record)}>编辑</a>
-            <Divider type="vertical" />
-            <a
-              className="eva-delete-link"
-              onClick={() => confirmDelete(record)}
+      ...actionColumn(300),
+      render: (_, record) => (
+        <ActionGroup>
+          <Button type="link" size="small" onClick={() => handleView(record)}>
+            查看
+          </Button>
+          {record.status === '0001' && (
+            <div
+              style={{ textAlign: 'center' }}
+              onDoubleClick={(event) => event.stopPropagation()}
             >
-              删除
-            </a>
-          </div>
-        ),
+              <a onClick={() => handleAdd(record)}>添加下级</a>
+              <Divider type="vertical" />
+              <a onClick={() => handleEdit(record)}>编辑</a>
+              <Divider type="vertical" />
+              <a
+                className="eva-delete-link"
+                onClick={() => confirmDelete(record)}
+              >
+                删除
+              </a>
+            </div>
+          )}
+        </ActionGroup>
+      ),
     },
   ];
 
@@ -268,7 +293,7 @@ const SysOrganizationPage: React.FC = () => {
           loading={orgsQuery.isLoading}
           columns={columns}
           rowKey="id"
-          scroll={{ y: 'calc(100vh - 360px)' }}
+          scroll={{ x: 1100, y: 'calc(100vh - 360px)' }}
           rowSelection={
             searchName
               ? undefined
@@ -280,13 +305,7 @@ const SysOrganizationPage: React.FC = () => {
                   }),
                 }
           }
-          onRow={(record) => ({
-            onDoubleClick: () => {
-              if (record.status === '0001') {
-                handleEdit(record);
-              }
-            },
-          })}
+          onRow={(record) => viewRow(() => handleView(record))}
           rowClassName={(record) =>
             clsx({
               'eva-locked': record.frozen === 1,
@@ -298,10 +317,18 @@ const SysOrganizationPage: React.FC = () => {
 
       {operateType !== '' && (
         <OrgAOEForm
+          key={`${operateType}:${currentItem.id ?? 'create'}`}
           operateType={operateType}
-          currentItem={currentItem}
+          currentItem={
+            operateType !== 'create' ? (view.data ?? currentItem) : currentItem
+          }
+          detailsLoading={operateType !== 'create' && view.loading}
+          detailsError={operateType !== 'create' ? view.error : undefined}
           data={allData}
-          onClose={() => setOperateType('')}
+          onClose={() => {
+            view.close();
+            setOperateType('');
+          }}
           onSuccess={refresh}
         />
       )}

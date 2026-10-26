@@ -212,6 +212,7 @@ describe('系统列表只读行分类', () => {
             selectedRowKeys={[]}
             setSelectedRowKeys={vi.fn()}
             onEdit={vi.fn()}
+            onView={vi.fn()}
             onGrant={vi.fn()}
           />,
         );
@@ -313,7 +314,14 @@ describe('系统列表只读行分类', () => {
       '字典明细',
       async () => {
         const { default: Page } = await import('./dictionary/linelist');
-        return <Page lines={[]} setLines={vi.fn()} operateType="edit" />;
+        return (
+          <Page
+            lines={[]}
+            setLines={vi.fn()}
+            operateType="edit"
+            isCurrent={() => true}
+          />
+        );
       },
     ],
     [

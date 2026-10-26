@@ -190,6 +190,39 @@ canvas {
   min-width: 0;
 }
 
+/* 查看值保留字段外框，文字沿用正常主题色。 */
+.eva-view-value {
+  display: block;
+  box-sizing: border-box;
+  min-height: var(--ant-control-height, 32px);
+  padding: var(--ant-padding-xxs, 4px) var(--ant-padding-sm, 12px);
+  border: 1px solid var(--ant-color-border-secondary, #d9d9d9);
+  border-radius: var(--ant-border-radius, 6px);
+  background: var(--ant-color-fill-alter, rgba(0, 0, 0, 0.02));
+  color: var(--ant-color-text, rgba(0, 0, 0, 0.88));
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.eva-view-value .ant-skeleton.ant-skeleton-element {
+  display: flex;
+}
+
+.eva-view-value-multiline {
+  min-height: calc(
+    var(--ant-font-height, 22px) *
+    var(--eva-view-rows, 4) +
+    var(--ant-padding-xxs, 4px) *
+    2 +
+    2px
+  );
+}
+
+/* 仅由实际提示块承担一次间距，不覆盖所有 Alert。 */
+.eva-view-notice {
+  margin-block: var(--ant-margin-sm, 12px);
+}
+
 /* ============== EVA 工作区布局 ============== */
 html,
 body,
@@ -198,11 +231,15 @@ body,
   overflow: hidden;
 }
 
-.ant-pro-layout,
-.ant-pro-layout .ant-layout,
-.ant-pro-layout-container {
+#root > .ant-app > .ant-pro-layout {
+  height: 100vh;
+  min-height: 0;
+}
+
+#root > .ant-app > .ant-pro-layout > .ant-layout,
+#root > .ant-app > .ant-pro-layout > .ant-layout > .ant-pro-layout-container {
   height: 100%;
-  min-height: 100%;
+  min-height: 0;
 }
 
 .ant-pro-layout .ant-layout-content {
@@ -220,8 +257,9 @@ body,
 
 .eva-workspace {
   display: flex;
-  height: 100vh;
+  height: auto;
   min-height: 0;
+  flex: 1;
   flex-direction: column;
   overflow: hidden;
   background: var(--ant-color-bg-layout, #f5f5f5);

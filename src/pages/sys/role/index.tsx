@@ -11,9 +11,16 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { useIntl } from '@umijs/max';
-import { Alert, App, Button, Divider, Form, Input, Space } from 'antd';
+import { Alert, App, Button, Divider, Form, Input } from 'antd';
 import clsx from 'clsx';
 import React, { useRef, useState } from 'react';
+import { useRecordView, viewRow } from '@/components/RecordView';
+import {
+  ActionGroup,
+  actionColumn,
+  TextCell,
+  textColumn,
+} from '@/components/TablePresentation';
 import { frozenText, sysText } from '../status';
 import RoleAOEForm, { type ModalType } from './aoeform';
 import RoleConfigModal from './component/roleconfig';
@@ -31,6 +38,12 @@ const canOperateRole = (record: RoleItem) => !isSystemRole(record);
 
 const SysRolePage: React.FC = () => {
   const intl = useIntl();
+  const view = useRecordView<RoleItem>();
+  const handleView = (record: RoleItem) => {
+    setCurrentItem({ id: record.id });
+    setModalType('view');
+    void view.read(record.id, () => getRole(record.id));
+  };
   const { message: msg, modal } = App.useApp();
   const actionRef = useRef<ActionType | undefined>(undefined);
   const [searchForm] = Form.useForm<{ name?: string; code?: string }>();
@@ -45,16 +58,15 @@ const SysRolePage: React.FC = () => {
   const refresh = () => actionRef.current?.reload();
 
   const handleAdd = () => {
+    view.close();
     setCurrentItem({});
     setModalType('create');
   };
 
-  const handleEdit = async (record: RoleItem) => {
-    const res = await getRole(record.id);
-    if (res.data) {
-      setCurrentItem(res.data);
-      setModalType('edit');
-    }
+  const handleEdit = (record: RoleItem) => {
+    setCurrentItem({ id: record.id });
+    setModalType('edit');
+    void view.read(record.id, () => getRole(record.id));
   };
 
   const handleDelete = async (record: RoleItem) => {
@@ -128,32 +140,40 @@ const SysRolePage: React.FC = () => {
 
   const columns: ProColumns<RoleItem>[] = [
     {
-      title: sysText(intl, 'pages.sys.role.name', '角色名称'),
-      dataIndex: 'name',
+      ...textColumn<RoleItem>(
+        sysText(intl, 'pages.sys.role.name', '角色名称'),
+        'name',
+        180,
+      ),
     },
     {
-      title: sysText(intl, 'pages.sys.role.code', '角色编码'),
-      dataIndex: 'code',
+      ...textColumn<RoleItem>(
+        sysText(intl, 'pages.sys.role.code', '角色编码'),
+        'code',
+        180,
+      ),
     },
     {
-      title: sysText(intl, 'pages.sys.role.remark', '角色描述'),
-      dataIndex: 'remark',
-      ellipsis: true,
+      ...textColumn<RoleItem>(
+        sysText(intl, 'pages.sys.role.remark', '角色描述'),
+        'remark',
+        260,
+      ),
     },
     {
       title: sysText(intl, 'pages.sys.column.locked', '是否锁定'),
       dataIndex: 'frozen',
+      width: 110,
+      align: 'center',
+      ellipsis: { showTitle: false },
       search: false,
       render: (_, record) => (
-        <Space size={8}>
-          <span>{frozenText(intl, record.frozen)}</span>
-        </Space>
+        <TextCell text={frozenText(intl, record.frozen)} />
       ),
     },
     {
       title: sysText(intl, 'pages.sys.role.moduleAuth', '模块授权'),
-      align: 'center',
-      width: 100,
+      ...actionColumn(140),
       search: false,
       render: (_, record) => (
         <Button
@@ -167,8 +187,7 @@ const SysRolePage: React.FC = () => {
     },
     {
       title: sysText(intl, 'pages.sys.role.userAuth', '用户授权'),
-      align: 'center',
-      width: 100,
+      ...actionColumn(140),
       search: false,
       render: (_, record) => (
         <Button
@@ -182,8 +201,7 @@ const SysRolePage: React.FC = () => {
     },
     {
       title: sysText(intl, 'pages.sys.role.configAuth', '配置授权'),
-      align: 'center',
-      width: 100,
+      ...actionColumn(140),
       search: false,
       render: (_, record) => (
         <Button
@@ -197,11 +215,13 @@ const SysRolePage: React.FC = () => {
     },
     {
       title: sysText(intl, 'pages.searchTable.titleOption', '操作'),
-      align: 'center',
-      width: 140,
+      ...actionColumn(220),
       search: false,
       render: (_, record) => (
-        <Space size={8} align="center">
+        <ActionGroup>
+          <Button type="link" size="small" onClick={() => handleView(record)}>
+            查看
+          </Button>
           <a
             className={clsx({ 'eva-link-disabled': !canOperateRole(record) })}
             onClick={() => {
@@ -220,7 +240,7 @@ const SysRolePage: React.FC = () => {
           >
             {sysText(intl, 'pages.sys.action.delete', '删除')}
           </a>
-        </Space>
+        </ActionGroup>
       ),
     },
   ];
@@ -319,6 +339,7 @@ const SysRolePage: React.FC = () => {
 
       <div className="eva-body">
         <ProTable<RoleItem>
+          scroll={{ x: 1440 }}
           headerTitle={
             <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
               {sysText(intl, 'pages.sys.role.add', '新增角色')}
@@ -344,11 +365,7 @@ const SysRolePage: React.FC = () => {
               'eva-readonly': isSystemRole(record),
             })
           }
-          onRow={(record) => ({
-            onDoubleClick: () => {
-              if (canOperateRole(record)) handleEdit(record);
-            },
-          })}
+          onRow={(record) => viewRow(() => handleView(record))}
           request={async (params) => {
             const res = await queryRoles({ ...query, ...params });
             const list = res?.data?.list ?? [];
@@ -363,9 +380,17 @@ const SysRolePage: React.FC = () => {
 
       {modalType !== '' && (
         <RoleAOEForm
+          key={`${modalType}:${currentItem.id ?? 'create'}`}
           modalType={modalType}
-          setModalType={setModalType}
-          currentItem={currentItem}
+          setModalType={(type) => {
+            view.close();
+            setModalType(type);
+          }}
+          currentItem={
+            modalType !== 'create' ? (view.data ?? currentItem) : currentItem
+          }
+          detailsLoading={modalType !== 'create' && view.loading}
+          detailsError={modalType !== 'create' ? view.error : undefined}
           onSuccess={refresh}
         />
       )}

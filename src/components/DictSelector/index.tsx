@@ -2,6 +2,8 @@ import { request } from '@umijs/max';
 import { Select, type SelectProps } from 'antd';
 import React, { useEffect, useState } from 'react';
 
+type DictOption = { value: string; label: string };
+
 export interface DictSelectorProps extends Omit<SelectProps, 'options'> {
   /** 字典编码，用于走 /api/sys/dictionary/query/{code} 远程拉取 */
   code?: string;
@@ -20,53 +22,93 @@ const DictSelector: React.FC<DictSelectorProps> = ({
   showall = true,
   ...rest
 }) => {
-  const [options, setOptions] = useState<
-    Array<{ value: string; label: string }>
-  >([]);
+  const [options, setOptions] = useState<DictOption[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    if (data) {
-      const parsed: Record<string, string> =
-        typeof data === 'string' ? JSON.parse(data) : data;
-      setOptions(
-        Object.keys(parsed).map((value) => ({ value, label: parsed[value] })),
-      );
-      return;
-    }
-    if (code) {
-      request<{
-        data?: Record<string, string> | Array<Record<string, unknown>>;
-      }>(`/api/sys/dictionary/query/${code}`)
-        .then((response) => {
-          if (response?.data) {
-            if (Array.isArray(response.data)) {
-              setOptions(
-                response.data.map((item) => ({
-                  value: String(item.value ?? item.code ?? item.id ?? ''),
-                  label: String(item.name ?? item.label ?? item.value ?? ''),
-                })),
-              );
-            } else {
-              setOptions(
-                Object.keys(response.data).map((value) => ({
-                  value,
-                  label: (response.data as Record<string, string>)[value],
-                })),
-              );
-            }
+    let active = true;
+    setOptions([]);
+    setFailed(false);
+    setLoading(Boolean(!data && code));
+    const load = async () => {
+      try {
+        let parsed: unknown;
+        if (data) {
+          parsed = typeof data === 'string' ? JSON.parse(data) : data;
+        } else if (code) {
+          const response = await request<{
+            success?: boolean;
+            data?: Record<string, string> | Array<Record<string, unknown>>;
+          }>(`/api/sys/dictionary/query/${code}`);
+          if (!active) return;
+          if (response?.success === false) {
+            throw new Error();
           }
-        })
-        .catch(() => {
-          /* swallow: caller can decide to retry */
-        });
-    }
+          parsed = response?.data;
+        } else {
+          return;
+        }
+        let next: DictOption[];
+        if (Array.isArray(parsed)) {
+          // 保留已有数组兼容，不扩展到详情 lines 或其它包装结构。
+          next = parsed.map((item) => {
+            if (!item || typeof item !== 'object') throw new Error();
+            return {
+              value: String(item.value ?? item.code ?? item.id ?? ''),
+              label: String(item.name ?? item.label ?? item.value ?? ''),
+            };
+          });
+        } else if (
+          parsed &&
+          typeof parsed === 'object' &&
+          Object.values(parsed).every((label) => typeof label === 'string')
+        ) {
+          next = Object.entries(parsed).map(([value, label]) => ({
+            value,
+            label: label as string,
+          }));
+        } else {
+          throw new Error();
+        }
+        if (active) {
+          setOptions(next);
+        }
+      } catch {
+        if (!active) return;
+        setFailed(true);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    void load();
+    return () => {
+      active = false;
+    };
   }, [code, data]);
 
-  const finalOptions = showall
-    ? [{ value: '0000', label: '全部' }, ...options]
-    : options;
+  const finalOptions =
+    failed || loading
+      ? []
+      : showall
+        ? [{ value: '0000', label: '全部' }, ...options]
+        : options;
 
-  return <Select {...rest} options={finalOptions} />;
+  return (
+    <Select
+      {...rest}
+      options={finalOptions}
+      loading={loading || rest.loading}
+      status={failed ? 'error' : rest.status}
+      notFoundContent={
+        failed
+          ? '字典加载失败，请稍后重试'
+          : loading
+            ? '加载中...'
+            : rest.notFoundContent
+      }
+    />
+  );
 };
 
 export default DictSelector;

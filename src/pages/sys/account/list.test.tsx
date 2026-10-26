@@ -6,6 +6,7 @@ import type { AccountItem } from './data.d';
 import AccountList from './list';
 
 const mocks = vi.hoisted(() => ({
+  view: vi.fn(),
   lockAccounts: vi.fn(),
   getAccount: vi.fn(),
   reload: vi.fn(),
@@ -69,6 +70,7 @@ const show = () => {
     <AccountList
       selectedRowKeys={[]}
       setSelectedRowKeys={vi.fn()}
+      onView={mocks.view}
       onEdit={edit}
       onGrant={vi.fn()}
     />,
@@ -76,7 +78,7 @@ const show = () => {
   return edit;
 };
 
-it('单行锁定传当前ID，刷新列表，双击按钮不会打开编辑；行双击原入口仍可用', async () => {
+it('单行锁定传当前ID，双击按钮不查看；行双击改为只读查看', async () => {
   const edit = show();
   const button = screen.getByRole('button', { name: /锁\s*定/ });
   fireEvent.click(button);
@@ -88,7 +90,11 @@ it('单行锁定传当前ID，刷新列表，双击按钮不会打开编辑；�
   expect(mocks.getAccount).not.toHaveBeenCalled();
   expect(mocks.reload).toHaveBeenCalledTimes(1);
   fireEvent.doubleClick(screen.getByTestId('row-user-a'));
-  await waitFor(() => expect(edit).toHaveBeenCalledTimes(1));
+  expect(mocks.view).toHaveBeenCalledWith(
+    expect.objectContaining({ id: 'user-a' }),
+  );
+  expect(edit).not.toHaveBeenCalled();
+  expect(mocks.getAccount).not.toHaveBeenCalled();
 });
 
 it('已锁定账号仅可单行解锁，保留只读及锁定账号编辑限制', async () => {
@@ -98,10 +104,10 @@ it('已锁定账号仅可单行解锁，保留只读及锁定账号编辑限制'
   ];
   show();
   expect(screen.queryByText('编辑')).toBeNull();
-  expect(screen.getByTestId('row-system')).toBeEmptyDOMElement();
+  expect(screen.getByTestId('row-system')).toHaveTextContent('查看');
   fireEvent.doubleClick(screen.getByTestId('row-locked'));
   fireEvent.doubleClick(screen.getByTestId('row-system'));
-  expect(mocks.getAccount).not.toHaveBeenCalled();
+  expect(mocks.view).toHaveBeenCalledTimes(2);
   fireEvent.click(screen.getByRole('button', { name: /解\s*锁/ }));
   await waitFor(() =>
     expect(mocks.lockAccounts).toHaveBeenCalledWith(['locked'], '0000'),

@@ -1,5 +1,6 @@
 import { Checkbox, Modal, Table, type TableColumnsType } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { TextCell, textColumn } from '@/components/TablePresentation';
 import type { RoleModuleNode } from '../data.d';
 import { listRoleModules, saveRoleModules } from '../service';
 
@@ -84,18 +85,23 @@ const RoleModuleModal: React.FC<RoleModuleProps> = ({
   };
 
   const columns: TableColumnsType<RoleModuleNode> = [
-    { title: '模块名称', dataIndex: 'name' },
+    {
+      ...textColumn<RoleModuleNode>('模块名称', 'name', 260),
+      onCell: () => ({ style: { whiteSpace: 'nowrap' } }),
+    },
     {
       title: '资源权限',
       align: 'left',
       dataIndex: 'resources',
       render: (_, record) => {
         const options = (record.resources ?? []).map((r) => ({
-          label: r.resourceDesc,
+          label: <TextCell text={r.resourceDesc} maxWidth={260} />,
+          style: { maxWidth: '100%' },
           value: r.id,
         }));
         return (
           <Checkbox.Group
+            style={{ display: 'flex', flexWrap: 'wrap', minWidth: 0 }}
             options={options}
             value={checkedResource[record.id] ?? []}
             onChange={(vals) =>
@@ -114,7 +120,7 @@ const RoleModuleModal: React.FC<RoleModuleProps> = ({
       title="选择授权模块"
       okText="确定"
       cancelText="关闭"
-      width="45%"
+      width={860}
       centered
       onOk={handleSubmit}
       onCancel={onClose}
@@ -129,6 +135,7 @@ const RoleModuleModal: React.FC<RoleModuleProps> = ({
           columns={columns}
           dataSource={records}
           pagination={false}
+          scroll={{ x: 720 }}
           rowKey="id"
           rowSelection={{
             selectedRowKeys: checked,

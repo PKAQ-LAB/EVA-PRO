@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => ({
   editModule: vi.fn(),
 }));
 
+vi.mock('@umijs/max', () => ({ history: { block: () => vi.fn() } }));
+
 vi.mock('@/components', () => ({
   IconSelect: ({ id, value, onChange }: ComponentProps<'input'>) => (
     <input id={id} value={value} onChange={onChange} />
@@ -51,7 +53,7 @@ describe('ModuleAOEForm', () => {
             path: '/tree/module-id',
             routeUrl: '/system/module',
             icon: 'setting',
-            orders: '1',
+            orders: 1,
             status: '0000',
           }}
           data={[]}
@@ -114,7 +116,7 @@ it('新增下级路由地址预填父routeUrl且可编辑，保存不改父路�
           name: '子模块',
           code: 'CHILD_CODE',
           icon: 'setting',
-          orders: '1',
+          orders: 1,
         }}
         data={[parent]}
         onClose={vi.fn()}
@@ -143,3 +145,44 @@ it('新增下级路由地址预填父routeUrl且可编辑，保存不改父路�
     routeUrl: '/sys',
   });
 });
+
+it.each([0, 1, 12.75])(
+  '数字排序%s回填后仅改名称可直接保存，顺序保持数值',
+  async (orders) => {
+    vi.clearAllMocks();
+    mocks.checkModuleUnique.mockResolvedValue({ success: true });
+    mocks.editModule.mockResolvedValue({ success: true });
+    render(
+      <App>
+        <ModuleAOEForm
+          operateType="edit"
+          currentItem={{
+            id: 'child',
+            name: '原名称',
+            code: 'CHILD',
+            routeUrl: '/sys/child',
+            icon: 'setting',
+            orders,
+            status: '0000',
+          }}
+          data={[]}
+          onClose={vi.fn()}
+          onSuccess={vi.fn()}
+        />
+      </App>,
+    );
+    expect(
+      await screen.findByRole('spinbutton', { name: '显示顺序' }),
+    ).toHaveValue(String(orders));
+    fireEvent.change(screen.getByLabelText('模块名称'), {
+      target: { value: '仅改名称' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /保\s*存/ }));
+    await waitFor(() => expect(mocks.editModule).toHaveBeenCalledTimes(1));
+    expect(mocks.editModule.mock.calls[0][0]).toMatchObject({
+      name: '仅改名称',
+      orders,
+    });
+    expect(screen.queryByText(/不是一个有效|undefined/)).toBeNull();
+  },
+);

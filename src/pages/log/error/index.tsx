@@ -5,6 +5,7 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import {
+  Alert,
   Button,
   DatePicker,
   Descriptions,
@@ -12,17 +13,25 @@ import {
   Drawer,
   Form,
   Row,
+  Spin,
 } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
 import React, { useRef, useState } from 'react';
+import { useRecordView, viewRow } from '@/components/RecordView';
+import {
+  ActionGroup,
+  actionColumn,
+  textColumn,
+} from '@/components/TablePresentation';
 import { type ErrorLogItem, getErrorLog, queryErrorLogs } from './service';
 
 const { RangePicker } = DatePicker;
 
 const ErrorLogPage: React.FC = () => {
+  const view = useRecordView<ErrorLogItem>();
+  const detail = view.data;
   const [searchForm] = Form.useForm<{ requestTime?: [Dayjs, Dayjs] }>();
   const actionRef = useRef<ActionType | undefined>(undefined);
-  const [detail, setDetail] = useState<ErrorLogItem | null>(null);
   const [query, setQuery] = useState<{ begin?: string; end?: string }>(() => ({
     begin: dayjs().add(-7, 'day').format('YYYY-MM-DD'),
     end: dayjs().format('YYYY-MM-DD'),
@@ -43,23 +52,34 @@ const ErrorLogPage: React.FC = () => {
 
   const handleView = async (record: ErrorLogItem) => {
     if (!record.id) return;
-    const res = await getErrorLog(record.id);
-    if (res.success && res.data) setDetail(res.data);
+    await view.read(record.id, () => getErrorLog(record.id));
   };
 
   const columns: ProColumns<ErrorLogItem>[] = [
-    { title: '类名', dataIndex: 'className', width: 180, ellipsis: true },
-    { title: '异常描述', dataIndex: 'exDesc', width: 240, ellipsis: true },
-    { title: '请求 IP', dataIndex: 'ip' },
-    { title: '方法名', dataIndex: 'method' },
-    { title: '方法参数', dataIndex: 'params', width: 240, ellipsis: true },
-    { title: '记录时间', dataIndex: 'requestTime' },
-    { title: '请求耗时', dataIndex: 'spendTime' },
+    textColumn<ErrorLogItem>('类名', 'className', 180),
+    textColumn<ErrorLogItem>('异常描述', 'exDesc', 240),
+    textColumn<ErrorLogItem>('请求 IP', 'ip', 160),
+    textColumn<ErrorLogItem>('方法名', 'method', 180),
+    textColumn<ErrorLogItem>('方法参数', 'params', 240),
+    textColumn<ErrorLogItem>('记录时间', 'requestTime', 200),
+    {
+      ...textColumn<ErrorLogItem>('请求耗时', 'spendTime', 110),
+      align: 'right',
+    },
     {
       title: '操作',
-      align: 'center',
-      width: 100,
-      render: (_, record) => <a onClick={() => handleView(record)}>查看</a>,
+      ...actionColumn(180),
+      render: (_, record) => (
+        <ActionGroup>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => void handleView(record)}
+          >
+            查看
+          </Button>
+        </ActionGroup>
+      ),
     },
   ];
 
@@ -90,6 +110,8 @@ const ErrorLogPage: React.FC = () => {
       </div>
       <div className="eva-body">
         <ProTable<ErrorLogItem>
+          scroll={{ x: 1490 }}
+          onRow={(record) => viewRow(() => void handleView(record))}
           defaultSize="small"
           actionRef={actionRef}
           columns={columns}
@@ -110,34 +132,42 @@ const ErrorLogPage: React.FC = () => {
 
       <Drawer
         closable={{ placement: 'end' }}
-        open={!!detail}
+        open={view.open}
         width={600}
-        onClose={() => setDetail(null)}
+        onClose={view.close}
         title="错误日志明细"
         destroyOnHidden
       >
-        {detail && (
-          <Descriptions column={1} size="small" bordered>
-            <Descriptions.Item label="记录时间">
-              {detail.requestTime}
-            </Descriptions.Item>
-            <Descriptions.Item label="请求耗时">
-              {detail.spendTime}
-            </Descriptions.Item>
-            <Descriptions.Item label="类名">
-              {detail.className}
-            </Descriptions.Item>
-            <Descriptions.Item label="请求 IP">{detail.ip}</Descriptions.Item>
-            <Descriptions.Item label="方法名">
-              {detail.method}
-            </Descriptions.Item>
-            <Descriptions.Item label="方法参数">
-              {detail.params}
-            </Descriptions.Item>
-            <Descriptions.Item label="异常描述">
-              {detail.exDesc}
-            </Descriptions.Item>
-          </Descriptions>
+        {view.loading ? (
+          <Spin description="加载中...">
+            <div style={{ minHeight: 100 }} />
+          </Spin>
+        ) : view.error ? (
+          <Alert type="error" showIcon title={view.error} />
+        ) : (
+          detail && (
+            <Descriptions column={1} size="small" bordered>
+              <Descriptions.Item label="记录时间">
+                {detail.requestTime}
+              </Descriptions.Item>
+              <Descriptions.Item label="请求耗时">
+                {detail.spendTime}
+              </Descriptions.Item>
+              <Descriptions.Item label="类名">
+                {detail.className}
+              </Descriptions.Item>
+              <Descriptions.Item label="请求 IP">{detail.ip}</Descriptions.Item>
+              <Descriptions.Item label="方法名">
+                {detail.method}
+              </Descriptions.Item>
+              <Descriptions.Item label="方法参数">
+                {detail.params}
+              </Descriptions.Item>
+              <Descriptions.Item label="异常描述">
+                {detail.exDesc}
+              </Descriptions.Item>
+            </Descriptions>
+          )
         )}
       </Drawer>
     </PageContainer>

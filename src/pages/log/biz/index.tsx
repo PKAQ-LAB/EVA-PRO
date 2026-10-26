@@ -6,6 +6,7 @@ import {
 } from '@ant-design/pro-components';
 import { useModel } from '@umijs/max';
 import {
+  Alert,
   Button,
   DatePicker,
   Descriptions,
@@ -13,9 +14,17 @@ import {
   Drawer,
   Form,
   Row,
+  Spin,
 } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
 import React, { useRef, useState } from 'react';
+import { useRecordView, viewRow } from '@/components/RecordView';
+import {
+  ActionGroup,
+  actionColumn,
+  TextCell,
+  textColumn,
+} from '@/components/TablePresentation';
 import { type BizLogItem, getBizLog, queryBizLogs } from './service';
 
 const { RangePicker } = DatePicker;
@@ -24,10 +33,11 @@ const fmt = (val?: string) =>
   val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '-';
 
 const BizLogPage: React.FC = () => {
+  const view = useRecordView<BizLogItem>();
+  const detail = view.data;
   const { initialState } = useModel('@@initialState');
   const [searchForm] = Form.useForm<{ operateDatetime?: [Dayjs, Dayjs] }>();
   const actionRef = useRef<ActionType | undefined>(undefined);
-  const [detail, setDetail] = useState<BizLogItem | null>(null);
   const [query, setQuery] = useState<{ begin?: string; end?: string }>(() => ({
     begin: dayjs().add(-7, 'day').format('YYYY-MM-DD'),
     end: dayjs().format('YYYY-MM-DD'),
@@ -48,8 +58,7 @@ const BizLogPage: React.FC = () => {
 
   const handleView = async (record: BizLogItem) => {
     if (!record.id) return;
-    const res = await getBizLog(record.id);
-    if (res.success && res.data) setDetail(res.data);
+    await view.read(record.id, () => getBizLog(record.id));
   };
   const operateTypeDict = (
     initialState?.dict as Record<string, unknown> | undefined
@@ -61,20 +70,36 @@ const BizLogPage: React.FC = () => {
     {
       title: '操作时间',
       dataIndex: 'operateDatetime',
-      render: (_, r) => fmt(r.operateDatetime),
+      width: 200,
+      ellipsis: { showTitle: false },
+      render: (_, r) => <TextCell text={fmt(r.operateDatetime)} />,
     },
     {
       title: '操作类型',
       dataIndex: 'operateType',
-      render: (_, record) => getOperateTypeText(record.operateType),
+      width: 180,
+      align: 'center',
+      ellipsis: { showTitle: false },
+      render: (_, record) => (
+        <TextCell text={getOperateTypeText(record.operateType)} />
+      ),
     },
-    { title: '操作人', dataIndex: 'operator' },
-    { title: '描述', dataIndex: 'description', ellipsis: true },
+    textColumn<BizLogItem>('操作人', 'operator', 180),
+    textColumn<BizLogItem>('描述', 'description', 360),
     {
       title: '操作',
-      align: 'center',
-      width: 120,
-      render: (_, record) => <a onClick={() => handleView(record)}>查看明细</a>,
+      ...actionColumn(180),
+      render: (_, record) => (
+        <ActionGroup>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => void handleView(record)}
+          >
+            查看明细
+          </Button>
+        </ActionGroup>
+      ),
     },
   ];
 
@@ -105,11 +130,14 @@ const BizLogPage: React.FC = () => {
       </div>
       <div className="eva-body">
         <ProTable<BizLogItem>
+          scroll={{ x: 1100 }}
+          onRow={(record) => viewRow(() => void handleView(record))}
           defaultSize="small"
           actionRef={actionRef}
           columns={columns}
           rowKey="id"
           search={false}
+          bordered
           params={query}
           request={async (params) => {
             const res = await queryBizLogs({ ...query, ...params });
@@ -124,27 +152,35 @@ const BizLogPage: React.FC = () => {
 
       <Drawer
         closable={{ placement: 'end' }}
-        open={!!detail}
+        open={view.open}
         width={600}
-        onClose={() => setDetail(null)}
+        onClose={view.close}
         title="业务日志明细"
         destroyOnHidden
       >
-        {detail && (
-          <Descriptions column={1} size="small" bordered>
-            <Descriptions.Item label="操作时间">
-              {fmt(detail.operateDatetime)}
-            </Descriptions.Item>
-            <Descriptions.Item label="操作人">
-              {detail.operator}
-            </Descriptions.Item>
-            <Descriptions.Item label="操作类型">
-              {getOperateTypeText(detail.operateType)}
-            </Descriptions.Item>
-            <Descriptions.Item label="描述">
-              {detail.description}
-            </Descriptions.Item>
-          </Descriptions>
+        {view.loading ? (
+          <Spin description="加载中...">
+            <div style={{ minHeight: 100 }} />
+          </Spin>
+        ) : view.error ? (
+          <Alert type="error" showIcon title={view.error} />
+        ) : (
+          detail && (
+            <Descriptions column={1} size="small" bordered>
+              <Descriptions.Item label="操作时间">
+                {fmt(detail.operateDatetime)}
+              </Descriptions.Item>
+              <Descriptions.Item label="操作人">
+                {detail.operator}
+              </Descriptions.Item>
+              <Descriptions.Item label="操作类型">
+                {getOperateTypeText(detail.operateType)}
+              </Descriptions.Item>
+              <Descriptions.Item label="描述">
+                {detail.description}
+              </Descriptions.Item>
+            </Descriptions>
+          )
         )}
       </Drawer>
     </PageContainer>

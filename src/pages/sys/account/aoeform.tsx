@@ -1,5 +1,6 @@
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import {
+  Alert,
   App,
   Button,
   Col,
@@ -7,28 +8,35 @@ import {
   Input,
   Modal,
   Row,
+  Skeleton,
   Space,
   Tooltip,
+  TreeSelect,
   Upload,
   type UploadFile,
 } from 'antd';
 import { createStyles } from 'antd-style';
 import { MD5 } from 'jscrypto/es6/MD5';
 import React, { useEffect, useRef, useState } from 'react';
-import { TreeSelector } from '@/components';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import type { AccountItem, OrgNode, RoleItem } from './data.d';
 import RoleList from './rolelist';
 import { checkAccountUnique, editAccount } from './service';
 import useLeaveGuard from './useLeaveGuard';
 
-export type OperateType = '' | 'create' | 'edit';
+export type OperateType = '' | 'create' | 'edit' | 'view';
 
 export interface AOEFormProps {
   operateType: OperateType;
   currentItem: AccountItem | null;
   orgs: OrgNode[];
   roles: RoleItem[];
+  orgsLoading?: boolean;
+  orgsError?: boolean;
+  onRetryOrgs?: () => void;
+  detailsLoading?: boolean;
+  detailsError?: string;
+  onRetryDetails?: () => void;
   rolesLoading?: boolean;
   rolesError?: boolean;
   onRetryRoles?: () => void;
@@ -43,6 +51,7 @@ type AccountFormValues = Omit<AccountItem, 'locked' | 'frozen'> & {
 const TITLE: Record<Exclude<OperateType, ''>, string> = {
   create: '新增',
   edit: '编辑',
+  view: '查看',
 };
 
 const formItemLayout = {
@@ -50,16 +59,37 @@ const formItemLayout = {
   wrapperCol: { flex: 'auto' },
 };
 
+function orgTitle(nodes: OrgNode[], id: string): string | undefined {
+  for (const node of nodes) {
+    if (String(node.id) === id) return node.title;
+    const title = orgTitle(node.children ?? [], id);
+    if (title) return title;
+  }
+  return undefined;
+}
+const auditText = (value: unknown) =>
+  typeof value === 'string' && value.trim() ? value : '—';
+
 const useStyles = createStyles(({ token, css }) => ({
   layout: css`
     display: grid;
     grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
     align-items: stretch;
     gap: ${token.marginLG}px;
-    > div { min-width: 0; }
+    > section { position: relative; min-width: 0; }
     @media (max-width: 800px) {
       grid-template-columns: minmax(0, 1fr);
     }
+  `,
+  audit: css`margin-block-start: ${token.marginLG}px;`,
+  status: css`
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   `,
   roles: css`
     position: relative;
@@ -80,6 +110,12 @@ const AOEForm: React.FC<AOEFormProps> = ({
   operateType,
   currentItem,
   orgs,
+  orgsLoading = false,
+  orgsError = false,
+  onRetryOrgs,
+  detailsLoading = false,
+  detailsError,
+  onRetryDetails,
   roles,
   rolesLoading = false,
   rolesError = false,
@@ -87,8 +123,44 @@ const AOEForm: React.FC<AOEFormProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const isView = operateType === 'view';
+  const ownedIds = [...new Set(currentItem?.roleIds ?? [])];
+  const summaries = new Map(
+    (currentItem?.assignedRoles ?? []).map((role) => [role.id, role]),
+  );
+  const assignedRoles = ownedIds.map((id) => ({
+    id,
+    name: summaries.get(id)?.name || '—',
+    frozen: summaries.get(id)?.frozen,
+  }));
+  const rolesMetadataError =
+    !Array.isArray(currentItem?.roleIds) ||
+    !Array.isArray(currentItem?.assignedRoles)
+      ? '角色信息未就绪'
+      : summaries.size !== ownedIds.length ||
+          ownedIds.some((id) => !summaries.has(id))
+        ? '角色信息不完整'
+        : undefined;
   const [form] = Form.useForm<AccountFormValues>();
   const { styles } = useStyles();
+  const viewReady = !detailsLoading && !detailsError && currentItem != null;
+  const textValue = (value: unknown, multiline = false) => (
+    <div
+      className={`eva-view-value${multiline ? ' eva-view-value-multiline' : ''}`}
+    >
+      {detailsLoading ? (
+        <div aria-hidden="true">
+          <Skeleton.Input
+            active
+            block
+            style={{ width: '100%', height: '1em' }}
+          />
+        </div>
+      ) : viewReady ? (
+        auditText(value)
+      ) : null}
+    </div>
+  );
   const dialogStyles = useFormDialogStyles();
   const { message: msg, modal } = App.useApp();
   const savingRef = useRef(false);
@@ -98,15 +170,21 @@ const AOEForm: React.FC<AOEFormProps> = ({
   const [dirty, setDirty] = useState(false);
   const uploadingRef = useRef(false);
   const uploading = avatar.some((file) => file.status === 'uploading');
-  const closeBlocked = submitting || uploading;
+  const fieldDisabled =
+    isView ||
+    submitting ||
+    detailsLoading ||
+    Boolean(detailsError) ||
+    currentItem?.frozen === 9999;
+  const closeBlocked = !isView && (submitting || uploading);
   const leaveGuard = useLeaveGuard({
     identity: `${operateType}:${currentItem?.id ?? ''}`,
-    dirty,
+    dirty: !isView && dirty,
     busy: closeBlocked,
     isBusy: () => savingRef.current || uploadingRef.current,
     onClose,
     onClean: () => setDirty(false),
-    onBlocked: () => msg.info('正在上传或保存，请稍候'),
+    onBlocked: () => msg.info('加载中...'),
     modal,
   });
   const password = Form.useWatch('password', form);
@@ -144,7 +222,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
 
   // 校验账号唯一性 (服务端)
   const checkAccount = async (_: unknown, value: string) => {
-    if (currentItem?.id && value === currentItem.account) return;
+    if (isView || (currentItem?.id && value === currentItem.account)) return;
     const res = await checkAccountUnique(value, currentItem?.id);
     if (!res.success) {
       throw new Error(res.message ?? '账号已存在');
@@ -155,7 +233,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
     file: UploadFile;
     fileList: UploadFile[];
   }) => {
-    if (!leaveGuard.isCurrent()) return;
+    if (fieldDisabled || !leaveGuard.isCurrent()) return;
     uploadingRef.current = info.fileList.some(
       (file) => file.status === 'uploading',
     );
@@ -174,6 +252,11 @@ const AOEForm: React.FC<AOEFormProps> = ({
 
   const handleSaveClick = async () => {
     if (
+      (operateType !== 'create' && operateType !== 'edit') ||
+      detailsLoading ||
+      detailsError ||
+      orgsLoading ||
+      orgsError ||
       savingRef.current ||
       rolesLoading ||
       rolesError ||
@@ -243,61 +326,114 @@ const AOEForm: React.FC<AOEFormProps> = ({
       mask={{ closable: false }}
       closable={!closeBlocked}
       keyboard={!closeBlocked}
-      onCancel={leaveGuard.requestClose}
+      onCancel={isView ? onClose : leaveGuard.requestClose}
       open={operateType !== ''}
       width={1040}
       centered
       footer={
-        <Space style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button disabled={closeBlocked} onClick={leaveGuard.requestClose}>
-            取消
+        isView ? (
+          <Button htmlType="button" aria-label="关闭用户查看" onClick={onClose}>
+            关闭
           </Button>
-          <Button
-            type="primary"
-            loading={submitting}
-            disabled={
-              rolesLoading ||
-              rolesError ||
-              avatar.some((file) => file.status === 'uploading') ||
-              currentItem?.frozen === 9999
-            }
-            onClick={handleSaveClick}
-          >
-            保存
-          </Button>
-        </Space>
+        ) : (
+          <Space style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button disabled={closeBlocked} onClick={leaveGuard.requestClose}>
+              取消
+            </Button>
+            <Button
+              type="primary"
+              loading={submitting}
+              disabled={
+                detailsLoading ||
+                Boolean(detailsError) ||
+                orgsLoading ||
+                orgsError ||
+                rolesLoading ||
+                rolesError ||
+                avatar.some((file) => file.status === 'uploading') ||
+                currentItem?.frozen === 9999
+              }
+              onClick={handleSaveClick}
+            >
+              保存
+            </Button>
+          </Space>
+        )
       }
-      title={`${TITLE[operateType as 'create' | 'edit'] ?? '查看'}用户信息`}
+      title={`${TITLE[operateType as Exclude<OperateType, ''>] ?? '查看'}用户信息`}
     >
       <Form
+        component={isView ? 'div' : 'form'}
+        name={isView ? undefined : 'account-dialog'}
         size="middle"
         form={form}
         labelAlign="left"
         layout="horizontal"
-        disabled={submitting || currentItem?.frozen === 9999}
-        onValuesChange={() => setDirty(true)}
+        disabled={fieldDisabled}
+        onValuesChange={() => {
+          if (!isView) setDirty(true);
+        }}
         {...formItemLayout}
       >
         <div className={styles.layout}>
-          <div>
+          <section aria-label="用户资料" aria-busy={detailsLoading}>
+            {detailsLoading && (
+              <div role="status" className={isView ? styles.status : undefined}>
+                加载中...
+              </div>
+            )}
+            {detailsError && (
+              <Alert
+                className="eva-view-notice"
+                type="error"
+                showIcon
+                title={detailsError}
+                action={
+                  <Button
+                    htmlType="button"
+                    disabled={detailsLoading}
+                    onClick={onRetryDetails}
+                  >
+                    重试资料
+                  </Button>
+                }
+              />
+            )}
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item label="头像" colon={false}>
-                  <Upload
-                    key={`${operateType}:${currentItem?.id ?? ''}`}
-                    onChange={handleFileUpload}
-                    fileList={avatar}
-                    listType="picture-card"
-                    action="/api/upload/file"
-                    accept=".jpg,.png,.jpeg"
-                  >
-                    {avatar.length < 1 && (
-                      <div>
-                        <PlusOutlined />
-                        <div>选择头像</div>
-                      </div>
-                    )}
-                  </Upload>
+                  {isView ? (
+                    textValue(currentItem?.avatar)
+                  ) : (
+                    <Upload
+                      key={`${operateType}:${currentItem?.id ?? ''}`}
+                      onChange={handleFileUpload}
+                      fileList={avatar}
+                      listType="picture-card"
+                      action={fieldDisabled ? undefined : '/api/upload/file'}
+                      disabled={fieldDisabled}
+                      openFileDialogOnClick={!fieldDisabled}
+                      beforeUpload={fieldDisabled ? () => false : undefined}
+                      onRemove={fieldDisabled ? () => false : undefined}
+                      showUploadList={
+                        isView
+                          ? {
+                              showRemoveIcon: false,
+                              showPreviewIcon: false,
+                              showDownloadIcon: false,
+                            }
+                          : undefined
+                      }
+                      accept=".jpg,.png,.jpeg"
+                    >
+                      {avatar.length < 1 && (
+                        <div>
+                          {!isView && <PlusOutlined />}
+                          <div>{isView ? '—' : '选择头像'}</div>
+                        </div>
+                      )}
+                    </Upload>
+                  )}
                 </Form.Item>
               </Col>
             </Row>
@@ -312,138 +448,302 @@ const AOEForm: React.FC<AOEFormProps> = ({
                       </Tooltip>
                     </span>
                   }
-                  name="account"
+                  name={isView ? undefined : 'account'}
                   hasFeedback
-                  rules={[
-                    {
-                      required: true,
-                      message: '账号格式错误或已存在',
-                      whitespace: true,
-                      pattern: /^[0-9a-zA-Z_]{4,16}$/,
-                      validator: checkAccount,
-                    },
-                  ]}
+                  rules={
+                    isView
+                      ? undefined
+                      : [
+                          {
+                            required: true,
+                            message: '账号格式错误或已存在',
+                            whitespace: true,
+                            pattern: /^[0-9a-zA-Z_]{4,16}$/,
+                            validator: checkAccount,
+                          },
+                        ]
+                  }
                   validateTrigger="onBlur"
                 >
-                  <Input
-                    minLength={4}
-                    maxLength={16}
-                    placeholder="输入账号 (唯一)"
-                  />
+                  {isView ? (
+                    textValue(currentItem?.account)
+                  ) : (
+                    <Input
+                      readOnly={isView}
+                      minLength={4}
+                      maxLength={16}
+                      placeholder={isView ? '—' : '输入账号 (唯一)'}
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12}>
                 <Form.Item
                   label="姓名"
-                  name="name"
-                  rules={[{ required: true }]}
+                  name={isView ? undefined : 'name'}
+                  rules={isView ? undefined : [{ required: true }]}
                 >
-                  <Input maxLength={10} placeholder="请输入姓名" />
+                  {isView ? (
+                    textValue(currentItem?.name)
+                  ) : (
+                    <Input
+                      readOnly={isView}
+                      maxLength={10}
+                      placeholder={isView ? '—' : '请输入姓名'}
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={16}>
-              <Col xs={24} sm={12}>
-                <Form.Item
-                  label={
-                    <span>
-                      密码&nbsp;
-                      <Tooltip title="密码应为 8-16 位的数字字母组合 (不含空格)">
-                        <QuestionCircleOutlined />
-                      </Tooltip>
-                    </span>
-                  }
-                  name="password"
-                  rules={[
-                    {
-                      required: !currentItem?.id,
-                      whitespace: true,
-                      pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
-                      message: '请输入 8-16 位包含数字及字母的密码',
-                    },
-                  ]}
-                >
-                  <Input.Password autoComplete="new-password" />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12}>
-                <Form.Item
-                  label="确认密码"
-                  name="repassword"
-                  dependencies={['password']}
-                  rules={[
-                    {
-                      required: !currentItem?.id || Boolean(password),
-                      whitespace: true,
-                      pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
-                      message: '请输入 8-16 位包含数字及字母的密码',
-                    },
-                    ({ getFieldValue }) => ({
-                      validator: (_, value) =>
-                        (!value && !getFieldValue('password')) ||
-                        value === getFieldValue('password')
-                          ? Promise.resolve()
-                          : Promise.reject(new Error('两次输入的密码不一致')),
-                    }),
-                  ]}
-                >
-                  <Input.Password autoComplete="new-password" />
-                </Form.Item>
-              </Col>
-            </Row>
+            {!isView && (
+              <Row gutter={16}>
+                <Col xs={24} sm={12}>
+                  <Form.Item
+                    label={
+                      <span>
+                        密码&nbsp;
+                        <Tooltip title="密码应为 8-16 位的数字字母组合 (不含空格)">
+                          <QuestionCircleOutlined />
+                        </Tooltip>
+                      </span>
+                    }
+                    name={isView ? undefined : 'password'}
+                    rules={
+                      isView
+                        ? undefined
+                        : [
+                            {
+                              required: !currentItem?.id,
+                              whitespace: true,
+                              pattern:
+                                /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
+                              message: '请输入 8-16 位包含数字及字母的密码',
+                            },
+                          ]
+                    }
+                  >
+                    <Input.Password
+                      aria-label={isView ? '密码' : undefined}
+                      readOnly={isView}
+                      visibilityToggle={!isView}
+                      value={isView ? '' : undefined}
+                      autoComplete={isView ? 'off' : 'new-password'}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Form.Item
+                    label="确认密码"
+                    name={isView ? undefined : 'repassword'}
+                    dependencies={isView ? undefined : ['password']}
+                    rules={
+                      isView
+                        ? undefined
+                        : [
+                            {
+                              required: !currentItem?.id || Boolean(password),
+                              whitespace: true,
+                              pattern:
+                                /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
+                              message: '请输入 8-16 位包含数字及字母的密码',
+                            },
+                            ({ getFieldValue }) => ({
+                              validator: (_, value) =>
+                                (!value && !getFieldValue('password')) ||
+                                value === getFieldValue('password')
+                                  ? Promise.resolve()
+                                  : Promise.reject(
+                                      new Error('两次输入的密码不一致'),
+                                    ),
+                            }),
+                          ]
+                    }
+                  >
+                    <Input.Password
+                      aria-label={isView ? '确认密码' : undefined}
+                      readOnly={isView}
+                      visibilityToggle={!isView}
+                      value={isView ? '' : undefined}
+                      autoComplete={isView ? 'off' : 'new-password'}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            )}
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item
                   label="所属部门"
-                  name="deptId"
-                  rules={[{ required: true }]}
+                  name={isView ? undefined : 'deptId'}
+                  getValueFromEvent={(selected?: {
+                    value?: string | number;
+                  }) =>
+                    selected?.value == null ? undefined : String(selected.value)
+                  }
+                  getValueProps={(value?: string) => ({
+                    value: value
+                      ? {
+                          value: String(value),
+                          label:
+                            orgTitle(orgs, String(value)) ??
+                            (String(currentItem?.deptId) === String(value)
+                              ? currentItem?.deptName
+                              : undefined) ??
+                            '—',
+                        }
+                      : undefined,
+                  })}
+                  rules={isView ? undefined : [{ required: true }]}
                 >
-                  <TreeSelector
-                    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                    data={orgs as never}
-                    keys={['id', 'title', 'children']}
-                    allowClear
-                    showSearch
-                  />
+                  {isView ? (
+                    textValue(
+                      orgTitle(orgs, currentItem?.deptId ?? '') ??
+                        currentItem?.deptName,
+                    )
+                  ) : (
+                    <TreeSelect
+                      styles={{
+                        popup: { root: { maxHeight: 400, overflow: 'auto' } },
+                      }}
+                      treeData={orgs}
+                      fieldNames={{
+                        value: 'id',
+                        label: 'title',
+                        children: 'children',
+                      }}
+                      labelInValue
+                      disabled={fieldDisabled || orgsLoading || orgsError}
+                      loading={orgsLoading}
+                      status={orgsError ? 'error' : undefined}
+                      notFoundContent={
+                        orgsError
+                          ? '部门列表加载失败'
+                          : orgsLoading
+                            ? '加载中...'
+                            : '暂无可选部门'
+                      }
+                      placeholder={isView ? '—' : '请选择所属部门'}
+                      allowClear={!isView}
+                      showSearch={{ treeNodeFilterProp: 'title' }}
+                    />
+                  )}
                 </Form.Item>
+                {orgsError && (
+                  <Alert
+                    className="eva-view-notice"
+                    style={{ marginBlockStart: 0 }}
+                    title="部门列表加载失败"
+                    type="error"
+                    showIcon
+                    action={
+                      <Button
+                        htmlType="button"
+                        disabled={false}
+                        onClick={onRetryOrgs}
+                      >
+                        重试
+                      </Button>
+                    }
+                  />
+                )}
               </Col>
             </Row>
             <Row gutter={16}>
               <Col xs={24} sm={12}>
                 <Form.Item
                   label="手机号码"
-                  name="tel"
-                  rules={[{ required: true }]}
+                  name={isView ? undefined : 'tel'}
+                  rules={isView ? undefined : [{ required: true }]}
                 >
-                  <Input addonBefore="86" />
+                  {isView ? (
+                    textValue(currentItem?.tel)
+                  ) : (
+                    <Input
+                      readOnly={isView}
+                      placeholder={isView ? '—' : undefined}
+                      addonBefore="86"
+                    />
+                  )}
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12}>
                 <Form.Item
                   label="邮箱"
-                  name="email"
-                  rules={[{ required: true, type: 'email' }]}
+                  name={isView ? undefined : 'email'}
+                  rules={
+                    isView ? undefined : [{ required: true, type: 'email' }]
+                  }
                 >
-                  <Input />
+                  {isView ? (
+                    textValue(currentItem?.email)
+                  ) : (
+                    <Input
+                      readOnly={isView}
+                      placeholder={isView ? '—' : undefined}
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={24}>
-                <Form.Item label="备注" name="remark">
-                  <Input.TextArea maxLength={200} rows={4} />
+                <Form.Item
+                  label="备注"
+                  name={isView ? undefined : 'remark'}
+                  style={{ marginBottom: 0 }}
+                >
+                  {isView ? (
+                    textValue(currentItem?.remark, true)
+                  ) : (
+                    <Input.TextArea
+                      placeholder={isView ? '—' : undefined}
+                      readOnly={isView}
+                      maxLength={200}
+                      rows={4}
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </Row>
-          </div>
-          <section className={styles.roles} aria-label="用户角色">
-            <Form.Item name="roles" noStyle>
+            {isView && (
+              <Row gutter={16} className={styles.audit}>
+                {(
+                  [
+                    ['创建人', currentItem?.createBy],
+                    ['创建时间', currentItem?.utcCreate],
+                    ['修改人', currentItem?.modifyBy],
+                    ['修改时间', currentItem?.utcModify],
+                  ] as const
+                ).map(([label, value]) => (
+                  <Col xs={24} sm={12} key={label}>
+                    <Form.Item label={label}>{textValue(value)}</Form.Item>
+                  </Col>
+                ))}
+              </Row>
+            )}
+          </section>
+          <section
+            className={styles.roles}
+            aria-label="用户角色"
+            aria-busy={isView ? detailsLoading : rolesLoading}
+          >
+            <Form.Item name={isView ? undefined : 'roles'} noStyle>
               <RoleList
-                roles={roles}
-                loading={rolesLoading}
-                error={rolesError}
+                key={`${operateType}:${currentItem?.id ?? ''}`}
+                roles={isView ? (viewReady ? assignedRoles : []) : roles}
+                readOnly={isView}
+                metadataError={
+                  isView && !detailsLoading
+                    ? detailsError
+                      ? '角色信息读取失败'
+                      : rolesMetadataError
+                    : undefined
+                }
+                loading={isView ? detailsLoading : rolesLoading}
+                onRetryMetadata={onRetryDetails}
+                error={!isView && rolesError}
                 onRetry={onRetryRoles}
-                disabled={submitting || currentItem?.frozen === 9999}
+                disabled={fieldDisabled}
               />
             </Form.Item>
           </section>

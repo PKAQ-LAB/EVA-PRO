@@ -8,6 +8,7 @@ import {
   Tree,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { textColumn } from '@/components/TablePresentation';
 import { queryOrgs } from '../../organization/service';
 import type { RoleUserItem } from '../data.d';
 import { listRoleUsers, saveRoleUsers } from '../service';
@@ -69,10 +70,10 @@ const RoleUserModal: React.FC<RoleUserProps> = ({
   };
 
   const columns: TableColumnsType<RoleUserItem> = [
-    { title: '姓名', dataIndex: 'name' },
-    { title: '账号', dataIndex: 'account' },
-    { title: '所属部门', dataIndex: 'deptName' },
-    { title: '手机', dataIndex: 'tel' },
+    textColumn<RoleUserItem>('姓名', 'name', 140),
+    textColumn<RoleUserItem>('账号', 'account', 180),
+    textColumn<RoleUserItem>('所属部门', 'deptName', 200),
+    textColumn<RoleUserItem>('手机', 'tel', 160),
   ];
 
   return (
@@ -113,7 +114,7 @@ const RoleUserModal: React.FC<RoleUserProps> = ({
               onChange: (keys) => setChecked(keys.map(String)),
             }}
             dataSource={records}
-            scroll={{ y: 466 }}
+            scroll={{ x: 740, y: 466 }}
             pagination={false}
           />
         </Col>

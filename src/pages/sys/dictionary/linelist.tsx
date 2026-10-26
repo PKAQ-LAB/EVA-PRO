@@ -1,5 +1,11 @@
 import { App, Button, Card, Divider, Table, type TableColumnsType } from 'antd';
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import RecordView, { useRecordView, viewRow } from '@/components/RecordView';
+import {
+  ActionGroup,
+  actionColumn,
+  textColumn,
+} from '@/components/TablePresentation';
 import type { DictLine } from './data.d';
 import LineAOEForm, { type LineModalType } from './lineaoeform';
 
@@ -17,6 +23,7 @@ const LineList: React.FC<LineListProps> = ({
   operateType,
   isCurrent,
 }) => {
+  const view = useRecordView<DictLine>();
   const { modal } = App.useApp();
   const [modalType, setModalType] = useState<LineModalType>('');
   const [editIndex, setEditIndex] = useState<number | ''>('');
@@ -71,23 +78,35 @@ const LineList: React.FC<LineListProps> = ({
   };
 
   const columns: TableColumnsType<DictLine> = [
-    { title: '编码', dataIndex: 'keyName' },
-    { title: '描述', dataIndex: 'keyValue' },
-    { title: '排序', dataIndex: 'orders' },
+    textColumn<DictLine>('编码', 'keyName', 180),
+    textColumn<DictLine>('描述', 'keyValue', 260),
+    { ...textColumn<DictLine>('排序', 'orders', 90), align: 'right' },
     {
       title: '操作',
-      align: 'center',
-      width: 160,
-      render: (_, _record, index) =>
-        !isReadOnly && (
-          <>
-            <a onClick={() => handleEdit(index)}>编辑</a>
-            <Divider type="vertical" />
-            <a className="eva-delete-link" onClick={() => confirmDelete(index)}>
-              删除
-            </a>
-          </>
-        ),
+      ...actionColumn(220),
+      render: (_, _record, index) => (
+        <ActionGroup>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => view.show({ ..._record })}
+          >
+            查看
+          </Button>
+          {!isReadOnly && (
+            <>
+              <a onClick={() => handleEdit(index)}>编辑</a>
+              <Divider type="vertical" />
+              <a
+                className="eva-delete-link"
+                onClick={() => confirmDelete(index)}
+              >
+                删除
+              </a>
+            </>
+          )}
+        </ActionGroup>
+      ),
     },
   ];
 
@@ -102,6 +121,8 @@ const LineList: React.FC<LineListProps> = ({
       }
     >
       <Table<DictLine>
+        scroll={{ x: 750 }}
+        onRow={(record) => viewRow(() => view.show({ ...record }))}
         size="small"
         rowKey={(_record, index) => `${index}-${_record.keyName}`}
         dataSource={lines}
@@ -119,6 +140,16 @@ const LineList: React.FC<LineListProps> = ({
           isCurrent={isCurrent}
         />
       )}
+      <RecordView
+        title="查看字典明细"
+        view={view}
+        items={(record) => [
+          { key: 'name', label: '编码', children: record.keyName },
+          { key: 'value', label: '描述', children: record.keyValue },
+          { key: 'orders', label: '排序', children: record.orders },
+          { key: 'remark', label: '备注', children: record.remark },
+        ]}
+      />
     </Card>
   );
 };

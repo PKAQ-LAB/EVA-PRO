@@ -1,7 +1,9 @@
+import type { RecordAudit } from '@/components/RecordAuditFields';
+
 /** 组织（部门）状态：0000 停用、0001 启用、9999 系统部门 */
 export type OrgStatus = '0000' | '0001' | '9999';
 
-export interface OrgItem {
+export interface OrgItem extends RecordAudit {
   id: string;
   name: string;
   code?: string;

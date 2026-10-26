@@ -1,5 +1,6 @@
 import APIS from '@/apis';
 import http from '@/utils/http';
+import { normalizePageData, normalizePageParams } from '../../sys/adapter';
 
 export interface BizLogItem {
   id: string;
@@ -16,7 +17,15 @@ export interface BizLogListResponse {
 }
 
 export const queryBizLogs = (params: Record<string, unknown>) =>
-  http.list<BizLogListResponse>(APIS.BIZLOG_LIST, params);
+  http
+    .list<{ data?: unknown; success?: boolean }>(
+      APIS.BIZLOG_LIST,
+      normalizePageParams(params),
+    )
+    .then((res): BizLogListResponse => {
+      const page = normalizePageData<BizLogItem>(res.data);
+      return { ...res, data: page.list, total: Number(page.total) };
+    });
 
 export const getBizLog = (id: string) =>
   http.get<{ data?: BizLogItem; success?: boolean }>(APIS.BIZLOG_GET, id);

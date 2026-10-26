@@ -59,7 +59,21 @@ export const getAccount = (id: string) =>
 
 export const editAccount = (data: Partial<AccountItem>) =>
   http.post<MutationResult>(APIS.ACCOUNT_EDIT, {
-    ...data,
+    ...Object.fromEntries(
+      Object.entries(data).filter(
+        ([key]) =>
+          ![
+            'assignedRoles',
+            'createBy',
+            'utcCreate',
+            'modifyBy',
+            'utcModify',
+            'createId',
+            'modifyId',
+            'deptName',
+          ].includes(key),
+      ),
+    ),
     code: data.account,
     frozen: data.locked === '0001' ? 1 : 0,
     roleIds: data.roles?.map((role) => role.id),
@@ -81,12 +95,16 @@ export const checkAccountUnique = (account: string, id?: string) =>
   http.post<MutationResult>(APIS.ACCOUNT_CHECKUNIQUE, { account, id });
 
 export const queryOrgs = () =>
-  http.list<OrgListResponse>(APIS.ORG_LIST).then((res) => ({
-    ...res,
-    data: normalizeTree(res.data).map((row) =>
-      normalizeOrgNode(row as Partial<OrgNode> & Record<string, unknown>),
-    ),
-  }));
+  http.list<OrgListResponse>(APIS.ORG_LIST).then((res) => {
+    if (res.success === false || !Array.isArray(res.data))
+      throw new Error('部门列表加载失败');
+    return {
+      ...res,
+      data: normalizeTree(res.data).map((row) =>
+        normalizeOrgNode(row as Partial<OrgNode> & Record<string, unknown>),
+      ),
+    };
+  });
 
 export const queryRoles = () =>
   http
@@ -95,6 +113,19 @@ export const queryRoles = () =>
       normalizePageParams({ current: 1, pageSize: 200 }),
     )
     .then((res) => {
+      const data = res.data as
+        | { records?: unknown; list?: unknown }
+        | undefined;
+      if (
+        res.success === false ||
+        !(
+          Array.isArray(data) ||
+          Array.isArray(data?.records) ||
+          Array.isArray(data?.list)
+        )
+      ) {
+        throw new Error('角色列表加载失败');
+      }
       const page = normalizePageData<RoleItem>(res.data);
       return {
         ...res,
@@ -110,17 +141,29 @@ export const queryRoles = () =>
 
 function normalizeAccount(row: AccountItem) {
   const record = row as AccountItem & Record<string, unknown>;
+  if (Object.hasOwn(record, 'roleIds') && !Array.isArray(record.roleIds))
+    throw new Error('已分配角色数据格式错误');
+  const refs = new Map(
+    (row.roles ?? []).map((role) => [String(role.id), role]),
+  );
+  const roles = Array.isArray(record.roleIds)
+    ? record.roleIds.map((id: string | number) => ({
+        ...refs.get(String(id)),
+        id: String(id),
+      }))
+    : (row.roles ?? []).map((role) => ({ ...role, id: String(role.id) }));
   return {
     ...row,
     id: row.id != null ? String(row.id) : row.id,
     frozen: normalizeFrozen(record.frozen),
     locked: row.locked ?? frozenToEnabledStatus(record.frozen as never),
-    roles:
-      row.roles ??
-      ((record.roleIds as Array<string | number> | undefined)?.map((id) => ({
-        id: String(id),
-      })) ||
-        []),
+    roleIds: Array.isArray(record.roleIds)
+      ? record.roleIds.map(String)
+      : undefined,
+    assignedRoles: Array.isArray(record.assignedRoles)
+      ? record.assignedRoles.map((role) => ({ ...role, id: String(role.id) }))
+      : undefined,
+    roles,
   } as AccountItem;
 }
 

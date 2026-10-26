@@ -1,7 +1,9 @@
+import type { RecordAudit } from '@/components/RecordAuditFields';
+
 /** 角色冻结状态：0 启用、1 锁定、9999 系统只读 */
 export type RoleFrozen = 0 | 1 | 9999;
 
-export interface RoleItem {
+export interface RoleItem extends RecordAudit {
   id: string;
   name: string;
   code?: string;

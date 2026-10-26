@@ -6,6 +6,13 @@ export interface AccountRoleRef {
   name?: string;
 }
 
+export interface AssignedRole {
+  id: string;
+  name: string | null;
+  code: string | null;
+  frozen: 0 | 1 | 9999 | null;
+}
+
 export interface AccountItem {
   id?: string;
   account: string;
@@ -21,6 +28,12 @@ export interface AccountItem {
   frozen?: 0 | 1 | 9999;
   locked?: AccountLockStatus;
   roles?: AccountRoleRef[];
+  roleIds?: string[];
+  assignedRoles?: AssignedRole[];
+  createBy?: string;
+  utcCreate?: string;
+  modifyBy?: string;
+  utcModify?: string;
 }
 
 export interface OrgNode {
@@ -33,4 +46,5 @@ export interface OrgNode {
 export interface RoleItem {
   id: string;
   name: string;
+  frozen?: 0 | 1 | 9999 | null;
 }

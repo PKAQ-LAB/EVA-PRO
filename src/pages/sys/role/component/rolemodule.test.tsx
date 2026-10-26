@@ -69,3 +69,60 @@ it('实际授权展示后端全部允许候选，回填checked并只提交资源
   });
   expect(close).toHaveBeenCalledTimes(1);
 });
+
+it('名称列为树缩进留宽并保持单行，资源列仍允许换行且表格内部滚动', async () => {
+  mocks.list.mockResolvedValue({
+    success: true,
+    data: {
+      modules: [
+        {
+          id: 'parent',
+          name: '系统管理',
+          children: [
+            {
+              id: 'child',
+              name: '用于检查树形缩进的长模块名称',
+              resources: [
+                {
+                  id: 'get',
+                  resourceDesc: 'GET 查询资源',
+                  resourceType: 'GET',
+                },
+                {
+                  id: 'post',
+                  resourceDesc: 'POST 编辑资源',
+                  resourceType: 'POST',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  });
+  render(
+    <App>
+      <RoleModuleModal
+        open
+        roleId="role-a"
+        onClose={vi.fn()}
+        onSuccess={vi.fn()}
+      />
+    </App>,
+  );
+  const name = await screen.findByRole('cell', {
+    name: /用于检查树形缩进的长模块名称/,
+  });
+  expect(name).toHaveStyle({ whiteSpace: 'nowrap' });
+  expect(name.querySelector('.ant-table-row-indent')).toHaveStyle({
+    paddingLeft: '15px',
+  });
+  const table = screen.getByRole('table');
+  expect(table.querySelectorAll('col')[1]).toHaveStyle({ width: '260px' });
+  expect(table).toHaveStyle({ width: '720px' });
+  expect(table.parentElement).toHaveStyle({ overflowX: 'auto' });
+  expect(screen.getByRole('dialog')).toHaveStyle({ width: '860px' });
+  const resourceCell = screen.getByLabelText('GET 查询资源').closest('td');
+  expect(resourceCell?.style.whiteSpace).not.toBe('nowrap');
+  expect(screen.getByLabelText('POST 编辑资源')).toBeEnabled();
+});

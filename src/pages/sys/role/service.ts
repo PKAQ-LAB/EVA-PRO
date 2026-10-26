@@ -45,15 +45,22 @@ export const getRole = (id: string) =>
     .get<{ data?: RoleItem; success?: boolean }>(APIS.ROLE_GET, id)
     .then((res) => ({ ...res, data: res.data && normalizeRole(res.data) }));
 
-export const saveRole = (data: Partial<RoleItem>) =>
-  http.post<MutationResult>(APIS.ROLE_SAVE, {
+export const saveRole = async (data: Partial<RoleItem>) => {
+  const dataScope = Object.hasOwn(data, 'dataScope')
+    ? data.dataScope
+    : data.dataPermissionType;
+  if (typeof dataScope !== 'string' || !dataScope.trim()) {
+    throw new Error('请选择数据权限');
+  }
+  return http.post<MutationResult>(APIS.ROLE_SAVE, {
     ...data,
     frozen: normalizeFrozen(data.frozen),
-    dataScope: data.dataScope ?? data.dataPermissionType ?? '0000',
+    dataScope,
     dataOrgIds: Array.isArray(data.dataOrgIds)
       ? data.dataOrgIds.join(',')
       : data.dataOrgIds,
   });
+};
 
 export const deleteRoles = (ids: string[]) =>
   http.post<MutationResult>(APIS.ROLE_DEL, { param: ids });
@@ -90,7 +97,7 @@ export const saveRoleModules = (
 export const listRoleUsers = (roleId: string, deptId?: string) =>
   http
     .list<RoleUserResponse & { data?: unknown }>(APIS.ROLE_LISTUSER, {
-      roleEntity: roleId,
+      roleId,
       deptId,
     })
     .then((res) => ({ ...res, data: normalizeRoleUsers(res.data) }));
@@ -104,9 +111,9 @@ export const saveRoleUsers = (id: string, users: Array<{ userId: string }>) =>
 function normalizeRole(row: RoleItem) {
   const record = row as RoleItem & Record<string, unknown>;
   const frozen = normalizeFrozen(record.frozen);
-  const dataScope = String(
-    record.dataScope ?? record.dataPermissionType ?? '0000',
-  );
+  const dataScope = Object.hasOwn(record, 'dataScope')
+    ? record.dataScope
+    : record.dataPermissionType;
   const dataOrgIds = record.dataOrgIds ?? record.dataPermissionDeptid;
   return {
     ...row,
@@ -114,7 +121,7 @@ function normalizeRole(row: RoleItem) {
     frozen,
     status:
       row.status ?? (frozen === 9999 ? '9999' : frozen === 1 ? '0001' : '0000'),
-    dataScope,
+    dataScope: typeof dataScope === 'string' ? dataScope : undefined,
     dataOrgIds:
       typeof dataOrgIds === 'string' && dataOrgIds
         ? dataOrgIds.split(',')
@@ -205,6 +212,10 @@ function normalizeRoleUsers(
         | never[]
         | undefined) ?? [],
     checked:
-      ((payload.checked ?? payload.checkedIds) as string[] | undefined) ?? [],
+      (
+        (payload.checked ?? payload.checkedUser ?? payload.checkedIds) as
+          | Array<string | number>
+          | undefined
+      )?.map(String) ?? [],
   };
 }

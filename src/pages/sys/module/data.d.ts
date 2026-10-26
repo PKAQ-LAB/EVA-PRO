@@ -1,7 +1,9 @@
+import type { RecordAudit } from '@/components/RecordAuditFields';
+
 /** 模块状态：0000 启用、0001 停用、9999 系统模块 */
 export type ModuleStatus = '0000' | '0001' | '9999';
 
-export interface ModuleResource {
+export interface ModuleResource extends RecordAudit {
   id?: string;
   mainId?: string;
   code?: string;
@@ -11,7 +13,7 @@ export interface ModuleResource {
   resourceType?: string;
 }
 
-export interface ModuleItem {
+export interface ModuleItem extends RecordAudit {
   id: string;
   name: string;
   code?: string;

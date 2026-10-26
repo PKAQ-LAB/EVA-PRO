@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { listRoleModules, saveRoleModules } from './service';
+import { listRoleModules, listRoleUsers, saveRoleModules } from './service';
 
 const mocks = vi.hoisted(() => ({
   list: vi.fn(),
@@ -85,4 +85,31 @@ it('授权仅发送勾选模块的资源ID，不混入模块ID或未勾选模块
     roleId: 'role-a',
     resourceId: ['r1'],
   });
+});
+
+it.each([undefined, 'dept-a'])(
+  '授权用户查询携带roleId，部门%s，并回填真实checkedUser',
+  async (deptId) => {
+    const data = {
+      users: [{ id: '101', name: '测试用户' }],
+      checkedUser: [101, '102'],
+    };
+    mocks.list.mockResolvedValue({ success: true, data });
+    const result = await listRoleUsers('role-a', deptId);
+    expect(mocks.list).toHaveBeenLastCalledWith('/api/sys/role/listUser', {
+      roleId: 'role-a',
+      deptId,
+    });
+    expect(result.data.checked).toEqual(['101', '102']);
+    expect(result.data.users).toEqual(data.users);
+    expect(data.checkedUser).toEqual([101, '102']);
+  },
+);
+
+it('显式空checked保持清空，不被兼容字段重新勾选', async () => {
+  mocks.list.mockResolvedValue({
+    success: true,
+    data: { users: [], checked: [], checkedUser: ['101'] },
+  });
+  expect((await listRoleUsers('role-a')).data.checked).toEqual([]);
 });

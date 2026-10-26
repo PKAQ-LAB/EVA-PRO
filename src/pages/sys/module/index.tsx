@@ -18,6 +18,13 @@ import {
 import clsx from 'clsx';
 import React, { useMemo, useState } from 'react';
 import IconMap from '@/appicon';
+import { useRecordView, viewRow } from '@/components/RecordView';
+import {
+  ActionGroup,
+  actionColumn,
+  TextCell,
+  textColumn,
+} from '@/components/TablePresentation';
 import {
   filterTree,
   getDeleteBlockers,
@@ -32,6 +39,12 @@ const { Search } = Input;
 
 const SysModulePage: React.FC = () => {
   const intl = useIntl();
+  const view = useRecordView<ModuleItem>();
+  const handleView = (record: ModuleItem) => {
+    setCurrentItem({ id: record.id });
+    setOperateType('view');
+    void view.read(record.id, () => getModule(record.id));
+  };
   const { message: msg, modal } = App.useApp();
   const [operateType, setOperateType] = useState<OperateType>('');
   const [currentItem, setCurrentItem] = useState<Partial<ModuleItem>>({});
@@ -60,28 +73,21 @@ const SysModulePage: React.FC = () => {
   const refresh = () => modulesQuery.refetch();
 
   const handleAdd = (record?: ModuleItem) => {
+    view.close();
     setCurrentItem(
       record ? { parentId: record.id, routeUrl: record.routeUrl ?? '' } : {},
     );
     setOperateType('create');
   };
 
-  const handleEdit = async (record: ModuleItem) => {
+  const handleEdit = (record: ModuleItem) => {
     if (!record.id) {
       modal.warning({ title: '提示', content: '没有选择记录' });
       return;
     }
-    try {
-      const res = await getModule(record.id);
-      if (res.success !== false && res.data) {
-        setCurrentItem(res.data);
-        setOperateType('edit');
-      } else {
-        msg.error('模块详情加载失败，请重试');
-      }
-    } catch {
-      msg.error('模块详情加载失败，请重试');
-    }
+    setCurrentItem({ id: record.id });
+    setOperateType('edit');
+    void view.read(record.id, () => getModule(record.id));
   };
 
   const handleDelete = async (record: ModuleItem) => {
@@ -144,28 +150,38 @@ const SysModulePage: React.FC = () => {
   };
 
   const columns: TableColumnsType<ModuleItem> = [
-    { title: '模块名称', dataIndex: 'name' },
+    textColumn<ModuleItem>('模块名称', 'name', 240),
     {
       title: '图标',
       dataIndex: 'icon',
-      render: (text) => (text ? (IconMap[text as string] ?? text) : null),
+      width: 100,
+      ellipsis: { showTitle: false },
+      render: (_, record) => (
+        <TextCell text={record.icon}>
+          {record.icon ? (IconMap[record.icon] ?? record.icon) : null}
+        </TextCell>
+      ),
     },
     {
       title: '路由地址',
       dataIndex: 'routeUrl',
-      render: (_, record) => record.routeUrl || '—',
+      width: 260,
+      ellipsis: { showTitle: false },
+      render: (_, record) => <TextCell text={record.routeUrl} />,
     },
-    { title: '上级模块', dataIndex: 'parentName' },
+    textColumn<ModuleItem>('上级模块', 'parentName', 200),
     {
       title: '排序',
       dataIndex: 'orders',
+      width: 150,
+      align: 'right',
       render: (text, record) => {
         if (searchName) return text;
         const moveDown = getSiblingMove(allData, record.id, 'down');
         const moveUp = getSiblingMove(allData, record.id, 'up');
         return (
-          <div>
-            {text}
+          <div data-no-row-view>
+            <TextCell text={text} maxWidth={48} />
             <Divider type="vertical" />
             {moveDown ? (
               <CaretDownOutlined
@@ -197,13 +213,21 @@ const SysModulePage: React.FC = () => {
     {
       title: '状态',
       dataIndex: 'frozen',
-      render: (_, record) => frozenText(intl, record.frozen),
+      width: 110,
+      align: 'center',
+      ellipsis: { showTitle: false },
+      render: (_, record) => (
+        <TextCell text={frozenText(intl, record.frozen)} />
+      ),
     },
     {
       title: '操作',
-      align: 'center',
+      ...actionColumn(300),
       render: (_, record) => (
-        <div style={{ textAlign: 'center' }}>
+        <ActionGroup>
+          <Button type="link" size="small" onClick={() => handleView(record)}>
+            查看
+          </Button>
           <a onClick={() => handleAdd(record)}>添加下级</a>
           <Divider type="vertical" />
           <a onClick={() => handleEdit(record)}>编辑</a>
@@ -218,7 +242,7 @@ const SysModulePage: React.FC = () => {
               </a>
             </>
           )}
-        </div>
+        </ActionGroup>
       ),
     },
   ];
@@ -280,6 +304,8 @@ const SysModulePage: React.FC = () => {
           />
         )}
         <Table<ModuleItem>
+          scroll={{ x: 1450 }}
+          onRow={(record) => viewRow(() => handleView(record))}
           size="small"
           columns={columns}
           dataSource={data}
@@ -309,10 +335,18 @@ const SysModulePage: React.FC = () => {
 
       {operateType !== '' && (
         <ModuleAOEForm
+          key={`${operateType}:${currentItem.id ?? 'create'}`}
           operateType={operateType}
-          currentItem={currentItem}
+          currentItem={
+            operateType !== 'create' ? (view.data ?? currentItem) : currentItem
+          }
+          detailsLoading={operateType !== 'create' && view.loading}
+          detailsError={operateType !== 'create' ? view.error : undefined}
           data={allData}
-          onClose={() => setOperateType('')}
+          onClose={() => {
+            view.close();
+            setOperateType('');
+          }}
           onSuccess={refresh}
         />
       )}

@@ -8,12 +8,18 @@ import { useIntl } from '@umijs/max';
 import { App, Button, Divider } from 'antd';
 import clsx from 'clsx';
 import React, { useImperativeHandle, useRef, useState } from 'react';
+import { viewRow } from '@/components/RecordView';
+import {
+  ActionGroup,
+  actionColumn,
+  TextCell,
+  textColumn,
+} from '@/components/TablePresentation';
 import { frozenText } from '../status';
 import type { AccountItem } from './data.d';
 import {
   type AccountListResponse,
   deleteAccounts,
-  getAccount,
   lockAccounts,
   queryAccountList,
 } from './service';
@@ -26,6 +32,7 @@ export interface AccountListProps {
   selectedRowKeys: string[];
   setSelectedRowKeys: (keys: string[]) => void;
   onEdit: (record: AccountItem) => void;
+  onView: (record: AccountItem) => void;
   onGrant: (record: AccountItem) => void;
   /** 受控刷新句柄，由父组件 ref 持有 */
   innerRef?: React.RefObject<AccountListHandle | null>;
@@ -37,11 +44,15 @@ const AccountList: React.FC<AccountListProps> = ({
   selectedRowKeys,
   setSelectedRowKeys,
   onEdit,
+  onView,
   onGrant,
   innerRef,
   query,
 }) => {
   const intl = useIntl();
+  const handleView = (record: AccountItem) => {
+    if (record.id) onView(record);
+  };
   const { message: msg, modal } = App.useApp();
   const actionRef = React.useRef<ActionType | undefined>(undefined);
   const lockingRef = useRef(false);
@@ -79,15 +90,13 @@ const AccountList: React.FC<AccountListProps> = ({
       modal.warning({ title: '提示', content: '没有选择记录' });
       return;
     }
-    const res = await getAccount(record.id);
-    if (res.data) onEdit(res.data);
+    onEdit(record);
   };
 
   const handleGrant = async (record: AccountItem) => {
     if (record.frozen === 9999 || record.frozen === 1) return;
     if (!record.id) return;
-    const res = await getAccount(record.id);
-    if (res.data) onGrant(res.data);
+    onGrant(record);
   };
 
   const handleLock = async (record: AccountItem) => {
@@ -113,59 +122,72 @@ const AccountList: React.FC<AccountListProps> = ({
   };
 
   const columns: ProColumns<AccountItem>[] = [
-    { title: '姓名', dataIndex: 'name' },
-    { title: '账号', dataIndex: 'account' },
-    { title: '所属部门', dataIndex: 'deptName', search: false },
-    { title: '手机', dataIndex: 'tel' },
+    textColumn<AccountItem>('姓名', 'name', 140),
+    textColumn<AccountItem>('账号', 'account', 180),
+    { ...textColumn<AccountItem>('所属部门', 'deptName', 220), search: false },
+    textColumn<AccountItem>('手机', 'tel', 160),
     {
       title: '账号状态',
       dataIndex: 'frozen',
+      width: 110,
+      align: 'center',
+      ellipsis: { showTitle: false },
       search: false,
-      render: (_, record) => frozenText(intl, record.frozen),
+      render: (_, record) => (
+        <TextCell text={frozenText(intl, record.frozen)} />
+      ),
     },
     {
       title: '操作',
-      align: 'center',
-      width: 260,
+      ...actionColumn(400),
       search: false,
-      render: (_, record) =>
-        record.frozen !== 9999 && (
-          <div onDoubleClick={(event) => event.stopPropagation()}>
-            <Button
-              type="link"
-              size="small"
-              icon={record.frozen === 1 ? <UnlockOutlined /> : <LockOutlined />}
-              loading={lockingId === record.id}
-              disabled={lockingId !== null}
-              onClick={(event) => {
-                event.stopPropagation();
-                void handleLock(record);
-              }}
-            >
-              {record.frozen === 1 ? '解锁' : '锁定'}
-            </Button>
-            {record.frozen !== 1 && (
-              <>
-                <Divider type="vertical" />
-                <a onClick={() => handleGrant(record)}>角色授权</a>
-                <Divider type="vertical" />
-                <a onClick={() => handleEdit(record)}>编辑</a>
-                <Divider type="vertical" />
-                <a
-                  className="eva-delete-link"
-                  onClick={() => confirmDelete(record)}
-                >
-                  删除
-                </a>
-              </>
-            )}
-          </div>
-        ),
+      render: (_, record) => (
+        <ActionGroup>
+          <Button type="link" size="small" onClick={() => handleView(record)}>
+            查看
+          </Button>
+          {record.frozen !== 9999 && (
+            <div onDoubleClick={(event) => event.stopPropagation()}>
+              <Button
+                type="link"
+                size="small"
+                icon={
+                  record.frozen === 1 ? <UnlockOutlined /> : <LockOutlined />
+                }
+                loading={lockingId === record.id}
+                disabled={lockingId !== null}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  void handleLock(record);
+                }}
+              >
+                {record.frozen === 1 ? '解锁' : '锁定'}
+              </Button>
+              {record.frozen !== 1 && (
+                <>
+                  <Divider type="vertical" />
+                  <a onClick={() => handleGrant(record)}>角色授权</a>
+                  <Divider type="vertical" />
+                  <a onClick={() => handleEdit(record)}>编辑</a>
+                  <Divider type="vertical" />
+                  <a
+                    className="eva-delete-link"
+                    onClick={() => confirmDelete(record)}
+                  >
+                    删除
+                  </a>
+                </>
+              )}
+            </div>
+          )}
+        </ActionGroup>
+      ),
     },
   ];
 
   return (
     <ProTable<AccountItem>
+      scroll={{ x: 1260 }}
       defaultSize="small"
       actionRef={actionRef}
       columns={columns}
@@ -186,9 +208,7 @@ const AccountList: React.FC<AccountListProps> = ({
           'eva-readonly': record.frozen === 9999,
         })
       }
-      onRow={(record) => ({
-        onDoubleClick: () => handleEdit(record),
-      })}
+      onRow={(record) => viewRow(() => handleView(record))}
       request={async (params) => {
         const res: AccountListResponse = await queryAccountList({
           ...query,

@@ -8,7 +8,13 @@ import {
   type TableColumnsType,
 } from 'antd';
 import React, { useState } from 'react';
+import {
+  ActionGroup,
+  actionColumn,
+  textColumn,
+} from '@/components/TablePresentation';
 import type { DictItem } from './data.d';
+import styles from './list.module.css';
 import { isReadonlyDict } from './readonly';
 
 const { Search } = Input;
@@ -27,6 +33,7 @@ export interface DictListProps {
   loading: boolean;
   onCreate: () => void;
   onEdit: (record: DictItem) => Promise<void> | void;
+  selectedId?: string;
   onDelete: (record: DictItem) => Promise<void> | void;
 }
 
@@ -35,6 +42,7 @@ const DictListView: React.FC<DictListProps> = ({
   loading,
   onCreate,
   onEdit,
+  selectedId,
   onDelete,
 }) => {
   const { modal } = App.useApp();
@@ -53,30 +61,39 @@ const DictListView: React.FC<DictListProps> = ({
   };
 
   const columns: TableColumnsType<DictItem> = [
-    { title: '字典描述', dataIndex: 'name' },
-    { title: '字典编码', dataIndex: 'code' },
+    textColumn<DictItem>('字典描述', 'name', 220),
+    textColumn<DictItem>('字典编码', 'code', 220),
     {
       title: '操作',
-      align: 'center',
-      width: 100,
-      render: (_, record) =>
-        !isReadonlyDict(record) && (
-          <a
-            className="eva-delete-link"
-            onClick={(event) => {
-              event.stopPropagation();
-              confirmDelete(record);
-            }}
-          >
-            删除
-          </a>
-        ),
+      ...actionColumn(100),
+      render: (_, record) => (
+        <ActionGroup>
+          {!isReadonlyDict(record) && (
+            <Button
+              type="link"
+              size="small"
+              danger
+              className="eva-delete-link"
+              onClick={(event) => {
+                event.stopPropagation();
+                confirmDelete(record);
+              }}
+            >
+              删除
+            </Button>
+          )}
+        </ActionGroup>
+      ),
     },
   ];
 
   return (
-    <div>
-      <Row style={{ padding: '10px 5px' }} gutter={8}>
+    <div className={styles.list}>
+      <Row
+        className={styles.toolbar}
+        style={{ padding: '10px 5px' }}
+        gutter={8}
+      >
         <Col span={6}>
           <Button type="primary" onClick={onCreate}>
             新增
@@ -91,19 +108,39 @@ const DictListView: React.FC<DictListProps> = ({
         </Col>
       </Row>
       <Table<DictItem>
+        className={styles.table}
         size="small"
         bordered
         columns={columns}
         rowKey="id"
-        loading={loading}
+        loading={{ spinning: loading, description: '加载中...' }}
         dataSource={filterDicts(data, search)}
+        rowClassName={(record) =>
+          record.id === selectedId ? 'ant-table-row-selected' : ''
+        }
         onRow={(record) => ({
-          onClick: () => {
-            onEdit(record);
+          tabIndex: 0,
+          'aria-label': `选择字典${record.name ?? record.code ?? ''}`,
+          'aria-selected': record.id === selectedId,
+          onClick: (event) => {
+            if (
+              event.target instanceof Element &&
+              event.target.closest('button,a,input,[data-no-row-view]')
+            ) {
+              return;
+            }
+            void onEdit(record);
+          },
+          onKeyDown: (event) => {
+            if (event.target !== event.currentTarget) return;
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              void onEdit(record);
+            }
           },
         })}
         pagination={false}
-        scroll={{ y: 'calc(100vh - 315px)' }}
+        scroll={{ x: 540, y: '100%' }}
       />
     </div>
   );

@@ -31,23 +31,7 @@ vi.mock('./service', () => ({
   checkAccountUnique: mocks.checkAccountUnique,
   editAccount: mocks.editAccount,
 }));
-vi.mock('@/components', () => ({
-  TreeSelector: ({
-    id,
-    value = '',
-    onChange,
-  }: {
-    id?: string;
-    value?: string;
-    onChange?: (value: string) => void;
-  }) => (
-    <input
-      id={id}
-      value={value}
-      onChange={(event) => onChange?.(event.target.value)}
-    />
-  ),
-}));
+
 const roles = [
   { id: 'role-a', name: '管理员' },
   { id: 'role-b', name: '业务主管' },
@@ -78,7 +62,7 @@ const show = (
         <AOEForm
           operateType="create"
           currentItem={null}
-          orgs={[]}
+          orgs={[{ id: 'dept-a', title: '测试部门' }]}
           roles={roles}
           onClose={vi.fn()}
           onSuccess={vi.fn()}
@@ -109,7 +93,12 @@ it.each([false, true])(
     expect(screen.queryByText(/密码强度/)).toBeNull();
     change(/账号/, 'newuser');
     change('姓名', '新用户');
-    change('所属部门', 'dept-a');
+    fireEvent.mouseDown(screen.getByLabelText('所属部门'));
+    fireEvent.click(
+      await screen.findByText('测试部门', {
+        selector: '.ant-select-tree-title',
+      }),
+    );
     change('手机号码', '13800000000');
     change('邮箱', 'new@example.com');
     change(/^密码/, 'abc12345');
@@ -259,7 +248,7 @@ it.each(['switch', 'unmount', 'switch-back'] as const)(
         <AOEForm
           operateType="edit"
           currentItem={item}
-          orgs={[]}
+          orgs={[{ id: 'dept-a', title: '测试部门' }]}
           roles={roles}
           onClose={onClose}
           onSuccess={onSuccess}
@@ -328,7 +317,7 @@ it('旧校验完成不清除新会话正在保存的状态，新会话只提交�
       <AOEForm
         operateType="edit"
         currentItem={item}
-        orgs={[]}
+        orgs={[{ id: 'dept-a', title: '测试部门' }]}
         roles={roles}
         onClose={vi.fn()}
         onSuccess={vi.fn()}

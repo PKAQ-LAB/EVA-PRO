@@ -19,6 +19,9 @@ export interface DictAOEFormProps {
   setOperateType: (v: OperateType) => void;
   currentItem: Partial<DictItem>;
   onSuccess: () => Promise<void> | void;
+  loading?: boolean;
+  onDirtyChange?: (dirty: boolean) => void;
+  onBusyChange?: (busy: boolean) => void;
 }
 
 const TITLE: Record<Exclude<OperateType, ''>, string> = {
@@ -37,20 +40,28 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
   setOperateType,
   currentItem,
   onSuccess,
+  loading = false,
+  onDirtyChange,
+  onBusyChange,
 }) => {
   const [form] = Form.useForm<DictItem>();
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
+  const saving = useRef(false);
   const [lines, setLines] = useState<DictLine[]>(currentItem?.lines ?? []);
 
   useEffect(() => {
     setLines(currentItem?.lines ?? []);
     form.resetFields();
     if (currentItem) form.setFieldsValue(currentItem as DictItem);
-  }, [currentItem, form]);
+    onDirtyChange?.(false);
+  }, [currentItem, form, onDirtyChange]);
 
   const isReadOnly =
-    operateType === '' || operateType === 'view' || isReadonlyDict(currentItem);
+    loading ||
+    operateType === '' ||
+    operateType === 'view' ||
+    isReadonlyDict(currentItem);
   // 每次对象或只读上下文切换都建立新会话，返回同一对象也不恢复旧回调。
   const session = useMemo(() => ({ active: false }), [currentItem, isReadOnly]);
   const sessionRef = useRef(session);
@@ -68,11 +79,13 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
   }, [session]);
 
   const handleSaveClick = async () => {
-    if (!isCurrent() || submitting) return;
+    if (!isCurrent() || saving.current) return;
+    saving.current = true;
+    onBusyChange?.(true);
     setSubmitting(true);
     try {
-      const values = await form.validateFields();
-      if (!isCurrent()) return;
+      const values = await form.validateFields().catch(() => undefined);
+      if (!values || !isCurrent()) return;
       const res = await editDict({
         ...values,
         id: currentItem.id,
@@ -80,17 +93,33 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
       });
       if (isCurrent() && res.success) {
         msg.success('保存成功');
+        onDirtyChange?.(false);
         setOperateType('view');
         await onSuccess();
+      } else if (isCurrent()) {
+        msg.error('保存失败，请重试');
       }
+    } catch {
+      if (isCurrent()) msg.error('保存失败，请重试');
     } finally {
+      saving.current = false;
+      onBusyChange?.(false);
       if (isCurrent()) setSubmitting(false);
     }
   };
 
   return (
     <>
-      <Form colon form={form} layout="horizontal" {...formItemLayout}>
+      <Form
+        colon
+        form={form}
+        layout="horizontal"
+        {...formItemLayout}
+        disabled={isReadOnly || submitting}
+        onValuesChange={() => {
+          if (isCurrent()) onDirtyChange?.(true);
+        }}
+      >
         <Card
           title={`${TITLE[operateType as 'create' | 'edit' | 'view'] ?? ''}字典信息`}
           extra={
@@ -111,7 +140,7 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
                 name="code"
                 rules={[{ required: true }]}
               >
-                <Input maxLength={30} disabled={isReadOnly} />
+                <Input maxLength={30} disabled={isReadOnly || submitting} />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -120,7 +149,7 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
                 name="name"
                 rules={[{ required: true }]}
               >
-                <Input maxLength={30} disabled={isReadOnly} />
+                <Input maxLength={30} disabled={isReadOnly || submitting} />
               </Form.Item>
             </Col>
           </Row>
@@ -129,7 +158,7 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
               <Form.Item label="备注" name="remark">
                 <Input.TextArea
                   maxLength={200}
-                  disabled={isReadOnly}
+                  disabled={isReadOnly || submitting}
                   rows={5}
                 />
               </Form.Item>
@@ -140,10 +169,13 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
       <LineList
         lines={lines}
         setLines={(next) => {
-          if (isCurrent()) setLines(next);
+          if (isCurrent() && !saving.current) {
+            setLines(next);
+            onDirtyChange?.(true);
+          }
         }}
         isCurrent={isCurrent}
-        operateType={isReadOnly ? 'view' : operateType}
+        operateType={isReadOnly || submitting ? 'view' : operateType}
       />
     </>
   );

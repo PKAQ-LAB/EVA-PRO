@@ -32,9 +32,15 @@ vi.mock('@ant-design/pro-components', () => ({
 }));
 vi.mock('@/appicon', () => ({ default: {} }));
 vi.mock('./aoeform', () => ({
-  default: ({ currentItem }: ModuleAOEFormProps) => (
+  default: ({
+    currentItem,
+    detailsLoading,
+    detailsError,
+  }: ModuleAOEFormProps) => (
     <div>
       编辑窗口已打开
+      {detailsLoading && <span>加载中...</span>}
+      {detailsError && <div role="alert">{detailsError}</div>}
       <input
         aria-label="草稿路由"
         value={currentItem.routeUrl ?? ''}
@@ -59,10 +65,11 @@ it('真实编辑点击的服务器异常被反馈，列表显示routeUrl而非ID
   expect(screen.getByText('/sys/module')).toBeInTheDocument();
   expect(screen.queryByText('/0/m1')).toBeNull();
   fireEvent.click(screen.getByText('编辑'));
-  expect(
-    await screen.findByText('模块详情加载失败，请重试'),
-  ).toBeInTheDocument();
-  expect(screen.queryByText('编辑窗口已打开')).toBeNull();
+  expect(screen.getByText('编辑窗口已打开')).toBeInTheDocument();
+  expect(await screen.findByRole('alert')).toHaveTextContent(
+    '详情读取失败，请关闭后重试',
+  );
+  expect(screen.getByText('编辑窗口已打开')).toBeInTheDocument();
 });
 it('实际新增下级入口只预填父路由和父ID，不带父层级path作为子路由', () => {
   render(
