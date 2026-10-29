@@ -70,6 +70,6 @@ export default [
   {
     component: './exception/404',
     layout: false,
-    path: './*',
+    path: '*',
   },
 ];
