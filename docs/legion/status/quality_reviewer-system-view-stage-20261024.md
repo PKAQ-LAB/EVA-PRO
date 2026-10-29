@@ -237,3 +237,125 @@ UTC21:29:30.471Z（北京05:29:30）合法部门Form.Item label所属部门，co
 正常点击已有EVA_QA_20261018_查询资源行查看，UTC2026-10-25T22:34:03.954Z（北京10-26 06:34）Modal500×306，三label仅资源描述/资源类型/资源路径，3plates均32px，bg rgba0,0,0,.02/border rgb240；真值QA查询/GET//sys/module/list，0form/input/textarea/select/combobox，footer仅关闭，无四audit/编辑保存。安全截图runtime-20261026/07-resource-three-fields-noaudit.png已实际视觉检查；DOM/几何证resource-noaudit-live.json。未读取账号PII或实际日志，无假HTTP证明。
 
 正常先关子资源、再关主模块；fresh#/sys/module visibleDialogs0/forms0，markHandoff。未真实业务保存/删除/授权、未改设置、未build/服务/cache/DBRedisHTTP写/commitpush，S10保护。此资源例外独立自动及现场通过；部门搜索实际场景仍待、PEER回填wire最小投影仍等用户、其它Alertgap/明暗/完整S矩阵未完，不all done。所有命令/UI停止，验证槽交总控。
+
+## 2026-10-26 21:45 提交后正常UI补验（不重跑自动测试）
+
+按总控恢复唯一UI锁，先读提交检查点与S账本。CUA旧binding已随工具运行态消失；Edge3 agent tabs为空，但user.openTabs显示新用户页328079562/provider d7294a81...，#/sys/role。仅claim既有页，不新建/刷新/启停服务；fresh确认umi.js、2232×1221、无login/可见dialog/form。原tab816及PEER搜索编辑现场已不在，故明确原清空步骤中断，不冒同一旧窗连续结果，也未丢弃旧或用户新增输入。
+
+正常菜单进用户→精确QA_PEER_20261023→编辑；两区busytrue后false，初始部门control‘请选择所属部门’。本轮未搜时11首屏虚拟候选；只填QA_D1后P祖先/D1/D1C三项均selectedfalse，未点值；QA_NO_MATCH_20261026为空，暂无可选部门/treeitem0；清搜索后11首屏候选恢复，selectedtrue0，control仍原占位。UTC13:39:12.090Z（北京21:39）证peer-search-clear-restored.json/09-peer-search-clear-restored.png仅安全popup。Escape+原Footer取 消后visibleDialogs0/editForms0，无dirty确认，不执行discard/保存/角色选择；本轮搜索不触业务脏保护，未以DOM宣称HTTP POST监测。实际名称/无关/清空流程现通过；该PEER初始没有已选ID，故实际只能证‘空选择保持’，有值19位ID保持仍是独立46合成证，不冒真实已选ID通过。详情回填仍未修，wire最小投影待人，不私抓token/store。
+
+进入既有TanStack示例DEMO_01仅查看、未CRUD或读写私有localStorage：正常560×1221 Drawer，名称/编码/状态三32px，备注4行98px，四audit缺值—各32px；0form/input/textarea/select/combobox，footer仅关闭，无audit标题。亮色bg黑.02/border240/text黑.88；通过公开设置临时realDark后同560尺寸、同32/98、bg白.04/border48/text白.85，0controls。证tanstack-{light,dark}-view.json及10/11-tanstack-{light,dark}-view.png，暗图实际视觉检查。首暗抽屉截图rect x2232是原滑入动画，已等稳定fresh x1672后才保存截图，不误报空窗；恢复light第一次在设置滑入动画期间未生效，fresh核未恢复后稳定控件正常点light，明确checkblock/darknone，再遮罩关闭。本次QA临时外观已恢复原light，其余导航/布局未改，无源码HMR。
+
+当前#/examples/tanstack、无open设置/编辑，未新增业务数据或权限，S10不变。业务Alert尚无自然失败态，未断网/注入/改存储造错误，故真实上下gap未完成；真实安全日志样例、LIMIT本地凭据/作者样例/权限S各阶段仍缺前置。无build/tsc/自动重复/service/cache/Gitstagecommitpush。该段为提交后新QA记录，会产生受控docs dirty，不能把此前提交clean当当前clean。
+
+## 2026-10-26 21:50 组织/模块暗色骨架补证与字典明细规则冲突停点
+
+继续唯一UI锁仅看既有S父P/受保护R模块M01/字典D01，未改值保存。组织light同_r_1je_：pending10skeleton/0controls，offset/computed Dialog608；首BBox140/plate6.4为原zoom0.2，未当实际布局变窄；ready700×608/正文458，普通9plate32/备注98。dark同_r_1jp_ pending到ready offset Dialog608/正文458、plate32/98不变、busytrue→false，0controls；证organization-light-pending-ready.json、organization-dark-ready.json、图12/13。正常关闭，无固定高度/裁切生产修改。
+
+模块dark同_r_1l2_：原640Drawer pending→ready正文offset470全同，12plates普通/四audit32、备注54，0controls；四audit仍备注后，原图标预览/名称保留。证module-dark-pending-ready.json/14-module-dark-view.png。资源子view另500×306，只有描述/类型/路径3plate32/0控件，无audit，dark token bg白.04/border48/text白.85，图15-resource-dark-view.png已视觉核、resource-dark-view.json；依次正常关子及父，无写。
+
+新发现需总控裁决的规则冲突（未擅改/未直接定为业务bug）：既有D01主表正常单击→右编辑，未改任何字段；查看QA01明细实际独立640Drawer，用RecordView→Descriptions四项编码/描述/排序/备注，eva-view-value0、0controls，无四audit。当前lineaoeform实际create/edit是500Modal三Form.Item编码/描述/排序，无备注；linelist查看则单独RecordView带remark，DictLine类型本就有remark。与新全局‘view沿同AOE布局且token字段底框’存在容器/字段差异，不能机械以资源例外移除remark或加audit，也不能不经确认把独立详情改同AOE导致remark丢失。依据lineaoeform97-110、linelist143-152与现场dictionary-line-view-contract-conflict.json/16-dictionary-original-description-view.png。
+
+已安全关闭本次QA明细查看；设置恢复lightcheckblock/darknone，再遮罩关闭。停在#/sys/dictionary，右侧D01已读编辑状态但本轮无改值、未保存/新建，未触dirty/discard，无账号凭据表单。等待总控向用户确认：A保留原独立只读详情作为明确例外（需明确底框要求）；B改为同500AOE三mode，同时先确认remark保留位置/只读范围。A影响仅规则例外和视觉范围，B涉及linelist/lineAOE及shared nested测试，不能称纯CSS或默认删除字段。源继续冻结，无测试/build/service/cache/git写，S10未变，其余Alert/S/log仍未完。
+
+## 2026-10-26 23:22 临时断点恢复后只读复核与真实Alert间距
+
+总控提供后端独立live取证：新实例selectById实际仅SYS_ACCOUNT无profileJOIN，detail.user/vo dept均NULL，statement resource为Java bestguess非XML；这是后端报告的运行证，QA不冒自行读过IDE。XML未生效机制仍待分析/评审，修复未实施，禁猜前端回填/DB改。
+
+后端已清断点Watch且线程Running后，本人fresh原PEER只读窗双busyfalse/0controls，安全标题‘详情读取失败，请关闭后重试’及‘角色信息读取失败’；处于刚才授权断点暂停后的请求失败，不定为新产品timeoutbug。只走原重试资料按钮一次，busytrue→false、error消失、role明确暂无已分配角色、dept仍—/0controls，正常关闭到account/dialogs0。无读取phone/email/password/完整响应、未再开编辑或保存。
+
+利用该真实失败态只量DOM几何，不注入错误：两个Alert均eva-view-notice，上下computed margin12px。用户资料区域top338.5，Alerttop350.5/bottom400.5，下一Row及首字段top412.5，实际上12/下12；角色区top338.5，Alerttop359.5/bottom409.5，theadtop429.5，顶部含表titlepadding后间隔21、提示至表头20。两区同bottom870.5/height532。证debug-pause-account-alert-gaps.json，17-debug-pause-alert-gaps.png只截提示及头像空框/表头，无PII，已视觉核存在留白。只证明账号资料/角色这两处真实失败态间距，不能泛称其它所有Alert都过；不把调试暂停失败当正常业务可重复错误样例。
+
+随后正常系统日志菜单→业务日志，仅读日期控件元数据，不全snapshot/截图正文。先未定位M01/M02批准QA标识；按已有QA操作日期限定2026-10-23到2026-10-24，一次正常查询，loading0/总373，首屏仅布尔匹配QA标识未命中，未输出其他description/operator或打开任何详情。该UI只有日期过滤，缺安全主体精确筛选，故未逐页扫描373/扩大旧敏感正文，不为造样例重复R写。日期浮层正常Escape关闭，当前#/log/biz visibleDialog0/picker0/markHandoff，安全停。
+
+部门查询缺陷运行根因已由后端证明但未修，本人实际dept—保持。S11未改、依赖档案部门的S1链继续暂停；正常只读下一步需后端或用户定位合法安全QA业务日志样本及UI入口，不使用直接HTTP或猜路由。字典明细冲突仍待用户；源HMR冻结，无业务数据/授权/密码/服务/cache/build/重复自动/Git提交push。ownQA卡为提交后新增dirty，不all done。
+
+## 2026-10-27 九宫格Loading独立自动复验通过，现场被Edge扩展界面阻挡
+
+只读核本批5files：CubeLoading/index.tsx+index.module.css，PageLoading/index.tsx、app.tsx、app.test.tsx。新Cube只接className/style、aria-hidden装饰9span，currentColor；1.3s ease-in-out无限，延迟[.2,.3,.4,.1,.2,.3,0,.1,.2]，0/70/100 scale3d1/35 scale3d(0,0,1)，与用户二维缩放语义一致；无100pxmargin/固定#333。reduced-motion CSS停动画且scale1。PageLoading显式40px，原200min容器未改；runtime antd memo保原spin其它配置，仅默认indicator。field Skeleton、请求/权限/按钮选择器loading无源改。
+
+已核实际安装antd6 Spin index/Indicator：优先显式indicator再context，clone仅追加className/semanticstyle/percent；Cube未将percent透传DOM，1em承载size token，小/默认/大字体尺寸沿SpinCSS，PageLoadingstyle40覆盖。独立pnpm.cmd exec vitest run app.test/menuNavigation.wiring/menuLifecycle.wiring --maxWorkers=1，3files36/36/0fail0skip、success true/exit0，.git/qa-cube-loading-20261027.json/log。精确5filesBiome22ms0/no fixes；3生产tsx分别AntD0/partialfalse/skipped0，.git/qa-cube-loading-antd-{1,2,3}-20261027.json。最初一次antd传3路径被CLI拒too many arguments，未当通过，后已逐文件纠正；CLI6.6.3提示更新不升级。未build/fulltsc/全sys重跑。
+
+命令全退出后尝试fresh现有Edge3/tab328082602 #/sys/role的最小结构：evaluate在dispatch前deadline，未刷新/导航/输入。按官方browser-troubleshooting仅读说明，原browser user.openTabs仍显示同tab；再用官方getAXState替代，明确报告Microsoft Edge因另一个扩展UI已打开阻挡自动化，需人完成或关闭再继续。未使用原生桌面/CDP/DevTools绕过、未读账号PII/Token/React/store或自定义请求，未假定旧无draft=当前无draft。
+
+故当前尚未normalreload刷新runtime、实际九格/节奏/40px首屏、small/default/large/tableoverlay/亮暗/reducedmotion/字段骨架现场本轮均未验，不以36或DOM测试称像素通过。保留用户现有页面/扩展现场，UI停止，交总控待用户清阻后再授唯一锁。源冻结，后台IDE由backend处理不争锁；C/S11/字典冲突原边界保留，未commitpush。
+
+## 2026-10-28 继续现场复验：Edge扩展阻挡仍在
+
+用户继续后，官方CUA恢复文档并fresh Edge3 inventory，实际仅业务tab328082602，http://localhost:8000/#/sys/role。claim该用户tab后只读DOM白名单成功：dialogs0、modal/drawer forms0、visible password false，未读取任何输入值或账号联系信息。随后唯一一次正常reload调用返回Edge另一个扩展UI已打开、需人完成或关闭的阻挡；不能证明reload已执行或runtime已更新，立即停止，无低层绕过或重复重试。
+
+本轮PEER/LIMIT详情与正常编辑打开、D1回填、assigned-only角色、左右加载稳定布局，以及Cube九格动画/40px/尺寸/亮暗现场均未取得新证据，继续待验。既有独立203自动回归与36前端自动验证结论保留，未重跑、未拿自动结果替代实屏。未修改源/配置/业务数据/角色授权/密码/服务/cache/Git；S对象11、S1-S8未开始不变。需人先在Edge完成或关闭阻挡扩展界面，再交唯一UI锁；本轮释放锁并向总控回报。
+## 2026-10-28 用户清阻后恢复：刷新被Fitkun图片批量下载界面接管
+
+用户经总控明确可以了后fresh官方连接：旧Edge3不可用；inventory实际Edge5/6（同业务tab328082721），依fresh选Edge6并claim，实际http://localhost:8000/#/sys/role。最小DOM确认dialogs0、modal/drawer forms0、visible password false，未读取input值/contact。唯一一次正常reload后官方domSnapshot返回四项：×、拖拽到此处、图片将完成下载、由Fitkun图片批量下载提供。此轮未返回先前blocking错误字符串，而是实际读到Fitkun扩展界面，不能说已进入正常业务页或完成加载验收。
+
+按仍拦截一次即停，未点击扩展关闭/改变扩展设置、未换连接绕过、未反复reload、未继续账号菜单/详情/编辑；未截取任何账号或凭据信息。PEER/LIMIT D1回填与assigned-only、左右loading稳定布局、Cube九格/40px/尺寸/明暗均无新实屏结论。自动203/36未重跑，源/helper/config/服务/DB/Redis/授权/密码/Git不变，S对象11、S1-S8未开始。交回唯一UI锁；需用户在Edge关闭Fitkun当前拖拽界面后再派发。
+## 2026-10-28 Fitkun状态澄清与PEER真实部门复验
+
+总控允许正常关闭已识别Fitkun浮层后，fresh Edge6/tab328082721官方snapshot同时读到正常角色业务页与Fitkun文本。进一步只读DOM定位其自身#fitkun-drop-panel及唯一#fitkun-drop-panel-close-btn，实际panel y=-33554430、close y=-33554428，位于屏外；本轮无需也未强点关闭。此前仅看到Fitkun文本即停不足以证明其可见阻挡，本段更正该判断，不推断浏览器实际错误已被脚本处理。
+
+正常用户管理link导航成功，URL#/sys/account；仅查查询控件元数据及表头，跳过手机/邮箱/密码值。合法精确账号QA_PEER_20261023查询完成spin0唯一行，技术ID2113894345662021633、dept—、未锁定。正常查看该唯一行：初始1040×608Modal，左右aria-busy true；ready左右false、表Spinfalse，资料645.328×458、角色322.656×458同top375.5，view输入/textarea/select/combobox0。所属部门纯文本仍—；角色区仅表头与暂无已分配角色（0候选选择控件）。只证明本次空角色assigned-only消费和独立busy转变，不冒称实际拿过响应JSON、完整左右pending-ready像素零位移、C已生效或后端已重启。
+
+证据runtime-20261028/peer-department-runtime.json、peer-department.png、peer-assigned-role.png，安全裁图已视觉核，均无contact/密码。按部门仍缺即停链，未重开PEER编辑、未重选部门、未验证LIMIT或继续S权限；Cube九格/40px/尺寸/亮暗实屏也尚未完成。已正常关闭只读详情，当前#/sys/account dialogs0、visiblepasswordfalse，无未保存输入，交回唯一UI锁。无业务写/授权/密码/服务/source/helper/config/Git操作，无203/36重复自动。S11、S1-S8未开始不变。
+## 2026-10-28 Cube独立只读实屏：20px九格与减弱动画通过，40px/14px/普通动画待验
+
+总控另授Cube独立只读阶段，不再依赖部门修复。fresh account安全列表无visible form/password；正常link角色页一次捕捉真实table busytrue，indicator为index-module__l084vG__indicator ant-spin-dot，20×20，九个cube约6.66×6.66，证明真实runtime默认Spin已接Cube。后续角色正常查询/一次整页reload/组织和字典正常导航均因短加载未捕捉指标，相关JSON中的空indicators不是通过证；首次role这次工具DOM几何有证、未保存动画截图。
+
+主题面板实际light选中，正常切realDark勾选block/lightnone，无遮罩残留后只读LIMIT详情一次。最初DOM样式采集加getAnimations方法在官方只读scope不支持，TypeError，未取得该次完整pending样式，属采集限制不是产品错误；未注入替代或伪造状态。ready左右false/roleempty/controls0；安全右角色裁图cube-limit-role-dark.png已视觉核暗色完成态，仅完成态对比、不证明暗色动画。正常关闭后恢复原light，fresh勾选lightblock/darknone。
+
+浅色正常PEER详情一次捕捉pending：左右busytrue，资料x620/y375.5/w645.328/h458、角色x1289.328/y375.5/w322.656/h458；12字段Skeleton、buttonloading0。真实角色表Spin的Cube indicator20×20，color/background rgb(24,144,255)，9cube延迟[.2,.3,.4,.1,.2,.3,0,.1,.2]，全部animationName none/duration0s/transform matrix(1,0,0,1,0,0)。随后DOM-backed document.defaultView.matchMedia只读实际prefers-reduced-motion:reduce=true，证明当前本机减弱动画分支生效（未改系统或模拟偏好），不能把静态九格称1.3s普通动画通过。ready双false、外区位置尺寸与pending完全一致、Skeleton0/controls0；内部表内容高度189→94随空态数据结束变化，不冒称表内容零变化。证cube-peer-pending-light.json及cube-peer-ready-reduced-motion.json。
+
+cube-peer-role-light.png在截图时已完成请求，只有空角色完成态；已视觉核，不拿该图冒称捕捉到了九格。cube-table-light.png/cube-bootstrap-light.png/cube-organization-dark.png等亦只作该瞬间页面记录，按各JSON声明未捕捉指标，不作动画成功证据。实际40px PageLoading、14px small、32px large/普通运动节奏、暗色loading颜色、按钮转圈本次未自然捕捉，保持待验；不为补图制造假loading/网络拦截/新页面/业务写或更改reduced-motion。源与已有203/36自动结果保持、未重测。
+
+正常关闭只读PEER详情，安全停#/sys/account：visibleDialogs0/passwordfalse/drawers0，原light已恢复。全程未读取contact/password/token或响应体、未重选部门/改数据/授权/服务/source/helper/config/Git，S链未推进。独立Cube阶段报告为部分真实证据，不all pass；交回唯一UI锁。
+## 2026-10-28 用户确认后台已重启后：正常刷新被官方扩展阻挡拒绝
+
+总控转述用户明确后台已经重启，授仅PEER/LIMIT部门回填只读UI，不检查动画偏好。fresh官方Edge6用户tab328082721，实际http://localhost:8000/#/sys/account；最小DOM成功：visibleDialogs0、visible modal/drawer forms0、visible password false，未读取contact/input值。唯一正常reload立即由官方工具明确返回Microsoft Edge is blocking automation because another extension UI is open on this page. Complete or dismiss that extension UI in Microsoft Edge, then ask me to continue. 本次为真正官方拒绝，区别于之前DOM中屏外Fitkun文本；没有可安全取得的关闭target，不猜扩展身份/关闭目标、不再刷新或换连接绕过。
+
+本轮未取得重启后PEER/LIMIT详情、部门D1或role/busy新证据，不能沿用此前dept—当重启后结论，也不能宣称修复通过。未调用matchMedia、未推断OS；未作动画验收。未打开编辑/补部门/提交/改密/授权/读秘密/业务写/服务IDE断点/source/helper/config/Git操作，无203/36重复。阶段安全停止并交回UI锁；需人关闭或完成当前扩展界面后再恢复只读详情。
+## 2026-10-28 暂停后明确继续：新连接正常刷新仍被官方拒绝
+
+已读前端docs/legion/tasks/2026-10-28-orchestrator-paused-checkpoint.md（后端同路径不存在，已在前端找到）、本人卡及军团权威规则；无本人旧运行命令/持锁，恢复唯一UI锁。已重新读取computer-use 26.1023.50603 SKILL及更新官方CUA文档，无native操作。fresh Edge4对应此前同一扩展连接6795b222，用户新tab328083472实际http://localhost:8000/#/sys/role。claim后最小DOM成功：visibleDialogs0、visibleForms0、visiblePasswordfalse，未读任何输入值/联系方式。
+
+唯一正常reload被官方直接拒绝：Microsoft Edge is blocking automation because another extension UI is open on this page. Complete or dismiss that extension UI in Microsoft Edge, then ask me to continue. 已按一次即停，无第二次刷新/切连接/原生绕过/猜关目标；本轮不是因snapshot含屏外Fitkun文字而判阻挡。没有可辨识官方关闭target的新证据。重启后PEER/LIMIT部门D1、角色/布局及CSS后普通九格动画本轮仍无新实屏证，不用旧dept—当本轮失败或旧203/36当真实通过。未调matchMedia、不推断OS、不改偏好；未业务/授权/密码/source/helper/config/IDE/服务/Git操作，S链未推进。交回唯一UI锁，等待总控协调解除官方扩展阻挡。
+## 2026-10-28 副屏Edge正常导航完成重启后部门验收：PEER/LIMIT均D1
+
+用户继续并明确Edge副屏后fresh官方库存仍Edge3/4，沿同扩展6795b222的Edge4绑定，fresh用户tab328083472实际#/sys/role；无visible dialog/form/password。没有reload。当前业务role表正常但侧栏仅TanStack，用户管理link不存在；未猜权限原因。一次正常goto此前已核实http://localhost:8000/#/sys/account成功进入实际账号页，无官方拒绝。未凭屏外扩展文本判断遮挡、未操作扩展配置或换连接绕过。
+
+精确账号查询QA_PEER_20261023，完成唯一ID2113894345662021633后正常查看；pending左右及表busytrue、12Skeleton。ready均false、controls0，实际部门纯文本QA_D1_20261023、角色区暂无已分配角色。正常关闭后精确查询QA_LIM_20261023唯一ID2114719096971497474，正常查看同样pending三busytrue/12Skeleton，ready全false/controls0、实际部门QA_D1_20261023、暂无已分配角色。未读取contact/密码/完整JSON或重选部门/保存。本轮是真实重启后新UI证，两个详情部门回填均通过；不据UI推断mapper具体加载来源或替代S受限身份授权链。ready左右同y139/h458，资料x442/w645.328、角色x1111.328/w322.656；未采集本轮pending外框几何，不称本轮像素零位移。
+
+证据runtime-20261028-resumed/peer.json、limit.json及两张department安全裁图，均已视觉核显示D1、无联系方式。LIMIT pending顺便捕捉真实9cube animationName cubeScaleDelay/duration1.3s，其中第7块transform matrix(0.989529,0,0,0.989529,0,0)，其余尚none，证明当前普通动画已运行；Modal进场缩放阶段指示器bounding4×4不可误称实际设计尺寸4px。该样式输出在本会话工具证据，未独立保存该pendingJSON或动画截图，不当成完整周期视觉验收。未调用matchMedia或推断OS、未改偏好。40px首屏/14pxsmall/32pxlarge/暗色loading仍未取得本轮证据。
+
+已正常关闭LIMIT详情，停#/sys/account visibleDialogs0/visiblePasswordfalse，无草稿，唯一UI锁交回。未业务写/授权/改密/部门补填/源/helper/config/服务/IDE/Git操作，无203/36重跑。S对象11、S1-S8仍未开展，交总控另排。侧栏系统菜单缺失仅记录实际现象，不擅自定新缺陷或扩展范围。
+## 2026-10-28 资源权限前端冻结源码八文件一次独立验证
+
+总控授权唯一重验证槽一次完整八文件定向运行，cwd eva-web/trunk HEAD15db9e22f3edfc96661d777da1cc7d52c6ab0ca7。执行前Git状态已读，现有CubeLoading/PageLoading及QA文档变更保留未修改。冻结清单.git/organization-resource-permission-source-20261028.json SHA86BEE556C42E2E1948CE272FA267591239683B64FC3469579299816A25257BBF，16文件实际SHA执行前/自然退出后均逐项一致，manifest自身未漂移。
+
+唯一命令pnpm.cmd exec vitest run src/utils/resourcePermission.test.ts src/pages/sys/organization/permissions.test.tsx src/pages/sys/organization/aoeform.test.tsx src/pages/sys/organization/view.test.tsx src/pages/user/login/resourcePermission.test.tsx src/app.test.tsx src/pages/sys/recordView.test.tsx src/pages/sys/readonlyRows.test.tsx --maxWorkers=1 --reporter=verbose。session12626自然exit0，实际fresh Test Files8/8、Tests126/126，无fail或skip；23:09:00开始，76.27s。逐verbose成功行独立计数：resourcePermission27、organization permissions13、aoeform10、view9、login6、app20、recordView23、readonlyRows18，总126，不拼实现者旧两轮。
+
+实际用例含四org资源下删除入口/handler、edit/get/checkUnique正链、delete-only确认撤权/目标改变、宽授权但9999保持只读、strictfalse仍父子删除阻塞、unknown拒、旧false在bootstrap loading/error不能沿旧确认写、卸载后旧onOk不能写、详情晚到撤get不能激活保存、登录/刷新状态更新与Ant路径method匹配。均为合成自动化链，不冒称实际开发服务HTTP或浏览器已验证。
+
+完整日志runtime-20261028-resumed/qa-resource-capability-vitest-20261028.log，SHA CDF4726F70DA9287E4C66767C64BCB4C277A9F8A17D79807BD018DD028B2DD78，逐文件汇总同名.summary.json。含487条AntD deprecated及2条React act警告，不顺修、不当失败，也不称零警告。未另跑Biome/AntD专项/full tsc/build/升级或旧219/203/36，未改源码fixture/配置/Git发布，无UI/密码/服务/DB/HTTP/样本/身份切换/matchMedia。重验证槽主动交还总控；待designer源码终审和后台实际产物准备、用户正常重启后另排runtime字段/删除入口/本人getedit实屏，当前LIMIT登录与样本保持未观察。
+## 2026-10-29 后台正常重启后能力上线只读复验受阻
+
+总控转达人明确“可以了”后授主屏Edge只读窗口。fresh官方Edge4库存只有tab328084148，url#/sys/organization/title Eva Admin Pro。可见昵称QA_LIMIT，与已人确认LIMIT登录及原样本作者链一致，非admin；passwordFields0/forms0/dialogs0/busy0/alerts[]。实际侧栏只余TanStack示例，组织管理菜单缺失；搜索按钮disabled，搜索框灰显，新增部门入口不存在，组织表暂无数据且无任何rowKey，故精确样本2115435549295775746没有可用查询/查看/编辑入口。
+
+按明确“全按钮消失停报”停止，未根导航/刷新/重试或私读状态绕过。没有把删除/排序不显示当资源精确控制通过，因为已授list/get/edit/checkUnique也一并不可用；没有把空表当SELF隔离证据。无法核新boolean实际HTTP值、样本详情/编辑加载/取消，均记未验；官方当前文档无Network读取能力，未自定义fetch/读token/store/React。
+
+安全截图runtime-20261028-resumed/20261029-limit-capability-all-actions-missing.png已保存视觉核，只有合成QA_LIMIT/表格无联系人或密码。markHandoff保原现场，UI锁交回总控。无业务写/授权/身份切换/密码/服务IDE/DB/sourcehelper/config/测试/matchMedia，原样本备注未修改。需总控限定诊断bootstrap能力状态/加载链，当前不预判原因或扩大权限。
+## 2026-10-29 一次正常reload重新bootstrap后上线只读通过
+
+总控明确指出旧initialState尚未正常刷新，授权一次reload。刷新前password/forms/dialog均0，执行当前tab唯一正常reload；URL仍#/sys/organization、title恢复组织管理-Eva Admin Pro、身份QA_LIMIT。刷新后组织菜单恢复（另TanStack示例），点击正式组织菜单，busy0，唯一实际行ID2115435549295775746/name QA_SAMPLE_LIMIT_20261023。搜索/新增/查看/添加下级/编辑均可用，行删除及批删入口、勾选列、排序控件不显示；未点击任何删除/排序或私造handler。
+
+只读查看经历加载中后回填name/code QA_S_LIM_20261023、父—、order1、启用、remark EVA package S SELF isolation sample、创建/修改人QA_LIMIT、创建21:28:33/修改21:38:23均保持。关闭后仅打开编辑，经历loading/确定disabled到完整回填：原name/code、父0、orders1、enable开、原remark一致，确定按钮可用；未改任何字段/未提交，明确取消后全部dialog关闭，LIMIT登录保留，markHandoff，UI锁交回。
+
+截图20261029-limit-refreshed-permissions.png已保存视觉核；20261029-limit-refreshed-edit-readable.png记录完整回填/保存可用。原刷新前全禁截图保留，其只能证明当时未刷新的页面unknown安全关闭，不能证明新bootstrap请求失败；本次正常reload已恢复，不能继续沿旧“上线复验未通过”当最终结论。当前可收口页面行为：四资源下删除/排序入口受限、本人列表/查看/编辑加载可用。实际HTTP boolean原文未读取，官方API无Network，未自定义fetch或私读token/store/React；不冒称字段直接读证、strictfalse现场切换或跨作者隔离通过。无业务写/权限/DB/服务/源码/重测/matchMedia。
+## 2026-10-29 个人设置A最小修复独立源审及窄测试
+
+总控授四文件只读源审+唯一轻量test。实际diff仅AvatarDropdown移除settings菜单/SettingOutlined和旧兜底/account/${key}跳转；theme setInitialState保留原状态并打开settingDrawer、logout先清currentUser/dict再loginOut，服务端失败仍clearAuthState和正常redirect整段未变。config/routes唯一差异末尾catchall './*'→'*'，没有注册/account/settings、profileAPI或恢复模板。git历史2fdb1b57 feat使用simple模式删除settings/center模板文件，merge-base确认该删除提交是当前HEAD祖先；当前去掉死入口与这一事实一致，无业务扩大。
+
+测试源实际沿Umi依赖链取react-router-dom真实matchRoutes，适配嵌套路由而非mock路由，含旧'./*'不匹配/新'*'匹配与15个真实配置地址，静态主页/登录/sys/log/TanStack/403仍落原component，未知页/旧settings落404。Avatar三个用例覆盖服务端logout拒绝仍本地清理+redirect、仅theme/logout且theme保其它状态、旧settings事件不跳转不触发其它动作；它对HeaderDropdown为mock，不当真实AntD/浏览器点击证。
+
+四源哈希实际前后匹配：Avatar B8E2C6FCEF8BFFDA6BEFFAF868F0261CA0750B1998F7DE34AC5CE94E503296CD；routes0F6A403ED3F23E3492F1719D35F1C02A9F9C8F1B820DF872E748327927B4A8AB；routes.test F45DDA111D3B2C1842B6C0EA4CA3133F880FCA664FEFD09CF976F69D137DC286；Avatar.test460C33E279AF2BE85A75D762738ACA08198EE80024570F4CCE3D641BACBDA87A。原16权限清单及manifest86BEE556C42E2E1948CE272FA267591239683B64FC3469579299816A25257BBF前后逐SHA均不漂移。
+
+唯一pnpm.cmd exec vitest run src/routes.test.ts src/components/RightContent/AvatarDropdown.test.tsx --maxWorkers=1 --reporter=verbose，自然exit0，fresh2files/19tests全过（routes16、Avatar3），1.76s，无fail/skip或警告输出。完整日志runtime-20261028-resumed/20261029-settings-a-qa-vitest.log。源审未发现本次改动引入的阻断问题，未代码/fixture/config修改、UI/密码/退出PEER/服务DBHTTP/build全仓tsc升级或旧126重跑；Git LF/CRLF提示不作内容失败。轻量槽交回总控，真实页面菜单/404/主题与退出现场仍待总控另授，API stage1真实摘要仍未收到，不假已执行。

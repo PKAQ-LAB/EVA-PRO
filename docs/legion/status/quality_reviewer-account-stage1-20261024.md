@@ -39,3 +39,29 @@ fulltsc首次63（旧59+新Umi生成access1+新grant夹具3），据实交总控
 精确2文件Biome36ms通过/no fixes。项目本地 pnpm.cmd exec antd lint AOE exit0/partialfalse/skipped0，仅原Input addonBefore弃用1条；未升级CLI或依赖。直接antd命令不在PATH的首次失败已纠为项目本地CLI，未把失败称通过。生产本补修为 showSearch={{treeNodeFilterProp:'title'}}，无新增deptName/回填或保存契约改动。
 
 开始UI前新鲜DOM确认#/sys/account、umi.js、PEER行在；但当前已有role=dialog的ant-drawer-section，标题为整体风格设置/主题色/导航模式等开发设置，非上次交接的无抽屉现场。未关闭或操作该抽屉，未开账号编辑、未读phone/email/password，未截图账号全页；为保护用户现场暂停实际搜索回归并交总控。真实QA_D1名称搜索/无关词/清空和选择不变本轮尚未现场通过。部门回填仍未修复，等待总控向用户索取的最小wire证据；其它Alertgap/亮暗及S矩阵保持未完。无业务写/服务/build/缓存/提交push，S10不变。
+
+## 2026-10-26 LIMIT本地凭据交接（未创建，保护未保存草稿）
+
+按总控转述用户明确可本地输入密码，恢复唯一UI锁。fresh当前用户已到#/sys/account且打开纯只读‘查看用户信息’，无密码/编辑控件；只读Footer正常关闭后用合法账号查询精确QA_LIM_20261023。等查询结束spin0、dataRows0、暂无数据，确认本次无匹配，不因之前账本0直接重复创建。
+
+正常新增仅预填批准账号QA_LIM_20261023、明确QA名称QA_LIMIT；姓名为测试标识非真人。候选与详情区ready后部门展示名搜索QA_D1_20261023，先核实际treeitem技术ID2113856614139469826，未误选D1C2113857168370606081；正常选择精确D1。角色checkbox checked0，未授予角色。没有输入tel/email或密码/确认，未生成可用PII，未点击保存；此刻仍未创建成功，不记新ID。S对象仍10，只有本地未保存的LIMIT草稿。
+
+已markHandoff，已明确给人本地完成密码/确认及电话邮箱必填并自行保存，之后回复‘填写并保存好了’。从交接起不再截图/读取input值/工具观察敏感form，也不自动取消、导航、discard或保存；等待用户确认后才从安全列表核技术ID/部门/角色空。源冻结、无HMR/后台命令/业务接口DBRedis写/提交push。字典明细布局冲突仍待用户，PEER实际wire deptId:null由总控另交后台，不因开LIMIT草稿称回填已修。
+
+## 2026-10-26 22:03 LIMIT由用户本地保存后安全核验：S对象11，S0尚未通过
+
+用户通过总控明确‘保存好了’后恢复唯一UI锁，先fresh仅结构确认#/sys/account无visibleDialogs/visiblePasswordForms0，敏感表单已关闭；未读取或截图此前本地填写内容。合法精确查询QA_LIM_20261023完成spin0/唯一dataRow1，新技术ID2114719096971497474。按表头映射只读account/department/status，跳过手机列：账号精确一致、未锁定、所属部门—；未读tel/email/password。
+
+只对该技术ID正常查看，初始双区busytrue，ready双false，0form/input/textarea/select/combobox、密码元素0。角色表头仅序号/角色名称/角色状态，dataRows0、明确暂无已分配角色、roleErrorfalse；这是正常UI消费的空角色证据，不冒声称直接抓取roleIds/assignedRoles原JSON。部门纯文本仍—，不据此认选择丢失/DB已空，更不重开edit重选或修DB；PEER已确认真实wire deptId:null根因正在后台只读诊断，新LIMIT的真实部门关联同样待限定核实。证runtime-20261026/limit-created-safe-role-state.json，仅安全白名单无PII。
+
+正常关闭用户查看后#/sys/account visibleDialogs0，markHandoff，无新未保存输入。用户本人完成新建是本次唯一新增对象，现4org+5role+PEER+LIMIT共11，LIMIT账号/技术ID如上，角色空/未锁定；五角色资源原空尚未新增核，不假称S0全部通过。作者样例0、grant0、S1–S8仍未开始，不重复R、不新租户或物理删。
+
+下一最小前置：总控协调后台只读核新LIMIT实际档案部门D1及PEER缺详情字段的根因，不要求用户反复重输或先改业务；两账号关系及精确资源集合未齐前，不用管理员代受限身份跑S1。后续受限登录需用户本地切换，凭据不入聊天/脚本；本人不猜密码、不开password/edit、不复制token/完整响应。字典明细A/B冲突仍待用户、Alert安全失败场景及日志样例尚未齐。源/HMR冻结，未build/服务/cache/自动重跑/Git提交push；own卡新增dirty属提交后后续证据。
+
+## 2026-10-26 22:51 debug实例重置筛选后PEER返回（未触发详情）
+
+总控明确仅授一次公开重置后精确查询，后端此前已清所有临时断点/watch且线程Running。fresh#/sys/account visibleDialogs0；仅读筛选非空布尔：accounttrue、namefalse、telfalse，selectFilters0，treeitemaria-selectedtrue0及ant-tree-node-selected0，无其它可见筛选；未读取联系方式具体值/截图/私有表单或query状态。
+
+正常点公开重置，三个input非空均false，treeSelected0。随后仅填QA_PEER_20261023并正常查询一次，UTC2026-10-26T14:50:56.479Z（北京22:50:56）loading0、empty无、精确技术rowid2113894345662021633返回。没有打开详情/重复查询/刷新/编辑/保存/loginlogout/JWTcache操作，没有抓HTTP/store。不能以返回结果定因：重置前没有已观察到其它可见残留，原请求/内部状态/每请求schema无证，故只证重置后正常一次返回，不武断认部门wireNULL同因或对象删除。
+
+当前精确PEER列表安全停，markHandoff，交回浏览器锁等待总控下一调试安排；本轮没有触发PEER详情断点。S11/profileD1后台证据由后端卡分别负责，本人不冒已独立核DB。无源/HMR/重验证/build/服务/cache/Git提交push；本条仅ownQA证据新增dirty。

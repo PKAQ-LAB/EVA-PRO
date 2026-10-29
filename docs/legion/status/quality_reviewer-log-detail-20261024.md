@@ -32,3 +32,14 @@ Biome7files19ms exit0/no fixes（.git/qa-log-detail-biome-20261024.log），仅3
 ## 2026-10-26 00:22 新底框/骨架批次日志独立专项
 
 按总控本批顺序授权，sys/TanStack38files293完结后，日志另完整src/pages/log单worker6files23/23、0skip、32.43s、exit0；.git/qa-skeleton-log-20261026.json/log。与sys不重叠且分轮，不拼为一次316；原日志专用字段/请求/安全边界均保。此为自动复验，无真实敏感日志UI/正文、无业务写/build/服务/cache。源冻、全部命令退出，交槽待新dev合法UI。
+## 2026-10-26 23:22 临时断点恢复后只读复核与真实Alert间距
+
+总控提供后端独立live取证：新实例selectById实际仅SYS_ACCOUNT无profileJOIN，detail.user/vo dept均NULL，statement resource为Java bestguess非XML；这是后端报告的运行证，QA不冒自行读过IDE。XML未生效机制仍待分析/评审，修复未实施，禁猜前端回填/DB改。
+
+后端已清断点Watch且线程Running后，本人fresh原PEER只读窗双busyfalse/0controls，安全标题‘详情读取失败，请关闭后重试’及‘角色信息读取失败’；处于刚才授权断点暂停后的请求失败，不定为新产品timeoutbug。只走原重试资料按钮一次，busytrue→false、error消失、role明确暂无已分配角色、dept仍—/0controls，正常关闭到account/dialogs0。无读取phone/email/password/完整响应、未再开编辑或保存。
+
+利用该真实失败态只量DOM几何，不注入错误：两个Alert均eva-view-notice，上下computed margin12px。用户资料区域top338.5，Alerttop350.5/bottom400.5，下一Row及首字段top412.5，实际上12/下12；角色区top338.5，Alerttop359.5/bottom409.5，theadtop429.5，顶部含表titlepadding后间隔21、提示至表头20。两区同bottom870.5/height532。证debug-pause-account-alert-gaps.json，17-debug-pause-alert-gaps.png只截提示及头像空框/表头，无PII，已视觉核存在留白。只证明账号资料/角色这两处真实失败态间距，不能泛称其它所有Alert都过；不把调试暂停失败当正常业务可重复错误样例。
+
+随后正常系统日志菜单→业务日志，仅读日期控件元数据，不全snapshot/截图正文。先未定位M01/M02批准QA标识；按已有QA操作日期限定2026-10-23到2026-10-24，一次正常查询，loading0/总373，首屏仅布尔匹配QA标识未命中，未输出其他description/operator或打开任何详情。该UI只有日期过滤，缺安全主体精确筛选，故未逐页扫描373/扩大旧敏感正文，不为造样例重复R写。日期浮层正常Escape关闭，当前#/log/biz visibleDialog0/picker0/markHandoff，安全停。
+
+部门查询缺陷运行根因已由后端证明但未修，本人实际dept—保持。S11未改、依赖档案部门的S1链继续暂停；正常只读下一步需后端或用户定位合法安全QA业务日志样本及UI入口，不使用直接HTTP或猜路由。字典明细冲突仍待用户；源HMR冻结，无业务数据/授权/密码/服务/cache/build/重复自动/Git提交push。ownQA卡为提交后新增dirty，不all done。

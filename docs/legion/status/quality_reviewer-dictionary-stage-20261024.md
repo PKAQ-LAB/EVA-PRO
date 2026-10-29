@@ -103,3 +103,12 @@ index使用冻结leaveGuard保护字段和明细dirty，切对象/新增/route/u
 在未执行导航期间，15:47:36.582Z fresh DOM已变#/sys/organization、无dialog/drawer/password，说明用户侧页面已变化；立即停止交叉操作，不推断由谁/为何。13-peer-text-header、14-peer-assigned-role-empty、15-peer-audit-only三个裁剪在发现变页前按旧坐标保存，实际不再是PEER，不能作为账号证据或公开交付；本卡明确失效，不沿用其命名冒证，未读/发布其内容。有效账号证据为上述最小白名单DOM，未全屏采联系方式。
 
 随后总控转用户最新要求：view仍纯文本但须token亮暗浅底/外框；打开骨架或至少完成布局尺寸不得先小后大；Alert等与上下组件留间距并列顶级规则。立即按新规则停全部UI；15:48:24.340Z当前#/sys/organization，visibleDialogs[]/openDrawers0/editForms0/passwordfalse，无编辑草稿，markHandoff并明确交源码窗口。旧纯文本裸值视觉结果不替代新要求，未采初始高的不得声称高度无闪。未继续编辑部门/授权/CRUD/日志/TanStack/S；S仍4org+5role+PEER1共10，LIMIT及作者样例0、grant0、S1–S8未开始。不重复R或自动34/279/23/8/177、无fulltsc/build/cache/启停/源写/提交。全仓tsc60仍保留，完整验收未完成。
+## 2026-10-26 21:50 组织/模块暗色骨架补证与字典明细规则冲突停点
+
+继续唯一UI锁仅看既有S父P/受保护R模块M01/字典D01，未改值保存。组织light同_r_1je_：pending10skeleton/0controls，offset/computed Dialog608；首BBox140/plate6.4为原zoom0.2，未当实际布局变窄；ready700×608/正文458，普通9plate32/备注98。dark同_r_1jp_ pending到ready offset Dialog608/正文458、plate32/98不变、busytrue→false，0controls；证organization-light-pending-ready.json、organization-dark-ready.json、图12/13。正常关闭，无固定高度/裁切生产修改。
+
+模块dark同_r_1l2_：原640Drawer pending→ready正文offset470全同，12plates普通/四audit32、备注54，0controls；四audit仍备注后，原图标预览/名称保留。证module-dark-pending-ready.json/14-module-dark-view.png。资源子view另500×306，只有描述/类型/路径3plate32/0控件，无audit，dark token bg白.04/border48/text白.85，图15-resource-dark-view.png已视觉核、resource-dark-view.json；依次正常关子及父，无写。
+
+新发现需总控裁决的规则冲突（未擅改/未直接定为业务bug）：既有D01主表正常单击→右编辑，未改任何字段；查看QA01明细实际独立640Drawer，用RecordView→Descriptions四项编码/描述/排序/备注，eva-view-value0、0controls，无四audit。当前lineaoeform实际create/edit是500Modal三Form.Item编码/描述/排序，无备注；linelist查看则单独RecordView带remark，DictLine类型本就有remark。与新全局‘view沿同AOE布局且token字段底框’存在容器/字段差异，不能机械以资源例外移除remark或加audit，也不能不经确认把独立详情改同AOE导致remark丢失。依据lineaoeform97-110、linelist143-152与现场dictionary-line-view-contract-conflict.json/16-dictionary-original-description-view.png。
+
+已安全关闭本次QA明细查看；设置恢复lightcheckblock/darknone，再遮罩关闭。停在#/sys/dictionary，右侧D01已读编辑状态但本轮无改值、未保存/新建，未触dirty/discard，无账号凭据表单。等待总控向用户确认：A保留原独立只读详情作为明确例外（需明确底框要求）；B改为同500AOE三mode，同时先确认remark保留位置/只读范围。A影响仅规则例外和视觉范围，B涉及linelist/lineAOE及shared nested测试，不能称纯CSS或默认删除字段。源继续冻结，无测试/build/service/cache/git写，S10未变，其余Alert/S/log仍未完。
