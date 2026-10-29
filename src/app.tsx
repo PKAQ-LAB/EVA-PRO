@@ -1,7 +1,11 @@
 import { LinkOutlined, UserOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
-import type { RequestConfig, RunTimeLayoutConfig } from '@umijs/max';
+import type {
+  RequestConfig,
+  RunTimeLayoutConfig,
+  RuntimeAntdConfig,
+} from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import { ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
@@ -22,6 +26,7 @@ import {
   OfflineBanner,
 } from '@/components';
 import AuthBootstrapStatus from '@/components/AuthBootstrapStatus';
+import CubeLoading from '@/components/CubeLoading';
 import { user_key } from '@/constant';
 import { fetchDict, fetchMenus } from '@/services/user';
 import { isAuthExpiredError, redirectToLogin } from '@/utils/authState';
@@ -31,9 +36,18 @@ import {
   type MenuNavigationItem,
   normalizeMenuPaths,
 } from '@/utils/menuNavigation';
+import {
+  type ResourcePermissionUser,
+  resourcePermissionFromResponse,
+} from '@/utils/resourcePermission';
 import { printANSI } from '@/utils/screenlog';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
+
+export const antd: RuntimeAntdConfig = (memo) => ({
+  ...memo,
+  spin: { ...memo.spin, indicator: <CubeLoading /> },
+});
 
 // 启动时打印 ASCII 欢迎语 (TASK-11)
 printANSI();
@@ -66,12 +80,14 @@ function getCurrentRoutePath() {
 function normalizeCurrentUser(
   data: unknown,
   fallbackUser?: Record<string, unknown>,
-): API.CurrentUser | undefined {
+  resourcePermissionEnabled?: boolean,
+): ResourcePermissionUser | undefined {
   const menus = extractMenus(data);
   const baseUser = fallbackUser || {};
   if (Array.isArray(data)) {
     return {
       ...baseUser,
+      resourcePermissionEnabled,
       name:
         (baseUser.name as string | undefined) ??
         (baseUser.nickName as string | undefined) ??
@@ -93,6 +109,7 @@ function normalizeCurrentUser(
   if (!mergedUser || Object.keys(mergedUser).length === 0) return undefined;
   return {
     ...mergedUser,
+    resourcePermissionEnabled,
     menus,
     name:
       (mergedUser.name as string | undefined) ??
@@ -141,10 +158,10 @@ function getCurrentUserDisplayName(currentUser?: API.CurrentUser) {
  * */
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
-  currentUser?: API.CurrentUser;
+  currentUser?: ResourcePermissionUser;
   dict?: Record<string, unknown>;
   loading?: boolean;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  fetchUserInfo?: () => Promise<ResourcePermissionUser | undefined>;
   fetchDict?: () => Promise<Record<string, unknown> | undefined>;
   settingDrawerOpen?: boolean;
 }> {
@@ -154,7 +171,11 @@ export async function getInitialState(): Promise<{
     const msg = await fetchMenus({
       skipErrorHandler: true,
     });
-    const user = normalizeCurrentUser(msg.data, cachedUser);
+    const user = normalizeCurrentUser(
+      msg.data,
+      cachedUser,
+      resourcePermissionFromResponse(msg),
+    );
     if (!user) throw new Error('登录状态初始化响应无效');
     return user;
   };

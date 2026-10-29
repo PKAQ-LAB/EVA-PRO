@@ -7,6 +7,7 @@ export interface AuthLoginParams {
 }
 
 export interface AuthLoginResult {
+  resourcePermissionEnabled?: boolean;
   success?: boolean;
   code?: string;
   message?: string;

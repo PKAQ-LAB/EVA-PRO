@@ -14,8 +14,10 @@ import {
   TreeSelect,
 } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import APIS from '@/apis';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import RecordAuditFields from '@/components/RecordAuditFields';
+import type { CanRequest } from '@/utils/resourcePermission';
 import {
   excludeTreeSubtree,
   findTreeNode,
@@ -28,6 +30,7 @@ import { checkOrgUnique, editOrg } from './service';
 export type OperateType = '' | 'create' | 'edit' | 'view';
 
 export interface OrgAOEFormProps {
+  canRequest: CanRequest;
   operateType: OperateType;
   currentItem: Partial<OrgItem>;
   data: OrgItem[];
@@ -49,6 +52,7 @@ const TITLE: Record<Exclude<OperateType, ''>, string> = {
 };
 
 const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
+  canRequest,
   operateType,
   currentItem,
   data,
@@ -64,6 +68,37 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
   const savingRef = useRef(false);
   const [dirty, setDirty] = useState(false);
   const isView = operateType === 'view';
+  const permissionRef = useRef(canRequest);
+  permissionRef.current = canRequest;
+  const contextRef = useRef({
+    operateType,
+    currentItem,
+    detailsLoading,
+    detailsError,
+  });
+  contextRef.current = {
+    operateType,
+    currentItem,
+    detailsLoading,
+    detailsError,
+  };
+  const canSave = () => {
+    const current = contextRef.current;
+    return (
+      (current.operateType === 'create' || current.operateType === 'edit') &&
+      !current.detailsLoading &&
+      !current.detailsError &&
+      current.currentItem.frozen !== 9999 &&
+      current.currentItem.status !== '9999' &&
+      (current.operateType !== 'edit' ||
+        permissionRef.current(
+          'GET',
+          `${APIS.ORG_GET}/${current.currentItem.id}`,
+        )) &&
+      permissionRef.current('POST', APIS.ORG_EDIT) &&
+      permissionRef.current('POST', APIS.ORG_CHECKUNIQUE)
+    );
+  };
   const renderValue = (value: React.ReactNode, multiline = false) => (
     <div
       className={`eva-view-value${multiline ? ' eva-view-value-multiline' : ''}`}
@@ -88,6 +123,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
     </div>
   );
   const disabled =
+    !canSave() ||
     isView ||
     submitting ||
     detailsLoading ||
@@ -123,6 +159,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
 
   const checkCode = async (_: unknown, value: string) => {
     if (isView || detailsLoading || detailsError) return;
+    if (!canSave()) throw new Error('无权限保存或校验部门编码');
     const parentId = form.getFieldValue('parentId');
     if (
       currentItem?.id &&
@@ -146,6 +183,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
         throw new Error('编码校验失败，请检查网络或稍后重试');
       },
     );
+    if (!canSave()) throw new Error('部门操作权限已变更，请重新确认');
     if (!res?.success)
       throw new Error(res?.message ?? '编码校验未通过，请稍后重试');
   };
@@ -154,6 +192,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
     if (
       (operateType !== 'create' && operateType !== 'edit') ||
       disabled ||
+      !canSave() ||
       savingRef.current
     )
       return;
@@ -161,7 +200,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
     setSubmitting(true);
     try {
       const values = await form.validateFields();
-      if (!leaveGuard.isCurrent()) return;
+      if (!leaveGuard.isCurrent() || !canSave()) return;
       if (!isTreeParentAllowed(data, currentItem.id, values.parentId)) {
         msg.error('不能选择当前部门或其下级作为上级部门');
         return;

@@ -55,6 +55,7 @@ function form(
     <ConfigProvider locale={zhCN} theme={{ token: { motion: false } }}>
       <App>
         <OrgAOEForm
+          canRequest={() => true}
           operateType={mode}
           currentItem={record}
           data={[{ id: 'parent', name: '父部门', children: [item] }]}

@@ -21,6 +21,7 @@ import RolePage from './role';
 const mocks = vi.hoisted(() => ({ request: vi.fn(), english: false }));
 vi.mock('@umijs/max', async () => ({
   request: mocks.request,
+  useAccess: () => ({ canRequest: () => true }),
   history: (await import('@@/core/history')).createHistory({
     type: 'memory',
     initialEntries: ['/sys/dictionary'],

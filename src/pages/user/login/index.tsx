@@ -28,6 +28,10 @@ import {
   type MenuNavigationItem,
   resolveMenuNavigation,
 } from '@/utils/menuNavigation';
+import {
+  type ResourcePermissionUser,
+  resourcePermissionFromResponse,
+} from '@/utils/resourcePermission';
 import Settings from '../../../../config/defaultSettings';
 
 const currentUserCacheKey = 'eva_current_user';
@@ -479,10 +483,12 @@ function getLoginUserInfo(msg: AuthLoginResult) {
 function normalizeLoginUser(
   userInfo: Record<string, unknown> | undefined,
   menus: MenuNavigationItem[],
+  resourcePermissionEnabled?: boolean,
 ) {
   const user = userInfo || {};
   return {
     ...user,
+    resourcePermissionEnabled,
     menus,
     name:
       (user.name as string | undefined) ||
@@ -491,7 +497,7 @@ function normalizeLoginUser(
       (user.username as string | undefined) ||
       'Admin',
     access: (user.access as string | undefined) || 'admin',
-  } as API.CurrentUser & { menus?: MenuNavigationItem[] };
+  } as ResourcePermissionUser & { menus?: MenuNavigationItem[] };
 }
 
 const Login: React.FC = () => {
@@ -634,6 +640,7 @@ const Login: React.FC = () => {
         }
 
         let menus: MenuNavigationItem[] = [];
+        let resourcePermissionEnabled = resourcePermissionFromResponse(msg);
         let dict: Record<string, unknown> | undefined;
         try {
           const authHeaders = { Authorization: `Bearer ${tokenValue}` };
@@ -642,6 +649,8 @@ const Login: React.FC = () => {
             fetchDict({ headers: authHeaders, skipErrorHandler: true }),
           ]);
           menus = extractMenus(menuResponse?.data);
+          resourcePermissionEnabled =
+            resourcePermissionFromResponse(menuResponse);
           dict = dictResponse?.data;
         } catch (error) {
           if (isAuthExpiredError(error)) {
@@ -654,7 +663,11 @@ const Login: React.FC = () => {
           return;
         }
 
-        const currentUser = normalizeLoginUser(userInfo, menus);
+        const currentUser = normalizeLoginUser(
+          userInfo,
+          menus,
+          resourcePermissionEnabled,
+        );
         flushSync(() => {
           setInitialState((state) => ({
             ...state,

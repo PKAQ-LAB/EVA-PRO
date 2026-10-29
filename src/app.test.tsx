@@ -1,8 +1,9 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { message } from 'antd';
+import { Button, ConfigProvider, message, Skeleton, Spin } from 'antd';
 import type { ReactNode } from 'react';
 import { beforeEach, expect, it, vi } from 'vitest';
-import { getInitialState, layout } from './app';
+import { antd, getInitialState, layout } from './app';
+import PageLoading from './components/PageLoading';
 import RootPage from './pages';
 import {
   clearAuthState,
@@ -57,6 +58,83 @@ vi.mock('../config/defaultSettings', () => ({
 }));
 
 const menus = [{ routeUrl: '/sys/role' }];
+
+it('根antd配置保留原配置，九格仅替换默认Spin且尊重显式indicator', () => {
+  const memo: Parameters<typeof antd>[0] = {
+    appConfig: {},
+    variant: 'filled',
+    theme: { cssVar: true, token: { colorPrimary: '#1677ff' } },
+    button: { autoInsertSpace: false },
+    spin: {
+      classNames: { root: 'original-spin' },
+      styles: { indicator: { opacity: 0.7 } },
+    },
+  };
+  const result = antd(memo);
+  expect(result.appConfig).toBe(memo.appConfig);
+  expect(result.theme).toBe(memo.theme);
+  expect(result.button).toBe(memo.button);
+  expect(result.variant).toBe(memo.variant);
+  expect(result.spin?.styles).toBe(memo.spin?.styles);
+  expect(memo.spin).not.toHaveProperty('indicator');
+  const { appConfig: _appConfig, ...provider } = result;
+  const view = render(
+    <ConfigProvider {...provider}>
+      <div data-testid="small-spin">
+        <Spin size="small" percent={37} />
+      </div>
+      <div data-testid="large-spin">
+        <Spin size="large" />
+      </div>
+      <Spin indicator={<span data-testid="explicit-indicator" />} />
+      <Button loading>保存</Button>
+      <Skeleton active title={false} />
+    </ConfigProvider>,
+  );
+  for (const size of ['small', 'large']) {
+    const region = screen.getByTestId(`${size}-spin`);
+    expect(region.querySelector('.ant-spin')).toHaveClass('original-spin');
+    const cube = region.querySelector<HTMLElement>('.ant-spin-dot');
+    expect(cube).not.toBeNull();
+    expect(cube).toHaveAttribute('aria-hidden', 'true');
+    expect(cube).not.toHaveAttribute('percent');
+    expect(cube).toHaveStyle({ opacity: '0.7' });
+    expect(cube?.style.fontSize).toBe('');
+    expect(cube?.querySelectorAll(':scope > span > span')).toHaveLength(9);
+  }
+  expect(
+    screen.getByTestId('small-spin').querySelector('.ant-spin'),
+  ).toHaveClass('ant-spin-sm');
+  expect(
+    screen.getByTestId('large-spin').querySelector('.ant-spin'),
+  ).toHaveClass('ant-spin-lg');
+  expect(screen.getByTestId('explicit-indicator').children).toHaveLength(0);
+  expect(
+    screen
+      .getByRole('button', { name: /保存/ })
+      .querySelector('.anticon-loading'),
+  ).not.toBeNull();
+  expect(view.container.querySelector('.ant-skeleton')).not.toBeNull();
+  expect(
+    view.container.querySelectorAll('.ant-spin-dot[aria-hidden="true"]'),
+  ).toHaveLength(2);
+});
+
+it('PageLoading显式使用40px九格，保留非交互加载容器', () => {
+  const view = render(<PageLoading />);
+  const cube = view.container.querySelector('.ant-spin-dot');
+  expect(cube).toHaveStyle({ fontSize: '40px' });
+  expect(cube?.querySelectorAll(':scope > span > span')).toHaveLength(9);
+  expect(view.container.querySelector('.anticon-deployment-unit')).toBeNull();
+  expect(
+    view.container.querySelector('button,input,textarea,select,[tabindex]'),
+  ).toBeNull();
+  expect(view.container.querySelector('.ant-spin')).toHaveAttribute(
+    'aria-busy',
+    'true',
+  );
+});
+
 beforeEach(() => {
   vi.restoreAllMocks();
   vi.clearAllMocks();
@@ -86,6 +164,26 @@ it('启动必向服务端验证，旧菜单缓存不能充当有效会话', asyn
   expect(state.settings).toEqual({ navTheme: 'light' });
   expect(mocks.replace).not.toHaveBeenCalled();
 });
+
+it.each([true, false, undefined, null, 'false'])(
+  '刷新只采纳服务端外层boolean=%s，缓存false和data内字段不得回填',
+  async (flag) => {
+    window.sessionStorage.setItem(
+      'eva_current_user',
+      JSON.stringify({ name: '旧身份', resourcePermissionEnabled: false }),
+    );
+    mocks.menus.mockResolvedValue({
+      success: true,
+      resourcePermissionEnabled: flag,
+      data: menus,
+    });
+    const state = await getInitialState();
+    expect(state.currentUser?.resourcePermissionEnabled).toBe(
+      typeof flag === 'boolean' ? flag : undefined,
+    );
+    expect(state.currentUser).toMatchObject({ menus });
+  },
+);
 
 it('验证中不渲染保护内容或提前跳登录，验证成功后才选择首叶子', async () => {
   let finish: (response: { data: typeof menus }) => void = () => {};

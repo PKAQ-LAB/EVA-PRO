@@ -38,6 +38,7 @@ vi.mock('antd', async (importOriginal) => ({
   Table: (props: TableProps) => captureTable(props),
 }));
 vi.mock('@umijs/max', () => ({
+  useAccess: () => ({ canRequest: () => true }),
   useIntl: () => ({
     formatMessage: ({ defaultMessage }: { defaultMessage: string }) =>
       defaultMessage,
