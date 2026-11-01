@@ -1174,3 +1174,51 @@ modes新增7项：真实TreeSelect以QA_D1/QA_D2可见标题搜索（小写输�
 按root转述用户明确资源查看不展示四audit的业务例外，本窗仅获nestedRecordView.test.tsx单写，不推广其他子表。读完整测试后，仅模块资源分支删除夹具无契约来源的createBy/utcCreate，保资源desc/url/type真值与500Modal；由原7plates改精确3个eva-view-value及创建人/创建时间/修改人/修改时间四label均不存在。字典分支、主module audit其它共享测试原样，资源0控件/0写/Enter无submit/原编辑/父readonly/显式键盘入口全保。
 
 仅该测试biome format成功（1文件格式微调）、diffcheckexit0；未Vitest/Biome check/tsc/build，不占系统独占验证槽，未写global/RecordAuditFields/data/生产源或其他测试。所有命令结束，该文件冻结主动交root待系统源完成后QA统一复验；不将尚未执行的新断言说通过。
+
+## 用户暂停与前端交接（2026-10-31）
+
+用户明确“保存 暂停”。全部前端源码及测试保持冻结，无活动命令、浏览器任务或持有的源码/重验证锁；仅追加本人状态卡，随后停止操作。B 的 businessWritable/readOnly 响应增量尚未批准，用户暂停不能解释为同意。B/C 不实施，分类映射/迁移未批准，A 后端现有工作不回滚、不扩大，角色和样本保留，C3 继续跳过。
+
+已交付未提交的历史登录日志为十二文件：config/routes.ts、src/access.ts、src/apis.ts、src/routes.test.ts、src/utils/menuNavigation.ts，以及 src/pages/log/login/ 下 data.d.ts、service.ts、permissions.ts、index.tsx、index.test.tsx、service.test.ts、permissions.test.ts。完整哈希清单 .git/login-log-source-20261030.json，SHA256 CCC976F2E31FEDFDF455A93C6B2F7BFD9F83AE3F7460CF260D70E4CB90E140BA。首次六文件 72 项通过，最终受影响两文件 12 项通过，当前去重覆盖 74 项，不能说一次全仓 74 项通过。精确 Biome/AntD 检查通过；定向类型检查新增文件无诊断，但仍有 appicon 两项及 organization 一项外部错误，整条检查不是成功。真实后台管理员范围与菜单入口此前已交总控安排，不在此追加验收结论。
+
+字典明细统一 500px Modal 为四文件：src/pages/sys/dictionary/linelist.tsx、lineaoeform.tsx、新 lineview.test.tsx，以及 src/pages/sys/nestedRecordView.test.tsx 的字典分支两项断言。保持同一容器、100px 标签及编码/描述/排序/只读备注四行；查看无输入/校验/提交，不改主字典单击右编辑的例外。五个聚焦测试文件 28/28 通过，相关两生产文件定向类型检查 exit0，Biome/diff 检查通过，AntD 保留原两项弃用提示。哈希清单 .git/dictionary-line-source-20261031.json，SHA256 A116465B4C0B461981FDDDDC7D355736496BF19450FBCD8EE916E077095D5FDE；交付时核对历史登录十二文件零漂移。总控已接收，后续实屏结果不在本卡重复自证。
+
+B 仅完成只读准备及向设计方核对，无生产源或测试改动。候选补充见后端仓库 docs/legion/design/2026-10-31-dictionary-b-write-capability-addendum.md：list 外层 businessWritable、行/get 的 readOnly 严格布尔；字段名称与增量未获用户批准，不得接线。旧或不完整分类保平表可见且全只读，只有完整分类才展示 SYSTEM/BUSINESS 两个本地虚根；不猜 QA 归属，不造持久 pid/path、第三根或客户端管理员推断。原 ROOT checkpoint 不改。
+
+下一步仅在用户明确继续且总控重新派发后：确认 A 独立验收终态；等待 B 响应增量获得明确批准并冻结真实后端契约，再按新的源码锁开展前端 B。未获这些前置条件前不分析、实现、测试、访问接口/数据库、启动服务或提交推送；不重复运行既有 28/74 项。
+
+## 字典 B 获批后前端源码冻结（2026-10-31）
+
+本节记录总控确认 A 独立验收及用户批准 businessWritable/readOnly 增量之后的实施结果，替代上一节待批准状态。仅修改字典七个生产文件和六个测试文件；完整分类契约生成两显示虚根，缺失契约保平表且全只读，业务写入口同时检查服务端严格布尔能力、真实分类、只读标识及具体资源权限。详情携带分类消歧；身份切换与迟到结果隔离；失败保留旧草稿，加载骨架不显示旧值；9999 子行不可修改或删除。未执行分类迁移或 C 阶段。
+
+首轮七文件 36 项中 28 通过、8 失败；必要修复后第二轮三文件 14 项中 13 通过、1 失败；最终受影响 interaction/categoryPage 两文件 14/14 通过，包含新增身份切换旧详情迟到保护。累计七文件 37 个不同用例均曾通过，未声称同轮完整 37 项通过。定向类型检查仅剩既有 appicon 两项与 organization 一项外部错误，字典文件无诊断；不是整条 tsc 成功。十三文件 Biome 和精确 diff 检查通过，index/list/aoeform 的 AntD 检查各零问题；CLI 升级提示未执行。
+
+冻结清单 .git/dictionary-b-source-20261031.json，SHA256 94A4C0E66981A564D743B5D13E8C9DCBECAAF6D749CFFFE422BBAFA0FAB0DA76。登录日志十二文件零漂移，500px lineaoeform SHA256 保持 18AE111D4C2FFE6AE0C09D080DF3238ACCC6AAA3E2CE8BADF4DF1EF1023E0D25。无活动重任务，验证槽已释放给总控安排独立 QA；生产源码冻结，不提交推送、不启动服务，不把单测当作实屏或部署证据。
+
+本聊天用户补充模块编辑错误栈 Convert.convert:68 → StdService.get:90 → ModuleService.getModule:193，已交后端只读核对当前修复与运行版本，前端未写后端。用户管理原要求经当前源码复核已存在：右侧角色随用户保存、列表独立锁定按钮、表单不含锁定控件或密码强度条；账号目录本轮无改动。
+
+## 模块专用锁定解锁核心修复（2026-11-01）
+
+按总控授单独源锁，仅 module/index.tsx、aoeform.tsx 及三必要测试文件。接入既有 switchModuleStatus，单次请求 pending ref 防重、成功刷新/失败恢复；父节点操作提示级联所有子孙且只读不变，冻结父下子解锁禁用，9999 不显示操作。编辑状态改现有纯文本展示，保存保留当前状态；新增启用开关/默认值和查看不变，未链式保存加切换。原 getDeleteBlockers 和删除门禁未改，无后端/API/契约变更。
+
+分轮核心验证：index 首轮四项通过；aoe/service 首轮三过两失败，新增夹具缺必填路由和图标，补齐后 aoe 三项通过，service 两目标载荷用例已过；父锁/解锁级联两个参数化用例最终通过。累计十个不同核心用例通过，未称单轮全套通过。日志 .git/module-status-index-20261101.log、module-status-form-service-20261101.log、module-status-form-fixed-20261101.log、module-status-cascade-20261101.log。首次复合正则因 Windows cmd 竖线解析失败未启动 Vitest，已改分开筛选。Biome 五文件/diff 通过，AntD 仅原 Divider.type/Drawer.width 弃用；定向 tsc 模块无诊断，仍 appicon 两项和 organization 一项外部错误，整条未通过。无全仓/视觉/构建/升级、服务/API/数据库或 Git 发布操作。
+
+冻结清单 .git/module-status-source-20261101.json SHA256 43AF63F0F7C6EBE39C6F232AEC5AF607BE7009FE14AA4DCEB70AD93CDE9F6689，包含五文件源哈希。源码停止写入，无活动重命令，归还源锁/测试槽并交 QA 独立核心复验及实际父子解锁；既有字典、角色、登录和其它用户改动保护。
+
+## 角色编辑锁定修复证据
+
+总控确认后端普通编辑保留 origin.frozen、锁定走专用 switch 的安全分工后，仅改 role/aoeform.tsx 及既有测试。编辑锁定字段改为现 renderValue + frozenText 纯文本，无交互开关；编辑保存沿用 currentItem.frozen，不自动链式调用 switch；查看展示与新增初始状态不变。页面属 EVA 自定义，非 Ant Design Pro 上游。GitNexus 索引版本不兼容，沿此前直接调用链核范围。
+
+锁定相关四个定向用例通过（编辑0/1纯文本且保存保原值、查看无写、新增仍默认0），日志 .git/role-edit-lock-20261101.log，既有十三项本轮未运行未改。两文件 Biome/diff 和生产文件 AntD 检查通过，未类型检查/全仓/视觉/构建、未升级依赖、未服务/API/DB操作或提交推送。源码 SHA256 F650FA185C2542E6CFF79C024E982C408A4382C1443B5C26C8DAD54121349796，测试 SHA256 A091C6371B15CB95F02F3102B125BAF1434BEEC104BB31D21F27EA8F27D7A990。无活动命令，冻结源码并交 QA 独立定向复验，已归还源锁。
+
+## 角色资源清空修复证据
+
+按总控最小任务与 QA 交还写锁，仅修改 role/component/rolemodule.tsx 及其既有测试。空资源限制来自 EVA 自定义页面，upstream/master 无该文件；前端 saveRoleModules 原本即向既有接口提交 roleId 和 resourceId 数组，后端成员确认空数组已有撤销语义，无接口或鉴权变更。删除“至少选择一个资源”拦截，清空时取消对应模块选中，其它模块资源保持。GitNexus 库43/runtime42不兼容，改用源码调用链核影响仅授权弹窗。
+
+单文件按“授权”筛选执行三项核心用例全部通过：原授权提交、清空全部资源提交空数组、清当前模块保留其它模块资源；既有尺寸布局用例未运行，未删改。日志 .git/role-resource-clear-20261101.log，47.85s。精确 Biome/diff 检查通过，AntD 仅原 maskClosable 弃用提示，无升级；未跑全仓、主题、视觉、构建或类型检查，未操作服务/API/数据库、提交或推送。源码 SHA256 2A0B64EF30E4C803FA2F26E28258925FCB4EAACE3D6D06A45E84837691C238D9，测试 SHA256 B6895C42266E9907268951E442D6BAA025643895535FCD53BAB268BF8421C033。源码冻结且无活动命令，交 QA 独立核心复核及真实空集合验收；原字典、登录日志和其它用户改动保持。
+
+## 字典 B 详情身份独审必修后重新冻结（2026-10-31）
+
+设计独审撤回 94A4 候选：详情缺少返回 ID 与请求 ID 比对，且列表/详情曾允许非 false 的成功标记。仅补 index 的三处守卫：列表与详情 success 必须严格 true，详情 ID 不得缺失且 String 归一后必须等请求 ID，既有分类相等检查保留；错误仍走原 catch 保留选择和草稿。http.list 原样转发响应，全局 errorThrower 使用真值判断，不能替代此处严格布尔检查；未修改共享请求层。
+
+新增七项负例（同分类错 ID、缺 ID、详情缺/字符串 success，列表缺/字符串/false success），要求不切换到错误记录、保草稿、零 POST。取得 QA 明确交槽后，categoryPage + interaction 两文件 21/21 通过；定向类型检查仅原 appicon 两项和 organization 一项错误，字典零诊断。补丁两文件 Biome、index AntD 零问题及精确 diff 检查通过，无升级或源码外扩。新冻结清单 .git/dictionary-b-source-identity-20261031.json，SHA256 11AD24CE24CEC68139CAB35920755F026898A307A161D96D8A5839A2E535D354；旧清单仅保留历史证据。登录十二文件零漂移，500px lineaoeform 哈希保持原值。源码停止写入，无活动重进程，槽交总控安排设计终签和 QA 独验。
