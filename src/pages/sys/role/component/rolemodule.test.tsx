@@ -126,3 +126,63 @@ it('名称列为树缩进留宽并保持单行，资源列仍允许换行且表�
   expect(resourceCell?.style.whiteSpace).not.toBe('nowrap');
   expect(screen.getByLabelText('POST 编辑资源')).toBeEnabled();
 });
+
+it.each([false, true])(
+  '取消最后一个资源可保存撤销授权，保留其它模块=%s',
+  async (keepOther) => {
+    mocks.post.mockClear();
+    mocks.list.mockResolvedValue({
+      success: true,
+      data: {
+        modules: [
+          {
+            id: 'm1',
+            name: '待撤销模块',
+            resources: [{ id: 'r1', resourceDesc: '待撤销资源', checked: 1 }],
+          },
+          ...(keepOther
+            ? [
+                {
+                  id: 'm2',
+                  name: '保留模块',
+                  resources: [
+                    { id: 'r2', resourceDesc: '保留资源', checked: 1 },
+                  ],
+                },
+              ]
+            : []),
+        ],
+        checkedModuleIds: keepOther ? ['m1', 'm2'] : ['m1'],
+      },
+    });
+    mocks.post.mockResolvedValue({ success: true });
+    const close = vi.fn();
+    const success = vi.fn();
+    render(
+      <App>
+        <RoleModuleModal
+          open
+          roleId="role-a"
+          onClose={close}
+          onSuccess={success}
+        />
+      </App>,
+    );
+    const resource = await screen.findByLabelText('待撤销资源');
+    expect(resource).toBeChecked();
+    fireEvent.click(resource);
+    expect(resource).not.toBeChecked();
+    expect(screen.queryByText('至少选择一个资源')).toBeNull();
+    expect(mocks.post).not.toHaveBeenCalled();
+    if (keepOther) expect(screen.getByLabelText('保留资源')).toBeChecked();
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    await waitFor(() =>
+      expect(mocks.post).toHaveBeenCalledExactlyOnceWith(APIS.ROLE_SAVEMODULE, {
+        roleId: 'role-a',
+        resourceId: keepOther ? ['r2'] : [],
+      }),
+    );
+    expect(close).toHaveBeenCalledTimes(1);
+    expect(success).toHaveBeenCalledTimes(1);
+  },
+);

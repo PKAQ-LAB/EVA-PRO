@@ -9,7 +9,6 @@ import {
   Modal,
   Row,
   Skeleton,
-  Switch,
   TreeSelect,
 } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
@@ -224,7 +223,7 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
         name: values.name,
         code: values.code,
         remark: values.remark,
-        frozen: values.frozen,
+        frozen: modalType === 'edit' ? currentItem.frozen : values.frozen,
         dataScope: values.dataScope,
         id: currentItem.id,
         dataOrgIds: Array.isArray(dataOrgIds)
@@ -468,23 +467,12 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
           {modalType !== 'create' && (
             <Form.Item
               label={sysText(intl, 'pages.sys.column.locked', '是否锁定')}
-              name="frozen"
-              getValueProps={(value) => ({ checked: value === 1 })}
-              normalize={(checked) => (checked ? 1 : 0)}
             >
-              <Switch
-                checkedChildren={sysText(
-                  intl,
-                  'pages.sys.status.locked',
-                  '已锁定',
-                )}
-                unCheckedChildren={sysText(
-                  intl,
-                  'pages.sys.status.unlocked',
-                  '未锁定',
-                )}
-                disabled={disabled}
-              />
+              {renderValue(
+                currentItem.frozen == null
+                  ? '—'
+                  : frozenText(intl, currentItem.frozen),
+              )}
             </Form.Item>
           )}
           <Form.Item

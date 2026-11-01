@@ -74,13 +74,13 @@ const RoleModuleModal: React.FC<RoleModuleProps> = ({
 
   // 改资源勾选
   const handleResourceClick = (resourceIds: string[], moduleId: string) => {
-    if (resourceIds.length < 1) {
-      Modal.warning({ title: '警告', content: '至少选择一个资源' });
-      return;
-    }
     setCheckedResource((prev) => ({ ...prev, [moduleId]: resourceIds }));
     setChecked((prev) =>
-      prev.includes(moduleId) ? prev : [...prev, moduleId],
+      resourceIds.length === 0
+        ? prev.filter((id) => id !== moduleId)
+        : prev.includes(moduleId)
+          ? prev
+          : [...prev, moduleId],
     );
   };
 

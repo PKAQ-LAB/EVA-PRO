@@ -34,7 +34,7 @@ const saved = () =>
   mocks.request.mock.calls.filter(([url]) => url === APIS.ROLE_SAVE);
 function show(
   currentItem: Partial<RoleItem> = {},
-  modalType: 'create' | 'edit' = 'create',
+  modalType: 'create' | 'edit' | 'view' = 'create',
 ) {
   return render(
     <ConfigProvider locale={zhCN} theme={{ token: { motion: false } }}>
@@ -57,6 +57,65 @@ beforeEach(() => {
       return { success: true, data: mocks.dict };
     return { success: true, data: [] };
   });
+});
+
+it.each([0, 1] as const)(
+  '编辑锁定状态%s仅纯文本，资料保存保持原值且不调用切换',
+  async (frozen) => {
+    show(
+      {
+        id: 'role-a',
+        name: '角色原名',
+        code: 'ROLE_TEST',
+        frozen,
+        dataScope: '0001',
+      },
+      'edit',
+    );
+    expect(screen.queryByRole('switch')).toBeNull();
+    expect(
+      screen
+        .getByText(frozen === 1 ? '已锁定' : '未锁定')
+        .closest('.eva-view-value'),
+    ).not.toBeNull();
+    fireEvent.change(screen.getByLabelText('角色名称'), {
+      target: { value: '角色改名' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    await waitFor(() => expect(saved()).toHaveLength(1));
+    expect(saved()[0][1].data).toMatchObject({ frozen, name: '角色改名' });
+    expect(
+      mocks.request.mock.calls.some(([url]) => url === APIS.ROLE_LOCK),
+    ).toBe(false);
+  },
+);
+
+it('查看锁定状态仍纯文本且不能保存', () => {
+  show(
+    {
+      id: 'role-a',
+      name: '角色',
+      code: 'ROLE_TEST',
+      frozen: 1,
+      dataScope: '0001',
+    },
+    'view',
+  );
+  expect(screen.getByText('已锁定').closest('.eva-view-value')).not.toBeNull();
+  expect(screen.queryByRole('switch')).toBeNull();
+  expect(screen.queryByRole('button', { name: /确\s*定/ })).toBeNull();
+  expect(saved()).toHaveLength(0);
+});
+
+it('新增锁定默认值保持未锁定且没有切换控件', async () => {
+  show({ name: '新角色', code: 'ROLE_NEW', dataScope: '0001' });
+  expect(screen.queryByRole('switch')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+  await waitFor(() => expect(saved()).toHaveLength(1));
+  expect(saved()[0][1].data.frozen).toBe(0);
+  expect(mocks.request.mock.calls.some(([url]) => url === APIS.ROLE_LOCK)).toBe(
+    false,
+  );
 });
 
 it('真实空字典无ALL初值，仅填名称编码无法保存且不触发POST', async () => {
