@@ -1217,8 +1217,68 @@ B 仅完成只读准备及向设计方核对，无生产源或测试改动。候
 
 单文件按“授权”筛选执行三项核心用例全部通过：原授权提交、清空全部资源提交空数组、清当前模块保留其它模块资源；既有尺寸布局用例未运行，未删改。日志 .git/role-resource-clear-20261101.log，47.85s。精确 Biome/diff 检查通过，AntD 仅原 maskClosable 弃用提示，无升级；未跑全仓、主题、视觉、构建或类型检查，未操作服务/API/数据库、提交或推送。源码 SHA256 2A0B64EF30E4C803FA2F26E28258925FCB4EAACE3D6D06A45E84837691C238D9，测试 SHA256 B6895C42266E9907268951E442D6BAA025643895535FCD53BAB268BF8421C033。源码冻结且无活动命令，交 QA 独立核心复核及真实空集合验收；原字典、登录日志和其它用户改动保持。
 
-## 字典 B 详情身份独审必修后重新冻结（2026-10-31）
+## 字典同步鉴权与合成标签独审必修后冻结（2026-11-01）
+
+独审撤回 730D：运行时同步最终鉴权失效原仅清字典，没有接原退出；默认 showall 合成 0000 的选中标签也未纳入 labelRender。仅改 DictionarySync 的 load catch，在 current owner/generation 仍有效且 isAuthExpiredError 时调用既有 redirectToLogin 并传播错误，旧身份晚回与普通 403/来源 409 不退出。DictSelector 以同一 finalOptions 给控件和 labelRender，并沿 rcSelect 同值最后条目优先语义保真实 0000 覆盖，不改 scope 合同。
+
+相关两个组件同轮十三项全部通过（runtime 当前401退出/旧身份401不退出/403和409不退出、既有时钟与身份检查、合成全部及真实0000、原 selector 本地映射等）。同命令中新增真实链 suite 初次未执行，因为生成代码的 umi bare import 在根依赖无入口；没有将该命令 exit1 当全部通过。先临时 alias 验证可行，再仅在既有 vitest.config 加已安装 @umijs/max 所属 umi 的解析别名，保证默认命令也可复验，无新包、框架或生产 HTTP 改动。真实 generated request + 项目原 errorConfig + 本地 Axios adapter 的原生200、空304、native false 错误链用例已在默认配置下 1/1 通过，无服务外网。生成 request SHA256 0937A9F2F0D346394DB3B156FF624F958BA6B96A0DD58119BCD41B7C4686DE97。
+
+证据 .git/dict-sync-auth-showall-chain-20261101.log、dict-sync-real-chain-default-20261101.log、dict-sync-auth-fix-types-20261101.log。新链测试最初 axios 根类型解析失败，改用项目 generated 导出的 AxiosRequestConfig；最终仅原 appicon 两项和 organization 一项外部类型错误，改动文件零诊断。精确 Biome 五文件与两生产组件 AntD 零问题，services 新测试沿原忽略配置但已格式及类型验证。
+
+新冻结 .git/dict-sync-source-auth-fixed-20261101.json SHA256 A2A710618430041F1097611A8772FA6D1C374573E2349EEB19A718BA5D0ABFAB，共二十五文件；旧 730D 仅历史。相对旧签只有两组件与两测试变化，加实际请求链测试和必要既有测试解析配置。累计五十个不同必要用例分轮通过，不冒单轮全套。scope 产品与后端保持；源码停止写入，已归还测试槽，未服务、现库或 Git 发布，待独立 QA。
+
+## 字典同步 A 首次候选历史证据
+
+按用户与总控批准，复用 initialState.dict 唯一内存快照，增加 owner/generation/ETag 与 ready/stale/error 状态，不持久化、不另建数据缓存。登录及认证初始化全量获取；普通 token 续期不清字典。退出、认证清理、换身份或租户立即使旧代次不可用，旧请求及回调不能写回。fetchDict 仅此端点使用 getResponse 与 200/304 validateStatus，匹配已冻结 weak ETag v1；304 空体用 discriminated union 返回，不全局放宽成功标记。200 必须原生 success true 且完整 map 有效，原子替换；认证/指定 409 机器码/结构错误清快照与 ETag，普通网络和 5xx 保最后正确同身份值并标 stale 可重试。
+
+DictionarySync 用 Hooks 管可见在线 60 秒检查、focus/online 十秒合并和清理；单在途复用，写成功遇旧请求则结束后再补一次。字典管理写成功立即发起条件校验，不等待管理列表刷新完成。DictSelector 显式 data 优先，其余只读 owned 全局映射，不再逐组件 GET query；用 labelRender 避免 Select 缓存旧身份标签，表单 code 不被更新事件清空。业务日志、模块资源现有标签消费者同样只读当前身份快照。普通管理、校验、权限接口及 0003/0006 产品源码未改。
+
+本轮四文件新核心首轮 22 项中 17 通过、5 失败：一项真实 Select 旧 label 缓存已修；两项空态 SVG/title 重复匹配调整定位；两项测试 beforeEach 返回 mock 被当 cleanup 执行旧 reject，改 fixture 花括号。后续对应两文件 13/13 通过，新增 HTTP200 原生 false/缺响应边界 3/3 通过。新核心累计 25 个不同用例（controller6/HTTP11/timer3/selector5）已分轮通过；启动字典4、登录6、导航1、角色本地字典5、业务标签1、资源标签1、退出1 也通过，共 44 不同核心及必要集成用例，不声称单轮全仓通过。日志为 .git/dict-sync-*-20261101.log；没有主题、像素或旧全套重复验证。
+
+类型检查本次新增/修改源无诊断，仅原 appicon 两项和 organization 一项使整条 exit1。精确 Biome 21 文件通过，services 两文件沿仓库配置忽略，已定向类型/功能验证并格式化新增部分；两新组件 AntD 零问题，未升级依赖。冻结 .git/dict-sync-source-20261101.json SHA256 730D3AADB2420485C1DFB04128D2D27E80930FC97B9DD79913C6021230B5F59C，共 23 文件。原 71B9 九文件仅 role/aoeform.test.tsx 因本地模型 owner/epoch 夹具与无逐 code 请求断言而获批变更，八个其它文件逐哈希不变。
+
+当前无活动重命令，源码停止写入，已释放唯一重槽，交设计与 QA 独立复核。未服务启动、真实接口、现库、Git 暂存提交推送；源码与离线验证不代运行验收。
+
+## 指定部门右树历史候选证据
+
+按用户新增要求及总控澄清，角色 Modal 右侧根据 0003/0006 显示部门树或岗位表。0003 复用原 TreeSelect 默认父子联动与 SHOW_CHILD 导出，保持精确保存原导出 ID 集合，不改为 strict 独立勾选、不新增子孙权限；控件直接在右栏展开。编辑自动回显、查看同位纯文本，部门读取独立加载/失败重试且保留勾选，切角色关闭后忽略旧响应；保留未知详情阶段的中性区域。岗位组件及 0003→0006 清组织、Partial 岗位省略语义未改。仅 aoeform、其既有测试、新 roledepartments、postscope 测试在原 93F4 候选上增量修改。
+
+新部门四项与跨 scope 两项单轮 6/6，原 0003 仅改名称保存用例单项通过。后者仅增加等待候选加载解除保存禁用，不改原组织字段断言。日志 role-dept-scope-final-20261101.log、role-dept-existing-20261101.log；未重复主题、像素或全仓测试。Biome 四文件/diff、aoeform 与 roledepartments 的 AntD 零问题；定向 tsc 新文件无诊断，仍旧 appicon 两项和 organization 一项外部错误，整条 exit1。合并九文件清单 .git/role-scope-dept-post-source-20261101.json SHA256 71B9891BFF427A02F32FE83F2196032664B83633DE1B1F503FB2646E47D36B52，源码停止写入并归还重槽，交设计/QA 独立复核。
+
+字典同步仅只读：app.getInitialState 的 initDict 调用既有 fetchDicts 后存 initialState.dict 内存，业务日志/模块资源已有本地映射；DictSelector 未消费模型，无 data 时仍按 code 远程请求，管理写成功只刷新当前窗口。尚无已确认后台更新检测/版本同步协议，没有自行增加 localStorage、轮询、新版本端点或字典源码修改。未服务、现库、Git 发布。
+
+## 指定岗位 0006 接线历史证据
+
+QA 与设计独审发现原 0003 非空部门切 0006 的保存载荷仍带旧组织。现仅在 aoeform/saveRole 的 0006 保存边界写 dataOrgIds 空串，原 Form 部门值可供切回，旧 0003 与其它范围序列化不变；saveRole 的 Partial 编辑参数省略 dataPostIds 时原样省略交后端判保持或非法切换，新建缺省与显式空集合仍拒，完整表单继续显式提交。新增两条真实联动/适配回归，没有修改后端合同。
+
+获得后端明确临时交槽后，原 0003→0006 保存清组织与精确岗位数组单项通过、岗位适配三项通过。首次新 UI 用例在选择校验尚未解除按钮禁用时点击导致零提交，改为等待真实按钮可用后保存通过，保留失败日志；未降低业务保护。证据 .git/role-post-org-clear-fixed-20261101.log、role-post-adapter-fixed-20261101.log、role-post-scope-fixed-types-20261101.log。定向类型仅既有外部三错，新文件零诊断；精确 Biome/diff 与 aoeform AntD 零问题。
+
+新冻结 .git/role-post-scope-source-fixed-20261101.json SHA256 93F4C1AEC1599457B20FCD00A9C23FAF1CE70AAF7A859412D5A76A8B4C133749，原 0573 仅历史。累计十个不同核心用例分轮通过，不冒整轮；重槽明确归还后端，无活动命令，源码冻结交设计与 QA 复审。未服务、现库、Git 发布或视觉全仓验证。
+
+## 指定岗位 0006 首次候选历史证据
+
+依据用户批准及后端冻结字段，新增 dataPostIds 十进制字符串数组，不转 Number 或 CSV；复用 GET /api/sys/post/list 的 id/title/frozen/children nullable 契约，不新增岗位接口或伪造字典值。原角色 Modal 保留左字段及 0003 部门逻辑，0006 的 Form.useWatch 驱动右侧岗位多选，编辑自动展开与回选，先页面再加载。列表复制扁平化无自动子孙授权，状态 0/9999 有效、1 不可新选，缺失或失效已选保留显示且阻止保存，重试保留勾选；切离清空岗位载荷，查看纯文本无选择控件。请求卸载/换角色/关闭后忽略旧响应，沿原未保存保护取消。
+
+候选清单 .git/role-post-scope-source-20261101.json，SHA256 057347441E9C1D36173D20EB360790D1B81D868ED2D13CE64BFD40A3D47EBB37，共七文件。八个不同核心用例分轮通过（六 UI + 两保存适配），未称一次全套通过；首轮因测试未设中文 locale 失败，补齐后另一切换断言在 Form.useWatch 异步提交前执行失败，改为等待真实联动提交，最终该单项通过。保留 role-post-scope、role-post-scope-ui、role-post-scope-switch-fixed 三份 20261101 日志，未删真实断言或放宽业务校验。Biome 七文件、精确 diff 和两生产组件 AntD 零问题；定向类型新文件无诊断，仅既有 appicon 两项和 organization 一项导致整条 exit1。未全仓、视觉、构建、服务、数据库或发布操作。
+
+源码停止写入，已交设计与 QA 独审。唯一重测试槽明确交回后端；当前无活动命令，候选通过不替代真实初始化、独立复验与运行验收。
+
+## 字典 B 详情身份历史证据
 
 设计独审撤回 94A4 候选：详情缺少返回 ID 与请求 ID 比对，且列表/详情曾允许非 false 的成功标记。仅补 index 的三处守卫：列表与详情 success 必须严格 true，详情 ID 不得缺失且 String 归一后必须等请求 ID，既有分类相等检查保留；错误仍走原 catch 保留选择和草稿。http.list 原样转发响应，全局 errorThrower 使用真值判断，不能替代此处严格布尔检查；未修改共享请求层。
 
 新增七项负例（同分类错 ID、缺 ID、详情缺/字符串 success，列表缺/字符串/false success），要求不切换到错误记录、保草稿、零 POST。取得 QA 明确交槽后，categoryPage + interaction 两文件 21/21 通过；定向类型检查仅原 appicon 两项和 organization 一项错误，字典零诊断。补丁两文件 Biome、index AntD 零问题及精确 diff 检查通过，无升级或源码外扩。新冻结清单 .git/dictionary-b-source-identity-20261031.json，SHA256 11AD24CE24CEC68139CAB35920755F026898A307A161D96D8A5839A2E535D354；旧清单仅保留历史证据。登录十二文件零漂移，500px lineaoeform 哈希保持原值。源码停止写入，无活动重进程，槽交总控安排设计终签和 QA 独验。
+
+## 2026-11-01 角色数据范围侧栏交互候选
+
+沿用户确认保留同一个 Modal 和 Form，固定 700px 主体；宽屏固定预留侧栏足迹，部门和岗位共用同一个右侧容器，以 transform 和 opacity 滑出收回，切换不重建主表单。窄屏侧栏转为表单下方展开，避免横向溢出；未增加系统动画偏好检测。部门 TreeSelect 仅用空 React 片段隐藏顶部已选标签，保留默认父子联动、原选中值和保存载荷，未改岗位精确多选与接口。加载阶段预留侧栏，初始指定范围直接展开。
+
+最终四文件冻结 .git/role-pane-ui-source-20261101.json，SHA256 470260748C5BDC7D73A2FB36F31B2E247AE311ED307DBFC10AC431E84F1A7BF3；旧 5F8F 候选因 tagRender 返回 null 不符本地类型已撤回，改空片段后重新验证。最终 .git/role-pane-ui-typed-final-20261101.log 定向 13/13 通过，含同 dialog/form/input/pane、焦点/输入保持、未保存保护、初始展开、无标签、原部门联动和岗位行为。前轮失败为测试未等待 useWatch 提交及重复标题文本查询，已保留真实断言修正查询。Biome 四文件通过；AntD 当前修改零告警，role 其他旧文件八条弃用告警保留。
+
+全项目 tsc 存在 Cloudflare 缺 hono 等无关诊断，不能称全仓通过；角色定向配置 .git/tsconfig-role-postscope.json 仅原 appicon 两项与 organization 一项，当前四文件无诊断，日志 .git/role-pane-types-scoped-20261101.log。全局字典 A2 25 文件复核零漂移。GitNexus 43/42 索引不兼容，改查直接引用和测试，未重建索引。未写业务数据、启动服务、操作数据库或提交推送。交 QA 浏览器独验主表单稳定位置、侧栏滑出与窄屏行为；源码停止写入，重槽和 UI 锁归还 QA。
+
+## 2026-11-01 用户撤回侧滑布局后的恢复候选
+
+用户要求指定部门/岗位右侧恢复原效果，仅撤回最近固定主窗、预占足迹、绝对定位滑出及窄屏新机制，恢复原 width={postsVisible || deptsVisible ? 1060 : 700} 与 flex 左右布局。确认仅 aoeform 引用后删除本轮 role/useStyles.ts，移除 pane 专属身份与展开属性断言，改验证原弹窗范围切换加宽；保留同 Modal/Form/input、输入焦点和草稿、取消保护及所有部门/岗位用例。aoeform 文件哈希与原 71B9 清单该输入完全一致。部门隐藏标签空片段保留，部门树原联动、岗位精确多选、0006载荷、异步防护、service和API均未回退。全局字典 A2 25 项零漂移。
+
+新冻结 .git/role-layout-restore-source-20261101.json，SHA256 E3501D4F3F55E640275588D7663100EB6A207A3EBF73CB1682E2E9998F750572，三输入及确认删除 role/useStyles.ts；旧470260侧滑候选按用户要求不再生效。13项定向测试通过，日志 .git/role-layout-restore-tests-20261101.log；Biome三项通过、aoeform AntD零问题。角色定向类型仅既有 appicon 两项与 organization 一项，本次目标零诊断，日志 .git/role-layout-restore-types-20261101.log。不全仓测试、不启服务、不写业务数据/数据库、不提交推送。源码停止写入，重槽交QA窄独验。
