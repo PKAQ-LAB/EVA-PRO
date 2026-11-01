@@ -17,6 +17,7 @@ it.each([{ frozen: 9999 }, { status: '9999' as const }])(
     const view = render(
       <App>
         <DictAOEForm
+          canWrite={() => true}
           operateType="edit"
           setOperateType={vi.fn()}
           onSuccess={vi.fn()}
@@ -30,7 +31,8 @@ it.each([{ frozen: 9999 }, { status: '9999' as const }])(
         />
       </App>,
     );
-    expect(await screen.findByLabelText('字典编码')).toBeDisabled();
+    expect(screen.queryByLabelText('字典编码')).toBeNull();
+    expect(screen.getByText('REAL')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /保\s*存/u })).toBeDisabled();
     expect(screen.getByRole('button', { name: '新增明细' })).toBeDisabled();
     expect(screen.queryByText('编辑')).not.toBeInTheDocument();
@@ -40,10 +42,17 @@ it.each([{ frozen: 9999 }, { status: '9999' as const }])(
     view.rerender(
       <App>
         <DictAOEForm
+          canWrite={() => true}
           operateType="edit"
           setOperateType={vi.fn()}
           onSuccess={vi.fn()}
-          currentItem={{ id: 'business', code: 'EDITABLE', name: '可编辑字典' }}
+          currentItem={{
+            id: 'business',
+            category: 'BUSINESS',
+            readOnly: false,
+            code: 'EDITABLE',
+            name: '可编辑字典',
+          }}
         />
       </App>,
     );
@@ -67,12 +76,19 @@ it('切换只读对象关闭已经打开的明细编辑弹窗', async () => {
     operateType: 'edit' as const,
     setOperateType: vi.fn(),
     onSuccess: vi.fn(),
+    canWrite: () => true,
   };
   const view = render(
     <App>
       <DictAOEForm
         {...props}
-        currentItem={{ id: 'business', code: 'EDITABLE', name: '可编辑字典' }}
+        currentItem={{
+          id: 'business',
+          category: 'BUSINESS',
+          readOnly: false,
+          code: 'EDITABLE',
+          name: '可编辑字典',
+        }}
       />
     </App>,
   );
@@ -99,6 +115,8 @@ it('切换只读对象关闭已经打开的明细编辑弹窗', async () => {
         {...props}
         currentItem={{
           id: 'business-2',
+          category: 'BUSINESS',
+          readOnly: false,
           code: 'EDITABLE2',
           name: '可编辑字典2',
         }}

@@ -10,6 +10,9 @@ export interface DictLine {
 }
 
 export interface DictItem {
+  category?: 'SYSTEM' | 'BUSINESS' | null;
+  readOnly?: boolean;
+  revision?: number;
   id: string;
   type?: string;
   code?: string;

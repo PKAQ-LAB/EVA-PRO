@@ -4,6 +4,7 @@ import { enabledStatusToFrozen, frozenToEnabledStatus } from '../adapter';
 import type { DictItem } from './data.d';
 
 export interface DictListResponse {
+  businessWritable?: boolean;
   data?: DictItem[];
   success?: boolean;
 }
@@ -21,9 +22,12 @@ export const queryDicts = (params?: Record<string, unknown>) =>
     ),
   }));
 
-export const getDict = (id: string) =>
+export const getDict = (id: string, category?: DictItem['category']) =>
   http
-    .get<{ data?: DictItem; success?: boolean }>(APIS.DICT_GET, id)
+    .list<{ data?: DictItem; success?: boolean }>(
+      `${APIS.DICT_GET}/${id}`,
+      category ? { category } : undefined,
+    )
     .then((res) => ({
       ...res,
       data: res.data
@@ -33,7 +37,15 @@ export const getDict = (id: string) =>
 
 export const editDict = (data: Partial<DictItem>) =>
   http.post<MutationResult>(APIS.DICT_EDIT, {
-    ...data,
+    id: data.id,
+    revision: data.revision,
+    type: data.type,
+    code: data.code,
+    name: data.name,
+    remark: data.remark,
+    sort: data.sort,
+    lines: data.lines,
+    ...(data.id ? { category: data.category } : {}),
     frozen: enabledStatusToFrozen(data.status),
   });
 

@@ -15,20 +15,14 @@ import {
 } from '@/components/TablePresentation';
 import type { DictItem } from './data.d';
 import styles from './list.module.css';
-import { isReadonlyDict } from './readonly';
+import { type DictRow, dictIdentity, dictionaryRows } from './readonly';
 
 const { Search } = Input;
 
-const filterDicts = (data: DictItem[], searchText: string) => {
-  if (!searchText) return data;
-  return data.filter((item) => {
-    const name = item.name ?? '';
-    const code = item.code ?? '';
-    return name.includes(searchText) || code.includes(searchText);
-  });
-};
-
 export interface DictListProps {
+  grouped?: boolean;
+  canCreate?: boolean;
+  canDelete?: (record: DictItem) => boolean;
   data: DictItem[];
   loading: boolean;
   onCreate: () => void;
@@ -44,31 +38,38 @@ const DictListView: React.FC<DictListProps> = ({
   onEdit,
   selectedId,
   onDelete,
+  grouped = false,
+  canCreate = false,
+  canDelete = () => false,
 }) => {
   const { modal } = App.useApp();
   const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState<string[]>([
+    'category:SYSTEM',
+    'category:BUSINESS',
+  ]);
 
   const confirmDelete = (record: DictItem) => {
-    if (isReadonlyDict(record)) return;
+    if (!canDelete(record)) return;
     modal.confirm({
       title: '删除后系统中部分数据可能无法正确显示，确定要删除吗？',
       centered: true,
       okText: '确定',
       cancelText: '取消',
       okButtonProps: { danger: true },
-      onOk: () => onDelete(record),
+      onOk: () => canDelete(record) && onDelete(record),
     });
   };
 
-  const columns: TableColumnsType<DictItem> = [
-    textColumn<DictItem>('字典描述', 'name', 220),
-    textColumn<DictItem>('字典编码', 'code', 220),
+  const columns: TableColumnsType<DictRow> = [
+    textColumn<DictRow>('字典描述', 'name', 220),
+    textColumn<DictRow>('字典编码', 'code', 220),
     {
       title: '操作',
       ...actionColumn(100),
       render: (_, record) => (
         <ActionGroup>
-          {!isReadonlyDict(record) && (
+          {!record.virtual && canDelete(record as DictItem) && (
             <Button
               type="link"
               size="small"
@@ -76,7 +77,7 @@ const DictListView: React.FC<DictListProps> = ({
               className="eva-delete-link"
               onClick={(event) => {
                 event.stopPropagation();
-                confirmDelete(record);
+                confirmDelete(record as DictItem);
               }}
             >
               删除
@@ -95,7 +96,7 @@ const DictListView: React.FC<DictListProps> = ({
         gutter={8}
       >
         <Col span={6}>
-          <Button type="primary" onClick={onCreate}>
+          <Button type="primary" onClick={onCreate} disabled={!canCreate}>
             新增
           </Button>
         </Col>
@@ -107,35 +108,46 @@ const DictListView: React.FC<DictListProps> = ({
           />
         </Col>
       </Row>
-      <Table<DictItem>
+      <Table<DictRow>
         className={styles.table}
         size="small"
         bordered
         columns={columns}
-        rowKey="id"
+        rowKey={(record) => (record.virtual ? record.id : dictIdentity(record))}
         loading={{ spinning: loading, description: '加载中...' }}
-        dataSource={filterDicts(data, search)}
+        dataSource={dictionaryRows(data, grouped, search)}
+        expandable={{
+          expandedRowKeys: expanded,
+          onExpandedRowsChange: (keys) => setExpanded(keys.map(String)),
+        }}
         rowClassName={(record) =>
-          record.id === selectedId ? 'ant-table-row-selected' : ''
+          !record.virtual && dictIdentity(record) === selectedId
+            ? 'ant-table-row-selected'
+            : ''
         }
         onRow={(record) => ({
-          tabIndex: 0,
+          tabIndex: record.virtual ? undefined : 0,
           'aria-label': `选择字典${record.name ?? record.code ?? ''}`,
-          'aria-selected': record.id === selectedId,
+          'aria-selected':
+            !record.virtual && dictIdentity(record) === selectedId,
           onClick: (event) => {
+            if (record.virtual) return;
             if (
               event.target instanceof Element &&
-              event.target.closest('button,a,input,[data-no-row-view]')
+              event.target.closest(
+                'button,a,input,[data-no-row-view],.ant-table-row-expand-icon',
+              )
             ) {
               return;
             }
-            void onEdit(record);
+            void onEdit(record as DictItem);
           },
           onKeyDown: (event) => {
+            if (record.virtual) return;
             if (event.target !== event.currentTarget) return;
             if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault();
-              void onEdit(record);
+              void onEdit(record as DictItem);
             }
           },
         })}

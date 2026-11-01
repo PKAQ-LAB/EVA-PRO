@@ -1,4 +1,4 @@
-import { App, Button, Card, Col, Form, Input, Row } from 'antd';
+import { App, Button, Card, Col, Form, Input, Row, Skeleton } from 'antd';
 import React, {
   useCallback,
   useEffect,
@@ -15,6 +15,7 @@ import { editDict } from './service';
 export type OperateType = '' | 'create' | 'edit' | 'view';
 
 export interface DictAOEFormProps {
+  canWrite?: () => boolean;
   operateType: OperateType;
   setOperateType: (v: OperateType) => void;
   currentItem: Partial<DictItem>;
@@ -43,14 +44,47 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
   loading = false,
   onDirtyChange,
   onBusyChange,
+  canWrite: canMaintain = () => false,
 }) => {
   const [form] = Form.useForm<DictItem>();
   const { message: msg } = App.useApp();
   const [submitting, setSubmitting] = useState(false);
   const saving = useRef(false);
+  const [savedValues, setSavedValues] = useState<{
+    item: Partial<DictItem>;
+    values: Partial<DictItem>;
+  }>();
+  const displayed =
+    savedValues?.item === currentItem ? savedValues.values : currentItem;
+  const permissionRef = useRef(canMaintain);
+  permissionRef.current = canMaintain;
+  const readonlyValue = (value: unknown, multiline = false) => (
+    <div
+      className={`eva-view-value${multiline ? ' eva-view-value-multiline' : ''}`}
+      aria-busy={loading}
+    >
+      {loading ? (
+        <Skeleton.Node
+          active
+          styles={{
+            root: { width: '100%' },
+            content: {
+              width: '100%',
+              height: multiline
+                ? 'calc(var(--ant-font-height, 22px) * 5)'
+                : 'var(--ant-font-height, 22px)',
+            },
+          }}
+        />
+      ) : (
+        String(value ?? '').trim() || '—'
+      )}
+    </div>
+  );
   const [lines, setLines] = useState<DictLine[]>(currentItem?.lines ?? []);
 
   useEffect(() => {
+    setSavedValues(undefined);
     setLines(currentItem?.lines ?? []);
     form.resetFields();
     if (currentItem) form.setFieldsValue(currentItem as DictItem);
@@ -61,13 +95,18 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
     loading ||
     operateType === '' ||
     operateType === 'view' ||
-    isReadonlyDict(currentItem);
+    !canMaintain() ||
+    (operateType !== 'create' && isReadonlyDict(currentItem));
   // 每次对象或只读上下文切换都建立新会话，返回同一对象也不恢复旧回调。
   const session = useMemo(() => ({ active: false }), [currentItem, isReadOnly]);
   const sessionRef = useRef(session);
   sessionRef.current = session;
   const isCurrent = useCallback(
-    () => session.active && sessionRef.current === session && !isReadOnly,
+    () =>
+      session.active &&
+      sessionRef.current === session &&
+      !isReadOnly &&
+      permissionRef.current(),
     [session, isReadOnly],
   );
   useLayoutEffect(() => {
@@ -89,9 +128,11 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
       const res = await editDict({
         ...values,
         id: currentItem.id,
+        category: currentItem.id ? currentItem.category : undefined,
         lines,
       });
       if (isCurrent() && res.success) {
+        setSavedValues({ item: currentItem, values });
         msg.success('保存成功');
         onDirtyChange?.(false);
         setOperateType('view');
@@ -111,6 +152,7 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
   return (
     <>
       <Form
+        component={isReadOnly ? 'div' : 'form'}
         colon
         form={form}
         layout="horizontal"
@@ -137,30 +179,42 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
             <Col span={12}>
               <Form.Item
                 label="字典编码"
-                name="code"
-                rules={[{ required: true }]}
+                name={isReadOnly ? undefined : 'code'}
+                rules={isReadOnly ? undefined : [{ required: true }]}
               >
-                <Input maxLength={30} disabled={isReadOnly || submitting} />
+                {isReadOnly ? (
+                  readonlyValue(displayed.code)
+                ) : (
+                  <Input maxLength={30} disabled={submitting} />
+                )}
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
                 label="字典描述"
-                name="name"
-                rules={[{ required: true }]}
+                name={isReadOnly ? undefined : 'name'}
+                rules={isReadOnly ? undefined : [{ required: true }]}
               >
-                <Input maxLength={30} disabled={isReadOnly || submitting} />
+                {isReadOnly ? (
+                  readonlyValue(displayed.name)
+                ) : (
+                  <Input maxLength={30} disabled={submitting} />
+                )}
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col span={24}>
-              <Form.Item label="备注" name="remark">
-                <Input.TextArea
-                  maxLength={200}
-                  disabled={isReadOnly || submitting}
-                  rows={5}
-                />
+              <Form.Item label="备注" name={isReadOnly ? undefined : 'remark'}>
+                {isReadOnly ? (
+                  readonlyValue(displayed.remark, true)
+                ) : (
+                  <Input.TextArea
+                    maxLength={200}
+                    disabled={isReadOnly || submitting}
+                    rows={5}
+                  />
+                )}
               </Form.Item>
             </Col>
           </Row>

@@ -18,6 +18,7 @@ const api = vi.hoisted(() => ({
   getDict: vi.fn(),
   editDict: vi.fn(),
   deleteDict: vi.fn(),
+  user: { name: 'fixture', resourcePermissionEnabled: false },
 }));
 vi.mock('./service', () => api);
 vi.mock('@umijs/max', async () => {
@@ -27,7 +28,10 @@ vi.mock('@umijs/max', async () => {
       type: 'memory',
       initialEntries: ['/sys/dictionary'],
     }),
-    useModel: () => ({ initialState: {}, setInitialState: vi.fn() }),
+    useModel: () => ({
+      initialState: { currentUser: api.user },
+      setInitialState: vi.fn(),
+    }),
   };
 });
 vi.mock('@ant-design/pro-components', () => ({
@@ -40,17 +44,38 @@ vi.mock('@/components', async () => ({
 const records = [
   {
     id: 'a',
+    category: 'BUSINESS',
+    readOnly: false,
     name: '字典甲',
     code: 'A',
     lines: [{ id: 'line-a', keyName: 'KEY_A', keyValue: '值甲' }],
   },
-  { id: 'b', name: '字典乙', code: 'B', lines: [] },
-  { id: 'readonly', name: '内置字典', code: 'SYSTEM', frozen: 9999, lines: [] },
+  {
+    id: 'b',
+    category: 'BUSINESS',
+    readOnly: false,
+    name: '字典乙',
+    code: 'B',
+    lines: [],
+  },
+  {
+    id: 'readonly',
+    category: 'SYSTEM',
+    readOnly: true,
+    name: '内置字典',
+    code: 'SYSTEM',
+    frozen: 9999,
+    lines: [],
+  },
 ];
 beforeEach(() => {
   history.replace('/sys/dictionary');
   vi.clearAllMocks();
-  api.queryDicts.mockResolvedValue({ success: true, data: records });
+  api.queryDicts.mockResolvedValue({
+    success: true,
+    businessWritable: true,
+    data: records,
+  });
   api.getDict.mockImplementation(async (id: string) => ({
     success: true,
     data: records.find((record) => record.id === id),
@@ -173,10 +198,8 @@ it('详情失败保留原值和dirty，再次选择可重试；9999只读且无�
   expect(unload()).toBe(true);
   fireEvent.click(screen.getByText('内置字典'));
   fireEvent.click(await screen.findByRole('button', { name: '放弃修改' }));
-  await waitFor(() =>
-    expect(screen.getByLabelText('字典描述')).toHaveValue('内置字典'),
-  );
-  expect(screen.getByLabelText('字典描述')).toBeDisabled();
+  await waitFor(() => expect(screen.queryByLabelText('字典描述')).toBeNull());
+  expect(screen.getAllByText('内置字典').length).toBeGreaterThan(1);
   expect(screen.getByRole('button', { name: /保\s*存/ })).toBeDisabled();
   expect(
     within(screen.getByRole('row', { name: '选择字典内置字典' })).queryByText(
@@ -227,10 +250,8 @@ it('删除独立确认且不触发行加载；删除当前对象清理右侧选�
   const selectedRow = screen.getByRole('row', { name: '选择字典字典甲' });
   fireEvent.click(within(selectedRow).getByRole('button', { name: /删\s*除/ }));
   fireEvent.click(await screen.findByRole('button', { name: /确\s*定/ }));
-  await waitFor(() =>
-    expect(screen.getByLabelText('字典描述')).toHaveValue(''),
-  );
-  expect(screen.getByLabelText('字典描述')).toBeDisabled();
+  await waitFor(() => expect(screen.queryByLabelText('字典描述')).toBeNull());
+  expect(screen.getByRole('button', { name: /保\s*存/ })).toBeDisabled();
 });
 
 it('详情读取期间阻止覆盖编辑，卸载后旧详情不写回', async () => {

@@ -74,6 +74,8 @@ it.each([
       kind === 'dictionary' ? '查看字典明细' : '查看资源',
     );
     if (kind === 'dictionary') {
+      expect(dialog).toHaveStyle({ width: '500px' });
+      expect(dialog.querySelectorAll('.eva-view-value')).toHaveLength(4);
       expect(
         dialog.querySelector('form,input,textarea,[type="submit"]'),
       ).toBeNull();

@@ -1,6 +1,6 @@
 import { App, Button, Card, Divider, Table, type TableColumnsType } from 'antd';
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import RecordView, { useRecordView, viewRow } from '@/components/RecordView';
+import { viewRow } from '@/components/RecordView';
 import {
   ActionGroup,
   actionColumn,
@@ -23,7 +23,6 @@ const LineList: React.FC<LineListProps> = ({
   operateType,
   isCurrent,
 }) => {
-  const view = useRecordView<DictLine>();
   const { modal } = App.useApp();
   const [modalType, setModalType] = useState<LineModalType>('');
   const [editIndex, setEditIndex] = useState<number | ''>('');
@@ -50,20 +49,28 @@ const LineList: React.FC<LineListProps> = ({
   };
 
   const handleEdit = (index: number) => {
-    if (!canWrite()) return;
+    if (!canWrite() || lines[index]?.frozen === 9999) return;
     setEditIndex(index);
     setModalType('edit');
   };
 
+  const handleView = (record: DictLine) => {
+    if (!activeRef.current) return;
+    const index = lines.indexOf(record);
+    if (index < 0) return;
+    setEditIndex(index);
+    setModalType('view');
+  };
+
   const handleDelete = (index: number) => {
-    if (!canWrite()) return;
+    if (!canWrite() || lines[index]?.frozen === 9999) return;
     const next = [...lines];
     next.splice(index, 1);
     setLines(next);
   };
 
   const confirmDelete = (index: number) => {
-    if (!canWrite()) return;
+    if (!canWrite() || lines[index]?.frozen === 9999) return;
     confirmationRef.current?.destroy();
     confirmationRef.current = modal.confirm({
       title: '确定要删除吗？',
@@ -86,14 +93,10 @@ const LineList: React.FC<LineListProps> = ({
       ...actionColumn(220),
       render: (_, _record, index) => (
         <ActionGroup>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => view.show({ ..._record })}
-          >
+          <Button type="link" size="small" onClick={() => handleView(_record)}>
             查看
           </Button>
-          {!isReadOnly && (
+          {!isReadOnly && _record.frozen !== 9999 && (
             <>
               <a onClick={() => handleEdit(index)}>编辑</a>
               <Divider type="vertical" />
@@ -122,14 +125,14 @@ const LineList: React.FC<LineListProps> = ({
     >
       <Table<DictLine>
         scroll={{ x: 750 }}
-        onRow={(record) => viewRow(() => view.show({ ...record }))}
+        onRow={(record) => viewRow(() => handleView(record))}
         size="small"
         rowKey={(_record, index) => `${index}-${_record.keyName}`}
         dataSource={lines}
         columns={columns}
         pagination={false}
       />
-      {!isReadOnly && modalType !== '' && (
+      {modalType !== '' && (modalType === 'view' || !isReadOnly) && (
         <LineAOEForm
           modalType={modalType}
           setModalType={setModalType}
@@ -138,18 +141,12 @@ const LineList: React.FC<LineListProps> = ({
           editIndex={editIndex}
           setEditIndex={setEditIndex}
           isCurrent={isCurrent}
+          readOnly={
+            isReadOnly ||
+            (editIndex !== '' && lines[editIndex]?.frozen === 9999)
+          }
         />
       )}
-      <RecordView
-        title="查看字典明细"
-        view={view}
-        items={(record) => [
-          { key: 'name', label: '编码', children: record.keyName },
-          { key: 'value', label: '描述', children: record.keyValue },
-          { key: 'orders', label: '排序', children: record.orders },
-          { key: 'remark', label: '备注', children: record.remark },
-        ]}
-      />
     </Card>
   );
 };

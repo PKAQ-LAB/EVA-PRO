@@ -22,6 +22,8 @@ afterEach(() => vi.restoreAllMocks());
 function items() {
   const first: DictItem = {
     id: 'A',
+    category: 'BUSINESS',
+    readOnly: false,
     code: 'A',
     name: '字典A',
     lines: [
@@ -31,12 +33,16 @@ function items() {
   };
   const second: DictItem = {
     id: 'B',
+    category: 'BUSINESS',
+    readOnly: false,
     code: 'B',
     name: '字典B',
     lines: [{ id: 'B1', keyName: 'b1', keyValue: 'B一' }],
   };
   const readonly: DictItem = {
     id: 'R',
+    category: 'SYSTEM',
+    readOnly: true,
     code: 'R',
     name: '只读字典',
     frozen: 9999,
@@ -48,6 +54,7 @@ function editor(item: DictItem) {
   return (
     <App>
       <DictAOEForm
+        canWrite={() => true}
         operateType="edit"
         setOperateType={vi.fn()}
         onSuccess={vi.fn()}
