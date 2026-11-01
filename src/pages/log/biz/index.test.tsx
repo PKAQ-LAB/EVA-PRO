@@ -9,6 +9,7 @@ import { App, ConfigProvider, theme } from 'antd';
 import type { ReactNode } from 'react';
 import { beforeEach, expect, it, vi } from 'vitest';
 import APIS from '@/apis';
+import { dictionaryGeneration, dictionaryOwner } from '@/utils/dictionaryState';
 import BizLogPage from './index';
 
 const mocks = vi.hoisted(() => ({
@@ -21,7 +22,14 @@ beforeEach(() => {
 });
 vi.mock('@umijs/max', () => ({
   request: mocks.request,
-  useModel: () => ({ initialState: { dict: mocks.dict } }),
+  useModel: () => ({
+    initialState: {
+      currentUser: { userid: 'fixture' },
+      dictOwner: dictionaryOwner({ userid: 'fixture' }),
+      dictGeneration: dictionaryGeneration(),
+      dict: mocks.dict,
+    },
+  }),
 }));
 vi.mock('@ant-design/pro-components', async () => ({
   PageContainer: ({ children }: { children: ReactNode }) => children,

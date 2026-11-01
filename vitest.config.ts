@@ -1,5 +1,11 @@
-import { join } from 'node:path';
+import { createRequire } from 'node:module';
+import { dirname, join } from 'node:path';
 import { defineConfig } from 'vitest/config';
+
+const projectRequire = createRequire(import.meta.url);
+const umiRuntime = projectRequire.resolve('umi', {
+  paths: [dirname(projectRequire.resolve('@umijs/max/package.json'))],
+});
 
 export default defineConfig({
   resolve: {
@@ -7,6 +13,7 @@ export default defineConfig({
       '@': join(__dirname, 'src'),
       '@root': join(__dirname),
       '@@': join(__dirname, 'src', '.umi'),
+      umi: umiRuntime,
     },
   },
   test: {

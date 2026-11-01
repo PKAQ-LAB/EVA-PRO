@@ -14,10 +14,19 @@ export interface RoleItem extends RecordAudit {
   dataScope?: string;
   /** 当 dataScope=0003 时，限定的部门 id 列表（后端用逗号串） */
   dataOrgIds?: string | string[];
+  /** 指定岗位读取资格，仅十进制字符串 ID 数组。 */
+  dataPostIds?: string[];
   /** 兼容旧字段：数据权限类型 */
   dataPermissionType?: string;
   /** 兼容旧字段：当 dataPermissionType=0003 时，限定的部门 id 列表 */
   dataPermissionDeptid?: string | string[];
+}
+
+export interface RolePostItem {
+  id: string;
+  title?: string;
+  frozen?: number;
+  children?: RolePostItem[] | null;
 }
 
 export interface RoleListResponse {

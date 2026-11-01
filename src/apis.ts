@@ -36,6 +36,7 @@ const APIS = {
   ROLE_CHECKUNIQUE: '/api/sys/role/checkUnique',
   ROLE_LISTMOUDLE: '/api/sys/role/fetchResource',
   ROLE_LISTUSER: '/api/sys/role/listUser',
+  POST_LIST: '/api/sys/post/list',
   // 用户管理
   ACCOUNT_GET: '/api/sys/account/get',
   ACCOUNT_LIST: '/api/sys/account/list',

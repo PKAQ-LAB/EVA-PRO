@@ -5,6 +5,7 @@ import { Spin } from 'antd';
 import React, { startTransition } from 'react';
 import { outLogin } from '@/services/auth';
 import { clearAuthState } from '@/utils/authState';
+import { beginDictionarySession } from '@/utils/dictionaryState';
 import HeaderDropdown from '../HeaderDropdown';
 
 type GlobalHeaderRightProps = {
@@ -57,11 +58,16 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
   const onMenuClick: MenuProps['onClick'] = (event) => {
     const { key } = event;
     if (key === 'logout') {
+      beginDictionarySession();
       startTransition(() => {
         setInitialState((s) => ({
           ...s,
           currentUser: undefined,
           dict: undefined,
+          dictEtag: undefined,
+          dictOwner: undefined,
+          dictGeneration: undefined,
+          dictStatus: undefined,
         }));
       });
       loginOut();

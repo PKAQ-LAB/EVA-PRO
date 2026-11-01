@@ -38,7 +38,11 @@ vi.mock('@/components/AuthBootstrapStatus', () => ({ default: () => null }));
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mocks.dict.mockResolvedValue({ data: {} });
+  mocks.dict.mockResolvedValue({
+    kind: 'updated',
+    etag: `W/"dict-v1-${'a'.repeat(64)}"`,
+    data: {},
+  });
   mocks.login.mockResolvedValue({
     success: true,
     resourcePermissionEnabled: false,

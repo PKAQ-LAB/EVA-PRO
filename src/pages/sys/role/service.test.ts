@@ -1,10 +1,54 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { listRoleModules, listRoleUsers, saveRoleModules } from './service';
+import {
+  listRoleModules,
+  listRoleUsers,
+  saveRole,
+  saveRoleModules,
+} from './service';
 
 const mocks = vi.hoisted(() => ({
   list: vi.fn(),
   post: vi.fn(),
 }));
+
+it('岗位ID保存保持Long字符串数组，切离岗位只提交空数组', async () => {
+  mocks.post.mockClear();
+  const ids = ['2113857683657629697', '2113857683657629698'];
+  await saveRole({ id: 'role-a', dataScope: '0006', dataPostIds: ids });
+  expect(mocks.post).toHaveBeenLastCalledWith(
+    '/api/sys/role/edit',
+    expect.objectContaining({ dataPostIds: ids }),
+  );
+  await saveRole({ id: 'role-a', dataScope: '0001', dataPostIds: ids });
+  expect(mocks.post).toHaveBeenLastCalledWith(
+    '/api/sys/role/edit',
+    expect.objectContaining({ dataPostIds: [] }),
+  );
+  expect(ids).toEqual(['2113857683657629697', '2113857683657629698']);
+});
+it('岗位空集合和非法ID不发保存请求', async () => {
+  mocks.post.mockClear();
+  await expect(
+    saveRole({ dataScope: '0006', dataPostIds: [] }),
+  ).rejects.toThrow('请选择有效岗位');
+  await expect(
+    saveRole({ dataScope: '0006', dataPostIds: ['1,2'] }),
+  ).rejects.toThrow('请选择有效岗位');
+  expect(mocks.post).not.toHaveBeenCalled();
+});
+
+it('岗位编辑省略ID数组保持省略，0006清组织但不改变旧范围组织序列化', async () => {
+  mocks.post.mockClear();
+  await saveRole({ id: 'role-a', dataScope: '0006', dataOrgIds: ['123'] });
+  const firstBody = mocks.post.mock.calls.at(-1)?.[1];
+  expect(firstBody).not.toHaveProperty('dataPostIds');
+  expect(firstBody).toMatchObject({ dataOrgIds: '' });
+  await saveRole({ id: 'role-a', dataScope: '0003', dataOrgIds: ['123'] });
+  expect(mocks.post).toHaveBeenLastCalledWith(
+    '/api/sys/role/edit',
+    expect.objectContaining({ dataOrgIds: '123' }),
+  );
+});
 
 vi.mock('@/utils/http', () => ({
   default: {

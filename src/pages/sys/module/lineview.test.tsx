@@ -9,6 +9,7 @@ import {
 import { App, ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { expect, it, vi } from 'vitest';
+import { dictionaryGeneration, dictionaryOwner } from '@/utils/dictionaryState';
 import type { ModuleResource } from './data.d';
 import ModuleLines from './linelist';
 
@@ -28,7 +29,12 @@ function textField(dialog: HTMLElement, label: string) {
 
 vi.mock('@umijs/max', () => ({
   useModel: () => ({
-    initialState: { dict: { RESOURCE_TYPE: { GET: '读取' } } },
+    initialState: {
+      currentUser: { userid: 'fixture' },
+      dictOwner: dictionaryOwner({ userid: 'fixture' }),
+      dictGeneration: dictionaryGeneration(),
+      dict: { RESOURCE_TYPE: { GET: '读取' } },
+    },
   }),
 }));
 const line = {

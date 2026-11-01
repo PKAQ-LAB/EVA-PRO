@@ -10,6 +10,7 @@ import { App, ConfigProvider } from 'antd';
 import type { ReactNode } from 'react';
 import { beforeEach, expect, it, vi } from 'vitest';
 import APIS from '@/apis';
+import { dictionaryGeneration, dictionaryOwner } from '@/utils/dictionaryState';
 import BizLogPage from './biz';
 import ErrorLogPage from './error';
 
@@ -17,7 +18,12 @@ const mocks = vi.hoisted(() => ({ request: vi.fn() }));
 vi.mock('@umijs/max', () => ({
   request: mocks.request,
   useModel: () => ({
-    initialState: { dict: { BIZ_OPERATE_TYPE: { QUERY: '查询' } } },
+    initialState: {
+      currentUser: { userid: 'fixture' },
+      dictOwner: dictionaryOwner({ userid: 'fixture' }),
+      dictGeneration: dictionaryGeneration(),
+      dict: { BIZ_OPERATE_TYPE: { QUERY: '查询' } },
+    },
   }),
 }));
 vi.mock('@ant-design/pro-components', async () => ({

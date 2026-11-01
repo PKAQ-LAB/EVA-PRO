@@ -24,6 +24,11 @@ import {
   setStoredRefreshToken,
 } from '@/utils/authState';
 import {
+  beginDictionarySession,
+  dictionaryFields,
+  dictionaryGeneration,
+} from '@/utils/dictionaryState';
+import {
   extractMenus,
   type MenuNavigationItem,
   resolveMenuNavigation,
@@ -642,6 +647,8 @@ const Login: React.FC = () => {
         let menus: MenuNavigationItem[] = [];
         let resourcePermissionEnabled = resourcePermissionFromResponse(msg);
         let dict: Record<string, unknown> | undefined;
+        const epoch = beginDictionarySession();
+        let snapshot: Awaited<ReturnType<typeof fetchDict>> | undefined;
         try {
           const authHeaders = { Authorization: `Bearer ${tokenValue}` };
           const [menuResponse, dictResponse] = await Promise.all([
@@ -651,7 +658,11 @@ const Login: React.FC = () => {
           menus = extractMenus(menuResponse?.data);
           resourcePermissionEnabled =
             resourcePermissionFromResponse(menuResponse);
-          dict = dictResponse?.data;
+          if (epoch !== dictionaryGeneration()) return;
+          if (dictResponse.kind !== 'updated')
+            throw new Error('初始化字典不能复用空快照');
+          snapshot = dictResponse;
+          dict = dictResponse.data;
         } catch (error) {
           if (isAuthExpiredError(error)) {
             clearAuthState();
@@ -673,6 +684,7 @@ const Login: React.FC = () => {
             ...state,
             currentUser,
             dict,
+            ...dictionaryFields(currentUser, epoch, snapshot),
           }));
         });
         message.success(

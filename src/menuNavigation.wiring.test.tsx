@@ -172,7 +172,11 @@ describe('menu navigation wiring', () => {
       success: true,
     });
     mocks.fetchMenus.mockResolvedValue({ data: menus });
-    mocks.fetchDict.mockResolvedValue({ data: {} });
+    mocks.fetchDict.mockResolvedValue({
+      kind: 'updated',
+      etag: `W/"dict-v1-${'a'.repeat(64)}"`,
+      data: {},
+    });
     mocks.resolveMenuNavigation.mockReturnValue({ path: '/sys/role' });
 
     const { default: Login } = await import('@/pages/user/login');

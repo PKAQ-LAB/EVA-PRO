@@ -25,6 +25,7 @@ import {
   TextCell,
   textColumn,
 } from '@/components/TablePresentation';
+import { ownedDictionary } from '@/utils/dictionaryState';
 import { type BizLogItem, getBizLog, queryBizLogs } from './service';
 
 const { RangePicker } = DatePicker;
@@ -60,9 +61,9 @@ const BizLogPage: React.FC = () => {
     if (!record.id) return;
     await view.read(record.id, () => getBizLog(record.id));
   };
-  const operateTypeDict = (
-    initialState?.dict as Record<string, unknown> | undefined
-  )?.BIZ_OPERATE_TYPE as Record<string, string> | undefined;
+  const operateTypeDict = ownedDictionary(initialState)?.BIZ_OPERATE_TYPE as
+    | Record<string, string>
+    | undefined;
   const getOperateTypeText = (value?: string) =>
     value ? (operateTypeDict?.[value] ?? value) : '-';
 

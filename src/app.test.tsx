@@ -13,6 +13,11 @@ import {
   setStoredAccessToken,
   setStoredRefreshToken,
 } from './utils/authState';
+import {
+  beginDictionarySession,
+  dictionaryGeneration,
+  ownedDictionary,
+} from './utils/dictionaryState';
 
 const mocks = vi.hoisted(() => ({
   menus: vi.fn(),
@@ -150,7 +155,11 @@ beforeEach(() => {
   });
   window.location.hash = '';
   mocks.menus.mockResolvedValue({ data: menus });
-  mocks.dict.mockResolvedValue({ data: { RESOURCE_TYPE: { GET: 'GET' } } });
+  mocks.dict.mockResolvedValue({
+    kind: 'updated',
+    etag: `W/"dict-v1-${'a'.repeat(64)}"`,
+    data: { RESOURCE_TYPE: { GET: 'GET' } },
+  });
 });
 
 it('启动必向服务端验证，旧菜单缓存不能充当有效会话', async () => {
@@ -273,6 +282,40 @@ it('登录页也验证现有会话，匿名登录页不会循环跳转', async (
   expect((await getInitialState()).currentUser).toBeUndefined();
   expect(mocks.replace).not.toHaveBeenCalled();
   expect(message.error).not.toHaveBeenCalled();
+});
+
+it('字典bootstrap绑定当前认证身份与代次，初始化只发全量', async () => {
+  const state = await getInitialState();
+  expect(ownedDictionary(state)).toEqual({ RESOURCE_TYPE: { GET: 'GET' } });
+  expect(state.dictGeneration).toBe(dictionaryGeneration());
+  expect(state.dictEtag).toBe(`W/"dict-v1-${'a'.repeat(64)}"`);
+  expect(mocks.dict).toHaveBeenCalledExactlyOnceWith({
+    skipErrorHandler: true,
+  });
+});
+
+it('字典bootstrap迟到结果在新会话代次不能恢复旧用户快照', async () => {
+  let finish: (value: unknown) => void = () => {};
+  mocks.dict.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const pending = getInitialState();
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+  beginDictionarySession();
+  finish({
+    kind: 'updated',
+    etag: `W/"dict-v1-${'a'.repeat(64)}"`,
+    data: { OLD: { a: '旧' } },
+  });
+  const state = await pending;
+  expect(state.currentUser).toBeUndefined();
+  expect(state.dict).toBeUndefined();
+  expect(state.dictEtag).toBeUndefined();
 });
 
 it('字典401不返回半认证用户，字典500不清除已经验证的会话', async () => {

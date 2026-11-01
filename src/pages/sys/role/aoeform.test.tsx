@@ -9,6 +9,7 @@ import { App, ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import { beforeEach, expect, it, vi } from 'vitest';
 import APIS from '@/apis';
+import { dictionaryGeneration, dictionaryOwner } from '@/utils/dictionaryState';
 import RoleAOEForm from './aoeform';
 import type { RoleItem } from './data.d';
 import { getRole } from './service';
@@ -18,6 +19,15 @@ const mocks = vi.hoisted(() => ({
   dict: {} as Record<string, string>,
 }));
 vi.mock('@umijs/max', () => ({
+  useModel: () => ({
+    initialState: {
+      currentUser: { userid: 'fixture' },
+      dict: { DATA_SCOPE: mocks.dict },
+      dictOwner: dictionaryOwner({ userid: 'fixture' }),
+      dictGeneration: dictionaryGeneration(),
+      dictStatus: 'ready',
+    },
+  }),
   history: { block: () => vi.fn() },
   request: mocks.request,
   useIntl: () => ({
@@ -121,7 +131,7 @@ it('新增锁定默认值保持未锁定且没有切换控件', async () => {
 it('真实空字典无ALL初值，仅填名称编码无法保存且不触发POST', async () => {
   show();
   await waitFor(() =>
-    expect(mocks.request).toHaveBeenCalledWith(
+    expect(mocks.request).not.toHaveBeenCalledWith(
       '/api/sys/dictionary/query/DATA_SCOPE',
     ),
   );
@@ -149,7 +159,7 @@ it('新建必须由真实字典选项明确选择后才提交，允许用户实�
     target: { value: 'ROLE_TEST' },
   });
   await waitFor(() =>
-    expect(mocks.request).toHaveBeenCalledWith(
+    expect(mocks.request).not.toHaveBeenCalledWith(
       '/api/sys/dictionary/query/DATA_SCOPE',
     ),
   );
@@ -183,6 +193,9 @@ it.each(['0000', '0001', '0003'])(
     fireEvent.change(screen.getByLabelText('角色名称'), {
       target: { value: '仅改名称' },
     });
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /确\s*定/ })).toBeEnabled(),
+    );
     fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
     await waitFor(() => expect(saved()).toHaveLength(1));
     expect(saved()[0][1].data).toMatchObject({

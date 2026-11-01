@@ -27,10 +27,17 @@ import {
 } from '@/components';
 import AuthBootstrapStatus from '@/components/AuthBootstrapStatus';
 import CubeLoading from '@/components/CubeLoading';
+import DictionarySync from '@/components/DictionarySync';
 import { user_key } from '@/constant';
 import { fetchDict, fetchMenus } from '@/services/user';
 import { isAuthExpiredError, redirectToLogin } from '@/utils/authState';
 import { loopMenuItem } from '@/utils/DataHelper';
+import {
+  beginDictionarySession,
+  type DictionaryState,
+  dictionaryFields,
+  dictionaryGeneration,
+} from '@/utils/dictionaryState';
 import {
   extractMenus,
   type MenuNavigationItem,
@@ -156,15 +163,19 @@ function getCurrentUserDisplayName(currentUser?: API.CurrentUser) {
 /**
  * @see https://umijs.org/docs/api/runtime-config#getinitialstate
  * */
-export async function getInitialState(): Promise<{
-  settings?: Partial<LayoutSettings>;
-  currentUser?: ResourcePermissionUser;
-  dict?: Record<string, unknown>;
-  loading?: boolean;
-  fetchUserInfo?: () => Promise<ResourcePermissionUser | undefined>;
-  fetchDict?: () => Promise<Record<string, unknown> | undefined>;
-  settingDrawerOpen?: boolean;
-}> {
+export async function getInitialState(): Promise<
+  DictionaryState & {
+    settings?: Partial<LayoutSettings>;
+    currentUser?: ResourcePermissionUser;
+    dict?: Record<string, unknown>;
+    loading?: boolean;
+    fetchUserInfo?: () => Promise<ResourcePermissionUser | undefined>;
+    fetchDict?: () => Promise<Record<string, unknown> | undefined>;
+    settingDrawerOpen?: boolean;
+  }
+> {
+  const epoch = beginDictionarySession();
+  let snapshot: Awaited<ReturnType<typeof fetchDict>> | undefined;
   const fetchUserInfo = async () => {
     const cachedUser = getCachedCurrentUser();
     window.sessionStorage.removeItem(loginMenuCacheKey);
@@ -186,9 +197,13 @@ export async function getInitialState(): Promise<{
   const initDict = async (
     failOnUnauthorized = false,
   ): Promise<Record<string, unknown> | undefined> => {
+    if (epoch !== dictionaryGeneration()) return undefined;
     try {
       const res = await fetchDict({ skipErrorHandler: true });
-      return (res?.data as Record<string, unknown>) ?? {};
+      if (epoch !== dictionaryGeneration()) return undefined;
+      if (res.kind !== 'updated') throw new Error('初始化字典不能复用空快照');
+      snapshot = res;
+      return res.data;
     } catch (error) {
       if (isAuthExpiredError(error)) {
         redirectToLogin();
@@ -205,11 +220,19 @@ export async function getInitialState(): Promise<{
     try {
       const currentUser = await fetchUserInfo();
       const dict = await initDict(true);
+      if (epoch !== dictionaryGeneration())
+        return {
+          fetchUserInfo,
+          fetchDict: initDict,
+          settings: defaultSettings as Partial<LayoutSettings>,
+          settingDrawerOpen: false,
+        };
       return {
         fetchUserInfo,
         fetchDict: initDict,
         currentUser,
         dict,
+        ...dictionaryFields(currentUser, epoch, snapshot),
         settings: defaultSettings as Partial<LayoutSettings>,
         settingDrawerOpen: false,
       };
@@ -354,6 +377,7 @@ export const layout: RunTimeLayoutConfig = ({
         return <AuthBootstrapStatus />;
       return (
         <>
+          <DictionarySync />
           <ConfigProvider
             variant={
               initialState?.settings?.navTheme === 'realDark'

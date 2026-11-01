@@ -9,6 +9,7 @@ import {
   TextCell,
   textColumn,
 } from '@/components/TablePresentation';
+import { ownedDictionary } from '@/utils/dictionaryState';
 import type { ModuleResource } from './data.d';
 import ModuleLineAOEForm, { type LineModalType } from './lineaoeform';
 
@@ -48,9 +49,9 @@ const ModuleLineList: React.FC<ModuleLineListProps> = ({
     setViewRecord({ ...record });
     setModalType('view');
   };
-  const resourceTypeDict = (
-    initialState?.dict as Record<string, unknown> | undefined
-  )?.RESOURCE_TYPE as Record<string, string> | undefined;
+  const resourceTypeDict = ownedDictionary(initialState)?.RESOURCE_TYPE as
+    | Record<string, string>
+    | undefined;
 
   const handleAdd = () => {
     if (!writable.current) return;

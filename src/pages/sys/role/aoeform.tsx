@@ -9,17 +9,15 @@ import {
   Modal,
   Row,
   Skeleton,
-  TreeSelect,
 } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DictSelector } from '@/components';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import RecordAuditFields from '@/components/RecordAuditFields';
-import { findTreeNode } from '@/utils/treeOperations';
 import useLeaveGuard from '../account/useLeaveGuard';
-import type { OrgItem } from '../organization/data.d';
-import { queryOrgs } from '../organization/service';
 import { frozenText, sysText } from '../status';
+import RoleDepartments from './component/roledepartments';
+import RolePosts from './component/roleposts';
 import type { RoleItem } from './data.d';
 import { checkRoleUnique, saveRole } from './service';
 
@@ -75,18 +73,37 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
     onBlocked: () => msg.info('加载中...'),
     modal,
   });
-  const [orgs, setOrgs] = useState<OrgItem[]>([]);
-  const [orgsLoading, setOrgsLoading] = useState(false);
-  const [showDepts, setShowDepts] = useState(false);
   const scope = Object.hasOwn(currentItem, 'dataScope')
     ? currentItem.dataScope
     : currentItem.dataPermissionType;
+  const watchedScope = Form.useWatch('dataScope', { form, preserve: true });
+  const watchedPosts = Form.useWatch('dataPostIds', { form, preserve: true });
+  const effectiveScope = isView ? scope : (watchedScope ?? scope);
+  const postsVisible = modalType !== '' && effectiveScope === '0006';
+  const deptsVisible = modalType !== '' && effectiveScope === '0003';
+  const watchedOrgs = Form.useWatch('dataOrgIds', { form, preserve: true });
+  const [deptsReady, setDeptsReady] = useState(false);
+  const deptsReadyRef = useRef(false);
+  const onDeptsReadyChange = useCallback((ready: boolean) => {
+    deptsReadyRef.current = ready;
+    setDeptsReady(ready);
+  }, []);
+  const postIds: string[] = isView
+    ? (currentItem.dataPostIds ?? [])
+    : (watchedPosts ?? currentItem.dataPostIds ?? []);
+  const [postsValid, setPostsValid] = useState(false);
+  const postsValidRef = useRef(false);
+  const onPostsValidChange = useCallback((valid: boolean) => {
+    postsValidRef.current = valid;
+    setPostsValid(valid);
+  }, []);
   const selectedOrgs = Object.hasOwn(currentItem, 'dataOrgIds')
     ? currentItem.dataOrgIds
     : currentItem.dataPermissionDeptid;
-  const orgIds = Array.isArray(selectedOrgs)
-    ? selectedOrgs
-    : (selectedOrgs?.split(',').filter(Boolean) ?? []);
+  const currentOrgs = isView ? selectedOrgs : (watchedOrgs ?? selectedOrgs);
+  const orgIds: string[] = Array.isArray(currentOrgs)
+    ? currentOrgs
+    : (currentOrgs?.split(',').filter(Boolean) ?? []);
   const renderValue = (
     value: React.ReactNode,
     multiline = false,
@@ -115,17 +132,6 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       )}
     </div>
   );
-  const departmentField = (
-    <Form.Item label={sysText(intl, 'pages.sys.role.dataOrgIds', '选择部门')}>
-      {renderValue(
-        orgIds.length
-          ? orgIds.map((id) => findTreeNode(orgs, id)?.name || '—').join('、')
-          : '—',
-        false,
-        detailsLoading || orgsLoading,
-      )}
-    </Form.Item>
-  );
 
   // 初始化 / 切换 currentItem
   useEffect(() => {
@@ -134,7 +140,6 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
     setDirty(false);
     savingRef.current = false;
     setSubmitting(false);
-    setOrgs([]);
     const init: Partial<RoleItem> = {
       frozen: 0,
       ...currentItem,
@@ -150,26 +155,6 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
     }
     if (!isView && !detailsLoading && !detailsError)
       form.setFieldsValue(init as RoleItem);
-
-    const isCustomDept = init.dataScope === '0003';
-    setShowDepts(isCustomDept);
-    let active = true;
-    setOrgsLoading(isCustomDept && !detailsLoading && !detailsError);
-    if (isCustomDept && !detailsLoading && !detailsError) {
-      queryOrgs()
-        .then((res) => {
-          if (active && res.success && res.data) setOrgs(res.data);
-        })
-        .catch(() => {
-          if (active) msg.error('部门信息加载失败，请重试');
-        })
-        .finally(() => {
-          if (active) setOrgsLoading(false);
-        });
-    }
-    return () => {
-      active = false;
-    };
   }, [modalType, currentItem, form, detailsLoading, detailsError, msg, isView]);
 
   const checkCode = async (_: unknown, code: string) => {
@@ -184,26 +169,18 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
     }
   };
 
-  const handleDataPermissionChange = async (v: string) => {
+  const handleDataPermissionChange = (v: string) => {
     if (disabled || !leaveGuard.isCurrent()) return;
-    const isCustom = v === '0003';
-    setShowDepts(isCustom);
-    if (isCustom) {
-      try {
-        const res = await queryOrgs();
-        if (leaveGuard.isCurrent() && res.success && res.data)
-          setOrgs(res.data);
-      } catch {
-        if (leaveGuard.isCurrent()) msg.error('部门信息加载失败，请重试');
-      }
-    }
+    if (v !== '0006') form.setFieldValue('dataPostIds', []);
   };
 
   const handleSaveClick = async () => {
     if (
       (modalType !== 'create' && modalType !== 'edit') ||
       disabled ||
-      savingRef.current
+      savingRef.current ||
+      (postsVisible && !postsValidRef.current) ||
+      (deptsVisible && !deptsReadyRef.current)
     )
       return;
     savingRef.current = true;
@@ -216,6 +193,8 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
         throw error;
       });
       if (!values || !leaveGuard.isCurrent()) return;
+      if (values.dataScope === '0006' && !postsValidRef.current) return;
+      if (values.dataScope === '0003' && !deptsReadyRef.current) return;
       // 隐藏部门控件时，validateFields不会返回该字段，仍须保留详情中的组织关联。
       const dataOrgIds: RoleItem['dataOrgIds'] =
         form.getFieldValue('dataOrgIds');
@@ -225,10 +204,15 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
         remark: values.remark,
         frozen: modalType === 'edit' ? currentItem.frozen : values.frozen,
         dataScope: values.dataScope,
+        dataPostIds:
+          values.dataScope === '0006' ? form.getFieldValue('dataPostIds') : [],
         id: currentItem.id,
-        dataOrgIds: Array.isArray(dataOrgIds)
-          ? dataOrgIds.join(',')
-          : dataOrgIds,
+        dataOrgIds:
+          values.dataScope === '0006'
+            ? ''
+            : Array.isArray(dataOrgIds)
+              ? dataOrgIds.join(',')
+              : dataOrgIds,
       };
       const res = await saveRole(formData);
       if (!leaveGuard.isCurrent()) return;
@@ -274,7 +258,7 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       confirmLoading={submitting}
       onCancel={isView ? () => setModalType('') : leaveGuard.requestClose}
       open={modalType !== ''}
-      width={700}
+      width={postsVisible || deptsVisible ? 1060 : 700}
       centered
       onOk={handleSaveClick}
       footer={
@@ -284,7 +268,10 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       }
       cancelButtonProps={{ disabled: submitting }}
       okButtonProps={{
-        disabled,
+        disabled:
+          disabled ||
+          (postsVisible && !postsValid) ||
+          (deptsVisible && !deptsReady),
         style: readOnly ? { display: 'none' } : undefined,
       }}
       title={sysText(
@@ -309,221 +296,223 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
           title={detailsError}
         />
       )}
-      {isView || detailsLoading || detailsError ? (
-        <Form
-          key={isView ? 'view' : 'pending'}
-          component="div"
-          colon
-          layout="horizontal"
-          {...formItemLayout}
-          aria-busy={detailsLoading && !detailsError}
-        >
-          {detailsLoading && !detailsError && (
-            <span role="status" aria-label="加载中..." />
-          )}
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label={sysText(intl, 'pages.sys.role.name', '角色名称')}
-              >
-                {renderValue(currentItem.name?.trim() || '—')}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={sysText(intl, 'pages.sys.role.code', '角色编码')}
-              >
-                {renderValue(currentItem.code?.trim() || '—')}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item
-            label={sysText(intl, 'pages.sys.column.locked', '是否锁定')}
-          >
-            {renderValue(
-              currentItem.frozen == null
-                ? '—'
-                : frozenText(intl, currentItem.frozen),
-            )}
-          </Form.Item>
-          <Form.Item label={sysText(intl, 'pages.sys.role.remark', '角色描述')}>
-            {renderValue(currentItem.remark?.trim() || '—', true)}
-          </Form.Item>
-          <Form.Item
-            label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
-          >
-            {renderValue(scope?.trim() || '—')}
-          </Form.Item>
-          {isView ? (
-            <div
-              data-role-department-region
-              style={{
-                minHeight:
-                  'calc(var(--ant-control-height, 32px) + var(--ant-margin-lg, 24px))',
-              }}
+      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 580px', minWidth: 0 }}>
+          {isView || detailsLoading || detailsError ? (
+            <Form
+              key={isView ? 'view' : 'pending'}
+              component="div"
+              colon
+              layout="horizontal"
+              {...formItemLayout}
               aria-busy={detailsLoading && !detailsError}
-              aria-hidden={
-                !detailsLoading && !detailsError && scope !== '0003'
-                  ? true
-                  : undefined
-              }
             >
-              {detailsLoading || detailsError ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    paddingBlockEnd: 'var(--ant-margin-lg, 24px)',
-                  }}
-                >
-                  <div
-                    style={{ flex: formItemLayout.labelCol.flex }}
-                    aria-hidden
-                  />
-                  <div
-                    style={{
-                      flex: formItemLayout.wrapperCol.flex,
-                      minWidth: 0,
-                    }}
+              {detailsLoading && !detailsError && (
+                <span role="status" aria-label="加载中..." />
+              )}
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label={sysText(intl, 'pages.sys.role.name', '角色名称')}
                   >
-                    {renderValue(null, false, detailsLoading)}
-                  </div>
-                </div>
-              ) : scope === '0003' ? (
-                departmentField
-              ) : null}
-            </div>
-          ) : scope === '0003' ? (
-            departmentField
-          ) : null}
-          {isView && (
-            <RecordAuditFields
-              record={currentItem}
-              loading={detailsLoading}
-              unavailable={Boolean(detailsError)}
-            />
+                    {renderValue(currentItem.name?.trim() || '—')}
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label={sysText(intl, 'pages.sys.role.code', '角色编码')}
+                  >
+                    {renderValue(currentItem.code?.trim() || '—')}
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Form.Item
+                label={sysText(intl, 'pages.sys.column.locked', '是否锁定')}
+              >
+                {renderValue(
+                  currentItem.frozen == null
+                    ? '—'
+                    : frozenText(intl, currentItem.frozen),
+                )}
+              </Form.Item>
+              <Form.Item
+                label={sysText(intl, 'pages.sys.role.remark', '角色描述')}
+              >
+                {renderValue(currentItem.remark?.trim() || '—', true)}
+              </Form.Item>
+              <Form.Item
+                label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
+              >
+                {renderValue(scope?.trim() || '—')}
+              </Form.Item>
+              {isView && (
+                <RecordAuditFields
+                  record={currentItem}
+                  loading={detailsLoading}
+                  unavailable={Boolean(detailsError)}
+                />
+              )}
+            </Form>
+          ) : (
+            <Form
+              key="write"
+              colon
+              form={form}
+              disabled={disabled}
+              layout="horizontal"
+              {...formItemLayout}
+              onValuesChange={() => {
+                if (!disabled) setDirty(true);
+              }}
+              onSubmitCapture={(event) => {
+                if (isView) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+              }}
+            >
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label={sysText(intl, 'pages.sys.role.name', '角色名称')}
+                    name="name"
+                    rules={[
+                      {
+                        required: true,
+                        message: sysText(
+                          intl,
+                          'pages.sys.role.nameRequired',
+                          '请输入角色名称',
+                        ),
+                      },
+                    ]}
+                  >
+                    <Input maxLength={30} disabled={disabled} />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label={sysText(intl, 'pages.sys.role.code', '角色编码')}
+                    name="code"
+                    validateTrigger="onBlur"
+                    hasFeedback
+                    rules={[
+                      {
+                        required: true,
+                        message: sysText(
+                          intl,
+                          'pages.sys.role.codeRule',
+                          '仅允许使用 4-30 位字母或数字',
+                        ),
+                        whitespace: true,
+                        pattern: /^[0-9a-zA-Z_]{4,30}$/,
+                      },
+                      { validator: checkCode },
+                    ]}
+                  >
+                    <Input minLength={4} maxLength={30} disabled={disabled} />
+                  </Form.Item>
+                </Col>
+              </Row>
+              {modalType !== 'create' && (
+                <Form.Item
+                  label={sysText(intl, 'pages.sys.column.locked', '是否锁定')}
+                >
+                  {renderValue(
+                    currentItem.frozen == null
+                      ? '—'
+                      : frozenText(intl, currentItem.frozen),
+                  )}
+                </Form.Item>
+              )}
+              <Form.Item
+                label={sysText(intl, 'pages.sys.role.remark', '角色描述')}
+                name="remark"
+              >
+                <Input.TextArea maxLength={60} disabled={disabled} />
+              </Form.Item>
+              <Form.Item
+                label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
+                name="dataScope"
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    message: sysText(
+                      intl,
+                      'pages.sys.role.dataScopeRequired',
+                      '请选择数据权限',
+                    ),
+                  },
+                ]}
+              >
+                <DictSelector
+                  code="DATA_SCOPE"
+                  disabled={disabled}
+                  showall={false}
+                  onChange={(v) => handleDataPermissionChange(String(v))}
+                />
+              </Form.Item>
+            </Form>
           )}
-        </Form>
-      ) : (
-        <Form
-          key="write"
-          colon
-          form={form}
-          disabled={disabled}
-          layout="horizontal"
-          {...formItemLayout}
-          onValuesChange={() => {
-            if (!disabled) setDirty(true);
-          }}
-          onSubmitCapture={(event) => {
-            if (isView) {
-              event.preventDefault();
-              event.stopPropagation();
-            }
+        </div>
+        <div
+          data-role-department-region
+          aria-hidden={!deptsVisible && !detailsLoading ? true : undefined}
+          style={{
+            flex: '1 1 300px',
+            minWidth: 0,
+            minHeight:
+              'calc(var(--ant-control-height, 32px) + var(--ant-margin-lg, 24px))',
+            display: deptsVisible || detailsLoading ? undefined : 'none',
           }}
         >
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label={sysText(intl, 'pages.sys.role.name', '角色名称')}
-                name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: sysText(
-                      intl,
-                      'pages.sys.role.nameRequired',
-                      '请输入角色名称',
-                    ),
-                  },
-                ]}
-              >
-                <Input maxLength={30} disabled={disabled} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={sysText(intl, 'pages.sys.role.code', '角色编码')}
-                name="code"
-                validateTrigger="onBlur"
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                    message: sysText(
-                      intl,
-                      'pages.sys.role.codeRule',
-                      '仅允许使用 4-30 位字母或数字',
-                    ),
-                    whitespace: true,
-                    pattern: /^[0-9a-zA-Z_]{4,30}$/,
-                  },
-                  { validator: checkCode },
-                ]}
-              >
-                <Input minLength={4} maxLength={30} disabled={disabled} />
-              </Form.Item>
-            </Col>
-          </Row>
-          {modalType !== 'create' && (
-            <Form.Item
-              label={sysText(intl, 'pages.sys.column.locked', '是否锁定')}
-            >
-              {renderValue(
-                currentItem.frozen == null
-                  ? '—'
-                  : frozenText(intl, currentItem.frozen),
-              )}
-            </Form.Item>
-          )}
-          <Form.Item
-            label={sysText(intl, 'pages.sys.role.remark', '角色描述')}
-            name="remark"
-          >
-            <Input.TextArea maxLength={60} disabled={disabled} />
-          </Form.Item>
-          <Form.Item
-            label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
-            name="dataScope"
-            rules={[
-              {
-                required: true,
-                whitespace: true,
-                message: sysText(
-                  intl,
-                  'pages.sys.role.dataScopeRequired',
-                  '请选择数据权限',
-                ),
-              },
-            ]}
-          >
-            <DictSelector
-              code="DATA_SCOPE"
+          {deptsVisible ? (
+            <RoleDepartments
+              key={`${modalType}:${currentItem.id ?? ''}`}
+              identity={`${modalType}:${currentItem.id ?? ''}`}
+              value={orgIds}
+              readOnly={isView || readOnly}
               disabled={disabled}
-              showall={false}
-              onChange={(v) => handleDataPermissionChange(String(v))}
+              waiting={detailsLoading || Boolean(detailsError)}
+              onReadyChange={onDeptsReadyChange}
+              onChange={(ids) => {
+                if (!disabled) {
+                  form.setFieldValue('dataOrgIds', ids);
+                  setDirty(true);
+                }
+              }}
             />
-          </Form.Item>
-          {showDepts && (
-            <Form.Item
-              label={sysText(intl, 'pages.sys.role.dataOrgIds', '选择部门')}
-              name="dataOrgIds"
-            >
-              <TreeSelect
-                treeData={orgs as never}
-                fieldNames={{
-                  label: 'name',
-                  value: 'id',
-                  children: 'children',
-                }}
-                treeCheckable
-                allowClear
-                multiple
-                disabled={disabled}
-              />
-            </Form.Item>
-          )}
-        </Form>
-      )}
+          ) : detailsLoading ? (
+            <Skeleton.Node
+              active
+              styles={{
+                root: { width: '100%' },
+                content: { width: '100%', height: 22 },
+              }}
+            />
+          ) : null}
+        </div>
+        {postsVisible && (
+          <div style={{ flex: '1 1 300px', minWidth: 0 }}>
+            <RolePosts
+              key={`${modalType}:${currentItem.id ?? ''}`}
+              identity={`${modalType}:${currentItem.id ?? ''}`}
+              value={postIds}
+              readOnly={isView || readOnly}
+              disabled={disabled}
+              waiting={detailsLoading || Boolean(detailsError)}
+              onValidChange={onPostsValidChange}
+              onChange={(ids) => {
+                if (!disabled) {
+                  form.setFieldValue('dataPostIds', ids);
+                  setDirty(true);
+                }
+              }}
+            />
+          </div>
+        )}
+      </div>
     </Modal>
   );
 };

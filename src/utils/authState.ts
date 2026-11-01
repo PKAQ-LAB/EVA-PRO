@@ -2,6 +2,7 @@ import { history } from '@umijs/max';
 import { message } from 'antd';
 import Cookies from 'universal-cookie';
 import { access_token, refresh_token, user_key } from '@/constant';
+import { beginDictionarySession } from './dictionaryState';
 
 export const authExpiredCodes = new Set([
   '0x000-00003',
@@ -106,6 +107,7 @@ export function setStoredRefreshToken(token: string) {
 }
 
 export function clearAuthState() {
+  beginDictionarySession();
   const cookies = new Cookies();
   cookies.remove(access_token, { maxAge: -1, path: '/' });
   cookies.remove(refresh_token, { maxAge: -1, path: '/' });

@@ -27,7 +27,6 @@ import {
 const SysDictionaryPage: React.FC = () => {
   const {
     initialState,
-    setInitialState,
     loading: bootLoading,
     error: bootError,
   } = useModel('@@initialState');
@@ -169,15 +168,10 @@ const SysDictionaryPage: React.FC = () => {
   const refresh = () => dictsQuery.refetch();
 
   const refreshDictState = async () => {
+    const sync = initialState?.fetchDict?.();
     await refresh();
     if (identity.current.version !== version) return;
-    const dict = await initialState?.fetchDict?.();
-    if (dict && identity.current.version === version) {
-      setInitialState((state) => ({
-        ...state,
-        dict,
-      }));
-    }
+    await sync;
   };
 
   const handleCreate = () => {

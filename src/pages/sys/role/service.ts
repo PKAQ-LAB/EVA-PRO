@@ -6,6 +6,7 @@ import type {
   RoleItem,
   RoleModuleNode,
   RoleModuleResponse,
+  RolePostItem,
   RoleUserResponse,
 } from './data.d';
 
@@ -52,15 +53,34 @@ export const saveRole = async (data: Partial<RoleItem>) => {
   if (typeof dataScope !== 'string' || !dataScope.trim()) {
     throw new Error('请选择数据权限');
   }
+  if (
+    dataScope === '0006' &&
+    (Object.hasOwn(data, 'dataPostIds') || !data.id) &&
+    (!data.dataPostIds?.length ||
+      data.dataPostIds.some(
+        (id) => typeof id !== 'string' || !/^[1-9]\d*$/.test(id),
+      ))
+  ) {
+    throw new Error('请选择有效岗位');
+  }
   return http.post<MutationResult>(APIS.ROLE_SAVE, {
     ...data,
     frozen: normalizeFrozen(data.frozen),
     dataScope,
-    dataOrgIds: Array.isArray(data.dataOrgIds)
-      ? data.dataOrgIds.join(',')
-      : data.dataOrgIds,
+    ...(Object.hasOwn(data, 'dataPostIds')
+      ? { dataPostIds: dataScope === '0006' ? data.dataPostIds : [] }
+      : {}),
+    dataOrgIds:
+      dataScope === '0006'
+        ? ''
+        : Array.isArray(data.dataOrgIds)
+          ? data.dataOrgIds.join(',')
+          : data.dataOrgIds,
   });
 };
+
+export const queryRolePosts = () =>
+  http.list<{ success?: boolean; data?: RolePostItem[] }>(APIS.POST_LIST);
 
 export const deleteRoles = (ids: string[]) =>
   http.post<MutationResult>(APIS.ROLE_DEL, { param: ids });

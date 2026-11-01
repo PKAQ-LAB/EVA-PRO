@@ -9,6 +9,7 @@ import { App, ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import type { ComponentProps } from 'react';
 import { beforeEach, expect, it, vi } from 'vitest';
+import { dictionaryGeneration, dictionaryOwner } from '@/utils/dictionaryState';
 import ModuleAOEForm from './aoeform';
 import type { ModuleItem } from './data.d';
 
@@ -37,7 +38,12 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@umijs/max', () => ({
   history: { block: mocks.block },
   useModel: () => ({
-    initialState: { dict: { RESOURCE_TYPE: { GET: '读取' } } },
+    initialState: {
+      currentUser: { userid: 'fixture' },
+      dictOwner: dictionaryOwner({ userid: 'fixture' }),
+      dictGeneration: dictionaryGeneration(),
+      dict: { RESOURCE_TYPE: { GET: '读取' } },
+    },
   }),
   request: vi.fn().mockResolvedValue({ success: true, data: {} }),
 }));
