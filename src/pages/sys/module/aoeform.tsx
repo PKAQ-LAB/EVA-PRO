@@ -172,7 +172,12 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
         orders: values.orders,
         remark: values.remark,
         id: currentItem.id,
-        status: values.status ? '0000' : '0001',
+        status:
+          operateType === 'edit'
+            ? currentItem.status
+            : values.status
+              ? '0000'
+              : '0001',
         resources: lines.map(
           ({
             id,
@@ -440,9 +445,27 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="是否启用" valuePropName="checked" name="status">
-                <Switch checkedChildren="启用" unCheckedChildren="停用" />
-              </Form.Item>
+              {operateType === 'create' ? (
+                <Form.Item
+                  label="是否启用"
+                  valuePropName="checked"
+                  name="status"
+                >
+                  <Switch checkedChildren="启用" unCheckedChildren="停用" />
+                </Form.Item>
+              ) : (
+                <Form.Item label="是否启用">
+                  {renderValue(
+                    currentItem.status === '0000'
+                      ? '启用'
+                      : currentItem.status === '0001'
+                        ? '停用'
+                        : currentItem.status === '9999'
+                          ? '只读'
+                          : '—',
+                  )}
+                </Form.Item>
+              )}
             </Col>
           </Row>
           <Form.Item label="备注" name="remark" rules={[{ max: 200 }]}>

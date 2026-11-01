@@ -41,6 +41,69 @@ describe('ModuleAOEForm', () => {
     mocks.editModule.mockResolvedValue({ success: true });
   });
 
+  it.each(['0000', '0001'] as const)(
+    '编辑状态%s纯文本且保存保持原状态',
+    async (status) => {
+      render(
+        <App>
+          <ModuleAOEForm
+            operateType="edit"
+            currentItem={{
+              id: 'm1',
+              name: '模块',
+              code: 'MODULE_TEST',
+              routeUrl: '/sys/module',
+              icon: 'setting',
+              orders: 1,
+              status,
+            }}
+            data={[]}
+            onClose={vi.fn()}
+            onSuccess={vi.fn()}
+          />
+        </App>,
+      );
+      expect(screen.queryByRole('switch')).toBeNull();
+      expect(
+        screen
+          .getByText(status === '0000' ? '启用' : '停用')
+          .closest('.eva-view-value'),
+      ).not.toBeNull();
+      fireEvent.click(screen.getByRole('button', { name: /保\s*存/ }));
+      await waitFor(() => expect(mocks.editModule).toHaveBeenCalledTimes(1));
+      expect(mocks.editModule.mock.calls[0][0].status).toBe(status);
+    },
+  );
+
+  it('新增状态默认启用，查看状态纯文本不提供切换', () => {
+    const view = render(
+      <App>
+        <ModuleAOEForm
+          operateType="create"
+          currentItem={{}}
+          data={[]}
+          onClose={vi.fn()}
+          onSuccess={vi.fn()}
+        />
+      </App>,
+    );
+    expect(screen.getByRole('switch')).toBeChecked();
+    view.rerender(
+      <App>
+        <ModuleAOEForm
+          operateType="view"
+          currentItem={{ id: 'm1', status: '0001' }}
+          data={[]}
+          onClose={vi.fn()}
+          onSuccess={vi.fn()}
+        />
+      </App>,
+    );
+    expect(screen.queryByRole('switch')).toBeNull();
+    expect(screen.getByText('停用').closest('.eva-view-value')).not.toBeNull();
+    expect(mocks.editModule).not.toHaveBeenCalled();
+  });
+
   it('binds code and routeUrl fields without exposing or submitting path', async () => {
     render(
       <App>

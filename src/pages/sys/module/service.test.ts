@@ -5,12 +5,25 @@ import {
   editModule,
   queryModules,
   sortModules,
+  switchModuleStatus,
 } from './service';
 
 const mocks = vi.hoisted(() => ({
   list: vi.fn(),
   post: vi.fn(),
 }));
+
+it.each(['0000', '0001'] as const)(
+  '状态操作%s提交既有目标状态载荷',
+  async (status) => {
+    mocks.post.mockClear();
+    await switchModuleStatus('m1', status);
+    expect(mocks.post).toHaveBeenCalledExactlyOnceWith(APIS.MODULE_STATUS, {
+      param: ['m1'],
+      frozen: status === '0000' ? 0 : 1,
+    });
+  },
+);
 
 vi.mock('@/utils/http', () => ({
   default: {

@@ -16,7 +16,7 @@ import {
   type TableColumnsType,
 } from 'antd';
 import clsx from 'clsx';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import IconMap from '@/appicon';
 import { useRecordView, viewRow } from '@/components/RecordView';
 import {
@@ -27,13 +27,20 @@ import {
 } from '@/components/TablePresentation';
 import {
   filterTree,
+  findTreeNode,
   getDeleteBlockers,
   getSiblingMove,
 } from '@/utils/treeOperations';
 import { frozenText } from '../status';
 import ModuleAOEForm, { type OperateType } from './aoeform';
 import type { ModuleItem } from './data.d';
-import { deleteModules, getModule, queryModules, sortModules } from './service';
+import {
+  deleteModules,
+  getModule,
+  queryModules,
+  sortModules,
+  switchModuleStatus,
+} from './service';
 
 const { Search } = Input;
 
@@ -50,6 +57,8 @@ const SysModulePage: React.FC = () => {
   const [currentItem, setCurrentItem] = useState<Partial<ModuleItem>>({});
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [searchName, setSearchName] = useState<string>('');
+  const statusBusy = useRef(false);
+  const [statusId, setStatusId] = useState<string | null>(null);
 
   const modulesQuery = useQuery<ModuleItem[]>({
     queryKey: ['sys', 'modules'],
@@ -71,6 +80,57 @@ const SysModulePage: React.FC = () => {
     [allData, searchName],
   );
   const refresh = () => modulesQuery.refetch();
+
+  const parentLocked = (record: ModuleItem) =>
+    findTreeNode(allData, record.parentId)?.frozen === 1;
+  const handleStatus = (record: ModuleItem) => {
+    if (
+      statusBusy.current ||
+      record.frozen === 9999 ||
+      record.status === '9999'
+    )
+      return;
+    const unlock = record.frozen === 1;
+    if (unlock && parentLocked(record)) {
+      msg.info('请先解锁上级模块');
+      return;
+    }
+    statusBusy.current = true;
+    setStatusId(record.id);
+    const release = () => {
+      statusBusy.current = false;
+      setStatusId(null);
+    };
+    const submit = async () => {
+      try {
+        const res = await switchModuleStatus(
+          record.id,
+          unlock ? '0000' : '0001',
+        );
+        if (res.success !== true) throw new Error('状态修改失败');
+        await refresh();
+        msg.success(unlock ? '解锁成功' : '锁定成功');
+      } catch {
+        msg.error('状态修改失败，请重试');
+      } finally {
+        release();
+      }
+    };
+    if (record.children?.length) {
+      modal.confirm({
+        title: unlock
+          ? '确定解锁模块及其子孙节点？'
+          : '确定锁定模块及其子孙节点？',
+        content: '该操作会级联更新所有子孙节点，只读节点保持不变。',
+        okText: '确定',
+        cancelText: '取消',
+        onOk: submit,
+        onCancel: release,
+      });
+    } else {
+      void submit();
+    }
+  };
 
   const handleAdd = (record?: ModuleItem) => {
     view.close();
@@ -231,6 +291,25 @@ const SysModulePage: React.FC = () => {
           <a onClick={() => handleAdd(record)}>添加下级</a>
           <Divider type="vertical" />
           <a onClick={() => handleEdit(record)}>编辑</a>
+          {record.frozen !== 9999 && record.status !== '9999' && (
+            <Button
+              type="link"
+              size="small"
+              loading={statusId === record.id}
+              disabled={
+                statusId !== null ||
+                (record.frozen === 1 && parentLocked(record))
+              }
+              title={
+                record.frozen === 1 && parentLocked(record)
+                  ? '请先解锁上级模块'
+                  : undefined
+              }
+              onClick={() => handleStatus(record)}
+            >
+              {record.frozen === 1 ? '解锁' : '锁定'}
+            </Button>
+          )}
           {record.status !== '9999' && record.status !== '0000' && (
             <>
               <Divider type="vertical" />
