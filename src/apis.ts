@@ -53,6 +53,8 @@ const APIS = {
   ERROR_LIST: '/api/monitor/log/error/list',
   // 业务日志
   BIZLOG_GET: '/api/monitor/log/biz/get',
+  LOGINLOG_GET: '/api/monitor/log/login/get',
+  LOGINLOG_LIST: '/api/monitor/log/login/list',
   BIZLOG_LIST: '/api/monitor/log/biz/list',
 } as const;
 

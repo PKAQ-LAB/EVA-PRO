@@ -45,6 +45,11 @@ export default [
     routes: [
       { path: '/log', redirect: '/log/online' },
       { name: 'log.online', path: '/log/online', component: './log/online' },
+      {
+        path: '/log/login',
+        component: './log/login',
+        access: 'canReadLoginLogs',
+      },
       { name: 'log.biz', path: '/log/biz', component: './log/biz' },
       { name: 'log.error', path: '/log/error', component: './log/error' },
     ],

@@ -43,6 +43,7 @@ describe('实际Umi路由匹配', () => {
     ['/sys/module', './sys/module'],
     ['/sys/dictionary', './sys/dictionary'],
     ['/log/online', './log/online'],
+    ['/log/login', './log/login'],
     ['/log/biz', './log/biz'],
     ['/log/error', './log/error'],
     ['/examples/tanstack', './examples/tanstack'],

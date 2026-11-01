@@ -20,6 +20,7 @@ const registeredMenuRoutes = new Set([
   '/sys/dictionary',
   '/log',
   '/log/online',
+  '/log/login',
   '/log/biz',
   '/log/error',
 ]);
