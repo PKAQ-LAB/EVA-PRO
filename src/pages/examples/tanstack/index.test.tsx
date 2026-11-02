@@ -14,6 +14,7 @@ import { App, ConfigProvider, theme } from 'antd';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import LocalRecordsPage from './index';
+import RecordList from './list';
 import { storageKey } from './service';
 
 function textField(dialog: HTMLElement, label: string) {
@@ -184,7 +185,7 @@ it('TanStack行模型实际分页、排序、过滤空态与重置，操作列�
   fireEvent.click(screen.getByRole('button', { name: /重\s*置/ }));
   expect(screen.getByLabelText('名称或编码')).toHaveValue('');
   await screen.findByText('DEMO_01');
-  expect(screen.getByRole('table').closest('.ant-table')).toHaveClass(
+  expect(screen.getByText('DEMO_01').closest('.ant-table')).toHaveClass(
     'ant-table-small',
   );
   expect(screen.getByRole('columnheader', { name: '操作' })).toHaveStyle({
@@ -271,4 +272,39 @@ it('已确认view入口与行内按钮互斥，跨tab失效刷新保留且查看
     otherTab,
   );
   expect(mocks.request).not.toHaveBeenCalled();
+});
+
+it('刷新期间保留同一分页容器并禁用翻页，完成后恢复操作', () => {
+  const props = {
+    records: Array.from({ length: 12 }, (_, index) => ({
+      id: String(index),
+      name: `记录${index}`,
+      code: `CODE_${index}`,
+      status: 'enabled' as const,
+      remark: '',
+    })),
+    busy: false,
+    onCreate: vi.fn(),
+    onView: vi.fn(),
+    onEdit: vi.fn(),
+    onDelete: vi.fn(),
+    onRefresh: vi.fn(),
+  };
+  const content = (loading: boolean) => (
+    <RecordList {...props} loading={loading} />
+  );
+  const view = render(content(false));
+  const pagination = view.container.querySelector('.ant-pagination');
+  if (!(pagination instanceof HTMLElement)) throw new Error('缺少分页容器');
+  const sizeChanger = within(pagination).getByRole('combobox');
+  expect(sizeChanger).not.toBeDisabled();
+  view.rerender(content(true));
+  expect(view.container.querySelector('.ant-pagination')).toBe(pagination);
+  expect(sizeChanger).toBeDisabled();
+  const next = pagination.querySelector('.ant-pagination-next');
+  if (!(next instanceof HTMLElement)) throw new Error('缺少下一页控件');
+  fireEvent.click(next);
+  expect(screen.getByText('CODE_0')).toBeInTheDocument();
+  view.rerender(content(false));
+  expect(sizeChanger).not.toBeDisabled();
 });

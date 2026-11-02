@@ -296,6 +296,7 @@ const SysRolePage: React.FC = () => {
 
   return (
     <PageContainer
+      className="eva-list-page"
       header={{ title: false, subTitle: false }}
       title={sysText(intl, 'pages.sys.role.title', '角色管理')}
       subTitle={sysText(
@@ -401,7 +402,9 @@ const SysRolePage: React.FC = () => {
 
       <div className="eva-body">
         <ProTable<RoleItem>
-          scroll={{ x: 1440 }}
+          className="eva-page-pro-table"
+          tableClassName="eva-page-table"
+          scroll={{ x: 1440, y: '100%' }}
           headerTitle={
             canAction('create') && (
               <Button

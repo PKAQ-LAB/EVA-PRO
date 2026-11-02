@@ -126,9 +126,14 @@ const OnlinePage: React.FC = () => {
   ];
 
   return (
-    <PageContainer header={{ title: false, subTitle: false }}>
+    <PageContainer
+      className="eva-list-page"
+      header={{ title: false, subTitle: false }}
+    >
       <ProTable<OnlineUserItem>
-        scroll={{ x: 1560 }}
+        className="eva-page-pro-table"
+        tableClassName="eva-page-table"
+        scroll={{ x: 1560, y: '100%' }}
         onRow={(record) => viewRow(() => showMetadata(record))}
         defaultSize="small"
         columns={columns}

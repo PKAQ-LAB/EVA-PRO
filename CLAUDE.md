@@ -61,6 +61,14 @@ Run `/antd` in Claude Code for any antd-related work. It provides access to `@an
 
 Each page dir: `index.tsx`, optional `service.ts`, `_mock.ts`, `data.d.ts`, style files. Keep page-specific code with the page.
 
+## Main List Layout
+
+当前项目实际全局样式入口是 `src/global.css`；Umi 同名样式只加载优先匹配文件，`src/global.less` 不在生成入口中。修改全局规则前须核对生成入口及浏览器实际加载的样式，不得把未导入的 Less 文件或独立样式夹具当作页面生效证据。
+
+当前项目的路由主列表在 `PageContainer` 上使用 `eva-list-page`。主 AntD Table 使用 `className="eva-page-table"`；主 ProTable 使用 `className="eva-page-pro-table"` 和 `tableClassName="eva-page-table"`，并保留业务所需的横向滚动，设置 `scroll.y: '100%'` 接入共用高度链。
+
+主列表占满页脚上方的剩余空间，表体内部滚动，工具栏、表头和分页不随数据行滚动；不得拉伸真实数据行或用固定视口减值计算表体高度。空数据是否显示分页沿用组件与业务契约。低高度窗口复用共用紧凑布局，搜索操作须可滚动访问。弹窗、侧栏选择器及嵌套明细表按自身业务高度布局，不套用主列表类名。
+
 # CLAUDE.md
 
 Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.

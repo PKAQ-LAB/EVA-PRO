@@ -9,7 +9,6 @@ import useLeaveGuard from '../account/useLeaveGuard';
 import DictAOEForm, { type OperateType } from './aoeform';
 import type { DictItem } from './data.d';
 import DictListView from './list';
-import styles from './list.module.css';
 import {
   completeContract,
   dictIdentity,
@@ -252,7 +251,7 @@ const SysDictionaryPage: React.FC = () => {
 
   return (
     <PageContainer
-      className={styles.page}
+      className="eva-list-page"
       header={{ title: false, subTitle: false }}
       title="字典管理"
       subTitle="系统字典（码表）管理维护"
@@ -267,6 +266,7 @@ const SysDictionaryPage: React.FC = () => {
           />
         )}
         <SideLayout
+          className="eva-list-side-layout"
           collapsible={false}
           title="字典分组"
           width="40%"

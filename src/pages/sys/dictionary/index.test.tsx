@@ -1,12 +1,9 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { render, screen } from '@testing-library/react';
 import { App, Spin } from 'antd';
 import { beforeEach, expect, it, vi } from 'vitest';
 import SideLayout from '@/components/SideLayout';
 import DictionaryPage from './index';
 import DictListView from './list';
-import styles from './list.module.css';
 
 const queryState = vi.hoisted(() => ({ loading: false }));
 beforeEach(() => {
@@ -60,52 +57,21 @@ it('真实字典页面固定40/60结构，分组标题和列表保留且没有�
   expect(document.querySelector('.side-handle')).not.toBeInTheDocument();
 });
 
-it('真实PageContainer中间GridContent层继续传递剩余高度，规则仅作用字典页', () => {
-  const stylesheet = document.createElement('style');
-  const source = readFileSync(
-    resolve('src/pages/sys/dictionary/list.module.css'),
-    'utf8',
-  );
-  // 将本页CSS Module作用域还原为当前测试的类名，仅检查真实包装的布局契约。
-  stylesheet.textContent = source
-    .replace(/\.page\b/g, `.${styles.page}`)
-    .replace(/:global\(([^)]+)\)/g, '$1');
-  document.head.append(stylesheet);
+it('真实PageContainer为路由列表接入共用高度链，保留GridContent包装和左右面板', () => {
   const view = render(
     <App>
       <DictionaryPage />
-      <div data-testid="other-page" className="ant-pro-grid-content-children" />
     </App>,
   );
-  try {
-    const page = view.container.querySelector(
-      '[data-testid="pro-page-container"]',
-    );
-    expect(page).toHaveClass(styles.page);
-    const grid = page?.querySelector('[data-testid="pro-grid-content"]');
-    const bridge = grid?.querySelector(
-      ':scope > .ant-pro-grid-content-children',
-    );
-    expect(bridge).not.toBeNull();
-    expect(
-      bridge?.querySelector(
-        ':scope > .ant-pro-page-container-children-container > .eva-body > .eva-side-layout',
-      ),
-    ).not.toBeNull();
-    if (!(bridge instanceof HTMLElement))
-      throw new Error('缺少真实GridContent中间层');
-    const computed = window.getComputedStyle(bridge);
-    expect(computed.display).toBe('flex');
-    expect(computed.flexDirection).toBe('column');
-    expect(computed.flexGrow).toBe('1');
-    expect(Number.parseFloat(computed.minHeight)).toBe(0);
-    expect(
-      window.getComputedStyle(screen.getByTestId('other-page')).display,
-    ).not.toBe('flex');
-  } finally {
-    view.unmount();
-    stylesheet.remove();
-  }
+  const page = view.container.querySelector(
+    '[data-testid="pro-page-container"]',
+  );
+  expect(page).toHaveClass('eva-list-page');
+  expect(
+    page?.querySelector(
+      '.ant-pro-grid-content-children > .ant-pro-page-container-children-container > .eva-body > .eva-list-side-layout',
+    ),
+  ).not.toBeNull();
 });
 
 it('初始列表加载仍先渲染真实页面、左右面板和表头，完成后沿用同一容器', () => {
@@ -136,16 +102,8 @@ it('初始列表加载仍先渲染真实页面、左右面板和表头，完成�
 });
 
 it.each([true, false])(
-  '真实Table的直接Spin在loading=%s时继续传递剩余高度',
+  '字典主表在loading=%s时保留固定表头的DOM与独立Spin',
   (loading) => {
-    const stylesheet = document.createElement('style');
-    stylesheet.textContent = readFileSync(
-      resolve('src/pages/sys/dictionary/list.module.css'),
-      'utf8',
-    )
-      .replace(/\.table\b/g, `.${styles.table}`)
-      .replace(/:global\(([^)]+)\)/g, '$1');
-    document.head.append(stylesheet);
     const view = render(
       <App>
         <DictListView
@@ -161,7 +119,7 @@ it.each([true, false])(
       </App>,
     );
     try {
-      const table = view.container.querySelector(`.${styles.table}`);
+      const table = view.container.querySelector('.eva-page-table');
       const spin = table?.querySelector(':scope > .ant-spin');
       expect(spin).not.toBeNull();
       if (!(spin instanceof HTMLElement))
@@ -172,19 +130,19 @@ it.each([true, false])(
           ':scope > .ant-spin-container > .ant-table > .ant-table-container > .ant-table-body',
         ),
       ).not.toBeNull();
-      const computed = window.getComputedStyle(spin);
-      expect(computed.display).toBe('flex');
-      expect(computed.flexDirection).toBe('column');
-      expect(computed.flexGrow).toBe('1');
-      expect(Number.parseFloat(computed.minHeight)).toBe(0);
       expect(
-        window.getComputedStyle(screen.getByTestId('other-spin')).display,
-      ).not.toBe('flex');
+        screen.getByTestId('other-spin').closest('.eva-page-table'),
+      ).toBeNull();
       if (loading)
         expect(spin.querySelector(':scope > .ant-spin-section')).not.toBeNull();
     } finally {
       view.unmount();
-      stylesheet.remove();
     }
   },
 );
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/dictionary': ['list', 'create', 'update', 'delete'],
+  }),
+}));

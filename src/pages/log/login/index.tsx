@@ -119,7 +119,10 @@ export default function LoginLogPage() {
     },
   ];
   return (
-    <PageContainer header={{ title: false, subTitle: false }}>
+    <PageContainer
+      className="eva-list-page"
+      header={{ title: false, subTitle: false }}
+    >
       {!canList ? (
         <Alert type="warning" showIcon title="无权限查看登录日志" />
       ) : (
@@ -182,12 +185,14 @@ export default function LoginLogPage() {
           )}
           <div className="eva-body">
             <ProTable<LoginLogItem>
+              className="eva-page-pro-table"
+              tableClassName="eva-page-table"
               rowKey="id"
               defaultSize="small"
               bordered
               search={false}
               columns={columns}
-              scroll={{ x: 1250 }}
+              scroll={{ x: 1250, y: '100%' }}
               params={query}
               pagination={{
                 defaultPageSize: 20,

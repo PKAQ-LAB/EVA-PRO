@@ -94,7 +94,10 @@ const ErrorLogPage: React.FC = () => {
   ];
 
   return (
-    <PageContainer header={{ title: false, subTitle: false }}>
+    <PageContainer
+      className="eva-list-page"
+      header={{ title: false, subTitle: false }}
+    >
       <div className="eva-ribbon">
         <Form
           className="eva-table-search"
@@ -126,7 +129,9 @@ const ErrorLogPage: React.FC = () => {
       </div>
       <div className="eva-body">
         <ProTable<ErrorLogItem>
-          scroll={{ x: 1490 }}
+          className="eva-page-pro-table"
+          tableClassName="eva-page-table"
+          scroll={{ x: 1490, y: '100%' }}
           onRow={(record) => viewRow(() => void handleView(record))}
           defaultSize="small"
           actionRef={actionRef}

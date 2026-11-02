@@ -225,7 +225,9 @@ const AccountList: React.FC<AccountListProps> = ({
 
   return (
     <ProTable<AccountItem>
-      scroll={{ x: 1260 }}
+      className="eva-page-pro-table"
+      tableClassName="eva-page-table"
+      scroll={{ x: 1260, y: '100%' }}
       defaultSize="small"
       actionRef={actionRef}
       columns={columns}

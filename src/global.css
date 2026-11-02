@@ -361,6 +361,152 @@ body:has(#root .eva-theme-dark)
   flex: 1 1 auto;
 }
 
+/* 仅路由主列表接入剩余高度，弹窗与嵌套明细表保持自身布局。 */
+.eva-list-page .ant-pro-grid-content-children {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+.eva-list-page .ant-pro-page-container-children-container {
+  overflow: hidden;
+}
+.eva-list-page .eva-body {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.eva-list-side-layout.ant-layout {
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 0;
+  overflow: hidden;
+}
+.eva-list-side-layout.ant-layout > .ant-layout-content {
+  overflow: auto;
+}
+.eva-list-side-layout.ant-layout
+  > .ant-layout-content:has(> .eva-page-pro-table) {
+  overflow: hidden;
+}
+.eva-list-page .eva-body > .ant-pagination {
+  flex: 0 0 auto;
+}
+.eva-page-pro-table,
+.eva-page-pro-table > .ant-pro-card,
+.eva-page-pro-table > .ant-pro-card > .ant-pro-card-body,
+.eva-page-table,
+.eva-page-table.ant-table-wrapper > .ant-spin,
+.eva-page-table > .ant-spin > .ant-spin-container,
+.eva-page-table > .ant-spin > .ant-spin-container > .ant-table,
+.eva-page-table
+  > .ant-spin
+  > .ant-spin-container
+  > .ant-table
+  > .ant-table-container {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+}
+/* 搜索、工具栏、表头和分页占自然高度；只有表体滚动，不拉伸真实数据行。 */
+.eva-page-pro-table,
+.eva-page-table {
+  overflow: hidden;
+}
+/* 展开搜索时保留表格空间，低高度窗口可在搜索区内滚到查询与折叠操作。 */
+.eva-page-pro-table > .ant-pro-table-search {
+  max-height: 40%;
+  overflow: auto;
+}
+.eva-page-pro-table > .ant-pro-table-search,
+.eva-page-pro-table
+  > .ant-pro-card
+  > .ant-pro-card-body
+  > .ant-pro-table-list-toolbar,
+.eva-page-pro-table > .ant-pro-card > .ant-pro-card-body > .ant-pro-table-alert,
+.eva-page-table > .ant-spin > .ant-spin-container > .ant-table-pagination,
+.eva-page-table
+  > .ant-spin
+  > .ant-spin-container
+  > .ant-table
+  > .ant-table-title,
+.eva-page-table
+  > .ant-spin
+  > .ant-spin-container
+  > .ant-table
+  > .ant-table-footer,
+.eva-page-table
+  > .ant-spin
+  > .ant-spin-container
+  > .ant-table
+  > .ant-table-container
+  > .ant-table-header {
+  flex: 0 0 auto;
+}
+.eva-page-table
+  > .ant-spin
+  > .ant-spin-container
+  > .ant-table
+  > .ant-table-container
+  > .ant-table-body {
+  min-height: 0;
+  flex: 1 1 0;
+  max-height: none !important;
+  overflow-y: auto !important;
+}
+/* 极低窗口压缩非数据间距，搜索独立滚动，保留表体与分页的剩余空间。 */
+@media (max-height: 480px) {
+  .eva-list-page .ant-pro-page-container-children-container {
+    padding: var(--ant-padding-xxs, 4px) var(--ant-padding-xs, 8px);
+  }
+  .eva-list-page .eva-body {
+    padding-block-start: var(--ant-padding-xxs, 4px);
+  }
+  .eva-list-page .eva-ribbon {
+    padding-block: var(--ant-padding-xxs, 4px);
+  }
+  .eva-page-pro-table > .ant-pro-table-search {
+    min-block-size: calc(
+      var(--ant-control-height, 32px) +
+      var(--ant-padding-sm, 12px)
+    );
+    max-height: 15%;
+    margin-block-end: var(--ant-margin-xxs, 4px);
+  }
+  .eva-page-pro-table
+    > .ant-pro-table-search
+    .ant-pro-query-filter-collapse-button {
+    white-space: nowrap;
+  }
+  .eva-page-pro-table > .ant-pro-card > .ant-pro-card-body {
+    padding-block: 0 !important;
+  }
+  .eva-page-pro-table .ant-pro-table-list-toolbar-container {
+    min-height: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-block: 0;
+  }
+  .eva-page-pro-table
+    > .ant-pro-card
+    > .ant-pro-card-body
+    > .ant-pro-table-alert {
+    margin-block-end: var(--ant-margin-xxs, 4px);
+  }
+  .eva-page-pro-table .ant-pro-table-alert-container {
+    padding-block: 0;
+  }
+  .eva-page-table > .ant-spin > .ant-spin-container > .ant-table-pagination {
+    margin-block: var(--ant-margin-xxs, 4px) !important;
+  }
+  .eva-list-page .eva-list-toolbar,
+  .eva-list-page .eva-body > .ant-pagination {
+    padding-block: var(--ant-padding-xxs, 4px) !important;
+  }
+}
+
 .ant-pro-global-footer {
   height: 30px;
   margin: 0;

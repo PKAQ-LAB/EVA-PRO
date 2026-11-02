@@ -113,7 +113,7 @@ const DictListView: React.FC<DictListProps> = ({
         </Col>
       </Row>
       <Table<DictRow>
-        className={styles.table}
+        className={`eva-page-table ${styles.table}`}
         size="small"
         bordered
         columns={columns}

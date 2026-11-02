@@ -69,6 +69,7 @@ export default function LocalRecordsPage() {
 
   return (
     <PageContainer
+      className="eva-list-page"
       header={{ title: false, subTitle: false }}
       breadcrumb={{
         items: [{ title: '本地示例' }, { title: 'TanStack Table' }],

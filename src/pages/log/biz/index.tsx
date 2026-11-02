@@ -115,7 +115,10 @@ const BizLogPage: React.FC = () => {
   ];
 
   return (
-    <PageContainer header={{ title: false, subTitle: false }}>
+    <PageContainer
+      className="eva-list-page"
+      header={{ title: false, subTitle: false }}
+    >
       <div className="eva-ribbon">
         <Form
           className="eva-table-search"
@@ -147,7 +150,9 @@ const BizLogPage: React.FC = () => {
       </div>
       <div className="eva-body">
         <ProTable<BizLogItem>
-          scroll={{ x: 1100 }}
+          className="eva-page-pro-table"
+          tableClassName="eva-page-table"
+          scroll={{ x: 1100, y: '100%' }}
           onRow={(record) => viewRow(() => void handleView(record))}
           defaultSize="small"
           actionRef={actionRef}

@@ -330,6 +330,7 @@ const SysOrganizationPage: React.FC = () => {
 
   return (
     <PageContainer
+      className="eva-list-page"
       header={{ title: false, subTitle: false }}
       title="组织（部门）管理"
       subTitle="系统组织架构管理维护"
@@ -388,13 +389,14 @@ const SysOrganizationPage: React.FC = () => {
           />
         )}
         <Table<OrgItem>
+          className="eva-page-table"
           size="small"
           pagination={false}
           dataSource={data}
           loading={orgsQuery.isLoading}
           columns={columns}
           rowKey="id"
-          scroll={{ x: 1100, y: 'calc(100vh - 360px)' }}
+          scroll={{ x: 1100, y: '100%' }}
           rowSelection={
             searchName || !canDelete
               ? undefined

@@ -219,6 +219,7 @@ export default function RecordList({
       </div>
       <div className="eva-body">
         <div
+          className="eva-list-toolbar"
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -235,6 +236,7 @@ export default function RecordList({
           </Button>
         </div>
         <Table<LocalRecord>
+          className="eva-page-table"
           onRow={(record) => viewRow(() => onView(record))}
           size="small"
           rowKey="id"
@@ -242,7 +244,7 @@ export default function RecordList({
           columns={displayColumns}
           dataSource={table.getRowModel().rows.map((row) => row.original)}
           pagination={false}
-          scroll={{ x: 1020 }}
+          scroll={{ x: 1020, y: '100%' }}
           locale={{ emptyText: loading ? '加载中...' : '暂无记录' }}
           onChange={(_, __, sorter) => {
             const sorted = Array.isArray(sorter) ? sorter[0] : sorter;
@@ -253,27 +255,26 @@ export default function RecordList({
             );
           }}
         />
-        {!loading && (
-          <Pagination
-            size="small"
-            style={{
-              padding: 16,
-              display: 'flex',
-              justifyContent: 'flex-end',
-              flexWrap: 'wrap',
-            }}
-            current={table.getState().pagination.pageIndex + 1}
-            pageSize={table.getState().pagination.pageSize}
-            total={table.getFilteredRowModel().rows.length}
-            showSizeChanger
-            pageSizeOptions={[5, 10, 20]}
-            showTotal={(total) => `共 ${total} 条`}
-            onChange={(page, pageSize) => {
-              table.setPageSize(pageSize);
-              table.setPageIndex(page - 1);
-            }}
-          />
-        )}
+        <Pagination
+          disabled={loading}
+          size="small"
+          style={{
+            padding: 16,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            flexWrap: 'wrap',
+          }}
+          current={table.getState().pagination.pageIndex + 1}
+          pageSize={table.getState().pagination.pageSize}
+          total={table.getFilteredRowModel().rows.length}
+          showSizeChanger
+          pageSizeOptions={[5, 10, 20]}
+          showTotal={(total) => `共 ${total} 条`}
+          onChange={(page, pageSize) => {
+            table.setPageSize(pageSize);
+            table.setPageIndex(page - 1);
+          }}
+        />
       </div>
     </>
   );

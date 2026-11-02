@@ -392,6 +392,7 @@ const SysModulePage: React.FC = () => {
 
   return (
     <PageContainer
+      className="eva-list-page"
       header={{ title: false, subTitle: false }}
       title="模块管理"
       subTitle="系统模块（菜单）管理维护"
@@ -456,7 +457,8 @@ const SysModulePage: React.FC = () => {
           />
         )}
         <Table<ModuleItem>
-          scroll={{ x: 1450 }}
+          className="eva-page-table"
+          scroll={{ x: 1450, y: '100%' }}
           onRow={(record) => viewRow(() => handleView(record))}
           size="small"
           columns={columns}

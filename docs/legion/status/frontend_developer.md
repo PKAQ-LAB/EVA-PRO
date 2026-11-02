@@ -1345,3 +1345,30 @@ ACTION_KEY 最终正式清单 SHA256：71C83218A0C7BA15E2798CAD54EE0C8FAEA915620
 用户已明确反馈实际页面“验证可以了”，确认本次用户弹窗右侧角色表格等高修复。此反馈为用户现场验收，不冒总控自动测量；独立 Chromium 合成夹具八项几何验证与 aoeform 12 项回归另有本地证据。样式限定 account/aoeform 局部角色区域，未改全局顶层样式或依赖。
 
 用户随后授权提交 push。origin/trunk fetch 后 ahead/behind 为 0/0；74 项代码清单以既有 ACTION_KEY 清单合并最终高度两输入核对零漂移。全仓 Biome lint exit0；全仓 TypeScript exit1，保留现有图标类型、旧模板测试缺文件、app 测试夹具和 organization 返回分支等诊断，不以发布动作掩盖为全绿。GitNexus 前端索引仍存在 43/42 存储版本不兼容，已记录失败并以精确差异、冻结清单和原独立测试复核范围，不重建索引、不顺改无关源码。生产构建沿用已通过且代码一致的证据，避免再次覆盖运行中的开发产物。
+
+## 2026-11-02 全路由主列表自适应高度候选
+
+基线 trunk b0d27388。实际路由为系统用户/角色/组织/模块/字典五页、在线/登录/业务/异常日志四页和 TanStack 示例，/sys/user 复用账户页。所有主 PageContainer 显式 eva-list-page，主 Table 显式 eva-page-table；ProTable 外层 eva-page-pro-table + 安装版源码已确认透传的 tableClassName。共用 CSS 仅沿主表直接子链伸展 Spin/Table/container/body，scroll.y=100%启用分离表头，工具栏/表头/分页保留自然高度，真实table/tbody/行不拉满。GridContent中间层传递剩余高度；workspace改父flex剩余，去掉用户/组织100vh减固定值。字典复用共用左表规则，右表单保独立auto滚动；SideLayout组件本身未改，只有页面显式接入。在线页直接ProTable内置search区最大占可用高度40%并内部滚动，保搜索/折叠状态与操作。TanStack分页loading时保持容器且disabled，保原刷新期间不能操作边界。权限/API/数据未改，弹窗aoeform仍F954。
+
+冻结 .git/adaptive-list-source-20261102.json（17输入）SHA256 725405F7F42CB3A280DE9FFB8847F255582A79A32904307E97ADA75315CD8DCD，零漂移；global.less SHA256 00586213D5F8AD2079EB6F9FDEA0AEC0D49A64F21F509118C29E8F0D2E8852C8。16支持文件Biome只读通过，git diff --check通过；AntD逐文件13项（CLI仅支持单path）共28条既有弃用，无usage问题，TanStack最终零问题；未升级CLI/依赖。GitNexus影响查询仍43/42不兼容，风险UNKNOWN，已按路由、引用及安装源码检查，不重建索引。
+
+首轮14文件Vitest约四分钟仅RUN，停止自有master并保留 .git/adaptive-list-tests-20261102.log 为未完成，不能计通过。窄轮 .git/adaptive-list-narrow-tests-20261102.log 中TanStack9/9通过、字典三项因HEAD已有权限mock缺useAccess失败；字典布局测试改使用既有稳定menuAccessFixture后单文件5/5通过，.git/adaptive-list-dictionary-tests-final-20261102.log。不将两轮称同轮14全绿。Pagination新增单测初两轮错误假定next disabled/aria语义，查安装RC实现后改验真实禁size/点击不跳页及同容器，.git/adaptive-list-pagination-test-final2-20261102.log为1通过/8跳过。旧字典CSS注入断言随共用规则抽取改为真实DOM接入验证，几何交给实际浏览器夹具，未写CSS镜像测试。
+
+总控已反馈首轮隔离生产build exit0（输出.git目录，未覆盖dev），定向tsc相对发布基线零新增但非全仓类型通过；最终40%搜索及disabled补丁需总控安排最终隔离build。QA实际安装组件+真实global.less+ProLayout无凭据SSR夹具首测：1920/1366x768 few/many分页距footer32、行高39、多行内部滚动无doc竖溢；640x720表体106，页脚690/分页658。1366x600全展开六搜索表体仅14，现40%方案待QA复测，不冒真实用户Edge现场验收。AntD InternalTable:370仅total非零才渲染分页，empty/loading零total保原合同，不伪造总数或加外部分页状态。源停止写入；本成员未浏览器、服务重启、数据库、build、Git发布或关机。
+## 主列表低高度验收修正与最终冻结
+
+40%搜索上限在1366x600真实组件测量使body69/client54、row39，正常与640x720仍通过。极低窗口尝试自然高度外滚+sticky候选E165后，QA证实初始分页受table起点钳制，整段已撤回，不作为交付。最终≤480仅压缩页面/Card/toolbar/selectionalert/分页非内容间距，保原flex链和表体内部滚动；搜索上限15%且最小controlHeight32+paddingSM12=44，操作完整可滚到，不改字体/行高/collapsed状态。TanStack显式eva-list-toolbar仅tiny纵padding4。分页margin最终仍token4，B33临时margin0已按总控较早最终指令撤回，不再往返。
+
+QA发现测量pre参与布局引15px横滚条，已撤回受污染640client38/foot315，隐藏pre后同紧凑源实际client51、pager322<foot330；480client169、pager442<foot450。唯一真实search44px控件被15%约36px口裁切才增加min44。字典Side0另为fixture漏moduleCSS+多App wrapper，纠正后table413.906/body373.906、内部滚动、footer738/doc768通过，产品Side组件未因误报改动；真实Modal CSR加全局CSS前后table117/row39不变。
+
+当前最终global.less SHA256 18F6AA67D648175EFE64FEEB477A0388CA6EF41856E19171BAEE7BE21165B956；.git/adaptive-list-source-final-20261102.json共18输入（17源码/测试+项目CLAUDE）SHA256 4EBE83F497540B3A365A839BFED4F06748167022F6842243DCC5A24BB56A28A1，零漂移。项目CLAUDE新增主列表布局约定，不写跨项目规则/vault/memory。最终16支持文件Biome及diffcheck通过；account弹窗源仍F954。源停止写入，等QA仅640x360最终min44完整控件/一行/分页复验及总控最终隔离build。不将首批未完成测试、组件夹具或静态检查冒全仓/用户Edge现场验收。
+最终在实际QueryFilter Actions.js:47确认语义class后，仅tiny搜索内折叠链接增加white-space:nowrap，解决窄列44px换行裁切，不改字体/行高/状态。正式源global SHA256 F1DD24FA53B49BC3DD761F1D09F96337901454BA05372412697C2F1EFB305D9A；18输入最终清单 .git/adaptive-list-source-final-20261102.json SHA256 809F344316E7A712B66B3B6F715AA828D257B8BF5BD4FE3EC12DB4DB01937BF2，替代此前4EBE/18F6，build前后均零漂移。总控最终隔离生产构建exit0，utoo6.784s/39assets，日志.git/adaptive-list-build-complete-20261102.log；HTTP8000仍200 /umi.js，未覆盖开发入口或重启服务，后端未动。account弹窗F954保持。最终QA仅640折叠链接可达性结果由总控收齐；本成员彻底停止源码/manifest写入，只补自有status，无提交推送授权。
+## 实际页面截图否定后的真入口修复与验收纠正
+
+此前修改global.less并用其独立编译夹具验收，漏核当前Umi实际导入global.css；该错误导致TSX类名虽已更新，浏览器新规则仍0，故前述F1DD/809F及Less夹具、隔离build不证明实际页面已生效，撤回真实页面完成结论。安装Umi watch.js优先.css，tmpFiles.js只导入globalCSS[0]；开发与生产umi.ts均只import global.css，不是本轮HMR缓存故障。
+
+按授权先保存.git/adaptive-list-before-css-migration-20261102.{css,less}；将Less仅本轮主列表新增块编译为平坦CSS加入实际global.css，旧CSS146行只新增、零删除。保global.css已有root视口/工作区flex/主题/只读/滚动条等真实规则，不导入整份Less、不双import、不写生成入口。global.less剔除本轮新增块及逆两处本轮root改动后，与git show HEAD全字串一致才还原，现gitdiff为0。CLAUDE补实际入口与生成入口/浏览器生效核验约束。CSS Biome exit0并有6条警告（5个覆盖AntD inline的important、1条specificity），不得说零警告。
+
+总控实际Edge页面已证修复后HMR成功，规则0→15；角色主表flex高973/body893、分页底1206<页脚1238；用户表973/body894、分页1206<页脚1238；字典主表983.9/body943.9、表底1220.9<页脚1238。此段为总控真实页面读数，区别前述无凭据SSR夹具。用户虽批准必要时仅重启前端，本轮HMR成功无需重启，未重启任何服务/后端/数据库。
+
+当前唯一权威冻结 .git/adaptive-list-css-entry-source-20261102.json共18输入（global.css取代global.less，含CLAUDE），SHA256 9A8D58FB1C73B546A6C5757E94D5E9856DB41C97F4BBBC3C960B54C963F0EB2C；global.css SHA256 4A1BF91910493AEA3594F450B9CAF09A22321D43C5AF7A58F08C319B7902E8B4；受保护原Less SHA256 3A0527AAD034CCEADCCB3A182F612918DECA0596DB0819A9F8BF25F268098492。未再运行synthetic矩阵，源/manifest停写，最终真CSS产物构建和QA产物检查由总控完成。无提交推送授权。

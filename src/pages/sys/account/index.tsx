@@ -262,6 +262,7 @@ const SysAccountPage: React.FC = () => {
 
   return (
     <PageContainer
+      className="eva-list-page"
       header={{ title: false, subTitle: false }}
       title="用户管理"
       subTitle="系统用户账号管理维护"
@@ -370,7 +371,7 @@ const SysAccountPage: React.FC = () => {
       <div className="eva-body">
         <SideLayout
           title="所属部门"
-          layoutStyle={{ height: 'calc(100vh - 332px)' }}
+          className="eva-list-side-layout"
           body={
             <Tree
               showLine
