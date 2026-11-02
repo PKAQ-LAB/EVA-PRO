@@ -26,6 +26,7 @@ import {
   textColumn,
 } from '@/components/TablePresentation';
 import { ownedDictionary } from '@/utils/dictionaryState';
+import useMenuAccess from '@/utils/useMenuAccess';
 import { type BizLogItem, getBizLog, queryBizLogs } from './service';
 
 const { RangePicker } = DatePicker;
@@ -34,6 +35,7 @@ const fmt = (val?: string) =>
   val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '-';
 
 const BizLogPage: React.FC = () => {
+  const canAction = useMenuAccess('/log/biz');
   const view = useRecordView<BizLogItem>();
   const detail = view.data;
   const { initialState } = useModel('@@initialState');
@@ -58,8 +60,13 @@ const BizLogPage: React.FC = () => {
   };
 
   const handleView = async (record: BizLogItem) => {
-    if (!record.id) return;
-    await view.read(record.id, () => getBizLog(record.id));
+    if (!record.id || !canAction('read')) return;
+    await view.read(record.id, async () => {
+      if (!canAction('read')) throw new Error('无权限');
+      const result = await getBizLog(record.id);
+      if (!canAction('read')) throw new Error('权限已变更');
+      return result;
+    });
   };
   const operateTypeDict = ownedDictionary(initialState)?.BIZ_OPERATE_TYPE as
     | Record<string, string>
@@ -92,13 +99,16 @@ const BizLogPage: React.FC = () => {
       ...actionColumn(180),
       render: (_, record) => (
         <ActionGroup>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => void handleView(record)}
-          >
-            查看明细
-          </Button>
+          {canAction('read') && (
+            <Button
+              type="link"
+              size="small"
+              disabled={!canAction('read')}
+              onClick={() => void handleView(record)}
+            >
+              查看明细
+            </Button>
+          )}
         </ActionGroup>
       ),
     },
@@ -120,9 +130,15 @@ const BizLogPage: React.FC = () => {
               <RangePicker />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" onClick={handleSearch}>
-                查询
-              </Button>
+              {canAction('list') && (
+                <Button
+                  type="primary"
+                  disabled={!canAction('list')}
+                  onClick={handleSearch}
+                >
+                  查询
+                </Button>
+              )}
               <Divider type="vertical" />
               <Button onClick={handleReset}>重置</Button>
             </Form.Item>
@@ -141,7 +157,11 @@ const BizLogPage: React.FC = () => {
           bordered
           params={query}
           request={async (params) => {
+            if (!canAction('list'))
+              return { data: [], total: 0, success: false };
             const res = await queryBizLogs({ ...query, ...params });
+            if (!canAction('list'))
+              return { data: [], total: 0, success: false };
             return {
               data: res?.data ?? [],
               total: res?.total ?? 0,
@@ -153,7 +173,7 @@ const BizLogPage: React.FC = () => {
 
       <Drawer
         closable={{ placement: 'end' }}
-        open={view.open}
+        open={view.open && canAction('read')}
         width={600}
         onClose={view.close}
         title="业务日志明细"

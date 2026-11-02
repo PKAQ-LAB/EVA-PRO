@@ -3,9 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useModel } from '@umijs/max';
 import { Alert, App, Button, Spin } from 'antd';
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
-import APIS from '@/apis';
 import { SideLayout } from '@/components';
-import { canRequestResource } from '@/utils/resourcePermission';
+import useMenuAccess from '@/utils/useMenuAccess';
 import useLeaveGuard from '../account/useLeaveGuard';
 import DictAOEForm, { type OperateType } from './aoeform';
 import type { DictItem } from './data.d';
@@ -25,22 +24,16 @@ import {
 } from './service';
 
 const SysDictionaryPage: React.FC = () => {
-  const {
-    initialState,
-    loading: bootLoading,
-    error: bootError,
-  } = useModel('@@initialState');
+  const { initialState } = useModel('@@initialState');
   const queryScope = useId();
   const user = initialState?.currentUser;
   const identity = useRef({ user, version: 0 });
   if (identity.current.user !== user)
     identity.current = { user, version: identity.current.version + 1 };
   const version = identity.current.version;
-  const accessRef = useRef(
-    (_method: string, _path: string) => false as boolean,
-  );
-  accessRef.current = (method, path) =>
-    !bootLoading && !bootError && canRequestResource(user, method, path);
+  const canAction = useMenuAccess('/sys/dictionary');
+  const accessRef = useRef(canAction);
+  accessRef.current = canAction;
   const { message: msg, modal } = App.useApp();
   const [operateType, setOperateType] = useState<OperateType>('');
   const [currentItem, setCurrentItem] = useState<Partial<DictItem>>({});
@@ -86,24 +79,18 @@ const SysDictionaryPage: React.FC = () => {
 
   const dictsQuery = useQuery<DictListResponse>({
     queryKey: ['sys', 'dicts', queryScope, version],
-    enabled: accessRef.current('GET', APIS.DICT_LIST),
+    enabled: accessRef.current('list'),
     queryFn: async () => {
-      if (!accessRef.current('GET', APIS.DICT_LIST))
-        throw new Error('无读取权限');
+      if (!accessRef.current('list')) throw new Error('无读取权限');
       const res = await queryDicts();
-      if (
-        identity.current.version !== version ||
-        !accessRef.current('GET', APIS.DICT_LIST)
-      )
+      if (identity.current.version !== version || !accessRef.current('list'))
         throw new Error('身份已变更');
       if (res.success !== true) throw new Error('字典列表加载失败');
       return res;
     },
   });
 
-  const data = accessRef.current('GET', APIS.DICT_LIST)
-    ? (dictsQuery.data?.data ?? [])
-    : [];
+  const data = accessRef.current('list') ? (dictsQuery.data?.data ?? []) : [];
   const grouped =
     !dictsQuery.isError &&
     completeContract(data, dictsQuery.data?.businessWritable);
@@ -128,12 +115,8 @@ const SysDictionaryPage: React.FC = () => {
     live.current.ready &&
     live.current.grouped &&
     live.current.businessWritable === true &&
-    accessRef.current('POST', APIS.DICT_EDIT);
-  const canWrite = (
-    record: Partial<DictItem>,
-    path: string = APIS.DICT_EDIT,
-    method = 'POST',
-  ) => {
+    accessRef.current('create');
+  const canWrite = (record: Partial<DictItem>, key = 'update') => {
     const state = live.current;
     const current = state.data.find(
       (row) => dictIdentity(row) === dictIdentity(record),
@@ -146,11 +129,11 @@ const SysDictionaryPage: React.FC = () => {
       !isReadonlyDict(record) &&
       current !== undefined &&
       !isReadonlyDict(current) &&
-      accessRef.current(method, path)
+      accessRef.current(key)
     );
   };
   const canDelete = (record: DictItem) =>
-    canWrite(record, `${APIS.DICT_DEL}/${record.id}`, 'GET') &&
+    canWrite(record, 'delete') &&
     !record.lines?.some((line) => line.frozen === 9999);
   const permissionRef = useRef<() => boolean>(() => false);
   permissionRef.current = () =>
@@ -186,7 +169,7 @@ const SysDictionaryPage: React.FC = () => {
   };
 
   const handleEdit = (record: DictItem) => {
-    if (!accessRef.current('GET', `${APIS.DICT_GET}/${record.id}`)) return;
+    if (!accessRef.current('list')) return;
     if (
       dictIdentity(currentItem) === dictIdentity(record) &&
       operateType === 'edit'
@@ -203,7 +186,7 @@ const SysDictionaryPage: React.FC = () => {
           if (
             id !== requestId.current ||
             identity.current.version !== version ||
-            !accessRef.current('GET', `${APIS.DICT_GET}/${record.id}`)
+            !accessRef.current('list')
           )
             return;
           if (res.success !== true || !res.data) {
@@ -293,6 +276,7 @@ const SysDictionaryPage: React.FC = () => {
             <DictListView
               grouped={grouped}
               canCreate={canCreate()}
+              createVisible={canAction('create')}
               canDelete={canDelete}
               data={data}
               loading={dictsQuery.isLoading}
@@ -315,6 +299,9 @@ const SysDictionaryPage: React.FC = () => {
           <Spin spinning={loading} description="加载中...">
             <DictAOEForm
               operateType={operateType}
+              writeVisible={canAction(
+                operateType === 'create' ? 'create' : 'update',
+              )}
               setOperateType={setOperateType}
               currentItem={currentItem}
               loading={loading}

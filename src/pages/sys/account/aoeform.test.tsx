@@ -149,7 +149,6 @@ it('少量角色保留与资料共用的伸展区域，去除授权标题且不�
   if (!layout || !wrapper) throw new Error('未找到左右布局或角色列表容器');
   expect(window.getComputedStyle(layout).alignItems).toBe('stretch');
   expect(window.getComputedStyle(wrapper).position).toBe('absolute');
-  expect(window.getComputedStyle(wrapper).overflow).toBe('auto');
 });
 
 it('请求失败保留输入与角色，密码不一致阻止提交', async () => {
@@ -360,3 +359,18 @@ it('旧校验完成不清除新会话正在保存的状态，新会话只提交�
     instance.unmount();
   }
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/account': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantRole',
+    ],
+    '/sys/role': ['read'],
+  }),
+}));

@@ -194,6 +194,27 @@ it.each([true, false, undefined, null, 'false'])(
   },
 );
 
+it.each([true, false, undefined, null, 'true', 'false'])(
+  '数据能力刷新%s只取外层布尔且独立于资源能力',
+  async (flag) => {
+    window.sessionStorage.setItem(
+      'eva_current_user',
+      JSON.stringify({ userid: 'fixture', dataPermissionEnabled: true }),
+    );
+    mocks.menus.mockResolvedValue({
+      success: true,
+      resourcePermissionEnabled: false,
+      dataPermissionEnabled: flag,
+      data: { user: { userid: 'fixture', dataPermissionEnabled: true }, menus },
+    });
+    const state = await getInitialState();
+    expect(state.currentUser?.dataPermissionEnabled).toBe(
+      typeof flag === 'boolean' ? flag : undefined,
+    );
+    expect(state.currentUser?.resourcePermissionEnabled).toBe(false);
+  },
+);
+
 it('验证中不渲染保护内容或提前跳登录，验证成功后才选择首叶子', async () => {
   let finish: (response: { data: typeof menus }) => void = () => {};
   mocks.menus.mockReturnValue(

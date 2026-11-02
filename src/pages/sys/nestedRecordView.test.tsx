@@ -91,7 +91,8 @@ it.each([
           textField(dialog, label).querySelector('.eva-view-value'),
         ).not.toBeNull();
       }
-      expect(dialog.querySelectorAll('.eva-view-value')).toHaveLength(3);
+      expect(dialog.querySelectorAll('.eva-view-value')).toHaveLength(4);
+      expect(textField(dialog, '动作标识')).toHaveTextContent('—');
       for (const label of ['创建人', '创建时间', '修改人', '修改时间']) {
         expect(
           within(dialog).queryByText(label, { selector: 'label' }),
@@ -160,3 +161,40 @@ it.each([
     ).toBe(true);
   },
 );
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/account': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantRole',
+    ],
+    '/sys/role': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantResource',
+      'grantUser',
+    ],
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+    '/sys/organization': ['list', 'read', 'create', 'update', 'delete', 'sort'],
+    '/log/online': ['list', 'read'],
+    '/log/biz': ['list', 'read'],
+    '/log/error': ['list', 'read'],
+  }),
+}));

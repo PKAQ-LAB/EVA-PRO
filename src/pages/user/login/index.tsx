@@ -23,6 +23,7 @@ import {
   setStoredAccessToken,
   setStoredRefreshToken,
 } from '@/utils/authState';
+import { dataPermissionFromResponse } from '@/utils/dataPermission';
 import {
   beginDictionarySession,
   dictionaryFields,
@@ -489,11 +490,13 @@ function normalizeLoginUser(
   userInfo: Record<string, unknown> | undefined,
   menus: MenuNavigationItem[],
   resourcePermissionEnabled?: boolean,
+  dataPermissionEnabled?: boolean,
 ) {
   const user = userInfo || {};
   return {
     ...user,
     resourcePermissionEnabled,
+    dataPermissionEnabled,
     menus,
     name:
       (user.name as string | undefined) ||
@@ -646,6 +649,7 @@ const Login: React.FC = () => {
 
         let menus: MenuNavigationItem[] = [];
         let resourcePermissionEnabled = resourcePermissionFromResponse(msg);
+        let dataPermissionEnabled = dataPermissionFromResponse(msg);
         let dict: Record<string, unknown> | undefined;
         const epoch = beginDictionarySession();
         let snapshot: Awaited<ReturnType<typeof fetchDict>> | undefined;
@@ -658,6 +662,7 @@ const Login: React.FC = () => {
           menus = extractMenus(menuResponse?.data);
           resourcePermissionEnabled =
             resourcePermissionFromResponse(menuResponse);
+          dataPermissionEnabled = dataPermissionFromResponse(menuResponse);
           if (epoch !== dictionaryGeneration()) return;
           if (dictResponse.kind !== 'updated')
             throw new Error('初始化字典不能复用空快照');
@@ -678,6 +683,7 @@ const Login: React.FC = () => {
           userInfo,
           menus,
           resourcePermissionEnabled,
+          dataPermissionEnabled,
         );
         flushSync(() => {
           setInitialState((state) => ({

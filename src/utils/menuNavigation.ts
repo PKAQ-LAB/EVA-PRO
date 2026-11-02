@@ -1,5 +1,6 @@
 export interface MenuNavigationItem extends Record<string, unknown> {
   children?: MenuNavigationItem[];
+  resources?: string[];
 }
 
 export interface MenuNavigationTarget {

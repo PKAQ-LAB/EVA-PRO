@@ -26,6 +26,29 @@ it('岗位ID保存保持Long字符串数组，切离岗位只提交空数组', a
   );
   expect(ids).toEqual(['2113857683657629697', '2113857683657629698']);
 });
+it('明确关闭能力才允许省略范围，丢弃五字段且不修改原对象', async () => {
+  mocks.post.mockClear();
+  const data = {
+    id: 'role-a',
+    name: '角色',
+    dataScope: '0006',
+    dataOrgIds: ['101'],
+    dataPostIds: ['bad'],
+    dataPermissionType: '0003',
+    dataPermissionDeptid: '101',
+  };
+  const original = structuredClone(data);
+  await saveRole(data, false);
+  expect(mocks.post).toHaveBeenCalledExactlyOnceWith('/api/sys/role/edit', {
+    id: 'role-a',
+    name: '角色',
+    frozen: 0,
+  });
+  expect(data).toEqual(original);
+  await expect(saveRole({ name: '能力未明确关闭' })).rejects.toThrow(
+    '请选择数据权限',
+  );
+});
 it('岗位空集合和非法ID不发保存请求', async () => {
   mocks.post.mockClear();
   await expect(

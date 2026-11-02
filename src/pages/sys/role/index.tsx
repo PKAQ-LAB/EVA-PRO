@@ -21,6 +21,7 @@ import {
   TextCell,
   textColumn,
 } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import { frozenText, sysText } from '../status';
 import RoleAOEForm, { type ModalType } from './aoeform';
 import RoleConfigModal from './component/roleconfig';
@@ -37,12 +38,19 @@ const isSystemRole = (record: RoleItem) =>
 const canOperateRole = (record: RoleItem) => !isSystemRole(record);
 
 const SysRolePage: React.FC = () => {
+  const canAction = useMenuAccess('/sys/role');
   const intl = useIntl();
   const view = useRecordView<RoleItem>();
   const handleView = (record: RoleItem) => {
+    if (!canAction('read')) return;
     setCurrentItem({ id: record.id });
     setModalType('view');
-    void view.read(record.id, () => getRole(record.id));
+    void view.read(record.id, async () => {
+      if (!canAction('read')) throw new Error('无权限');
+      const res = await getRole(record.id);
+      if (!canAction('read')) throw new Error('权限已变更');
+      return res;
+    });
   };
   const { message: msg, modal } = App.useApp();
   const actionRef = useRef<ActionType | undefined>(undefined);
@@ -58,18 +66,26 @@ const SysRolePage: React.FC = () => {
   const refresh = () => actionRef.current?.reload();
 
   const handleAdd = () => {
+    if (!canAction('create')) return;
     view.close();
     setCurrentItem({});
     setModalType('create');
   };
 
   const handleEdit = (record: RoleItem) => {
+    if (!canAction('update')) return;
     setCurrentItem({ id: record.id });
     setModalType('edit');
-    void view.read(record.id, () => getRole(record.id));
+    void view.read(record.id, async () => {
+      if (!canAction('update')) throw new Error('无权限');
+      const res = await getRole(record.id);
+      if (!canAction('update')) throw new Error('权限已变更');
+      return res;
+    });
   };
 
   const handleDelete = async (record: RoleItem) => {
+    if (!canAction('delete')) return;
     const res = await deleteRoles([record.id]);
     if (res.success) {
       msg.success(sysText(intl, 'pages.sys.message.deleteSuccess', '删除成功'));
@@ -78,6 +94,7 @@ const SysRolePage: React.FC = () => {
   };
 
   const confirmDelete = (record: RoleItem) => {
+    if (!canAction('delete')) return;
     if (!canOperateRole(record)) return;
     modal.confirm({
       title: sysText(intl, 'pages.sys.action.deleteConfirm', '确定要删除吗？'),
@@ -105,6 +122,7 @@ const SysRolePage: React.FC = () => {
   };
 
   const handleBatchDelete = async () => {
+    if (!canAction('delete')) return;
     if (selectedRowKeys.length === 0) return;
     const res = await deleteRoles(selectedRowKeys);
     if (res.success) {
@@ -115,6 +133,7 @@ const SysRolePage: React.FC = () => {
   };
 
   const handleLockSwitch = async (frozen: 0 | 1) => {
+    if (!canAction('freeze')) return;
     if (selectedRowKeys.length === 0) return;
     const res = await lockRoles(selectedRowKeys, frozen);
     if (res.success) {
@@ -124,6 +143,7 @@ const SysRolePage: React.FC = () => {
   };
 
   const handleSearch = async () => {
+    if (!canAction('list')) return;
     const values = await searchForm.validateFields();
     setQuery({ ...values });
   };
@@ -134,6 +154,12 @@ const SysRolePage: React.FC = () => {
   };
 
   const handleAction = (record: RoleItem, op: AuthOperate) => {
+    if (
+      !canOperateRole(record) ||
+      (op !== 'Config' &&
+        !canAction(op === 'Module' ? 'grantResource' : 'grantUser'))
+    )
+      return;
     setRoleId(record.id);
     setAuthOperate(op);
   };
@@ -176,13 +202,17 @@ const SysRolePage: React.FC = () => {
       ...actionColumn(140),
       search: false,
       render: (_, record) => (
-        <Button
-          type="link"
-          disabled={!canOperateRole(record)}
-          onClick={() => handleAction(record, 'Module')}
-        >
-          {sysText(intl, 'pages.sys.role.moduleAuth', '模块授权')}
-        </Button>
+        <React.Fragment>
+          {canAction('grantResource') && (
+            <Button
+              type="link"
+              disabled={!canOperateRole(record) || !canAction('grantResource')}
+              onClick={() => handleAction(record, 'Module')}
+            >
+              {sysText(intl, 'pages.sys.role.moduleAuth', '模块授权')}
+            </Button>
+          )}
+        </React.Fragment>
       ),
     },
     {
@@ -190,13 +220,17 @@ const SysRolePage: React.FC = () => {
       ...actionColumn(140),
       search: false,
       render: (_, record) => (
-        <Button
-          type="link"
-          disabled={!canOperateRole(record)}
-          onClick={() => handleAction(record, 'User')}
-        >
-          {sysText(intl, 'pages.sys.role.userAuth', '用户授权')}
-        </Button>
+        <React.Fragment>
+          {canAction('grantUser') && (
+            <Button
+              type="link"
+              disabled={!canOperateRole(record) || !canAction('grantUser')}
+              onClick={() => handleAction(record, 'User')}
+            >
+              {sysText(intl, 'pages.sys.role.userAuth', '用户授权')}
+            </Button>
+          )}
+        </React.Fragment>
       ),
     },
     {
@@ -219,27 +253,42 @@ const SysRolePage: React.FC = () => {
       search: false,
       render: (_, record) => (
         <ActionGroup>
-          <Button type="link" size="small" onClick={() => handleView(record)}>
-            查看
-          </Button>
-          <a
-            className={clsx({ 'eva-link-disabled': !canOperateRole(record) })}
-            onClick={() => {
-              if (canOperateRole(record)) handleEdit(record);
-            }}
-          >
-            {sysText(intl, 'pages.sys.action.edit', '编辑')}
-          </a>
+          {canAction('read') && (
+            <Button
+              type="link"
+              size="small"
+              disabled={!canAction('read')}
+              onClick={() => handleView(record)}
+            >
+              查看
+            </Button>
+          )}
+          {canAction('update') && (
+            <a
+              className={clsx({
+                'eva-link-disabled':
+                  !canOperateRole(record) || !canAction('update'),
+              })}
+              onClick={() => {
+                if (canOperateRole(record) && canAction('update'))
+                  handleEdit(record);
+              }}
+            >
+              {sysText(intl, 'pages.sys.action.edit', '编辑')}
+            </a>
+          )}
           <Divider type="vertical" />
-          <a
-            className={clsx('eva-delete-link', {
-              'eva-link-disabled': !canOperateRole(record),
-              'eva-delete-link-disabled': !canOperateRole(record),
-            })}
-            onClick={() => confirmDelete(record)}
-          >
-            {sysText(intl, 'pages.sys.action.delete', '删除')}
-          </a>
+          {canAction('delete') && (
+            <a
+              className={clsx('eva-delete-link', {
+                'eva-link-disabled': !canOperateRole(record),
+                'eva-delete-link-disabled': !canOperateRole(record),
+              })}
+              onClick={() => confirmDelete(record)}
+            >
+              {sysText(intl, 'pages.sys.action.delete', '删除')}
+            </a>
+          )}
         </ActionGroup>
       ),
     },
@@ -259,27 +308,36 @@ const SysRolePage: React.FC = () => {
         <div>
           {selectedRowKeys.length > 0 && (
             <>
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={confirmBatchDelete}
-              >
-                {sysText(intl, 'pages.sys.role.delete', '删除角色')}
-              </Button>
+              {canAction('delete') && (
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  disabled={!canAction('delete')}
+                  onClick={confirmBatchDelete}
+                >
+                  {sysText(intl, 'pages.sys.role.delete', '删除角色')}
+                </Button>
+              )}
               <Divider type="vertical" />
-              <Button
-                icon={<LockOutlined />}
-                onClick={() => handleLockSwitch(1)}
-              >
-                {sysText(intl, 'pages.sys.role.disable', '停用角色')}
-              </Button>
+              {canAction('freeze') && (
+                <Button
+                  icon={<LockOutlined />}
+                  disabled={!canAction('freeze')}
+                  onClick={() => handleLockSwitch(1)}
+                >
+                  {sysText(intl, 'pages.sys.role.disable', '停用角色')}
+                </Button>
+              )}
               <Divider type="vertical" />
-              <Button
-                icon={<UnlockOutlined />}
-                onClick={() => handleLockSwitch(0)}
-              >
-                {sysText(intl, 'pages.sys.role.enable', '启用角色')}
-              </Button>
+              {canAction('freeze') && (
+                <Button
+                  icon={<UnlockOutlined />}
+                  disabled={!canAction('freeze')}
+                  onClick={() => handleLockSwitch(0)}
+                >
+                  {sysText(intl, 'pages.sys.role.enable', '启用角色')}
+                </Button>
+              )}
             </>
           )}
         </div>
@@ -303,13 +361,17 @@ const SysRolePage: React.FC = () => {
               <Input allowClear />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
-                {sysText(intl, 'pages.sys.action.query', '查询')}
-              </Button>
+              {canAction('list') && (
+                <Button type="primary" htmlType="submit">
+                  {sysText(intl, 'pages.sys.action.query', '查询')}
+                </Button>
+              )}
               <Divider type="vertical" />
-              <Button htmlType="button" onClick={handleReset}>
-                {sysText(intl, 'pages.sys.action.reset', '重置')}
-              </Button>
+              {canAction('list') && (
+                <Button htmlType="button" onClick={handleReset}>
+                  {sysText(intl, 'pages.sys.action.reset', '重置')}
+                </Button>
+              )}
             </Form.Item>
           </Form>
         </div>
@@ -341,9 +403,16 @@ const SysRolePage: React.FC = () => {
         <ProTable<RoleItem>
           scroll={{ x: 1440 }}
           headerTitle={
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-              {sysText(intl, 'pages.sys.role.add', '新增角色')}
-            </Button>
+            canAction('create') && (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                disabled={!canAction('create')}
+                onClick={handleAdd}
+              >
+                {sysText(intl, 'pages.sys.role.add', '新增角色')}
+              </Button>
+            )
           }
           defaultSize="small"
           actionRef={actionRef}
@@ -367,8 +436,12 @@ const SysRolePage: React.FC = () => {
           }
           onRow={(record) => viewRow(() => handleView(record))}
           request={async (params) => {
+            if (!canAction('list'))
+              return { data: [], total: 0, success: false };
             const res = await queryRoles({ ...query, ...params });
             const list = res?.data?.list ?? [];
+            if (!canAction('list'))
+              return { data: [], total: 0, success: false };
             return {
               data: list,
               total: res?.data?.total ?? res?.total ?? list.length,
@@ -395,7 +468,7 @@ const SysRolePage: React.FC = () => {
         />
       )}
       <RoleModuleModal
-        open={authOperate === 'Module'}
+        open={authOperate === 'Module' && canAction('grantResource')}
         roleId={roleId}
         onClose={() => {
           setAuthOperate('');
@@ -404,7 +477,7 @@ const SysRolePage: React.FC = () => {
         onSuccess={refresh}
       />
       <RoleUserModal
-        open={authOperate === 'User'}
+        open={authOperate === 'User' && canAction('grantUser')}
         roleId={roleId}
         onClose={() => {
           setAuthOperate('');

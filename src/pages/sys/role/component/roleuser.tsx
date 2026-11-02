@@ -7,8 +7,9 @@ import {
   type TableColumnsType,
   Tree,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { textColumn } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import { queryOrgs } from '../../organization/service';
 import type { RoleUserItem } from '../data.d';
 import { listRoleUsers, saveRoleUsers } from '../service';
@@ -26,41 +27,66 @@ const RoleUserModal: React.FC<RoleUserProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const canAction = useMenuAccess('/sys/role');
+  const requestId = useRef(0);
+  const [ready, setReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [records, setRecords] = useState<RoleUserItem[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
   const [orgs, setOrgs] = useState<unknown[]>([]);
 
   useEffect(() => {
-    if (!open) return;
-    if (!roleId) {
-      setRecords([]);
-      setChecked([]);
-      return;
-    }
-    queryOrgs().then((res) => {
-      if (res.success && res.data) setOrgs(res.data);
-    });
-    listRoleUsers(roleId).then((res) => {
-      setRecords(res?.data?.users ?? []);
-      setChecked(res?.data?.checked ?? []);
-    });
-  }, [open, roleId]);
+    const request = ++requestId.current;
+    setReady(false);
+    setRecords([]);
+    setChecked([]);
+    if (!open || !roleId || !canAction('grantUser')) return;
+    queryOrgs()
+      .then((res) => {
+        if (
+          request === requestId.current &&
+          canAction('grantUser') &&
+          res.success
+        )
+          setOrgs(res.data ?? []);
+      })
+      .catch(() => {});
+    void loadUsers(roleId, undefined, request);
+    return () => {
+      requestId.current += 1;
+    };
+  }, [open, roleId, canAction]);
 
+  const loadUsers = async (
+    id: string,
+    deptId?: string,
+    request = ++requestId.current,
+  ) => {
+    setReady(false);
+    try {
+      const res = await listRoleUsers(id, deptId);
+      if (request !== requestId.current || !canAction('grantUser')) return;
+      if (res.success !== true) throw new Error('授权用户读取失败');
+      setRecords(res.data?.users ?? []);
+      setChecked(res.data?.checked ?? []);
+      setReady(true);
+    } catch {
+      if (request === requestId.current) setReady(false);
+    }
+  };
   const handleTreeSelect = async (selectedKeys: React.Key[]) => {
-    if (!roleId) return;
-    const res = await listRoleUsers(roleId, selectedKeys[0]?.toString());
-    setRecords(res?.data?.users ?? []);
-    setChecked(res?.data?.checked ?? []);
+    if (!roleId || !canAction('grantUser')) return;
+    await loadUsers(roleId, selectedKeys[0]?.toString());
   };
 
   const handleSubmit = async () => {
-    if (!roleId) return;
+    if (!canAction('grantUser')) return;
+    if (!roleId || !ready || loading) return;
     setLoading(true);
     try {
       const users = checked.map((id) => ({ userId: id }));
       const res = await saveRoleUsers(roleId, users);
-      if (res.success) {
+      if (res.success && canAction('grantUser')) {
         onClose();
         onSuccess();
       }
@@ -80,11 +106,15 @@ const RoleUserModal: React.FC<RoleUserProps> = ({
     <Modal
       confirmLoading={loading}
       maskClosable={false}
-      open={open}
+      open={open && canAction('grantUser')}
       title="选择授权用户"
       okText="保存"
       cancelText="关闭"
       centered
+      okButtonProps={{
+        disabled: !ready || loading || !canAction('grantUser'),
+        style: !canAction('grantUser') ? { display: 'none' } : undefined,
+      }}
       onOk={handleSubmit}
       onCancel={onClose}
       width="60%"

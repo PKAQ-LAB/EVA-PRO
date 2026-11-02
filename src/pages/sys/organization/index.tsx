@@ -5,7 +5,7 @@ import {
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useQuery } from '@tanstack/react-query';
-import { useAccess, useIntl, useModel } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import {
   Alert,
   App,
@@ -16,14 +16,7 @@ import {
   type TableColumnsType,
 } from 'antd';
 import clsx from 'clsx';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import APIS from '@/apis';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useRecordView, viewRow } from '@/components/RecordView';
 import {
   ActionGroup,
@@ -37,6 +30,7 @@ import {
   getDeleteBlockers,
   getSiblingMove,
 } from '@/utils/treeOperations';
+import useMenuAccess from '@/utils/useMenuAccess';
 import { frozenText } from '../status';
 import OrgAOEForm, { type OperateType } from './aoeform';
 import type { OrgItem } from './data.d';
@@ -45,8 +39,8 @@ import { deleteOrgs, getOrg, queryOrgs, sortOrgs } from './service';
 const { Search } = Input;
 
 const SysOrganizationPage: React.FC = () => {
-  const access = useAccess();
-  const { loading, error } = useModel('@@initialState');
+  const canAction = useMenuAccess('/sys/organization');
+  const { initialState } = useModel('@@initialState');
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -54,35 +48,30 @@ const SysOrganizationPage: React.FC = () => {
       mounted.current = false;
     };
   }, []);
-  const permissionRef = useRef(access.canRequest);
-  // Umi 刷新失败仍保留旧 initialState，旧 false 不能继续充当当前许可。
-  permissionRef.current = (method, path) =>
-    !loading && !error && access.canRequest(method, path);
-  const canRequest = useCallback(
-    (method: string, path: string) =>
-      mounted.current && permissionRef.current(method, path),
-    [],
-  );
-  const canList = canRequest('GET', APIS.ORG_LIST);
-  const canSave =
-    canRequest('POST', APIS.ORG_EDIT) &&
-    canRequest('POST', APIS.ORG_CHECKUNIQUE);
-  const canDelete = canRequest('POST', APIS.ORG_DEL);
-  const canSort = canRequest('POST', APIS.ORG_SORT);
-  const canRead = (record: OrgItem) =>
-    canRequest('GET', `${APIS.ORG_GET}/${record.id}`);
-  const canWrite = () =>
-    canRequest('POST', APIS.ORG_EDIT) &&
-    canRequest('POST', APIS.ORG_CHECKUNIQUE);
+  const canList = canAction('list');
+  const canSave = canAction('create');
+  const canDelete = canAction('delete');
+  const canSort = canAction('sort');
+  const canRead = (_record: OrgItem) => canAction('read');
+  const canWrite = () => canAction('update');
+  const queryScope = useId();
+  const queryIdentity = useRef({ user: initialState?.currentUser, version: 0 });
+  if (queryIdentity.current.user !== initialState?.currentUser)
+    queryIdentity.current = {
+      user: initialState?.currentUser,
+      version: queryIdentity.current.version + 1,
+    };
   const intl = useIntl();
   const view = useRecordView<OrgItem>();
   const handleView = (record: OrgItem) => {
     if (!canRead(record)) return;
     setCurrentItem({ id: record.id });
     setOperateType('view');
-    void view.read(record.id, () => {
+    void view.read(record.id, async () => {
       if (!canRead(record)) throw new Error('无权限查看部门');
-      return getOrg(record.id);
+      const res = await getOrg(record.id);
+      if (!canRead(record)) throw new Error('权限已变更');
+      return res;
     });
   };
   const { message: msg, modal } = App.useApp();
@@ -92,12 +81,12 @@ const SysOrganizationPage: React.FC = () => {
   const [searchName, setSearchName] = useState<string>('');
 
   const orgsQuery = useQuery<OrgItem[]>({
-    queryKey: ['sys', 'orgs'],
+    queryKey: ['sys', 'orgs', queryScope, queryIdentity.current.version],
     enabled: canList,
     queryFn: async () => {
-      if (!canRequest('GET', APIS.ORG_LIST)) return [];
+      if (!canAction('list')) return [];
       const res = await queryOrgs();
-      if (!canRequest('GET', APIS.ORG_LIST)) return [];
+      if (!canAction('list')) return [];
       return (res?.data ?? []) as OrgItem[];
     },
   });
@@ -116,12 +105,12 @@ const SysOrganizationPage: React.FC = () => {
     [allData, searchName],
   );
   const refresh = () => {
-    if (canRequest('GET', APIS.ORG_LIST)) return orgsQuery.refetch();
+    if (canAction('list')) return orgsQuery.refetch();
   };
 
   const handleAdd = (record?: OrgItem) => {
     if (
-      !canWrite() ||
+      !canAction('create') ||
       (record && (record.status !== '0001' || record.frozen === 9999))
     )
       return;
@@ -131,12 +120,7 @@ const SysOrganizationPage: React.FC = () => {
   };
 
   const handleEdit = (record: OrgItem) => {
-    if (
-      !canWrite() ||
-      !canRead(record) ||
-      record.status !== '0001' ||
-      record.frozen === 9999
-    )
+    if (!canWrite() || record.status !== '0001' || record.frozen === 9999)
       return;
     if (!record.id) {
       modal.warning({ title: '提示', content: '没有选择记录' });
@@ -144,14 +128,16 @@ const SysOrganizationPage: React.FC = () => {
     }
     setCurrentItem({ id: record.id });
     setOperateType('edit');
-    void view.read(record.id, () => {
-      if (!canWrite() || !canRead(record)) throw new Error('无权限编辑部门');
-      return getOrg(record.id);
+    void view.read(record.id, async () => {
+      if (!canWrite()) throw new Error('无权限编辑部门');
+      const res = await getOrg(record.id);
+      if (!canWrite()) throw new Error('权限已变更');
+      return res;
     });
   };
 
   const handleDelete = async (record: OrgItem) => {
-    if (!canRequest('POST', APIS.ORG_DEL)) return;
+    if (!canAction('delete')) return;
     const current = findTreeNode(live.current.allData, record.id);
     if (!current || current.frozen === 9999 || current.status !== '0001')
       return;
@@ -169,7 +155,7 @@ const SysOrganizationPage: React.FC = () => {
 
   const handleBatchDelete = async (ids: string[]) => {
     if (
-      !canRequest('POST', APIS.ORG_DEL) ||
+      !canAction('delete') ||
       !ids.length ||
       ids.length !== live.current.selectedRowKeys.length ||
       !ids.every((id) => live.current.selectedRowKeys.includes(id))
@@ -195,19 +181,19 @@ const SysOrganizationPage: React.FC = () => {
   };
 
   const confirmDelete = (record: OrgItem) => {
-    if (!canRequest('POST', APIS.ORG_DEL)) return;
+    if (!canAction('delete')) return;
     modal.confirm({
       title: '确定要删除吗？',
       centered: true,
       okText: '确定',
       cancelText: '取消',
       okButtonProps: { danger: true },
-      onOk: () => canRequest('POST', APIS.ORG_DEL) && handleDelete(record),
+      onOk: () => canAction('delete') && handleDelete(record),
     });
   };
 
   const confirmBatchDelete = () => {
-    if (!canRequest('POST', APIS.ORG_DEL)) return;
+    if (!canAction('delete')) return;
     const ids = [...live.current.selectedRowKeys];
     modal.confirm({
       title: '确定要删除选中的条目吗?',
@@ -215,12 +201,12 @@ const SysOrganizationPage: React.FC = () => {
       okText: '确定',
       cancelText: '取消',
       okButtonProps: { danger: true },
-      onOk: () => canRequest('POST', APIS.ORG_DEL) && handleBatchDelete(ids),
+      onOk: () => canAction('delete') && handleBatchDelete(ids),
     });
   };
 
   const handleSort = async (record: OrgItem, direction: 'up' | 'down') => {
-    if (!canRequest('POST', APIS.ORG_SORT) || live.current.searchName) return;
+    if (!canAction('sort') || live.current.searchName) return;
     const move = getSiblingMove(live.current.allData, record.id, direction);
     if (!move) return;
     if (
@@ -315,7 +301,7 @@ const SysOrganizationPage: React.FC = () => {
                   添加下级
                 </Button>
               )}
-              {canSave && canRead(record) && (
+              {canAction('update') && (
                 <Button
                   type="link"
                   size="small"
@@ -445,7 +431,7 @@ const SysOrganizationPage: React.FC = () => {
             setOperateType('');
           }}
           onSuccess={refresh}
-          canRequest={canRequest}
+          canAction={canAction}
         />
       )}
     </PageContainer>

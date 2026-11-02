@@ -1,4 +1,4 @@
-import { App, Button, Form, Input, Modal } from 'antd';
+import { App, AutoComplete, Button, Form, Input, Modal } from 'antd';
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import DictSelector from '@/components/DictSelector';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
@@ -74,7 +74,9 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
         Boolean(
           values.resourceUrl &&
             values.resourceUrl === value.resourceUrl &&
-            values.resourceType === value.resourceType,
+            values.resourceType === value.resourceType &&
+            (values.actionKey?.trim() || null) ===
+              (value.actionKey?.trim() || null),
         ),
     );
     if (exist) {
@@ -89,12 +91,14 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
       next[editIndex] = {
         ...next[editIndex],
         resourceDesc: values.resourceDesc,
+        actionKey: values.actionKey?.trim() || null,
         resourceType: values.resourceType,
         resourceUrl: values.resourceUrl,
       };
     } else {
       next.push({
         resourceDesc: values.resourceDesc,
+        actionKey: values.actionKey?.trim() || null,
         resourceType: values.resourceType,
         resourceUrl: values.resourceUrl,
       });
@@ -136,6 +140,11 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
               {viewRecord?.resourceDesc?.trim() || '—'}
             </span>
           </Form.Item>
+          <Form.Item label="动作标识">
+            <span className="eva-view-value">
+              {viewRecord?.actionKey || '—'}
+            </span>
+          </Form.Item>
           <Form.Item label="资源类型">
             <span className="eva-view-value">
               {resourceTypeDict?.[viewRecord?.resourceType ?? ''] ||
@@ -170,6 +179,29 @@ const ModuleLineAOEForm: React.FC<ModuleLineAOEFormProps> = ({
             rules={[{ required: true, max: 30 }]}
           >
             <Input placeholder="例如：新增、查询、修改、删除" />
+          </Form.Item>
+          <Form.Item
+            label="动作标识"
+            name="actionKey"
+            rules={[
+              {
+                validator: (_, value) =>
+                  !value?.trim() ||
+                  /^[a-z][A-Za-z0-9_]{0,63}$/.test(value.trim())
+                    ? Promise.resolve()
+                    : Promise.reject(
+                        new Error('以小写字母开头，最多64位字母、数字或下划线'),
+                      ),
+              },
+            ]}
+          >
+            <AutoComplete
+              allowClear
+              options={['list', 'read', 'create', 'update', 'delete'].map(
+                (value) => ({ value }),
+              )}
+              placeholder="选择标准动作或输入自定义动作，可留空"
+            />
           </Form.Item>
           <Form.Item
             label="资源类型"

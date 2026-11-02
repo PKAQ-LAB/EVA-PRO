@@ -69,3 +69,11 @@ it('在线记录双击仅展示已读元数据，token/复制区域不触发查�
   expect(dialog.querySelector('form,input,[type="submit"]')).toBeNull();
   expect(mocks.request.mock.calls).toHaveLength(requests);
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/log/online': ['list', 'read'],
+    '/log/biz': ['list', 'read'],
+    '/log/error': ['list', 'read'],
+  }),
+}));

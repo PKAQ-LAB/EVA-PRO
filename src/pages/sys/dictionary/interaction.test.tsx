@@ -11,6 +11,8 @@ import { history } from '@umijs/max';
 import { App, ConfigProvider } from 'antd';
 import type { ReactNode } from 'react';
 import { beforeEach, expect, it, vi } from 'vitest';
+import access from '@/access';
+import type { ResourcePermissionUser } from '@/utils/resourcePermission';
 import DictionaryPage from './index';
 
 const api = vi.hoisted(() => ({
@@ -18,12 +20,17 @@ const api = vi.hoisted(() => ({
   getDict: vi.fn(),
   editDict: vi.fn(),
   deleteDict: vi.fn(),
-  user: { name: 'fixture', resourcePermissionEnabled: false },
+  user: {
+    name: 'fixture',
+    resourcePermissionEnabled: false,
+    menus: [{ id: 'dict-menu', routeUrl: '/sys/dictionary', resources: [] }],
+  } as ResourcePermissionUser,
 }));
 vi.mock('./service', () => api);
 vi.mock('@umijs/max', async () => {
   const { createHistory } = await import('@@/core/history');
   return {
+    useAccess: () => access({ currentUser: api.user }),
     history: createHistory({
       type: 'memory',
       initialEntries: ['/sys/dictionary'],

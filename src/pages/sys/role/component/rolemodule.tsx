@@ -1,6 +1,7 @@
 import { Checkbox, Modal, Table, type TableColumnsType } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { TextCell, textColumn } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import type { RoleModuleNode } from '../data.d';
 import { listRoleModules, saveRoleModules } from '../service';
 
@@ -17,7 +18,9 @@ const RoleModuleModal: React.FC<RoleModuleProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const canAction = useMenuAccess('/sys/role');
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [records, setRecords] = useState<RoleModuleNode[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
   const [checkedResource, setCheckedResource] = useState<
@@ -25,7 +28,8 @@ const RoleModuleModal: React.FC<RoleModuleProps> = ({
   >({});
 
   useEffect(() => {
-    if (!open) return;
+    let active = true;
+    if (!open || !canAction('grantResource')) return;
     if (!roleId) {
       setChecked([]);
       setRecords([]);
@@ -33,20 +37,32 @@ const RoleModuleModal: React.FC<RoleModuleProps> = ({
       return;
     }
     setLoading(true);
+    setLoadError(false);
     listRoleModules(roleId)
       .then((res) => {
+        if (!active || !canAction('grantResource')) return;
+        if (res.success !== true) throw new Error('资源读取失败');
         setRecords(res?.data?.modules ?? []);
         setChecked(res?.data?.checked ?? []);
         setCheckedResource(res?.data?.checkedResource ?? {});
       })
-      .finally(() => setLoading(false));
-  }, [open, roleId]);
+      .catch(() => {
+        if (active) setLoadError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [open, roleId, canAction]);
 
   const handleSubmit = async () => {
-    if (!roleId) return;
+    if (!canAction('grantResource')) return;
+    if (!roleId || loading || loadError) return;
     const modules = checked.map((id) => ({ moduleId: id }));
     const res = await saveRoleModules(roleId, modules, checkedResource);
-    if (res.success) {
+    if (res.success && canAction('grantResource')) {
       onClose();
       onSuccess();
     }
@@ -115,13 +131,17 @@ const RoleModuleModal: React.FC<RoleModuleProps> = ({
 
   return (
     <Modal
-      open={open}
+      open={open && canAction('grantResource')}
       maskClosable={false}
       title="选择授权模块"
       okText="确定"
       cancelText="关闭"
       width={860}
       centered
+      okButtonProps={{
+        disabled: loading || loadError || !canAction('grantResource'),
+        style: !canAction('grantResource') ? { display: 'none' } : undefined,
+      }}
       onOk={handleSubmit}
       onCancel={onClose}
       destroyOnHidden

@@ -25,7 +25,10 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock('@umijs/max', () => ({
   useAccess: () => access({ currentUser: mocks.currentUser }),
-  useModel: () => mocks.bootstrap,
+  useModel: () => ({
+    ...mocks.bootstrap,
+    initialState: { currentUser: mocks.currentUser },
+  }),
   useIntl: () => ({
     formatMessage: ({ defaultMessage }: { defaultMessage: string }) =>
       defaultMessage,
@@ -63,25 +66,14 @@ const records: OrgItem[] = [
     orders: 3,
   },
 ];
-function grant(paths: string[], enabled = true) {
+function grant(keys: string[], enabled = true) {
   mocks.currentUser = {
-    access: 'admin',
     resourcePermissionEnabled: enabled,
-    menus: [
-      {
-        resources: paths.map((path) => {
-          const [resourceType, resourceUrl] = path.split(' ');
-          return { resourceType, resourceUrl };
-        }),
-      },
-    ],
+    menus: [{ id: 'org-menu', routeUrl: '/sys/organization', resources: keys }],
   };
 }
-const read = ['GET /sys/organization/list', 'GET /sys/organization/get/{id}'];
-const write = [
-  'POST /sys/organization/edit',
-  'POST /sys/organization/checkUnique',
-];
+const read = ['list', 'read'];
+const write = ['create', 'update'];
 function wrapper(children: ReactNode) {
   return (
     <ConfigProvider locale={zhCN} theme={{ token: { motion: false } }}>
@@ -173,7 +165,7 @@ it('edit/get和checkUnique均授权才可编辑，并能正常保存真实servic
 });
 
 it('delete-only与排序独立，确认框打开后撤权不能沿旧闭包写入', async () => {
-  grant([...read, 'POST /sys/organization/del']);
+  grant([...read, 'delete']);
   const view = showPage();
   await screen.findByText('可维护部门');
   expect(row().queryByText('编辑')).toBeNull();
@@ -190,7 +182,7 @@ it('delete-only与排序独立，确认框打开后撤权不能沿旧闭包写�
 });
 
 it('批删确认后选择目标变化，不删除旧目标或新目标', async () => {
-  grant([...read, 'POST /sys/organization/del']);
+  grant([...read, 'delete']);
   showPage();
   await screen.findByText('可维护部门');
   fireEvent.click(row().getByRole('checkbox'));
@@ -205,7 +197,7 @@ it('批删确认后选择目标变化，不删除旧目标或新目标', async (
 });
 
 it('宽授权允许排序与删除，9999仍无写入口且不可勾选', async () => {
-  grant(['* /sys/organization/**']);
+  grant(['list', 'read', 'create', 'update', 'delete', 'sort']);
   showPage();
   await screen.findByText('可维护部门');
   expect(row('系统只读部门').queryByText('删除')).toBeNull();
@@ -259,7 +251,12 @@ it('唯一校验await期间撤权，返回后不得保存并保留输入', async
         operateType="create"
         currentItem={currentItem}
         data={[]}
-        canRequest={access({ currentUser: mocks.currentUser }).canRequest}
+        canAction={(key) =>
+          access({ currentUser: mocks.currentUser }).canAction(
+            '/sys/organization',
+            key,
+          )
+        }
         onClose={vi.fn()}
         onSuccess={vi.fn()}
       />,
@@ -281,11 +278,7 @@ it('唯一校验await期间撤权，返回后不得保存并保留输入', async
   grant(read);
   view.rerender(content());
   await act(async () => finish({ success: true }));
-  await waitFor(() =>
-    expect(screen.getByRole('button', { name: /确\s*定/ })).not.toHaveClass(
-      'ant-btn-loading',
-    ),
-  );
+  expect(screen.queryByRole('button', { name: /确\s*定/ })).toBeNull();
   expect(screen.getByLabelText('部门名称')).toHaveValue('保留输入');
   expect(mocks.request.mock.calls.some(([url]) => url === APIS.ORG_EDIT)).toBe(
     false,
@@ -293,19 +286,15 @@ it('唯一校验await期间撤权，返回后不得保存并保留输入', async
 });
 
 it('没有list授权时query enabled与实际入口都不请求，get按实际行id判断', async () => {
-  grant(['POST /sys/organization/del']);
+  grant(['delete']);
   const view = showPage();
   expect(mocks.request).not.toHaveBeenCalled();
-  grant([
-    'GET /sys/organization/list',
-    'GET /sys/organization/get/7',
-    ...write,
-  ]);
+  grant(['list', 'read', ...write]);
   view.update();
   await screen.findByText('可维护部门');
   expect(row().getByText('编辑')).toBeInTheDocument();
-  expect(row('同级部门').queryByText('编辑')).toBeNull();
-  expect(row('同级部门').queryByText('查看')).toBeNull();
+  expect(row('同级部门').getByText('编辑')).toBeInTheDocument();
+  expect(row('同级部门').getByText('查看')).toBeInTheDocument();
 });
 
 it('资源关闭仍保留父子删除阻塞，不能因宽授权删除非叶部门', async () => {
@@ -359,7 +348,20 @@ it('页面已卸载但App确认框仍存续时，旧onOk无写入能力', async 
   );
 });
 
-it('详情晚到前撤回get权限，不能重新激活编辑保存', async () => {
+it('update无需read即可编辑回填，但没有独立详情入口', async () => {
+  grant(['list', 'update']);
+  showPage();
+  await screen.findByText('可维护部门');
+  expect(row().queryByText('查看')).toBeNull();
+  expect(screen.queryByText('新增部门')).toBeNull();
+  fireEvent.click(row().getByText('编辑'));
+  await waitFor(() =>
+    expect(screen.getByLabelText('部门名称')).toHaveValue('可维护部门'),
+  );
+  expect(screen.getByRole('button', { name: /确\s*定/ })).toBeEnabled();
+});
+
+it('详情晚到前撤回update权限，不能重新激活编辑保存', async () => {
   grant([...read, ...write]);
   let finish: (value: { success: boolean; data: OrgItem }) => void = () => {};
   mocks.request.mockImplementation((url: string) =>
@@ -375,14 +377,15 @@ it('详情晚到前撤回get权限，不能重新激活编辑保存', async () =
   await waitFor(() =>
     expect(mocks.request).toHaveBeenCalledWith(`${APIS.ORG_GET}/7`),
   );
-  grant(['GET /sys/organization/list', ...write]);
+  grant(['list']);
   view.update();
   await act(async () => finish({ success: true, data: records[0] }));
   await waitFor(() =>
-    expect(screen.getByLabelText('部门名称')).toHaveValue('可维护部门'),
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      '详情读取失败，请关闭后重试',
+    ),
   );
-  expect(screen.getByRole('button', { name: /确\s*定/ })).toBeDisabled();
-  fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+  expect(screen.queryByRole('button', { name: /确\s*定/ })).toBeNull();
   expect(mocks.request.mock.calls.some(([url]) => url === APIS.ORG_EDIT)).toBe(
     false,
   );

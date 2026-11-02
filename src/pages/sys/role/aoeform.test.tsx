@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@umijs/max', () => ({
   useModel: () => ({
     initialState: {
-      currentUser: { userid: 'fixture' },
+      currentUser: { userid: 'fixture', dataPermissionEnabled: true },
       dict: { DATA_SCOPE: mocks.dict },
       dictOwner: dictionaryOwner({ userid: 'fixture' }),
       dictGeneration: dictionaryGeneration(),
@@ -345,3 +345,18 @@ it.each([
     expect(raw).toEqual(snapshot);
   },
 );
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/role': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantResource',
+      'grantUser',
+    ],
+  }),
+}));

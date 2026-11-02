@@ -16,7 +16,6 @@ import {
 } from 'antd';
 import type { Dayjs } from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
-import APIS from '@/apis';
 import { useRecordView } from '@/components/RecordView';
 import {
   ActionGroup,
@@ -24,8 +23,8 @@ import {
   TextCell,
   textColumn,
 } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import type { LoginLogItem, LoginLogQuery } from './data.d';
-import { canReadLoginLog } from './permissions';
 import { getLoginLog, queryLoginLogs } from './service';
 
 const fields: [keyof LoginLogItem, string][] = [
@@ -55,15 +54,15 @@ const resultText = (value: unknown) =>
   value === true ? '成功' : value === false ? '失败' : '—';
 
 export default function LoginLogPage() {
+  const canAction = useMenuAccess('/log/login');
   const { initialState, loading, error } = useModel('@@initialState');
   const user = initialState?.currentUser;
   const mounted = useRef(true);
   const permission = useRef<(path: string) => boolean>(() => false);
   permission.current = (path) =>
-    !loading && !error && mounted.current && canReadLoginLog(user, path);
-  const canList = permission.current(APIS.LOGINLOG_LIST);
+    !loading && !error && mounted.current && canAction(path);
+  const canList = permission.current('list');
   const view = useRecordView<LoginLogItem>();
-  const [selectedId, setSelectedId] = useState('');
   const [listError, setListError] = useState(false);
   const [form] = Form.useForm<{
     account?: string;
@@ -81,13 +80,11 @@ export default function LoginLogPage() {
     view.close();
   }, [user, loading, error]);
   const show = (record: LoginLogItem) => {
-    const path = `${APIS.LOGINLOG_GET}/${record.id}`;
-    if (!record.id || !permission.current(path)) return;
-    setSelectedId(record.id);
+    if (!record.id || !permission.current('read')) return;
     void view.read(record.id, async () => {
-      if (!permission.current(path)) throw new Error('无权限');
+      if (!permission.current('read')) throw new Error('无权限');
       const response = await getLoginLog(record.id);
-      if (!permission.current(path)) throw new Error('权限已变更');
+      if (!permission.current('read')) throw new Error('权限已变更');
       return response;
     });
   };
@@ -112,7 +109,7 @@ export default function LoginLogPage() {
       ...actionColumn(100),
       render: (_, record) => (
         <ActionGroup>
-          {permission.current(`${APIS.LOGINLOG_GET}/${record.id}`) && (
+          {permission.current('read') && (
             <Button type="link" size="small" onClick={() => show(record)}>
               查看
             </Button>
@@ -198,11 +195,11 @@ export default function LoginLogPage() {
               }}
               onRequestError={() => setListError(true)}
               request={async (params) => {
-                if (!permission.current(APIS.LOGINLOG_LIST))
+                if (!permission.current('list'))
                   return { data: [], total: 0, success: false };
                 setListError(false);
                 const response = await queryLoginLogs(params);
-                if (!permission.current(APIS.LOGINLOG_LIST))
+                if (!permission.current('list'))
                   return { data: [], total: 0, success: false };
                 if (response.success === false)
                   throw new Error('登录日志读取失败');
@@ -216,11 +213,7 @@ export default function LoginLogPage() {
         title="登录日志明细"
         size={600}
         closable={{ placement: 'end' }}
-        open={
-          view.open &&
-          canList &&
-          permission.current(`${APIS.LOGINLOG_GET}/${selectedId}`)
-        }
+        open={view.open && canList && permission.current('read')}
         onClose={view.close}
         destroyOnHidden
       >

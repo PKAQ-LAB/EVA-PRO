@@ -22,6 +22,7 @@ const { Search } = Input;
 export interface DictListProps {
   grouped?: boolean;
   canCreate?: boolean;
+  createVisible?: boolean;
   canDelete?: (record: DictItem) => boolean;
   data: DictItem[];
   loading: boolean;
@@ -40,6 +41,7 @@ const DictListView: React.FC<DictListProps> = ({
   onDelete,
   grouped = false,
   canCreate = false,
+  createVisible = true,
   canDelete = () => false,
 }) => {
   const { modal } = App.useApp();
@@ -96,9 +98,11 @@ const DictListView: React.FC<DictListProps> = ({
         gutter={8}
       >
         <Col span={6}>
-          <Button type="primary" onClick={onCreate} disabled={!canCreate}>
-            新增
-          </Button>
+          {createVisible && (
+            <Button type="primary" onClick={onCreate} disabled={!canCreate}>
+              新增
+            </Button>
+          )}
         </Col>
         <Col span={18}>
           <Search

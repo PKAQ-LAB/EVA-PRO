@@ -7,6 +7,7 @@ export interface ModuleResource extends RecordAudit {
   id?: string;
   mainId?: string;
   code?: string;
+  actionKey?: string | null;
   sort?: number;
   resourceDesc: string;
   resourceUrl: string;

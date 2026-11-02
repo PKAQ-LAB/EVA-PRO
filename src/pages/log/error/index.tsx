@@ -23,11 +23,13 @@ import {
   actionColumn,
   textColumn,
 } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import { type ErrorLogItem, getErrorLog, queryErrorLogs } from './service';
 
 const { RangePicker } = DatePicker;
 
 const ErrorLogPage: React.FC = () => {
+  const canAction = useMenuAccess('/log/error');
   const view = useRecordView<ErrorLogItem>();
   const detail = view.data;
   const [searchForm] = Form.useForm<{ requestTime?: [Dayjs, Dayjs] }>();
@@ -51,8 +53,13 @@ const ErrorLogPage: React.FC = () => {
   };
 
   const handleView = async (record: ErrorLogItem) => {
-    if (!record.id) return;
-    await view.read(record.id, () => getErrorLog(record.id));
+    if (!record.id || !canAction('read')) return;
+    await view.read(record.id, async () => {
+      if (!canAction('read')) throw new Error('无权限');
+      const result = await getErrorLog(record.id);
+      if (!canAction('read')) throw new Error('权限已变更');
+      return result;
+    });
   };
 
   const columns: ProColumns<ErrorLogItem>[] = [
@@ -71,13 +78,16 @@ const ErrorLogPage: React.FC = () => {
       ...actionColumn(180),
       render: (_, record) => (
         <ActionGroup>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => void handleView(record)}
-          >
-            查看
-          </Button>
+          {canAction('read') && (
+            <Button
+              type="link"
+              size="small"
+              disabled={!canAction('read')}
+              onClick={() => void handleView(record)}
+            >
+              查看
+            </Button>
+          )}
         </ActionGroup>
       ),
     },
@@ -99,9 +109,15 @@ const ErrorLogPage: React.FC = () => {
               <RangePicker />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" onClick={handleSearch}>
-                查询
-              </Button>
+              {canAction('list') && (
+                <Button
+                  type="primary"
+                  disabled={!canAction('list')}
+                  onClick={handleSearch}
+                >
+                  查询
+                </Button>
+              )}
               <Divider type="vertical" />
               <Button onClick={handleReset}>重置</Button>
             </Form.Item>
@@ -120,7 +136,11 @@ const ErrorLogPage: React.FC = () => {
           bordered
           params={query}
           request={async (params) => {
+            if (!canAction('list'))
+              return { data: [], total: 0, success: false };
             const res = await queryErrorLogs({ ...query, ...params });
+            if (!canAction('list'))
+              return { data: [], total: 0, success: false };
             return {
               data: res?.data ?? [],
               total: res?.total ?? 0,
@@ -132,7 +152,7 @@ const ErrorLogPage: React.FC = () => {
 
       <Drawer
         closable={{ placement: 'end' }}
-        open={view.open}
+        open={view.open && canAction('read')}
         width={600}
         onClose={view.close}
         title="错误日志明细"

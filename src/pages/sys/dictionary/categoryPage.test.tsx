@@ -9,6 +9,7 @@ import {
 import { App, ConfigProvider } from 'antd';
 import type { ReactNode } from 'react';
 import { beforeEach, expect, it, vi } from 'vitest';
+import access from '@/access';
 import APIS from '@/apis';
 import type { ResourcePermissionUser } from '@/utils/resourcePermission';
 import type { DictItem } from './data.d';
@@ -25,6 +26,7 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock('@umijs/max', () => ({
   request: mocks.request,
+  useAccess: () => access({ currentUser: mocks.user }),
   history: { block: () => vi.fn() },
   useModel: () => ({
     initialState: { currentUser: mocks.user },
@@ -61,7 +63,11 @@ const biz: DictItem = {
 };
 beforeEach(() => {
   mocks.request.mockReset();
-  mocks.user = { name: 'fixture', resourcePermissionEnabled: false };
+  mocks.user = {
+    name: 'fixture',
+    resourcePermissionEnabled: false,
+    menus: [{ id: 'dict-menu', routeUrl: '/sys/dictionary', resources: [] }],
+  };
   mocks.writable = true;
   mocks.rows = [sys, biz];
   mocks.request.mockImplementation(async (url: string) => {
@@ -116,7 +122,11 @@ it('身份切换后旧详情返回不能恢复旧业务项或写权限', async (
       `${APIS.DICT_GET}/7?category=BUSINESS`,
     ),
   );
-  mocks.user = { name: 'another-user', resourcePermissionEnabled: false };
+  mocks.user = {
+    name: 'another-user',
+    resourcePermissionEnabled: false,
+    menus: [{ id: 'dict-menu', routeUrl: '/sys/dictionary', resources: [] }],
+  };
   mocks.rows = [sys];
   mocks.writable = false;
   view.rerenderPage();
@@ -288,7 +298,9 @@ it('维护能力为true也不能绕过具体POST资源，能读取业务项但�
     resourcePermissionEnabled: true,
     menus: [
       {
-        resources: [{ resourceType: 'GET', resourceUrl: '/sys/dictionary/**' }],
+        id: 'dict-menu',
+        routeUrl: '/sys/dictionary',
+        resources: ['list'],
       },
     ],
   };
@@ -299,8 +311,8 @@ it('维护能力为true也不能绕过具体POST资源，能读取业务项但�
     expect(screen.getAllByText('BIZ').length).toBeGreaterThan(1),
   );
   expect(screen.queryByLabelText('字典编码')).toBeNull();
-  expect(screen.getByRole('button', { name: /^新\s*增$/ })).toBeDisabled();
-  expect(screen.getByRole('button', { name: /保\s*存/ })).toBeDisabled();
+  expect(screen.queryByRole('button', { name: /^新\s*增$/ })).toBeNull();
+  expect(screen.queryByRole('button', { name: /保\s*存/ })).toBeNull();
   expect(
     mocks.request.mock.calls.some(([, options]) => options?.method === 'POST'),
   ).toBe(false);

@@ -391,3 +391,18 @@ it('当前目标授权失败保输入，重试原角色写载荷不清空', asyn
     roleIds: [roles[1].id, roles[0].id],
   });
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/account': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantRole',
+    ],
+    '/sys/role': ['read'],
+  }),
+}));

@@ -8,6 +8,7 @@ export interface AuthLoginParams {
 
 export interface AuthLoginResult {
   resourcePermissionEnabled?: boolean;
+  dataPermissionEnabled?: boolean;
   success?: boolean;
   code?: string;
   message?: string;

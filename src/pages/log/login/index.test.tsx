@@ -9,6 +9,7 @@ import {
 import { App, ConfigProvider, theme } from 'antd';
 import type { ReactNode } from 'react';
 import { beforeEach, expect, it, vi } from 'vitest';
+import access from '@/access';
 import APIS from '@/apis';
 import type { ResourcePermissionUser } from '@/utils/resourcePermission';
 import LoginLogPage from './index';
@@ -21,6 +22,7 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock('@umijs/max', () => ({
   request: mocks.request,
+  useAccess: () => access({ currentUser: mocks.user }),
   useModel: () => ({
     initialState: { currentUser: mocks.user },
     loading: mocks.loading,
@@ -42,12 +44,13 @@ const fixture = {
   userAgent: 'PRIVATE_AGENT_FIXTURE',
   tenantId: '42',
 };
-const grant = (url = '/monitor/log/login/**') => ({
+const grant = (key = 'all') => ({
   resourcePermissionEnabled: true,
   menus: [
     {
+      id: 'login-menu',
       routeUrl: '/log/login',
-      resources: [{ resourceType: 'GET', resourceUrl: url }],
+      resources: key === 'all' ? ['list', 'read'] : ['list'],
     },
   ],
 });
@@ -128,7 +131,7 @@ it.each(['missing-menu', 'unknown', 'loading', 'error'])(
 );
 
 it('list-only没有详情入口；分页仍发送pageNo/pageSize且无targetTenantId', async () => {
-  mocks.user = grant('/monitor/log/login/list');
+  mocks.user = grant('list');
   render(content());
   await screen.findByText('fixture-user');
   expect(screen.queryByRole('button', { name: '查看' })).toBeNull();

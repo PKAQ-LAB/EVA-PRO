@@ -186,3 +186,18 @@ it.each([false, true])(
     expect(success).toHaveBeenCalledTimes(1);
   },
 );
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/role': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantResource',
+      'grantUser',
+    ],
+  }),
+}));

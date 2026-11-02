@@ -21,7 +21,7 @@ import RolePage from './role';
 const mocks = vi.hoisted(() => ({ request: vi.fn(), english: false }));
 vi.mock('@umijs/max', async () => ({
   request: mocks.request,
-  useAccess: () => ({ canRequest: () => true }),
+  useAccess: () => ({ canAction: () => true }),
   history: (await import('@@/core/history')).createHistory({
     type: 'memory',
     initialEntries: ['/sys/dictionary'],
@@ -406,11 +406,14 @@ it.each([0, 9999])(
       name: '主字典',
       code: frozen === 9999 ? '9999' : 'FIXTURE',
       frozen,
+      category: frozen === 9999 ? 'SYSTEM' : 'BUSINESS',
+      readOnly: frozen === 9999,
       lines: [],
     };
     mocks.request.mockImplementation(async (url: string) => {
       const path = url.split('?')[0];
-      if (path === APIS.DICT_LIST) return { success: true, data: [record] };
+      if (path === APIS.DICT_LIST)
+        return { success: true, businessWritable: true, data: [record] };
       if (path === `${APIS.DICT_GET}/${record.id}`)
         return { success: true, data: record };
       throw new Error(`不允许的请求: ${path}`);
@@ -433,7 +436,7 @@ it.each([0, 9999])(
     ).toBeNull();
     const reads = () =>
       mocks.request.mock.calls.filter(
-        ([url]) => url === `${APIS.DICT_GET}/${record.id}`,
+        ([url]) => url.split('?')[0] === `${APIS.DICT_GET}/${record.id}`,
       );
     if (frozen === 0) {
       fireEvent.click(within(row).getByRole('button', { name: /删\s*除/ }));
@@ -447,13 +450,21 @@ it.each([0, 9999])(
       expect(within(row).queryByRole('button', { name: /删\s*除/ })).toBeNull();
     }
     fireEvent.click(within(row).getByText('主字典'));
-    await waitFor(() =>
-      expect(screen.getByLabelText('字典描述')).toHaveValue('主字典'),
-    );
-    expect(screen.getByLabelText('字典描述')).toHaveProperty(
-      'disabled',
-      frozen === 9999,
-    );
+    if (frozen === 0) {
+      await waitFor(() =>
+        expect(screen.getByLabelText('字典描述')).toHaveValue('主字典'),
+      );
+      expect(screen.getByLabelText('字典描述')).toBeEnabled();
+    } else {
+      await waitFor(() =>
+        expect(textField(document.body, '字典描述')).toHaveTextContent(
+          '主字典',
+        ),
+      );
+      expect(
+        textField(document.body, '字典描述').querySelector('input'),
+      ).toBeNull();
+    }
     expect(screen.getByRole('button', { name: /保\s*存/ })).toHaveProperty(
       'disabled',
       frozen === 9999,
@@ -628,3 +639,41 @@ it.each(
     ).toHaveLength(1);
   },
 );
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/dictionary': ['list', 'create', 'update', 'delete'],
+    '/sys/account': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantRole',
+    ],
+    '/sys/role': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantResource',
+      'grantUser',
+    ],
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+    '/sys/organization': ['list', 'read', 'create', 'update', 'delete', 'sort'],
+    '/log/online': ['list', 'read'],
+    '/log/biz': ['list', 'read'],
+    '/log/error': ['list', 'read'],
+  }),
+}));

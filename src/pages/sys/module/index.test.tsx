@@ -31,6 +31,7 @@ beforeEach(() => {
   mocks.switchModuleStatus.mockResolvedValue({ success: true });
 });
 vi.mock('@umijs/max', () => ({
+  useModel: () => ({}),
   useIntl: () => ({
     formatMessage: ({ defaultMessage }: { defaultMessage: string }) =>
       defaultMessage,
@@ -182,3 +183,17 @@ it('实际新增下级入口只预填父路由和父ID，不带父层级path作�
   expect(screen.getByLabelText('草稿父节点')).toHaveValue('m1');
   expect(screen.queryByDisplayValue('/0/m1')).not.toBeInTheDocument();
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+  }),
+}));

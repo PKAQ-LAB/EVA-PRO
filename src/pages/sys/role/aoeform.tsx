@@ -1,4 +1,4 @@
-import { useIntl } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import {
   Alert,
   App,
@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DictSelector } from '@/components';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import RecordAuditFields from '@/components/RecordAuditFields';
+import useMenuAccess from '@/utils/useMenuAccess';
 import useLeaveGuard from '../account/useLeaveGuard';
 import { frozenText, sysText } from '../status';
 import RoleDepartments from './component/roledepartments';
@@ -51,7 +52,13 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   detailsLoading = false,
   detailsError,
 }) => {
+  const canAction = useMenuAccess('/sys/role');
   const intl = useIntl();
+  const { initialState } = useModel('@@initialState');
+  const dataPermissionEnabled =
+    initialState?.currentUser?.dataPermissionEnabled;
+  const latestCapability = useRef(dataPermissionEnabled);
+  latestCapability.current = dataPermissionEnabled;
   const dialogStyles = useFormDialogStyles();
   const [form] = Form.useForm<RoleItem>();
   const { message: msg, modal } = App.useApp();
@@ -60,9 +67,20 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   const savingRef = useRef(false);
   const [dirty, setDirty] = useState(false);
   const isView = modalType === 'view';
+  const scopeVisible = isView
+    ? canAction('read')
+    : dataPermissionEnabled === true &&
+      canAction(modalType === 'create' ? 'create' : 'update');
+  const capabilityUnknown =
+    !isView && typeof dataPermissionEnabled !== 'boolean';
   const readOnly = isSystemRole(currentItem);
   const disabled =
-    isView || readOnly || submitting || detailsLoading || Boolean(detailsError);
+    isView ||
+    readOnly ||
+    !canAction(modalType === 'create' ? 'create' : 'update') ||
+    submitting ||
+    detailsLoading ||
+    Boolean(detailsError);
   const leaveGuard = useLeaveGuard({
     identity: `${modalType}:${currentItem.id ?? ''}`,
     dirty: !isView && dirty,
@@ -79,8 +97,11 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   const watchedScope = Form.useWatch('dataScope', { form, preserve: true });
   const watchedPosts = Form.useWatch('dataPostIds', { form, preserve: true });
   const effectiveScope = isView ? scope : (watchedScope ?? scope);
-  const postsVisible = modalType !== '' && effectiveScope === '0006';
-  const deptsVisible = modalType !== '' && effectiveScope === '0003';
+  const postsVisible =
+    scopeVisible && modalType !== '' && effectiveScope === '0006';
+  const deptsVisible =
+    scopeVisible && modalType !== '' && effectiveScope === '0003';
+  const scopePending = scopeVisible && detailsLoading;
   const watchedOrgs = Form.useWatch('dataOrgIds', { form, preserve: true });
   const [deptsReady, setDeptsReady] = useState(false);
   const deptsReadyRef = useRef(false);
@@ -175,6 +196,11 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
   };
 
   const handleSaveClick = async () => {
+    if (!canAction(modalType === 'create' ? 'create' : 'update')) return;
+    if (capabilityUnknown) {
+      msg.warning('数据权限能力尚未获取，请刷新页面后重试');
+      return;
+    }
     if (
       (modalType !== 'create' && modalType !== 'edit') ||
       disabled ||
@@ -192,9 +218,18 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
         }
         throw error;
       });
-      if (!values || !leaveGuard.isCurrent()) return;
-      if (values.dataScope === '0006' && !postsValidRef.current) return;
-      if (values.dataScope === '0003' && !deptsReadyRef.current) return;
+      if (
+        !values ||
+        !leaveGuard.isCurrent() ||
+        !canAction(modalType === 'create' ? 'create' : 'update')
+      )
+        return;
+      // 异步校验期间能力变化时，不让旧提交沿捕获的开关继续保存。
+      if (latestCapability.current !== dataPermissionEnabled) return;
+      if (dataPermissionEnabled === true) {
+        if (values.dataScope === '0006' && !postsValidRef.current) return;
+        if (values.dataScope === '0003' && !deptsReadyRef.current) return;
+      }
       // 隐藏部门控件时，validateFields不会返回该字段，仍须保留详情中的组织关联。
       const dataOrgIds: RoleItem['dataOrgIds'] =
         form.getFieldValue('dataOrgIds');
@@ -203,19 +238,29 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
         code: values.code,
         remark: values.remark,
         frozen: modalType === 'edit' ? currentItem.frozen : values.frozen,
-        dataScope: values.dataScope,
-        dataPostIds:
-          values.dataScope === '0006' ? form.getFieldValue('dataPostIds') : [],
         id: currentItem.id,
-        dataOrgIds:
-          values.dataScope === '0006'
-            ? ''
-            : Array.isArray(dataOrgIds)
-              ? dataOrgIds.join(',')
-              : dataOrgIds,
+        ...(dataPermissionEnabled === true
+          ? {
+              dataScope: values.dataScope,
+              dataPostIds:
+                values.dataScope === '0006'
+                  ? form.getFieldValue('dataPostIds')
+                  : [],
+              dataOrgIds:
+                values.dataScope === '0006'
+                  ? ''
+                  : Array.isArray(dataOrgIds)
+                    ? dataOrgIds.join(',')
+                    : dataOrgIds,
+            }
+          : {}),
       };
-      const res = await saveRole(formData);
-      if (!leaveGuard.isCurrent()) return;
+      const res = await saveRole(formData, dataPermissionEnabled);
+      if (
+        !leaveGuard.isCurrent() ||
+        !canAction(modalType === 'create' ? 'create' : 'update')
+      )
+        return;
       if (res.success) {
         leaveGuard.release();
         const action = sysText(
@@ -257,7 +302,7 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       keyboard={!submitting}
       confirmLoading={submitting}
       onCancel={isView ? () => setModalType('') : leaveGuard.requestClose}
-      open={modalType !== ''}
+      open={modalType !== '' && (!isView || canAction('read'))}
       width={postsVisible || deptsVisible ? 1060 : 700}
       centered
       onOk={handleSaveClick}
@@ -269,10 +314,15 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
       cancelButtonProps={{ disabled: submitting }}
       okButtonProps={{
         disabled:
+          !canAction(modalType === 'create' ? 'create' : 'update') ||
           disabled ||
+          capabilityUnknown ||
           (postsVisible && !postsValid) ||
           (deptsVisible && !deptsReady),
-        style: readOnly ? { display: 'none' } : undefined,
+        style:
+          readOnly || !canAction(modalType === 'create' ? 'create' : 'update')
+            ? { display: 'none' }
+            : undefined,
       }}
       title={sysText(
         intl,
@@ -288,6 +338,13 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
             : '新增角色',
       )}
     >
+      {capabilityUnknown && (
+        <Alert
+          className="eva-view-notice"
+          type="warning"
+          title="数据权限能力尚未获取，请刷新页面后重试"
+        />
+      )}
       {detailsError && (
         <Alert
           className="eva-view-notice"
@@ -340,11 +397,13 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
               >
                 {renderValue(currentItem.remark?.trim() || '—', true)}
               </Form.Item>
-              <Form.Item
-                label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
-              >
-                {renderValue(scope?.trim() || '—')}
-              </Form.Item>
+              {scopeVisible && (
+                <Form.Item
+                  label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
+                >
+                  {renderValue(scope?.trim() || '—')}
+                </Form.Item>
+              )}
               {isView && (
                 <RecordAuditFields
                   record={currentItem}
@@ -431,40 +490,42 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
               >
                 <Input.TextArea maxLength={60} disabled={disabled} />
               </Form.Item>
-              <Form.Item
-                label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
-                name="dataScope"
-                rules={[
-                  {
-                    required: true,
-                    whitespace: true,
-                    message: sysText(
-                      intl,
-                      'pages.sys.role.dataScopeRequired',
-                      '请选择数据权限',
-                    ),
-                  },
-                ]}
-              >
-                <DictSelector
-                  code="DATA_SCOPE"
-                  disabled={disabled}
-                  showall={false}
-                  onChange={(v) => handleDataPermissionChange(String(v))}
-                />
-              </Form.Item>
+              {scopeVisible && (
+                <Form.Item
+                  label={sysText(intl, 'pages.sys.role.dataScope', '数据权限')}
+                  name="dataScope"
+                  rules={[
+                    {
+                      required: true,
+                      whitespace: true,
+                      message: sysText(
+                        intl,
+                        'pages.sys.role.dataScopeRequired',
+                        '请选择数据权限',
+                      ),
+                    },
+                  ]}
+                >
+                  <DictSelector
+                    code="DATA_SCOPE"
+                    disabled={disabled}
+                    showall={false}
+                    onChange={(v) => handleDataPermissionChange(String(v))}
+                  />
+                </Form.Item>
+              )}
             </Form>
           )}
         </div>
         <div
           data-role-department-region
-          aria-hidden={!deptsVisible && !detailsLoading ? true : undefined}
+          aria-hidden={!deptsVisible && !scopePending ? true : undefined}
           style={{
             flex: '1 1 300px',
             minWidth: 0,
             minHeight:
               'calc(var(--ant-control-height, 32px) + var(--ant-margin-lg, 24px))',
-            display: deptsVisible || detailsLoading ? undefined : 'none',
+            display: deptsVisible || scopePending ? undefined : 'none',
           }}
         >
           {deptsVisible ? (
@@ -483,7 +544,7 @@ const RoleAOEForm: React.FC<RoleAOEFormProps> = ({
                 }
               }}
             />
-          ) : detailsLoading ? (
+          ) : scopePending ? (
             <Skeleton.Node
               active
               styles={{

@@ -175,7 +175,8 @@ it.each([0, 1, 9999] as const)(
     if (!child) throw new Error('缺少资源查看对话框');
     expect(child).toHaveStyle({ width: '500px' });
     expect(textField(child, '资源描述')).toHaveTextContent('查询资源');
-    expect(child.querySelectorAll('.eva-view-value')).toHaveLength(3);
+    expect(child.querySelectorAll('.eva-view-value')).toHaveLength(4);
+    expect(textField(child, '动作标识')).toHaveTextContent('—');
     for (const label of ['创建人', '创建时间', '修改人', '修改时间']) {
       expect(
         within(child).queryByText(label, { selector: 'label' }),
@@ -323,3 +324,17 @@ it('edit打开并关闭资源view保留父dirty且没有第二个离开拦截', 
   ).toBeInTheDocument();
   expect(close).not.toHaveBeenCalled();
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+  }),
+}));

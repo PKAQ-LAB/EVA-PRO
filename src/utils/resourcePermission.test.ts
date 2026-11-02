@@ -1,166 +1,123 @@
-import { describe, expect, it } from 'vitest';
+import { expect, it } from 'vitest';
 import access from '@/access';
 import {
-  canRequestResource,
-  matchesResourcePath,
+  canActionResource,
   type ResourcePermissionUser,
+  resolveMenuId,
   resourcePermissionFromResponse,
 } from './resourcePermission';
 
-const user = (method: string, path: string): ResourcePermissionUser => ({
-  access: 'admin',
-  resourcePermissionEnabled: true,
-  menus: [
-    {
-      children: [{ resources: [{ resourceType: method, resourceUrl: path }] }],
-    },
-  ],
+const user = (
+  resources: unknown = ['list', 'read'],
+  enabled: unknown = true,
+): ResourcePermissionUser =>
+  ({
+    resourcePermissionEnabled: enabled,
+    menus: [
+      { id: 'org-menu', routeUrl: '/sys/organization', resources },
+      { id: 'role-menu', routeUrl: '/sys/role', resources: ['update'] },
+    ],
+  }) as ResourcePermissionUser;
+it('按稳定菜单ID和key判定，同名兄弟key不借权，read不包含list/update', () => {
+  const current = user(['read']);
+  const permission = access({ currentUser: current });
+  expect(permission.canAction('org-menu', 'read')).toBe(true);
+  expect(permission.canAction('/sys/organization', 'read')).toBe(true);
+  expect(permission.canAction('org-menu', 'list')).toBe(false);
+  expect(permission.canAction('org-menu', 'update')).toBe(false);
+  expect(permission.canAction('role-menu', 'update')).toBe(true);
+  expect(permission.canAction('/sys/organizations', 'read')).toBe(false);
+  expect(permission.canAction('/sys/organization/7', 'read')).toBe(false);
 });
-
-describe('服务端资源路径与开关', () => {
-  it.each([
-    ['/sys/organization/get/{id}', '/sys/organization/get/7', true],
-    ['/sys/organization/get/{id}', '/sys/organization/get', false],
-    ['/sys/organization/get/{id}', '/sys/organization/get/7/child', false],
-    ['/sys/organization/g?t', '/sys/organization/get', true],
-    ['/sys/organization/g?t', '/sys/organization/geet', false],
-    ['/sys/organization/get*', '/sys/organization/getAll', true],
-    ['/sys/organization/*', '/sys/organization/get/7', false],
-    ['/sys/organization/**', '/sys/organization/get/7', true],
-    ['/sys/organization/**', '/sys/organization', true],
-    ['/sys/**/get/{id}', '/sys/get/7', true],
-    ['/sys/**/get/{id}', '/sys/a/b/get/7', true],
-    ['/sys/organization', '/sys/organizations', false],
-    ['/sys/organization/', '/sys/organization', false],
-    ['/', '/sys/organization/get/7', false],
-    ['/sys/{id:[0-9]+}', '/sys/7', false],
-    ['/sys/{broken', '/sys/7', false],
-    ['/sys/**', '/sys/../other', false],
-    ['/sys/**', '/sys/%ZZ', false],
-  ])('Ant边界 %s 对 %s = %s', (pattern, path, allowed) => {
-    expect(matchesResourcePath(pattern, path)).toBe(allowed);
-  });
-
-  it('按实际method和路径判定，资源兄弟、admin和近似前缀不放行', () => {
-    const current = user('get', '/sys/organization/get/{id}');
-    expect(
-      canRequestResource(
-        current,
-        'GET',
-        '/api/sys/organization/get/7?x=1#part',
-      ),
-    ).toBe(true);
-    expect(
-      canRequestResource(current, 'POST', '/api/sys/organization/get/7'),
-    ).toBe(false);
-    expect(
-      canRequestResource(current, 'POST', '/api/sys/organization/del'),
-    ).toBe(false);
-    expect(
-      canRequestResource(current, 'GET', '/apix/sys/organization/get/7'),
-    ).toBe(false);
-    expect(
-      canRequestResource(current, 'GET', '/api/api/sys/organization/get/7'),
-    ).toBe(false);
-    expect(
-      canRequestResource(
-        current,
-        'GET',
-        'https://external/sys/organization/get/7',
-      ),
-    ).toBe(false);
-    expect(
-      access({ currentUser: { access: 'admin' } }).canRequest(
-        'POST',
-        '/api/sys/organization/del',
-      ),
-    ).toBe(false);
-  });
-
-  it('只有method=*支持非根路径及移除单尾斜杠后的下级兼容', () => {
-    for (const path of ['/sys/organization', '/sys/organization/']) {
-      expect(
-        canRequestResource(
-          user('*', path),
-          'POST',
-          '/api/sys/organization/get/7',
-        ),
-      ).toBe(true);
-      expect(
-        canRequestResource(
-          user('POST', path),
-          'POST',
-          '/api/sys/organization/get/7',
-        ),
-      ).toBe(false);
-      expect(
-        canRequestResource(
-          user('*', path),
-          'POST',
-          '/api/sys/organizations/get/7',
-        ),
-      ).toBe(false);
-    }
-    expect(
-      canRequestResource(user('*', '/'), 'POST', '/api/sys/organization/del'),
-    ).toBe(false);
-  });
-
-  it.each([undefined, null, 'false', 'true', 0, 1])(
-    '未知能力%s拒绝，不能由admin或坏资源补权',
-    (flag) => {
-      const current = {
-        ...user('*', '/**'),
-        resourcePermissionEnabled: flag,
-      } as ResourcePermissionUser;
-      expect(
-        canRequestResource(current, 'POST', '/api/sys/organization/del'),
-      ).toBe(false);
-      expect(
-        resourcePermissionFromResponse({
-          success: true,
-          resourcePermissionEnabled: flag,
-        }),
-      ).toBeUndefined();
-    },
-  );
-
-  it('false必须显式成功且已认证；缺/坏菜单在true下拒绝，循环菜单不递归溢出', () => {
+it.each([undefined, null, 'true', 'false', 0, 1])(
+  '未知resource能力%s拒绝，admin/dataflag不补权',
+  (flag) => {
+    const current = {
+      ...user(['read']),
+      resourcePermissionEnabled: flag,
+      access: 'admin',
+      dataPermissionEnabled: false,
+    } as ResourcePermissionUser;
+    expect(canActionResource(current, 'org-menu', 'read')).toBe(false);
     expect(
       resourcePermissionFromResponse({
         success: true,
-        resourcePermissionEnabled: false,
-      }),
-    ).toBe(false);
-    expect(
-      resourcePermissionFromResponse({
-        success: false,
-        resourcePermissionEnabled: false,
+        resourcePermissionEnabled: flag,
       }),
     ).toBeUndefined();
-    expect(
-      resourcePermissionFromResponse({ resourcePermissionEnabled: false }),
-    ).toBeUndefined();
-    expect(
-      canRequestResource(undefined, 'POST', '/api/sys/organization/edit'),
-    ).toBe(false);
-    expect(
-      canRequestResource(
-        { resourcePermissionEnabled: false },
-        'POST',
-        '/api/sys/organization/edit',
-      ),
-    ).toBe(true);
-    const menu: { children?: unknown[]; resources?: unknown } = {
-      resources: [{ resourceType: null, resourceUrl: '/**' }],
-    };
-    menu.children = [menu];
-    expect(
-      canRequestResource(
-        { resourcePermissionEnabled: true, menus: [menu] },
-        'POST',
-        '/api/sys/organization/edit',
-      ),
-    ).toBe(false);
-  });
+  },
+);
+it.each([
+  [{ resourceType: '*', resourceUrl: '/**' }],
+  ['read', { resourceType: 'GET', resourceUrl: '/sys/**' }],
+  null,
+])('旧metadata或坏资源%s不能授权', (resources) =>
+  expect(canActionResource(user(resources), 'org-menu', 'read')).toBe(false),
+);
+it('显式关闭绕key仍需唯一菜单，缺身份/菜单或重复ID都拒绝', () => {
+  expect(canActionResource(user([], false), 'org-menu', 'update')).toBe(true);
+  expect(canActionResource(user([], false), 'missing', 'update')).toBe(false);
+  expect(canActionResource(undefined, 'org-menu', 'read')).toBe(false);
+  expect(
+    canActionResource(
+      {
+        ...user(),
+        menus: [
+          { id: 'x', routeUrl: '/sys/role', resources: ['read'] },
+          { id: 'x', routeUrl: '/sys/organization', resources: ['read'] },
+        ],
+      },
+      'x',
+      'read',
+    ),
+  ).toBe(false);
+});
+it('route只精确读取routeUrl，别名唯一才解析，不从code或前缀猜菜单', () => {
+  const current = {
+    ...user(),
+    menus: [{ id: 'account', routeUrl: '/sys/account', resources: ['read'] }],
+  };
+  expect(resolveMenuId(current, '/sys/user')).toBe('account');
+  expect(
+    resolveMenuId(
+      {
+        ...current,
+        menus: [
+          ...current.menus,
+          { id: 'other', routeUrl: '/sys/user', resources: ['read'] },
+        ],
+      },
+      '/sys/user',
+    ),
+  ).toBeUndefined();
+  expect(
+    resolveMenuId(
+      {
+        ...current,
+        menus: [{ id: 'fake', code: 'sys.organization', resources: ['read'] }],
+      },
+      '/sys/organization',
+    ),
+  ).toBeUndefined();
+});
+it.each(['*', 'API_SYS_EDIT', 'sys.read', 'sys:read', '', 'Read'])(
+  '非法/旧命名key%s不推权限',
+  (key) => expect(canActionResource(user([key]), 'org-menu', key)).toBe(false),
+);
+it('成功外层boolean只认显式值，失败与缺状态不能启用', () => {
+  expect(
+    resourcePermissionFromResponse({
+      success: true,
+      resourcePermissionEnabled: false,
+    }),
+  ).toBe(false);
+  expect(
+    resourcePermissionFromResponse({
+      success: false,
+      resourcePermissionEnabled: true,
+    }),
+  ).toBeUndefined();
+  expect(
+    resourcePermissionFromResponse({ resourcePermissionEnabled: true }),
+  ).toBeUndefined();
 });

@@ -13,6 +13,7 @@ import ModulePage from './index';
 
 const mocks = vi.hoisted(() => ({ get: vi.fn() }));
 vi.mock('@umijs/max', () => ({
+  useModel: () => ({}),
   useIntl: () => ({
     formatMessage: ({ defaultMessage }: { defaultMessage: string }) =>
       defaultMessage,
@@ -166,3 +167,17 @@ it('edit迟响应不能覆盖随后打开的view，view读取错误明确展示'
   expect(screen.getByLabelText('AOE')).toHaveTextContent('view');
   expect(screen.getByLabelText('AOE')).not.toHaveTextContent('迟编辑');
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+  }),
+}));

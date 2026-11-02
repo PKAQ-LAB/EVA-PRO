@@ -129,3 +129,18 @@ it('已弹出放弃确认后启动上传，再确认不能关闭；卸载后的�
   expect(view.close).not.toHaveBeenCalled();
   expect(mocks.editAccount).not.toHaveBeenCalled();
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/account': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantRole',
+    ],
+    '/sys/role': ['read'],
+  }),
+}));

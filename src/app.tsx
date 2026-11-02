@@ -32,6 +32,7 @@ import { user_key } from '@/constant';
 import { fetchDict, fetchMenus } from '@/services/user';
 import { isAuthExpiredError, redirectToLogin } from '@/utils/authState';
 import { loopMenuItem } from '@/utils/DataHelper';
+import { dataPermissionFromResponse } from '@/utils/dataPermission';
 import {
   beginDictionarySession,
   type DictionaryState,
@@ -88,6 +89,7 @@ function normalizeCurrentUser(
   data: unknown,
   fallbackUser?: Record<string, unknown>,
   resourcePermissionEnabled?: boolean,
+  dataPermissionEnabled?: boolean,
 ): ResourcePermissionUser | undefined {
   const menus = extractMenus(data);
   const baseUser = fallbackUser || {};
@@ -95,6 +97,7 @@ function normalizeCurrentUser(
     return {
       ...baseUser,
       resourcePermissionEnabled,
+      dataPermissionEnabled,
       name:
         (baseUser.name as string | undefined) ??
         (baseUser.nickName as string | undefined) ??
@@ -117,6 +120,7 @@ function normalizeCurrentUser(
   return {
     ...mergedUser,
     resourcePermissionEnabled,
+    dataPermissionEnabled,
     menus,
     name:
       (mergedUser.name as string | undefined) ??
@@ -186,6 +190,7 @@ export async function getInitialState(): Promise<
       msg.data,
       cachedUser,
       resourcePermissionFromResponse(msg),
+      dataPermissionFromResponse(msg),
     );
     if (!user) throw new Error('登录状态初始化响应无效');
     return user;

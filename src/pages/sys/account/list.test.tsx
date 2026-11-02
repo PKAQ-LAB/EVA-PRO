@@ -133,3 +133,18 @@ it('锁定请求期间防重复，失败不刷新且恢复重试按钮', async (
   expect(mocks.reload).not.toHaveBeenCalled();
   expect(button).not.toBeDisabled();
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/account': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantRole',
+    ],
+    '/sys/role': ['read'],
+  }),
+}));

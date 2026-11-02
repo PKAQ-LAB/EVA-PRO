@@ -7,12 +7,17 @@ import {
 } from '@testing-library/react';
 import { App } from 'antd';
 import { expect, it, vi } from 'vitest';
+import { dictionaryGeneration, dictionaryOwner } from '@/utils/dictionaryState';
 import ModuleLineAOEForm from './lineaoeform';
 import ModuleLineList from './linelist';
 
 vi.mock('@umijs/max', () => ({
   useModel: () => ({
     initialState: {
+      currentUser: { userid: 'fixture' },
+      dictOwner: dictionaryOwner({ userid: 'fixture' }),
+      dictGeneration: dictionaryGeneration(),
+      dictStatus: 'ready',
       dict: {
         RESOURCE_TYPE: {
           '*': '全部',
@@ -44,7 +49,7 @@ it('资源空列表不自动创建授权，只有普通新增入口且沿现有H
     ),
   );
   expect(screen.queryByLabelText('资源编码')).not.toBeInTheDocument();
-  fireEvent.mouseDown(screen.getByRole('combobox'));
+  fireEvent.mouseDown(screen.getByRole('combobox', { name: '资源类型' }));
   expect(
     await screen.findByRole('option', { name: 'POST' }),
   ).toBeInTheDocument();
@@ -116,6 +121,63 @@ it('编辑资源保留ID/归属/排序且不修改原对象，同路径不同HTT
   });
   expect(original.resourceDesc).toBe('查询');
 });
+it('同HTTP路径可分别配置create和update，清空actionKey显式null且保留ID/code', async () => {
+  const lines = [
+    {
+      id: 'a',
+      code: 'CREATE_ROW',
+      actionKey: 'create',
+      resourceDesc: '新增',
+      resourceUrl: '/sys/module/edit',
+      resourceType: 'POST',
+    },
+    {
+      id: 'b',
+      code: 'UPDATE_ROW',
+      actionKey: 'update',
+      resourceDesc: '编辑',
+      resourceUrl: '/sys/module/edit',
+      resourceType: 'POST',
+    },
+  ];
+  const setLines = vi.fn();
+  render(
+    <App>
+      <ModuleLineAOEForm
+        modalType="edit"
+        setModalType={vi.fn()}
+        lines={lines}
+        setLines={setLines}
+        editIndex={0}
+        setEditIndex={vi.fn()}
+        resourceTypeDict={{ POST: 'POST' }}
+      />
+    </App>,
+  );
+  fireEvent.change(screen.getByLabelText('资源描述'), {
+    target: { value: '新增资料' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: /提\s*交/ }));
+  await waitFor(() => expect(setLines).toHaveBeenCalledOnce());
+  expect(setLines.mock.calls[0][0][0]).toMatchObject({
+    id: 'a',
+    code: 'CREATE_ROW',
+    actionKey: 'create',
+  });
+  setLines.mockClear();
+  fireEvent.change(screen.getByLabelText('动作标识'), {
+    target: { value: '' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: /提\s*交/ }));
+  await waitFor(() => expect(setLines).toHaveBeenCalledOnce());
+  expect(setLines.mock.calls[0][0][0]).toMatchObject({
+    id: 'a',
+    code: 'CREATE_ROW',
+    actionKey: null,
+  });
+  expect(lines[0].actionKey).toBe('create');
+});
+
 it('普通HTTP资源仍通过真实确认删除且保留未删除记录的ID', async () => {
   const lines = [
     {
@@ -146,3 +208,17 @@ it('普通HTTP资源仍通过真实确认删除且保留未删除记录的ID', a
   expect(lines).toHaveLength(2);
   expect(lines[1].id).toBe('r2');
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+  }),
+}));

@@ -25,6 +25,7 @@ import {
   findTreeNode,
   isTreeParentAllowed,
 } from '@/utils/treeOperations';
+import useMenuAccess from '@/utils/useMenuAccess';
 import useLeaveGuard from '../account/useLeaveGuard';
 import type { ModuleItem, ModuleResource } from './data.d';
 import ModuleLineList from './linelist';
@@ -65,6 +66,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
   detailsLoading = false,
   detailsError,
 }) => {
+  const canAction = useMenuAccess('/sys/module');
   const [form] = Form.useForm<
     Omit<ModuleItem, 'status'> & { status?: boolean }
   >();
@@ -100,7 +102,11 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
     </div>
   );
   const disabled =
-    isView || submitting || detailsLoading || Boolean(detailsError);
+    isView ||
+    !canAction(operateType === 'create' ? 'create' : 'update') ||
+    submitting ||
+    detailsLoading ||
+    Boolean(detailsError);
   const leaveGuard = useLeaveGuard({
     identity: `${operateType}:${currentItem.id ?? ''}`,
     dirty: !isView && dirty,
@@ -143,6 +149,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
   };
 
   const handleSaveClick = async () => {
+    if (!canAction(operateType === 'create' ? 'create' : 'update')) return;
     if (
       (operateType !== 'create' && operateType !== 'edit') ||
       disabled ||
@@ -154,7 +161,11 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
     setSubmitting(true);
     try {
       const values = await form.validateFields();
-      if (!leaveGuard.isCurrent()) return;
+      if (
+        !leaveGuard.isCurrent() ||
+        !canAction(operateType === 'create' ? 'create' : 'update')
+      )
+        return;
       if (fixedParent && values.parentId !== currentItem.parentId) {
         msg.error('新增下级时不能修改上级模块');
         return;
@@ -183,6 +194,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
             id,
             mainId,
             code,
+            actionKey,
             sort,
             resourceDesc,
             resourceUrl,
@@ -191,6 +203,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
             id,
             mainId,
             code,
+            actionKey: actionKey?.trim() || null,
             sort,
             resourceDesc,
             resourceUrl,
@@ -198,7 +211,11 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
           }),
         ),
       });
-      if (!leaveGuard.isCurrent()) return;
+      if (
+        !leaveGuard.isCurrent() ||
+        !canAction(operateType === 'create' ? 'create' : 'update')
+      )
+        return;
       if (res.success) {
         leaveGuard.release();
         msg.success(`${TITLE[operateType as 'create' | 'edit']}成功`);
@@ -229,7 +246,7 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
       width={640}
       mask={{ closable: false }}
       onClose={isView ? onClose : leaveGuard.requestClose}
-      open={operateType !== ''}
+      open={operateType !== '' && (!isView || canAction('read'))}
       title={`${TITLE[operateType as Exclude<OperateType, ''>] ?? '查看'}模块信息`}
       destroyOnHidden
       footer={
@@ -241,16 +258,21 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
           >
             {isView ? '关闭' : '取消'}
           </Button>
-          {!isView && (
-            <Button
-              disabled={disabled || lineDialogOpen}
-              onClick={handleSaveClick}
-              type="primary"
-              loading={submitting}
-            >
-              保存
-            </Button>
-          )}
+          {!isView &&
+            canAction(operateType === 'create' ? 'create' : 'update') && (
+              <Button
+                disabled={
+                  !canAction(operateType === 'create' ? 'create' : 'update') ||
+                  disabled ||
+                  lineDialogOpen
+                }
+                onClick={handleSaveClick}
+                type="primary"
+                loading={submitting}
+              >
+                保存
+              </Button>
+            )}
         </div>
       }
     >
@@ -480,17 +502,18 @@ const ModuleAOEForm: React.FC<ModuleAOEFormProps> = ({
           aria-busy={detailsLoading && !detailsError}
         >
           <Divider>资源信息</Divider>
-          {!isView && (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                marginBottom: 10,
-              }}
-            >
-              <Skeleton.Button active={detailsLoading && !detailsError} />
-            </div>
-          )}
+          {!isView &&
+            canAction(operateType === 'create' ? 'create' : 'update') && (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  marginBottom: 10,
+                }}
+              >
+                <Skeleton.Button active={detailsLoading && !detailsError} />
+              </div>
+            )}
           <Table
             rowKey="id"
             size="small"

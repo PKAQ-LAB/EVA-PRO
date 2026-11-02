@@ -15,6 +15,7 @@ import {
   TextCell,
   textColumn,
 } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import { frozenText } from '../status';
 import type { AccountItem } from './data.d';
 import {
@@ -49,9 +50,10 @@ const AccountList: React.FC<AccountListProps> = ({
   innerRef,
   query,
 }) => {
+  const canAction = useMenuAccess('/sys/account');
   const intl = useIntl();
   const handleView = (record: AccountItem) => {
-    if (record.id) onView(record);
+    if (record.id && canAction('read')) onView(record);
   };
   const { message: msg, modal } = App.useApp();
   const actionRef = React.useRef<ActionType | undefined>(undefined);
@@ -65,6 +67,7 @@ const AccountList: React.FC<AccountListProps> = ({
   );
 
   const handleDelete = async (record: AccountItem) => {
+    if (!canAction('delete')) return;
     if (!record.id) return;
     const res = await deleteAccounts([record.id]);
     if (res.success) {
@@ -85,6 +88,7 @@ const AccountList: React.FC<AccountListProps> = ({
   };
 
   const handleEdit = async (record: AccountItem) => {
+    if (!canAction('update')) return;
     if (record.frozen === 9999 || record.frozen === 1) return;
     if (!record.id) {
       modal.warning({ title: '提示', content: '没有选择记录' });
@@ -94,12 +98,14 @@ const AccountList: React.FC<AccountListProps> = ({
   };
 
   const handleGrant = async (record: AccountItem) => {
+    if (!canAction('grantRole')) return;
     if (record.frozen === 9999 || record.frozen === 1) return;
     if (!record.id) return;
     onGrant(record);
   };
 
   const handleLock = async (record: AccountItem) => {
+    if (!canAction('freeze')) return;
     if (!record.id || record.frozen === 9999 || lockingRef.current) return;
     lockingRef.current = true;
     setLockingId(record.id);
@@ -143,39 +149,71 @@ const AccountList: React.FC<AccountListProps> = ({
       search: false,
       render: (_, record) => (
         <ActionGroup>
-          <Button type="link" size="small" onClick={() => handleView(record)}>
-            查看
-          </Button>
+          {canAction('read') && (
+            <Button
+              type="link"
+              size="small"
+              disabled={!canAction('read')}
+              onClick={() => handleView(record)}
+            >
+              查看
+            </Button>
+          )}
           {record.frozen !== 9999 && (
             <div onDoubleClick={(event) => event.stopPropagation()}>
-              <Button
-                type="link"
-                size="small"
-                icon={
-                  record.frozen === 1 ? <UnlockOutlined /> : <LockOutlined />
-                }
-                loading={lockingId === record.id}
-                disabled={lockingId !== null}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  void handleLock(record);
-                }}
-              >
-                {record.frozen === 1 ? '解锁' : '锁定'}
-              </Button>
+              {canAction('freeze') && (
+                <Button
+                  type="link"
+                  size="small"
+                  icon={
+                    record.frozen === 1 ? <UnlockOutlined /> : <LockOutlined />
+                  }
+                  loading={lockingId === record.id}
+                  disabled={!canAction('freeze') || lockingId !== null}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    void handleLock(record);
+                  }}
+                >
+                  {record.frozen === 1 ? '解锁' : '锁定'}
+                </Button>
+              )}
               {record.frozen !== 1 && (
                 <>
                   <Divider type="vertical" />
-                  <a onClick={() => handleGrant(record)}>角色授权</a>
+                  {canAction('grantRole') && (
+                    <Button
+                      type="link"
+                      size="small"
+                      disabled={!canAction('grantRole')}
+                      onClick={() => handleGrant(record)}
+                    >
+                      角色授权
+                    </Button>
+                  )}
                   <Divider type="vertical" />
-                  <a onClick={() => handleEdit(record)}>编辑</a>
+                  {canAction('update') && (
+                    <Button
+                      type="link"
+                      size="small"
+                      disabled={!canAction('update')}
+                      onClick={() => handleEdit(record)}
+                    >
+                      编辑
+                    </Button>
+                  )}
                   <Divider type="vertical" />
-                  <a
-                    className="eva-delete-link"
-                    onClick={() => confirmDelete(record)}
-                  >
-                    删除
-                  </a>
+                  {canAction('delete') && (
+                    <Button
+                      type="link"
+                      size="small"
+                      disabled={!canAction('delete')}
+                      className="eva-delete-link"
+                      onClick={() => confirmDelete(record)}
+                    >
+                      删除
+                    </Button>
+                  )}
                 </>
               )}
             </div>
@@ -210,10 +248,12 @@ const AccountList: React.FC<AccountListProps> = ({
       }
       onRow={(record) => viewRow(() => handleView(record))}
       request={async (params) => {
+        if (!canAction('list')) return { data: [], total: 0, success: false };
         const res: AccountListResponse = await queryAccountList({
           ...query,
           ...params,
         });
+        if (!canAction('list')) return { data: [], total: 0, success: false };
         return {
           data: res?.data ?? [],
           total: res?.total ?? 0,

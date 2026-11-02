@@ -14,6 +14,7 @@ import RoleAOEForm, { type RoleAOEFormProps } from './aoeform';
 import type { RoleItem } from './data.d';
 
 const mocks = vi.hoisted(() => ({
+  dataPermissionEnabled: true as unknown,
   request:
     vi.fn<
       (
@@ -23,6 +24,11 @@ const mocks = vi.hoisted(() => ({
     >(),
 }));
 vi.mock('@umijs/max', () => ({
+  useModel: () => ({
+    initialState: {
+      currentUser: { dataPermissionEnabled: mocks.dataPermissionEnabled },
+    },
+  }),
   request: mocks.request,
   history: { block: () => vi.fn() },
   useIntl: () => ({
@@ -79,6 +85,7 @@ const record: Partial<RoleItem> = {
 const saves = () =>
   mocks.request.mock.calls.filter(([url]) => url === APIS.ROLE_SAVE);
 beforeEach(() => {
+  mocks.dataPermissionEnabled = true;
   mocks.request.mockReset();
   mocks.request.mockImplementation(async (url) =>
     url === APIS.ORG_LIST
@@ -113,6 +120,115 @@ function show(
       view.rerender(content(next, nextMode)),
   };
 }
+it.each([
+  ['create', '0003'],
+  ['create', '0006'],
+  ['edit', '0003'],
+  ['edit', '0006'],
+] as const)(
+  '能力关闭时%s原范围%s隐藏且不加载候选，提交不含主字段及legacy',
+  async (mode, dataScope) => {
+    mocks.dataPermissionEnabled = false;
+    show(
+      {
+        ...record,
+        dataScope,
+        id: mode === 'edit' ? record.id : undefined,
+        dataOrgIds: ['101'],
+        dataPermissionType: '0003',
+        dataPermissionDeptid: '101',
+      },
+      mode,
+    );
+    expect(screen.queryByLabelText('数据权限')).toBeNull();
+    expect(screen.queryByRole('region', { name: '指定岗位' })).toBeNull();
+    expect(screen.queryByRole('region', { name: '指定部门' })).toBeNull();
+    expect(screen.getByRole('dialog')).toHaveStyle({ width: '700px' });
+    expect(
+      mocks.request.mock.calls.filter(
+        ([url]) => url === APIS.POST_LIST || url === APIS.ORG_LIST,
+      ),
+    ).toHaveLength(0);
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    await waitFor(() => expect(saves()).toHaveLength(1));
+    const body = saves()[0][1]?.data;
+    for (const key of [
+      'dataScope',
+      'dataOrgIds',
+      'dataPostIds',
+      'dataPermissionType',
+      'dataPermissionDeptid',
+    ])
+      expect(body).not.toHaveProperty(key);
+  },
+);
+
+it.each([undefined, null, 'false', 'true', 0])(
+  '能力未知%s时隐藏选择并阻止提交',
+  async (flag) => {
+    mocks.dataPermissionEnabled = flag;
+    show();
+    expect(screen.queryByLabelText('数据权限')).toBeNull();
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      '数据权限能力尚未获取，请刷新页面后重试',
+    );
+    expect(screen.getByRole('button', { name: /确\s*定/ })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    expect(saves()).toHaveLength(0);
+    expect(mocks.request).not.toHaveBeenCalled();
+  },
+);
+
+it.each([false, undefined])(
+  '编码校验期间能力变为%s时旧提交不保存',
+  async (flag) => {
+    let finish: (value: unknown) => void = () => {};
+    mocks.request.mockImplementation(async (url) =>
+      url === APIS.ROLE_CHECKUNIQUE
+        ? new Promise((resolve) => {
+            finish = resolve;
+          })
+        : { success: true, data: [] },
+    );
+    const item = { ...record, dataScope: '0001' };
+    const view = show(item);
+    fireEvent.change(screen.getByLabelText('角色编码'), {
+      target: { value: 'NEW_CODE' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+    await waitFor(() =>
+      expect(mocks.request).toHaveBeenCalledWith(
+        APIS.ROLE_CHECKUNIQUE,
+        expect.anything(),
+      ),
+    );
+    mocks.dataPermissionEnabled = flag;
+    view.change(item);
+    await act(async () => finish({ success: true }));
+    await waitFor(() =>
+      expect(screen.getByLabelText('角色编码')).not.toBeDisabled(),
+    );
+    expect(saves()).toHaveLength(0);
+  },
+);
+
+it('同表单能力从开启转为关闭保留草稿但不提交原范围', async () => {
+  const view = show(record);
+  await screen.findByText('岗位甲');
+  const name = screen.getByLabelText('角色名称');
+  fireEvent.change(name, { target: { value: '切换后保留草稿' } });
+  mocks.dataPermissionEnabled = false;
+  view.change(record);
+  expect(screen.getByLabelText('角色名称')).toBe(name);
+  expect(name).toHaveValue('切换后保留草稿');
+  expect(screen.queryByLabelText('数据权限')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: /确\s*定/ }));
+  await waitFor(() => expect(saves()).toHaveLength(1));
+  expect(saves()[0][1]?.data).toMatchObject({ name: '切换后保留草稿' });
+  expect(saves()[0][1]?.data).not.toHaveProperty('dataScope');
+  expect(saves()[0][1]?.data).not.toHaveProperty('dataPostIds');
+});
+
 it('恢复左右布局切换部门和岗位加宽弹窗，保留表单输入和未保存保护', async () => {
   const view = show({ ...record, dataScope: '0001', dataPostIds: [] });
   const dialog = screen.getByRole('dialog');
@@ -383,3 +499,18 @@ it('部门树单子选择保持精确ID并参与取消草稿保护', async () =>
   expect(saves()[0][1]?.data?.dataOrgIds).toBe('102');
   expect(view.close).toHaveBeenCalledTimes(1);
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/role': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantResource',
+      'grantUser',
+    ],
+  }),
+}));

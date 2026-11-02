@@ -19,6 +19,7 @@ import { createStyles } from 'antd-style';
 import { MD5 } from 'jscrypto/es6/MD5';
 import React, { useEffect, useRef, useState } from 'react';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
+import useMenuAccess from '@/utils/useMenuAccess';
 import type { AccountItem, OrgNode, RoleItem } from './data.d';
 import RoleList from './rolelist';
 import { checkAccountUnique, editAccount } from './service';
@@ -81,7 +82,10 @@ const useStyles = createStyles(({ token, css }) => ({
       grid-template-columns: minmax(0, 1fr);
     }
   `,
-  audit: css`margin-block-start: ${token.marginLG}px;`,
+  audit: css`
+    margin-block-start: ${token.marginLG}px;
+    row-gap: ${token.marginLG}px;
+  `,
   status: css`
     position: absolute;
     width: 1px;
@@ -101,7 +105,37 @@ const useStyles = createStyles(({ token, css }) => ({
     > .ant-table-wrapper {
       position: absolute;
       inset: 0;
-      overflow: auto;
+      overflow: hidden;
+    }
+    > .ant-table-wrapper > .ant-spin,
+    .ant-spin-container {
+      height: 100%;
+    }
+    .ant-table {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .ant-table-title {
+      flex: none;
+    }
+    .ant-table-container {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+    .ant-table-content {
+      flex: 1;
+      min-height: 0;
+      overflow: auto !important;
+    }
+    // 只让空态填满剩余空间，真实数据行保持 small 表格的自然行高。
+    .ant-table-empty .ant-table-content > table {
+      height: 100%;
+    }
+    .ant-table-empty thead {
+      height: 1px;
     }
   `,
 }));
@@ -141,6 +175,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
           ownedIds.some((id) => !summaries.has(id))
         ? '角色信息不完整'
         : undefined;
+  const canAction = useMenuAccess('/sys/account');
   const [form] = Form.useForm<AccountFormValues>();
   const { styles } = useStyles();
   const viewReady = !detailsLoading && !detailsError && currentItem != null;
@@ -251,6 +286,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
   };
 
   const handleSaveClick = async () => {
+    if (!canAction(operateType === 'create' ? 'create' : 'update')) return;
     if (
       (operateType !== 'create' && operateType !== 'edit') ||
       detailsLoading ||
@@ -268,7 +304,11 @@ const AOEForm: React.FC<AOEFormProps> = ({
     setSubmitting(true);
     try {
       const values = await form.validateFields();
-      if (!leaveGuard.isCurrent()) return;
+      if (
+        !leaveGuard.isCurrent() ||
+        !canAction(operateType === 'create' ? 'create' : 'update')
+      )
+        return;
       // 密码 MD5 加密
       if (values.password) {
         if (values.password !== values.repassword) {
@@ -297,7 +337,11 @@ const AOEForm: React.FC<AOEFormProps> = ({
           currentItem?.locked ?? (currentItem?.frozen === 1 ? '0001' : '0000'),
       };
       const res = await editAccount(payload);
-      if (!leaveGuard.isCurrent()) return;
+      if (
+        !leaveGuard.isCurrent() ||
+        !canAction(operateType === 'create' ? 'create' : 'update')
+      )
+        return;
       if (res.success) {
         leaveGuard.release();
         msg.success(`${TITLE[operateType as 'create' | 'edit']}成功`);
@@ -307,7 +351,11 @@ const AOEForm: React.FC<AOEFormProps> = ({
         msg.error(res.message ?? '保存失败，请重试');
       }
     } catch (error) {
-      if (!leaveGuard.isCurrent()) return;
+      if (
+        !leaveGuard.isCurrent() ||
+        !canAction(operateType === 'create' ? 'create' : 'update')
+      )
+        return;
       // 表单自身显示字段校验错误；请求异常保留已填内容。
       if (!(error && typeof error === 'object' && 'errorFields' in error)) {
         msg.error('保存失败，请重试');
@@ -327,7 +375,7 @@ const AOEForm: React.FC<AOEFormProps> = ({
       closable={!closeBlocked}
       keyboard={!closeBlocked}
       onCancel={isView ? onClose : leaveGuard.requestClose}
-      open={operateType !== ''}
+      open={operateType !== '' && (!isView || canAction('read'))}
       width={1040}
       centered
       footer={
@@ -340,23 +388,25 @@ const AOEForm: React.FC<AOEFormProps> = ({
             <Button disabled={closeBlocked} onClick={leaveGuard.requestClose}>
               取消
             </Button>
-            <Button
-              type="primary"
-              loading={submitting}
-              disabled={
-                detailsLoading ||
-                Boolean(detailsError) ||
-                orgsLoading ||
-                orgsError ||
-                rolesLoading ||
-                rolesError ||
-                avatar.some((file) => file.status === 'uploading') ||
-                currentItem?.frozen === 9999
-              }
-              onClick={handleSaveClick}
-            >
-              保存
-            </Button>
+            {canAction(operateType === 'create' ? 'create' : 'update') && (
+              <Button
+                type="primary"
+                loading={submitting}
+                disabled={
+                  detailsLoading ||
+                  Boolean(detailsError) ||
+                  orgsLoading ||
+                  orgsError ||
+                  rolesLoading ||
+                  rolesError ||
+                  avatar.some((file) => file.status === 'uploading') ||
+                  currentItem?.frozen === 9999
+                }
+                onClick={handleSaveClick}
+              >
+                保存
+              </Button>
+            )}
           </Space>
         )
       }
@@ -716,7 +766,9 @@ const AOEForm: React.FC<AOEFormProps> = ({
                   ] as const
                 ).map(([label, value]) => (
                   <Col xs={24} sm={12} key={label}>
-                    <Form.Item label={label}>{textValue(value)}</Form.Item>
+                    <Form.Item label={label} style={{ marginBottom: 0 }}>
+                      {textValue(value)}
+                    </Form.Item>
                   </Col>
                 ))}
               </Row>

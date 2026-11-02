@@ -32,6 +32,9 @@ const mocks = vi.hoisted(() => ({
   queryOrgs: vi.fn(),
 }));
 vi.mock('@umijs/max', () => ({
+  useModel: () => ({
+    initialState: { currentUser: { dataPermissionEnabled: true } },
+  }),
   history: { block: mocks.block },
   useIntl: () => ({
     formatMessage: ({ defaultMessage }: { defaultMessage: string }) =>
@@ -303,3 +306,18 @@ it.each([undefined, '0001', ''])(
     expect(mocks.save).not.toHaveBeenCalled();
   },
 );
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/role': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantResource',
+      'grantUser',
+    ],
+  }),
+}));

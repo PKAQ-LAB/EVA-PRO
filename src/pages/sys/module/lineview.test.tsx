@@ -119,3 +119,17 @@ it('资源查看切回原编辑恢复字段和提交，原快照不变', async (
   });
   expect(line.resourceDesc).toBe('合法资源快照');
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+  }),
+}));

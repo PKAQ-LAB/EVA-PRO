@@ -2,6 +2,7 @@ import { Alert, Button, Skeleton, Table } from 'antd';
 import { useState } from 'react';
 import { viewRow } from '@/components/RecordView';
 import { textColumn } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import type { AccountRoleRef, RoleItem } from './data.d';
 import RoleModulesView from './rolemodulesview';
 
@@ -30,9 +31,10 @@ export default function RoleList({
   onRetryMetadata,
   onRetry,
 }: RoleListProps) {
+  const canAction = useMenuAccess('/sys/role');
   const [previewRole, setPreviewRole] = useState<RoleItem | null>(null);
   const showRole = (role: RoleItem) => {
-    if (loading) return;
+    if (loading || !canAction('read')) return;
     setPreviewRole((current) =>
       current?.id === role.id ? current : { id: role.id, name: role.name },
     );
@@ -118,7 +120,7 @@ export default function RoleList({
         ]}
         onRow={(role) => ({
           ...viewRow(() => showRole(role)),
-          tabIndex: loading ? -1 : 0,
+          tabIndex: loading || !canAction('read') ? -1 : 0,
           onKeyDown: (event) => {
             if (
               event.key === 'Enter' &&
@@ -148,7 +150,7 @@ export default function RoleList({
               }
         }
       />
-      {previewRole && (
+      {previewRole && canAction('read') && (
         <RoleModulesView
           key={previewRole.id}
           role={previewRole}

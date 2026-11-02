@@ -13,14 +13,17 @@ import {
   TextCell,
   textColumn,
 } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import { type OnlineUserItem, queryOnlineUsers } from './service';
 
 const fmt = (val?: string) =>
   val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '-';
 
 const OnlinePage: React.FC = () => {
+  const canAction = useMenuAccess('/log/online');
   const view = useRecordView<Omit<OnlineUserItem, 'token'>>();
-  const showMetadata = (record: OnlineUserItem) =>
+  const showMetadata = (record: OnlineUserItem) => {
+    if (!canAction('read')) return;
     view.show({
       id: record.id,
       account: record.account,
@@ -30,10 +33,11 @@ const OnlinePage: React.FC = () => {
       issuedAt: record.issuedAt,
       expireAt: record.expireAt,
     });
+  };
   const { message } = App.useApp();
 
   const copyToken = async (token?: string) => {
-    if (!token) return;
+    if (!token || !canAction('list')) return;
     try {
       await navigator.clipboard.writeText(token);
       message.success('token 已复制到剪贴板');
@@ -106,9 +110,16 @@ const OnlinePage: React.FC = () => {
       ...actionColumn(100),
       render: (_, record) => (
         <ActionGroup>
-          <Button type="link" size="small" onClick={() => showMetadata(record)}>
-            查看
-          </Button>
+          {canAction('read') && (
+            <Button
+              type="link"
+              size="small"
+              disabled={!canAction('read')}
+              onClick={() => showMetadata(record)}
+            >
+              查看
+            </Button>
+          )}
         </ActionGroup>
       ),
     },
@@ -125,7 +136,9 @@ const OnlinePage: React.FC = () => {
         rowKey="id"
         rowSelection={{}}
         request={async (params) => {
+          if (!canAction('list')) return { data: [], total: 0, success: false };
           const res = await queryOnlineUsers(params);
+          if (!canAction('list')) return { data: [], total: 0, success: false };
           return {
             data: res?.data ?? [],
             total: res?.total ?? 0,
@@ -143,7 +156,7 @@ const OnlinePage: React.FC = () => {
         title="在线用户明细"
         closable={{ placement: 'end' }}
         width={600}
-        open={view.open}
+        open={view.open && canAction('read')}
         onClose={view.close}
         destroyOnHidden
       >

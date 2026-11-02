@@ -1,6 +1,7 @@
 import { Alert, Button, Empty, Modal, Skeleton, Space, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { TextCell, textColumn } from '@/components/TablePresentation';
+import useMenuAccess from '@/utils/useMenuAccess';
 import type { RoleModuleNode, RoleModuleResponse } from '../role/data.d';
 import { listRoleModules } from '../role/service';
 import type { RoleItem } from './data.d';
@@ -45,6 +46,7 @@ export default function RoleModulesView({
   role: RoleItem;
   onClose: () => void;
 }) {
+  const canAction = useMenuAccess('/sys/role');
   const [state, setState] = useState<{
     loading: boolean;
     records: GrantedNode[];
@@ -56,7 +58,7 @@ export default function RoleModulesView({
     let active = true;
     setState({ loading: true, records: [] });
     setExpandedKeys([]);
-    if (!roleId?.trim()) {
+    if (!roleId?.trim() || !canAction('read')) {
       setState({
         loading: false,
         records: [],
@@ -68,7 +70,7 @@ export default function RoleModulesView({
     }
     void listRoleModules(roleId)
       .then((response) => {
-        if (!active) return;
+        if (!active || !canAction('read')) return;
         if (response.success !== true || !response.data) throw new Error();
         const records = grantedTree(response.data);
         const parentKeys = (nodes: GrantedNode[]): string[] =>
@@ -81,7 +83,7 @@ export default function RoleModulesView({
         setState({ loading: false, records });
       })
       .catch((error: unknown) => {
-        if (!active) return;
+        if (!active || !canAction('read')) return;
         const status = (error as { response?: { status?: number } } | undefined)
           ?.response?.status;
         setState({
@@ -96,7 +98,7 @@ export default function RoleModulesView({
     return () => {
       active = false;
     };
-  }, [roleId]);
+  }, [roleId, canAction]);
 
   return (
     <Modal

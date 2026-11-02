@@ -5,7 +5,7 @@ import {
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { useQuery } from '@tanstack/react-query';
-import { useIntl } from '@umijs/max';
+import { useIntl, useModel } from '@umijs/max';
 import {
   Alert,
   App,
@@ -16,7 +16,7 @@ import {
   type TableColumnsType,
 } from 'antd';
 import clsx from 'clsx';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useId, useMemo, useRef, useState } from 'react';
 import IconMap from '@/appicon';
 import { useRecordView, viewRow } from '@/components/RecordView';
 import {
@@ -31,6 +31,7 @@ import {
   getDeleteBlockers,
   getSiblingMove,
 } from '@/utils/treeOperations';
+import useMenuAccess from '@/utils/useMenuAccess';
 import { frozenText } from '../status';
 import ModuleAOEForm, { type OperateType } from './aoeform';
 import type { ModuleItem } from './data.d';
@@ -45,12 +46,27 @@ import {
 const { Search } = Input;
 
 const SysModulePage: React.FC = () => {
+  const canAction = useMenuAccess('/sys/module');
+  const { initialState } = useModel('@@initialState');
+  const queryScope = useId();
+  const queryIdentity = useRef({ user: initialState?.currentUser, version: 0 });
+  if (queryIdentity.current.user !== initialState?.currentUser)
+    queryIdentity.current = {
+      user: initialState?.currentUser,
+      version: queryIdentity.current.version + 1,
+    };
   const intl = useIntl();
   const view = useRecordView<ModuleItem>();
   const handleView = (record: ModuleItem) => {
+    if (!canAction('read')) return;
     setCurrentItem({ id: record.id });
     setOperateType('view');
-    void view.read(record.id, () => getModule(record.id));
+    void view.read(record.id, async () => {
+      if (!canAction('read')) throw new Error('无权限');
+      const res = await getModule(record.id);
+      if (!canAction('read')) throw new Error('权限已变更');
+      return res;
+    });
   };
   const { message: msg, modal } = App.useApp();
   const [operateType, setOperateType] = useState<OperateType>('');
@@ -61,9 +77,12 @@ const SysModulePage: React.FC = () => {
   const [statusId, setStatusId] = useState<string | null>(null);
 
   const modulesQuery = useQuery<ModuleItem[]>({
-    queryKey: ['sys', 'modules'],
+    queryKey: ['sys', 'modules', queryScope, queryIdentity.current.version],
+    enabled: canAction('list'),
     queryFn: async () => {
+      if (!canAction('list')) throw new Error('无列表权限');
       const res = await queryModules();
+      if (!canAction('list')) throw new Error('权限已变更');
       return (res?.data ?? []) as ModuleItem[];
     },
   });
@@ -84,6 +103,7 @@ const SysModulePage: React.FC = () => {
   const parentLocked = (record: ModuleItem) =>
     findTreeNode(allData, record.parentId)?.frozen === 1;
   const handleStatus = (record: ModuleItem) => {
+    if (!canAction('freeze')) return;
     if (
       statusBusy.current ||
       record.frozen === 9999 ||
@@ -102,6 +122,10 @@ const SysModulePage: React.FC = () => {
       setStatusId(null);
     };
     const submit = async () => {
+      if (!canAction('freeze')) {
+        release();
+        return;
+      }
       try {
         const res = await switchModuleStatus(
           record.id,
@@ -133,6 +157,7 @@ const SysModulePage: React.FC = () => {
   };
 
   const handleAdd = (record?: ModuleItem) => {
+    if (!canAction('create')) return;
     view.close();
     setCurrentItem(
       record ? { parentId: record.id, routeUrl: record.routeUrl ?? '' } : {},
@@ -141,16 +166,23 @@ const SysModulePage: React.FC = () => {
   };
 
   const handleEdit = (record: ModuleItem) => {
+    if (!canAction('update')) return;
     if (!record.id) {
       modal.warning({ title: '提示', content: '没有选择记录' });
       return;
     }
     setCurrentItem({ id: record.id });
     setOperateType('edit');
-    void view.read(record.id, () => getModule(record.id));
+    void view.read(record.id, async () => {
+      if (!canAction('update')) throw new Error('无权限');
+      const res = await getModule(record.id);
+      if (!canAction('update')) throw new Error('权限已变更');
+      return res;
+    });
   };
 
   const handleDelete = async (record: ModuleItem) => {
+    if (!canAction('delete')) return;
     const [blockItem] = getDeleteBlockers(allData, [record.id]);
     if (blockItem) {
       msg.error(`错误：[${record.name}] 存在子节点，无法删除`);
@@ -164,6 +196,7 @@ const SysModulePage: React.FC = () => {
   };
 
   const handleBatchDelete = async () => {
+    if (!canAction('delete')) return;
     const [blockItem] = getDeleteBlockers(allData, selectedRowKeys);
     if (blockItem) {
       msg.error(`错误：[${blockItem.name}] 存在子节点，无法删除`);
@@ -199,6 +232,7 @@ const SysModulePage: React.FC = () => {
   };
 
   const handleSort = async (record: ModuleItem, direction: 'up' | 'down') => {
+    if (!canAction('sort')) return;
     const move = getSiblingMove(allData, record.id, direction);
     if (!move) return;
     const res = await sortModules({
@@ -236,7 +270,7 @@ const SysModulePage: React.FC = () => {
       width: 150,
       align: 'right',
       render: (text, record) => {
-        if (searchName) return text;
+        if (searchName || !canAction('sort')) return text;
         const moveDown = getSiblingMove(allData, record.id, 'down');
         const moveUp = getSiblingMove(allData, record.id, 'up');
         return (
@@ -285,40 +319,70 @@ const SysModulePage: React.FC = () => {
       ...actionColumn(300),
       render: (_, record) => (
         <ActionGroup>
-          <Button type="link" size="small" onClick={() => handleView(record)}>
-            查看
-          </Button>
-          <a onClick={() => handleAdd(record)}>添加下级</a>
-          <Divider type="vertical" />
-          <a onClick={() => handleEdit(record)}>编辑</a>
-          {record.frozen !== 9999 && record.status !== '9999' && (
+          {canAction('read') && (
             <Button
               type="link"
               size="small"
-              loading={statusId === record.id}
-              disabled={
-                statusId !== null ||
-                (record.frozen === 1 && parentLocked(record))
-              }
-              title={
-                record.frozen === 1 && parentLocked(record)
-                  ? '请先解锁上级模块'
-                  : undefined
-              }
-              onClick={() => handleStatus(record)}
+              disabled={!canAction('read')}
+              onClick={() => handleView(record)}
             >
-              {record.frozen === 1 ? '解锁' : '锁定'}
+              查看
             </Button>
           )}
+          {canAction('create') && (
+            <Button
+              type="link"
+              size="small"
+              disabled={!canAction('create')}
+              onClick={() => handleAdd(record)}
+            >
+              添加下级
+            </Button>
+          )}
+          <Divider type="vertical" />
+          {canAction('update') && (
+            <Button
+              type="link"
+              size="small"
+              disabled={!canAction('update')}
+              onClick={() => handleEdit(record)}
+            >
+              编辑
+            </Button>
+          )}
+          {record.frozen !== 9999 &&
+            record.status !== '9999' &&
+            canAction('freeze') && (
+              <Button
+                type="link"
+                size="small"
+                loading={statusId === record.id}
+                disabled={
+                  !canAction('freeze') ||
+                  statusId !== null ||
+                  (record.frozen === 1 && parentLocked(record))
+                }
+                title={
+                  record.frozen === 1 && parentLocked(record)
+                    ? '请先解锁上级模块'
+                    : undefined
+                }
+                onClick={() => handleStatus(record)}
+              >
+                {record.frozen === 1 ? '解锁' : '锁定'}
+              </Button>
+            )}
           {record.status !== '9999' && record.status !== '0000' && (
             <>
               <Divider type="vertical" />
-              <a
-                className="eva-delete-link"
-                onClick={() => confirmDelete(record)}
-              >
-                删除
-              </a>
+              {canAction('delete') && (
+                <a
+                  className="eva-delete-link"
+                  onClick={() => confirmDelete(record)}
+                >
+                  删除
+                </a>
+              )}
             </>
           )}
         </ActionGroup>
@@ -334,20 +398,29 @@ const SysModulePage: React.FC = () => {
     >
       <div className="eva-ribbon">
         <div>
-          <Button
-            icon={<PlusOutlined />}
-            type="primary"
-            onClick={() => handleAdd()}
-            loading={modulesQuery.isLoading}
-          >
-            新增模块
-          </Button>
+          {canAction('create') && (
+            <Button
+              icon={<PlusOutlined />}
+              type="primary"
+              disabled={!canAction('create')}
+              onClick={() => handleAdd()}
+              loading={modulesQuery.isLoading}
+            >
+              新增模块
+            </Button>
+          )}
           {selectedRowKeys.length > 0 && (
             <>
               <Divider type="vertical" />
-              <Button danger onClick={confirmBatchDelete}>
-                删除模块
-              </Button>
+              {canAction('delete') && (
+                <Button
+                  danger
+                  disabled={!canAction('delete')}
+                  onClick={confirmBatchDelete}
+                >
+                  删除模块
+                </Button>
+              )}
             </>
           )}
         </div>

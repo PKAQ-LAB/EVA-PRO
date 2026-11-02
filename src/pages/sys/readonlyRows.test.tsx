@@ -38,7 +38,7 @@ vi.mock('antd', async (importOriginal) => ({
   Table: (props: TableProps) => captureTable(props),
 }));
 vi.mock('@umijs/max', () => ({
-  useAccess: () => ({ canRequest: () => true }),
+  useAccess: () => ({ canAction: () => true }),
   useIntl: () => ({
     formatMessage: ({ defaultMessage }: { defaultMessage: string }) =>
       defaultMessage,
@@ -373,6 +373,7 @@ describe('系统列表只读行分类', () => {
         );
       } else {
         mocks.listRoleModules.mockResolvedValue({
+          success: true,
           data: { modules: [{ id: 'module', name: '模块' }], checked: [] },
         });
         const { default: Page } = await vi.importActual<
@@ -389,3 +390,40 @@ describe('系统列表只读行分类', () => {
     },
   );
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/account': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantRole',
+    ],
+    '/sys/role': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantResource',
+      'grantUser',
+    ],
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+    '/sys/organization': ['list', 'read', 'create', 'update', 'delete', 'sort'],
+    '/log/online': ['list', 'read'],
+    '/log/biz': ['list', 'read'],
+    '/log/error': ['list', 'read'],
+  }),
+}));

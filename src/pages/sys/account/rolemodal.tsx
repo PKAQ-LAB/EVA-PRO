@@ -8,6 +8,7 @@ import {
   type TransferProps,
 } from 'antd';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import useMenuAccess from '@/utils/useMenuAccess';
 import type { AccountItem, RoleItem } from './data.d';
 import { grantAccountRoles } from './service';
 
@@ -44,6 +45,7 @@ const RoleModal: React.FC<RoleModalProps> = ({
   rolesError = false,
   onRetryRoles,
 }) => {
+  const canAction = useMenuAccess('/sys/account');
   const { message } = App.useApp();
   const [saving, setSaving] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
@@ -95,6 +97,7 @@ const RoleModal: React.FC<RoleModalProps> = ({
   }));
 
   const handleSubmit = async () => {
+    if (!canAction('grantRole')) return;
     if (unavailable || savingRef.current) return;
     const request = session.current;
     savingRef.current = true;
@@ -104,7 +107,7 @@ const RoleModal: React.FC<RoleModalProps> = ({
         targetId,
         selectedRoles.map((id) => ({ id })),
       );
-      if (request !== session.current) return;
+      if (request !== session.current || !canAction('grantRole')) return;
       if (res.success) {
         message.success('授权成功');
         onClose();
@@ -126,7 +129,7 @@ const RoleModal: React.FC<RoleModalProps> = ({
 
   return (
     <Modal
-      open={open}
+      open={open && canAction('grantRole')}
       title="选择授权角色"
       okText="确定"
       cancelText="关闭"
@@ -134,7 +137,9 @@ const RoleModal: React.FC<RoleModalProps> = ({
       width="45%"
       centered
       confirmLoading={saving}
-      okButtonProps={{ disabled: unavailable || saving }}
+      okButtonProps={{
+        disabled: !canAction('grantRole') || unavailable || saving,
+      }}
       cancelButtonProps={{ disabled: saving }}
       closable={!saving}
       keyboard={!saving}

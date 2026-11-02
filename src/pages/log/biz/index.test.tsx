@@ -173,3 +173,11 @@ it.each([false, true])(
     );
   },
 );
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/log/online': ['list', 'read'],
+    '/log/biz': ['list', 'read'],
+    '/log/error': ['list', 'read'],
+  }),
+}));

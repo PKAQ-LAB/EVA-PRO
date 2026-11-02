@@ -86,6 +86,7 @@ const ModuleLineList: React.FC<ModuleLineListProps> = ({
 
   const columns: TableColumnsType<ModuleResource> = [
     textColumn<ModuleResource>('资源描述', 'resourceDesc', 220),
+    textColumn<ModuleResource>('动作标识', 'actionKey', 180),
     textColumn<ModuleResource>('资源路径', 'resourceUrl', 300),
     {
       title: '资源类型',

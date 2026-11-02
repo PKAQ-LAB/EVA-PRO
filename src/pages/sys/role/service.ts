@@ -46,7 +46,22 @@ export const getRole = (id: string) =>
     .get<{ data?: RoleItem; success?: boolean }>(APIS.ROLE_GET, id)
     .then((res) => ({ ...res, data: res.data && normalizeRole(res.data) }));
 
-export const saveRole = async (data: Partial<RoleItem>) => {
+export const saveRole = async (
+  data: Partial<RoleItem>,
+  dataPermissionEnabled = true,
+) => {
+  if (dataPermissionEnabled === false) {
+    const body = { ...data };
+    delete body.dataScope;
+    delete body.dataOrgIds;
+    delete body.dataPostIds;
+    delete body.dataPermissionType;
+    delete body.dataPermissionDeptid;
+    return http.post<MutationResult>(APIS.ROLE_SAVE, {
+      ...body,
+      frozen: normalizeFrozen(body.frozen),
+    });
+  }
   const dataScope = Object.hasOwn(data, 'dataScope')
     ? data.dataScope
     : data.dataPermissionType;

@@ -16,6 +16,7 @@ export type OperateType = '' | 'create' | 'edit' | 'view';
 
 export interface DictAOEFormProps {
   canWrite?: () => boolean;
+  writeVisible?: boolean;
   operateType: OperateType;
   setOperateType: (v: OperateType) => void;
   currentItem: Partial<DictItem>;
@@ -45,6 +46,7 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
   onDirtyChange,
   onBusyChange,
   canWrite: canMaintain = () => false,
+  writeVisible = true,
 }) => {
   const [form] = Form.useForm<DictItem>();
   const { message: msg } = App.useApp();
@@ -165,14 +167,16 @@ const DictAOEForm: React.FC<DictAOEFormProps> = ({
         <Card
           title={`${TITLE[operateType as 'create' | 'edit' | 'view'] ?? ''}字典信息`}
           extra={
-            <Button
-              loading={submitting}
-              type="primary"
-              onClick={handleSaveClick}
-              disabled={isReadOnly}
-            >
-              保存
-            </Button>
+            writeVisible && (
+              <Button
+                loading={submitting}
+                type="primary"
+                onClick={handleSaveClick}
+                disabled={isReadOnly}
+              >
+                保存
+              </Button>
+            )
           }
         >
           <Row gutter={16}>

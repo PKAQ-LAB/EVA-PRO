@@ -9,7 +9,10 @@ const mocks = vi.hoisted(() => ({
   editModule: vi.fn(),
 }));
 
-vi.mock('@umijs/max', () => ({ history: { block: () => vi.fn() } }));
+vi.mock('@umijs/max', () => ({
+  useModel: () => ({}),
+  history: { block: () => vi.fn() },
+}));
 
 vi.mock('@/components', () => ({
   IconSelect: ({ id, value, onChange }: ComponentProps<'input'>) => (
@@ -249,3 +252,17 @@ it.each([0, 1, 12.75])(
     expect(screen.queryByText(/不是一个有效|undefined/)).toBeNull();
   },
 );
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/module': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'sort',
+    ],
+  }),
+}));

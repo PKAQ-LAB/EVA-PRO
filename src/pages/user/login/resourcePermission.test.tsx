@@ -46,9 +46,14 @@ beforeEach(() => {
   mocks.login.mockResolvedValue({
     success: true,
     resourcePermissionEnabled: false,
+    dataPermissionEnabled: true,
     data: {
       access_token: 'test-token',
-      user_info: { name: '当前身份', resourcePermissionEnabled: false },
+      user_info: {
+        name: '当前身份',
+        resourcePermissionEnabled: false,
+        dataPermissionEnabled: true,
+      },
     },
   });
 });
@@ -92,6 +97,41 @@ it.each([true, false, undefined, null, 'false'])(
     );
     expect(state.currentUser.menus).toEqual(menus);
     expect(mocks.replace).toHaveBeenCalledWith('/sys/organization');
+  },
+);
+
+it.each([true, false, undefined, null, 'false'])(
+  '数据能力登录后%s由菜单外层覆盖login及userinfo，资源能力独立',
+  async (flag) => {
+    mocks.menus.mockResolvedValue({
+      success: true,
+      resourcePermissionEnabled: false,
+      dataPermissionEnabled: flag,
+      data: [{ routeUrl: '/sys/role' }],
+    });
+    render(
+      <ConfigProvider theme={{ token: { motion: false } }}>
+        <App>
+          <Login />
+        </App>
+      </ConfigProvider>,
+    );
+    fireEvent.change(screen.getByLabelText('请输入账号'), {
+      target: { value: 'tester' },
+    });
+    fireEvent.change(screen.getByLabelText('请输入密码'), {
+      target: { value: 'test-password' },
+    });
+    submitLogin();
+    await waitFor(() => expect(mocks.setInitialState).toHaveBeenCalledOnce());
+    const update = mocks.setInitialState.mock.calls[0][0] as (
+      state: object,
+    ) => { currentUser: ResourcePermissionUser };
+    const state = update({});
+    expect(state.currentUser.dataPermissionEnabled).toBe(
+      typeof flag === 'boolean' ? flag : undefined,
+    );
+    expect(state.currentUser.resourcePermissionEnabled).toBe(false);
   },
 );
 

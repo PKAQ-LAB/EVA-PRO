@@ -1282,3 +1282,66 @@ QA 与设计独审发现原 0003 非空部门切 0006 的保存载荷仍带旧�
 用户要求指定部门/岗位右侧恢复原效果，仅撤回最近固定主窗、预占足迹、绝对定位滑出及窄屏新机制，恢复原 width={postsVisible || deptsVisible ? 1060 : 700} 与 flex 左右布局。确认仅 aoeform 引用后删除本轮 role/useStyles.ts，移除 pane 专属身份与展开属性断言，改验证原弹窗范围切换加宽；保留同 Modal/Form/input、输入焦点和草稿、取消保护及所有部门/岗位用例。aoeform 文件哈希与原 71B9 清单该输入完全一致。部门隐藏标签空片段保留，部门树原联动、岗位精确多选、0006载荷、异步防护、service和API均未回退。全局字典 A2 25 项零漂移。
 
 新冻结 .git/role-layout-restore-source-20261101.json，SHA256 E3501D4F3F55E640275588D7663100EB6A207A3EBF73CB1682E2E9998F750572，三输入及确认删除 role/useStyles.ts；旧470260侧滑候选按用户要求不再生效。13项定向测试通过，日志 .git/role-layout-restore-tests-20261101.log；Biome三项通过、aoeform AntD零问题。角色定向类型仅既有 appicon 两项与 organization 一项，本次目标零诊断，日志 .git/role-layout-restore-types-20261101.log。不全仓测试、不启服务、不写业务数据/数据库、不提交推送。源码停止写入，重槽交QA窄独验。
+
+## 2026-11-01 数据权限后台开关前端候选
+
+按用户与总控确认，关闭数据权限表示服务器不启 SQL 过滤、返回全部数据，前端不猜默认范围。新增 dataPermissionEnabled 只解析成功登录或 fetchMenus 响应外层严格布尔值；登录与刷新 normalize 显式覆盖同名字段，不能从 cookie、session、user_info 或嵌套用户回填旧 true，独立于 resourcePermissionEnabled。未更改字典身份代次、ETag、定时同步算法或资源按钮权限判断。
+
+角色新增编辑仅 true 显示范围及 0003/0006 右栏并保留原 required、ready、valid 校验；false 隐藏控件和加载占位，不请求部门岗位，组包与 saveRole 明确 false 上下文双层剔除 dataScope/dataOrgIds/dataPostIds/dataPermissionType/dataPermissionDeptid。saveRole 默认仍 true 严格验证，未让漏参放宽。未知、缺失或非布尔值隐藏选择并提示刷新、禁提交及处理器守卫；不当作 false。查看保持已有只读展示，普通左右动态宽布局及部门隐藏标签不变。新建默认 0000 空关联、编辑保原范围由后端执行，不在客户端补造。
+
+冻结 .git/role-data-capability-source-20261101.json，SHA256 B1A53413D816F66E40044FB9A90C565E035FFFFD0ACB9CA58E8C83FA49E7CF79，共 15 源码/测试输入。实际单轮八文件 137/137 用例通过，日志 .git/role-data-capability-tests-20261101.log；覆盖严格布尔/失败解析、登录刷新与缓存造假、资源判断、false 新增编辑原 0003/0006 无候选请求且五字段无提交、unknown 禁存、同表单切关草稿保留及原 scope/save/view。Biome 13 支持文件通过，services 两文件依项目忽略配置仅手动核小范围类型变化，aoeform AntD 零问题。角色与传播全覆盖定向类型仍 exit1：原 appicon 两项、organization 一项及本次纳入的 app.test 原夹具两项（cssVar:true、menus unknown[]）均在 HEAD 同码核实，非本次新增错误，未顺修；日志 .git/role-data-capability-types-20261101.log。不称全仓类型通过。
+
+相对 A2 冻结仅 services/user、app 及测试、登录及测试、role/aoeform.test 六处授权接线/夹具变更；字典 controller、模型、selector、计时、身份算法输入均零漂移。GitNexus 43/42 索引不可用，已查直接引用、唯一生产保存调用与路由。全部命令自然结束，重槽已交回后端在线窄 Gradle；前端源码停止写入交设计/QA 独审。未浏览器、服务、数据库、真实业务写入或 Git 发布。
+
+## 数据能力异步保存边界修正后的最终候选
+
+自审撤回 B1A5：编码唯一性校验尚未返回时，同身份能力从 true 变为 false 或未知，旧 handler 闭包可能继续提交。仅在 aoeform 保存最新能力 ref，validateFields 返回后与本次捕获能力比对，不一致直接停止旧提交；不改变布局、模型或合同。新增两项延迟编码校验期间 true→false、true→unknown 均零保存回归。修后仅该组件同文件 25/25 通过，日志 .git/role-data-capability-race-final-20261101.log；前轮其余七文件未变不重复整套，137/137 为前轮八文件实际结果，不冒修后单轮八文件通过。修后 scoped type 仍原五项，日志 .git/role-data-capability-final-types-20261101.log。两改动 Biome/diff 通过，源码重新停止写入，新清单仍 .git/role-data-capability-source-20261101.json，原 B1A5 不再生效，最终 SHA 以后续交付通报与清单实算为准。命令自然结束，槽交 QA 独验；未服务、真实数据或 Git 发布。
+最终冻结 SHA256：D0EEF9FD36821F9E143C38D9DFCD84AC7FA462A58C6DF4309233D73B6445E6C3，十五项输入；源码停止写入交独立验收。
+
+## 2026-11-01 独立动作 key 与 Umi Access 最终候选
+
+用户批准后将按钮授权从 HTTP 元数据迁移到单一 Umi Access canAction(menuIdentifier,key)。按稳定菜单 ID 判断；页面 routeUrl 仅精确唯一解析，/sys/user 与 /sys/account 显式别名，双有效菜单歧义拒绝，不全树搜同名 key。bootstrap resources 只接受 string[]；旧 resourceType/resourceUrl/code/通配不补动作权限。标准 list/read/create/update/delete，read 仅详情，freeze/sort/grantRole/grantResource/grantUser 为现有自定义动作；resource 开关成功严格布尔、data 开关独立。无 key 条件隐藏真实按钮、处理器复核；9999/冻结/字典分类等原业务限制继续生效。Config 保留原建设中占位不造权限；copyToken 保本地列表行为不造 HTTP 资源。
+
+原 URL 消费者组织、字典、登录日志完整迁移，账户/角色/模块/系统日志现有按钮与详情入口补齐；详情按钮、双击与 Enter 同 read 约束，编辑回填由 update 而非 read 控制。账户嵌套角色预览独立 role/read，不妨碍角色 checkbox 选择。Umi Hook 只包装既有 Access/model 与身份/loading/error/卸载失效，不新增依赖或第二授权系统；旧身份异步和遗留确认框不能借新身份继续写。组织/模块查询按页面与身份隔离，未启新的权限缓存。撤 read 时已开详情窗口关闭，写入草稿不被缺写 key 强制清空。
+
+模块资源管理仍为带 ID/code/HTTP 元数据对象，新增独立 actionKey 可选输入（标准选项+自定义），trim 空显式 null，最多64位 ^[a-z][A-Za-z0-9_]{0,63}$。保存保 ID/code，去重加 actionKey，允许同 HTTP/path 下 create/update 不同行，多 path 同 key 不折叠；角色授权继续按 resource ID。D0EEF 数据权限全部行为继续保留；相对 D0EEF 仅 resourcePermission helper、role 表单及其三个界面 fixture 为本轮授权叠加，字典同步算法和其它 capability 接线未变，stash df210 原样。
+
+实际核心首轮七文件 50通过/5失败：一处真实卸载旧确认回调回归，补 Hook mounted setup true/cleanup false 并加卸载断言；其余为新 Autocomplete 重复 combobox、undefined fixture 默认true、撤权隐藏按钮与既有错误包装文案。四文件修后37/38，最后一项按原 wrapper 错误文案单项1/1，原7文件55不同必要用例分轮收齐，未冒单轮全绿。相邻十八文件初跑因测试权限替身每render返回新函数导致 effect 循环，已停止该自有进程、保留未完成日志，不冒通过；替身按显式菜单返回稳定函数，未模拟全能管理员。两文件授权及角色预览5/5通过；重跑相邻轮184通过/8失败，八处均新字段3→4或旧native/category/readonly fixture适配，保零POST/dirty/ID/系统只读断言。四失败文件复验51通过/2失败，最后字典旧fixture两项单独2/2通过，余14绿文件不重。准确日志 action-key-core-tests/core-fixed/late-update-fixed/grant-stable-fixture/integration-fixed/adjacent-fixed/dictionary-view-fixture-fixed-20261101.log。不称单轮全仓或单轮全部247通过。
+
+生产 pnpm.cmd build 实际 exit0，utoo pack 8.744s、39 assets，日志 .git/action-key-build-20261101.log。定向类型 exit1：原 appicon2/organization1/app.test夹具2，另生成 .umi history/plugin-access 两处声明类型可移植性诊断，未手改生成文件或冒类型全绿，日志 action-key-final-types-20261101.log。最终 Biome 72 支持文件通过（services 两文件沿项目忽略），新增动作控件 AntD零问题、精确diff通过。最终只修了一处测试换行格式，生产代码与构建一致，无额外重测。清单 .git/action-key-source-20261101.json 74输入，最终SHA按交付消息与实算为准。
+
+源码停止写入，当前无重进程，交总控安排设计/QA独审与必要窄复验。没有浏览器/现场视觉验收、数据库、服务重启、密码或凭据读取、Git暂存提交推送、关机。现库尚需根任务单独获批适配，缺列或旧wide授权不在前端自动猜 CRUD。
+ACTION_KEY 最终正式清单 SHA256：71C83218A0C7BA15E2798CAD54EE0C8FAEA915620C90CBC5BEBC7953A1413774，共74输入；生产build日志SHA256：213CA3A2743E1A530B2571D4AE6D0F063B46B816A193D7A445B006840506AF37。已交设计与QA，源码停止写入。
+
+## 2026-11-02 用户表单角色表格与左侧等高候选
+
+仅局部补 account/aoeform 的角色区域高度链：原 Grid stretch 与 absolute inset 外框已跟左侧，内部 Spin/table/container/content 仍自然收缩。现 Spin 两层满高，table flex column，container/content flex剩余且 min-height0，content 内部 overflow auto；只有空表 table 高100%配自然表头，真实数据表不拉满 tbody，因此少量行仍保持 small 密度，多行内部滚动。原单列断点及 min320 保留。查看审计四字段仍在左侧原位置，audit 用 token row-gap 保留字段行距、移除 Form.Item 底 margin，最后字段视觉底线不再额外多24px。权限/API/数据/选择/交互均未改。
+
+仅另在原 aoeform.test 删除一条旧外wrapper overflow auto 的实现断言，不增加镜像CSS测试；原其它结构及行为断言保留。grant+roleAccess 两文件单轮9/9通过，原aoeform单文件12/12通过；分别为 .git/account-role-height-tests-20261102.log 与 account-role-height-form-tests-20261102.log。Biome两文件通过；AntD仅原 addonBefore 一条弃用，不升级或顺修。CSS无类型变化未重复全仓type/build。GitNexus仍43/42不兼容，直接检查调用和安装包Table/Spin层级，参考本地 Table Semantic metadata。浏览器按root要求未使用，JSDOM不承担实际几何验收，不能称现场视觉通过。
+
+原71C832的74输入仅本次两文件变化，其余72输入零漂移；原所有actionKey/dataflag/await保护及RoleList已授筛选保留，stash未操作。最小冻结 .git/account-role-height-source-20261102.json 两输入，SHA见交付通报。源码停止写入且所有测试进程自然结束，交设计/QA窄审；未重启服务、写数据库、发布或关机，用户已取消关机。
+
+## 角色等高截图反馈后的根因修正候选
+
+用户截图否定69B8几何效果，该候选只保留历史，不能按9+12 JSDOM回归声称等高通过。用当前已装antd6真实Table与Spin进行无用户数据SSR，确定根class为ant-spin，子ant-spin-container，已无ant-spin-nested-loading；旧选择器漏真实根，截断百分比高度链。实际createStyles原片段提取证明//注释正确被处理且后续rules正常产出，非吞CSS。证据.git/account-role-height-ssr-result.json保存旧CSS、spinRoots；候选JSON为account-role-height-ssr-candidate-result.json。该probe仅结构诊断，不是完整用户表单，也不提供像素证明。
+
+仅将原root高度选择器改为 > .ant-table-wrapper > .ant-spin 与原container满高，正常整理既有CSS缩进，不再扩height链。audit保留四字段/row-gap，在每个audit Form.Item内联physical marginBottom0取代逻辑marginCSS，以避默认physical margin后注入竞争。实际source SHA256 F954318F8B7BFE1564577906C66DF9379830C59A31DB15D29663F80B3C34F74D，Biome只读通过（初次仅JSX换行格式失败已修）。test仍只有旧wrapper overflow实现断言删除，没有新CSS镜像断言。本修正没有重复跑JSDOM冒几何证据；实际像素/scrollport/行高仍由总控隔离headless合成夹具检查，截止本条尚未获结果，不能称等高验收完成。源停止写入供测量，未用户Edge/Token/数据库/业务服务/包安装升级/提交推送/关机。
+
+## 真实 Spin 根修正后的最终源与验证补记
+
+最终源 F954318F8B7BFE1564577906C66DF9379830C59A31DB15D29663F80B3C34F74D 保持不动。按总控要求重新从该源的实际 createStyles 片段导出 CSS/classes，.git/account-role-height-ssr-candidate-final-result.json SHA256 6C49ABD30E9ED7F8F2713909C8FF02F54331C232AFA1C7664AAEC00AB08C09FB，roles=acss-xojf75、audit=acss-fhblzq；替代此前缩进前的class。最小两输入冻结 .git/account-role-height-source-fixed-20261102.json SHA256 A92310CFF9EF83FE8ABBCDDECC7080275A1CF5D0604AAA7DC38FE431A98F2787，实核零漂移。当前真实 aoeform 单文件12/12通过（18.43s），日志 .git/account-role-height-corrected-form-tests-20261102.log；Biome两文件通过。未重复全仓、build/type或镜像CSS断言。
+
+总控隔离 Chromium 合成组件夹具已反馈首七项几何结果：原view-empty外框456而视口93、底gap362；真实Spin根修正后视口454、外框456、gap1。查看empty/few/many/loading、新增empty/few/loading七项均左右框等高，many内部scroll=true，few/many实际行高39，未拉伸。该结果是无用户数据的组件夹具，不冒真实用户Edge现场验收。总控尚在补第八项create-many与真实rowSelection，最终八项以后续根证据为准。audit在该AntD夹具里before/after lastFieldGap均0，不能将旧截图额外24像素断言为已证逻辑margin级联根因；此前仅是假设，现明确修正。inline marginBottom0是局部明确底距保障，四字段及位置不变。
+
+本会话全部测试已自然结束，源继续停写，测量和最终验收由总控组织。未触碰用户Edge/Token/现库/业务服务/包安装升级/Git发布/关机。
+
+## 2026-11-02 开发服务恢复与现场验收边界
+
+总控已按用户授权仅重启前端8000，并反馈通过项目 node_modules/.bin/max.cmd dev 原shim恢复成功；Hidden cmd44732 → node44816 → forkedDev44404，8000 ready且HTTP200，入口为 /umi.js 和 utoopack overlay，旧生产脚本已消失。此前直接node启动因config读取@utoo/pack/package.json解析失败；本成员只读定位已有pnpm依赖路径并报告，未执行服务启动、安装或配置修改，最终恢复采用总控确认的原shim。
+
+后端9016 PID39228未动；account/aoeform源码SHA256仍为F954318F8B7BFE1564577906C66DF9379830C59A31DB15D29663F80B3C34F74D。状态更新为开发服务恢复成功、实际用户弹窗页面待验：总控Edge reload被扩展界面阻挡后停止，不能将此前隔离组件夹具结果等同现场视觉验收。本成员保持源和CSS停写，不重复启动服务。
+## 2026-11-02 用户确认与发布核对
+
+用户已明确反馈实际页面“验证可以了”，确认本次用户弹窗右侧角色表格等高修复。此反馈为用户现场验收，不冒总控自动测量；独立 Chromium 合成夹具八项几何验证与 aoeform 12 项回归另有本地证据。样式限定 account/aoeform 局部角色区域，未改全局顶层样式或依赖。
+
+用户随后授权提交 push。origin/trunk fetch 后 ahead/behind 为 0/0；74 项代码清单以既有 ACTION_KEY 清单合并最终高度两输入核对零漂移。全仓 Biome lint exit0；全仓 TypeScript exit1，保留现有图标类型、旧模板测试缺文件、app 测试夹具和 organization 返回分支等诊断，不以发布动作掩盖为全绿。GitNexus 前端索引仍存在 43/42 存储版本不兼容，已记录失败并以精确差异、冻结清单和原独立测试复核范围，不重建索引、不顺改无关源码。生产构建沿用已通过且代码一致的证据，避免再次覆盖运行中的开发产物。

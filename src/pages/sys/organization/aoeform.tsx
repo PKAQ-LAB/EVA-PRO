@@ -14,10 +14,8 @@ import {
   TreeSelect,
 } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import APIS from '@/apis';
 import useFormDialogStyles from '@/components/FormDialog/useStyles';
 import RecordAuditFields from '@/components/RecordAuditFields';
-import type { CanRequest } from '@/utils/resourcePermission';
 import {
   excludeTreeSubtree,
   findTreeNode,
@@ -30,7 +28,7 @@ import { checkOrgUnique, editOrg } from './service';
 export type OperateType = '' | 'create' | 'edit' | 'view';
 
 export interface OrgAOEFormProps {
-  canRequest: CanRequest;
+  canAction: (key: string) => boolean;
   operateType: OperateType;
   currentItem: Partial<OrgItem>;
   data: OrgItem[];
@@ -52,7 +50,7 @@ const TITLE: Record<Exclude<OperateType, ''>, string> = {
 };
 
 const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
-  canRequest,
+  canAction,
   operateType,
   currentItem,
   data,
@@ -68,8 +66,6 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
   const savingRef = useRef(false);
   const [dirty, setDirty] = useState(false);
   const isView = operateType === 'view';
-  const permissionRef = useRef(canRequest);
-  permissionRef.current = canRequest;
   const contextRef = useRef({
     operateType,
     currentItem,
@@ -90,13 +86,7 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
       !current.detailsError &&
       current.currentItem.frozen !== 9999 &&
       current.currentItem.status !== '9999' &&
-      (current.operateType !== 'edit' ||
-        permissionRef.current(
-          'GET',
-          `${APIS.ORG_GET}/${current.currentItem.id}`,
-        )) &&
-      permissionRef.current('POST', APIS.ORG_EDIT) &&
-      permissionRef.current('POST', APIS.ORG_CHECKUNIQUE)
+      canAction(current.operateType === 'create' ? 'create' : 'update')
     );
   };
   const renderValue = (value: React.ReactNode, multiline = false) => (
@@ -245,12 +235,17 @@ const OrgAOEForm: React.FC<OrgAOEFormProps> = ({
       keyboard={!submitting}
       confirmLoading={submitting}
       onCancel={isView ? onClose : leaveGuard.requestClose}
-      open={operateType !== ''}
+      open={operateType !== '' && (!isView || canAction('read'))}
       width={700}
       centered
       onOk={handleSaveClick}
       footer={isView ? <Button onClick={onClose}>关闭</Button> : undefined}
-      okButtonProps={{ disabled }}
+      okButtonProps={{
+        disabled,
+        style: !canAction(operateType === 'create' ? 'create' : 'update')
+          ? { display: 'none' }
+          : undefined,
+      }}
       cancelButtonProps={{ disabled: submitting }}
       title={`${TITLE[operateType as Exclude<OperateType, ''>] ?? '查看'}部门信息`}
     >

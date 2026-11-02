@@ -1044,3 +1044,18 @@ it('查看首帧保留字段框与骨架，加载及失败不展示旧值或成�
   expect(roleRegion).toHaveTextContent('暂无已分配角色');
   expect(writes()).toHaveLength(0);
 });
+
+vi.mock('@/utils/useMenuAccess', async () => ({
+  default: (await import('@root/tests/menuAccessFixture')).menuAccessFixture({
+    '/sys/account': [
+      'list',
+      'read',
+      'create',
+      'update',
+      'delete',
+      'freeze',
+      'grantRole',
+    ],
+    '/sys/role': ['read'],
+  }),
+}));

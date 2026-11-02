@@ -18,7 +18,7 @@ function show() {
     <ConfigProvider locale={zhCN} theme={{ token: { motion: false } }}>
       <App>
         <OrgAOEForm
-          canRequest={() => true}
+          canAction={() => true}
           operateType="create"
           currentItem={{}}
           data={[]}

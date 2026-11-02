@@ -36,6 +36,7 @@ export interface RoleListResponse {
 }
 
 export interface RoleResource {
+  actionKey?: string | null;
   id: string;
   resourceDesc: string;
   resourceUrl?: string;

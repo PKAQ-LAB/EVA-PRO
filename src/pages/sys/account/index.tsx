@@ -10,6 +10,7 @@ import { Alert, App, Button, Divider, Form, Input, Tree } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import { SideLayout } from '@/components';
 import { useRecordView } from '@/components/RecordView';
+import useMenuAccess from '@/utils/useMenuAccess';
 import AOEForm, { type OperateType } from './aoeform';
 import type { AccountItem, OrgNode, RoleItem } from './data.d';
 import AccountList, { type AccountListHandle } from './list';
@@ -37,6 +38,7 @@ function optionScope(user?: object) {
 }
 
 const SysAccountPage: React.FC = () => {
+  const canAction = useMenuAccess('/sys/account');
   const { message: msg, modal } = App.useApp();
   const [searchForm] = Form.useForm();
   const [operateType, setOperateType] = useState<OperateType>('');
@@ -65,7 +67,11 @@ const SysAccountPage: React.FC = () => {
   // 字典型数据 (orgs / roles) 走 React Query 缓存，避免每次重渲染都重拉
   const orgsQuery = useQuery<OrgNode[]>({
     queryKey: ['sys', 'orgs', scope],
-    enabled: Boolean(currentUser),
+    enabled:
+      canAction('list') ||
+      canAction('create') ||
+      canAction('update') ||
+      canAction('read'),
     queryFn: async () => {
       const res = await queryOrgs();
       return (res?.data ?? []) as OrgNode[];
@@ -75,7 +81,11 @@ const SysAccountPage: React.FC = () => {
 
   const rolesQuery = useQuery<RoleItem[]>({
     queryKey: ['sys', 'roles', scope],
-    enabled: Boolean(currentUser),
+    enabled:
+      canAction('create') ||
+      canAction('update') ||
+      canAction('grantRole') ||
+      canAction('read'),
     queryFn: async () => {
       const res = await queryRoles();
       if (res.success === false) throw new Error('角色列表加载失败');
@@ -89,8 +99,21 @@ const SysAccountPage: React.FC = () => {
 
   const refreshOptions = (includeRoles = true) => {
     if (!currentUser) return;
-    void orgsQuery.refetch();
-    if (includeRoles) void rolesQuery.refetch();
+    if (
+      canAction('list') ||
+      canAction('create') ||
+      canAction('update') ||
+      canAction('read')
+    )
+      void orgsQuery.refetch();
+    if (
+      includeRoles &&
+      (canAction('create') ||
+        canAction('update') ||
+        canAction('read') ||
+        canAction('grantRole'))
+    )
+      void rolesQuery.refetch();
   };
   const closeForm = () => {
     detailIntent.current = '';
@@ -101,7 +124,7 @@ const SysAccountPage: React.FC = () => {
   };
   const openDetail = (item: AccountItem, mode: 'view' | 'edit') => {
     const id = item.id;
-    if (!id) return;
+    if (!id || !canAction(mode === 'view' ? 'read' : 'update')) return;
     const intent = `${mode}:${id}`;
     if (detailIntent.current === intent) return;
     detailIntent.current = intent;
@@ -110,14 +133,29 @@ const SysAccountPage: React.FC = () => {
     retryingDetail.current = false;
     setOperateType(mode);
     refreshOptions(mode === 'edit');
-    void detail.read(id, () => getAccount(id));
+    void detail.read(id, async () => {
+      const res = await getAccount(id);
+      if (!canAction(mode === 'view' ? 'read' : 'update'))
+        throw new Error('权限已变更');
+      return res;
+    });
   };
   const retryDetails = () => {
     const id = detailId.current;
-    if (!id || retryingDetail.current) return;
+    if (
+      !id ||
+      retryingDetail.current ||
+      !canAction(operateType === 'view' ? 'read' : 'update')
+    )
+      return;
     retryingDetail.current = true;
     void detail
-      .read(id, () => getAccount(id))
+      .read(id, async () => {
+        const res = await getAccount(id);
+        if (!canAction(operateType === 'view' ? 'read' : 'update'))
+          throw new Error('权限已变更');
+        return res;
+      })
       .finally(() => {
         if (detailId.current === id) retryingDetail.current = false;
       });
@@ -127,6 +165,7 @@ const SysAccountPage: React.FC = () => {
 
   // 解锁/锁定
   const handleLockSwitch = async (status: '0000' | '0001') => {
+    if (!canAction('freeze')) return;
     if (selectedRowKeys.length === 0) return;
     const res = await lockAccounts(selectedRowKeys, status);
     if (res.success) {
@@ -138,6 +177,7 @@ const SysAccountPage: React.FC = () => {
 
   // 批量删除
   const handleBatchDelete = async () => {
+    if (!canAction('delete')) return;
     if (selectedRowKeys.length === 0) return;
     const res = await deleteAccounts(selectedRowKeys);
     if (res.success) {
@@ -159,6 +199,7 @@ const SysAccountPage: React.FC = () => {
   };
 
   const handleSearch = async () => {
+    if (!canAction('list')) return;
     const values = await searchForm.validateFields();
     setQuery({ ...values });
   };
@@ -173,6 +214,7 @@ const SysAccountPage: React.FC = () => {
   };
 
   const openCreate = () => {
+    if (!canAction('create')) return;
     detailIntent.current = '';
     detailId.current = '';
     previousDetail.current = null;
@@ -183,10 +225,15 @@ const SysAccountPage: React.FC = () => {
   };
 
   const readGrantDetail = (id: string) => {
+    if (!canAction('grantRole')) return;
     const request = ++grantRequest.current;
     grantReading.current = true;
     void grantDetail
-      .read(id, () => getAccount(id))
+      .read(id, async () => {
+        const res = await getAccount(id);
+        if (!canAction('grantRole')) throw new Error('权限已变更');
+        return res;
+      })
       .finally(() => {
         if (grantRequest.current === request) grantReading.current = false;
       });
@@ -200,6 +247,7 @@ const SysAccountPage: React.FC = () => {
     setCurrentItem(null);
   };
   const openRoleModal = (item: AccountItem) => {
+    if (!canAction('grantRole')) return;
     if (!item.id || grantTarget.current === item.id) return;
     grantTarget.current = item.id;
     setCurrentItem(item);
@@ -220,33 +268,48 @@ const SysAccountPage: React.FC = () => {
     >
       <div className="eva-ribbon">
         <div>
-          <Button type="primary" onClick={openCreate}>
-            新增用户
-          </Button>
+          {canAction('create') && (
+            <Button
+              type="primary"
+              disabled={!canAction('create')}
+              onClick={openCreate}
+            >
+              新增用户
+            </Button>
+          )}
           {selectedRowKeys.length > 0 && (
             <>
               <Divider type="vertical" />
-              <Button
-                danger
-                icon={<DeleteOutlined />}
-                onClick={confirmBatchDelete}
-              >
-                删除用户
-              </Button>
+              {canAction('delete') && (
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  disabled={!canAction('delete')}
+                  onClick={confirmBatchDelete}
+                >
+                  删除用户
+                </Button>
+              )}
               <Divider type="vertical" />
-              <Button
-                icon={<LockOutlined />}
-                onClick={() => handleLockSwitch('0001')}
-              >
-                锁定
-              </Button>
+              {canAction('freeze') && (
+                <Button
+                  icon={<LockOutlined />}
+                  disabled={!canAction('freeze')}
+                  onClick={() => handleLockSwitch('0001')}
+                >
+                  锁定
+                </Button>
+              )}
               <Divider type="vertical" />
-              <Button
-                icon={<UnlockOutlined />}
-                onClick={() => handleLockSwitch('0000')}
-              >
-                解锁
-              </Button>
+              {canAction('freeze') && (
+                <Button
+                  icon={<UnlockOutlined />}
+                  disabled={!canAction('freeze')}
+                  onClick={() => handleLockSwitch('0000')}
+                >
+                  解锁
+                </Button>
+              )}
             </>
           )}
         </div>
@@ -267,13 +330,17 @@ const SysAccountPage: React.FC = () => {
               <Input placeholder="输入手机号搜索" />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
+              {canAction('list') && (
+                <Button type="primary" htmlType="submit">
+                  查询
+                </Button>
+              )}
               <Divider type="vertical" />
-              <Button htmlType="button" onClick={handleReset}>
-                重置
-              </Button>
+              {canAction('list') && (
+                <Button htmlType="button" onClick={handleReset}>
+                  重置
+                </Button>
+              )}
             </Form.Item>
           </Form>
         </div>
