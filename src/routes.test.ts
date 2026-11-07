@@ -32,8 +32,8 @@ describe('实际Umi路由匹配', () => {
     expect(matchRoutes([{ path: '*' }], '/account/settings')).not.toBeNull();
   });
   it.each([
-    ['/account/settings', './exception/404'],
-    ['/not-a-registered-page/deep', './exception/404'],
+    ['/account/settings', '@/components/Exception/404'],
+    ['/not-a-registered-page/deep', '@/components/Exception/404'],
     ['/', './index'],
     ['/user/login', './user/login'],
     ['/sys/account', './sys/account'],
@@ -47,7 +47,7 @@ describe('实际Umi路由匹配', () => {
     ['/log/biz', './log/biz'],
     ['/log/error', './log/error'],
     ['/examples/tanstack', './examples/tanstack'],
-    ['/exception/403', './exception/403'],
+    ['/exception/403', '@/components/Exception/403'],
   ])('%s按实际配置匹配%s', (path, component) => {
     const matches = matchRoutes(adapt(routes), path);
     expect(matches?.at(-1)?.route.component).toBe(component);

@@ -68,12 +68,12 @@ export default [
   },
   {
     path: '/exception/403',
-    component: './exception/403',
+    component: '@/components/Exception/403',
     layout: false,
     hideInMenu: true,
   },
   {
-    component: './exception/404',
+    component: '@/components/Exception/404',
     layout: false,
     path: '*',
   },
