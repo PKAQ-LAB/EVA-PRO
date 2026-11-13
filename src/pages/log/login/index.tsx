@@ -24,6 +24,7 @@ import {
   textColumn,
 } from '@/components/TablePresentation';
 import useMenuAccess from '@/utils/useMenuAccess';
+import { formatLogTime } from '../format';
 import type { LoginLogItem, LoginLogQuery } from './data.d';
 import { getLoginLog, queryLoginLogs } from './service';
 
@@ -89,7 +90,12 @@ export default function LoginLogPage() {
     });
   };
   const columns: ProColumns<LoginLogItem>[] = [
-    textColumn<LoginLogItem>('记录时间', 'utcCreate', 190),
+    {
+      ...textColumn<LoginLogItem>('记录时间', 'utcCreate', 190),
+      render: (_, record) => (
+        <TextCell text={formatLogTime(record.utcCreate)} />
+      ),
+    },
     textColumn<LoginLogItem>('登录账号', 'account', 180),
     {
       ...textColumn<LoginLogItem>('登录类型', 'loginType', 140),
@@ -256,6 +262,10 @@ export default function LoginLogPage() {
                   />
                 ) : field === 'success' ? (
                   resultText(view.data?.success)
+                ) : field === 'utcCreate' ||
+                  field === 'lastActiveAt' ||
+                  field === 'logoutAt' ? (
+                  formatLogTime(view.data?.[field])
                 ) : (
                   String(view.data?.[field] ?? '').trim() || '—'
                 )}

@@ -6,9 +6,9 @@ export interface OnlineUserItem {
   account?: string;
   device?: string;
   version?: string;
-  loginTime?: string;
-  issuedAt?: string;
-  expireAt?: string;
+  loginTime?: string | number;
+  issuedAt?: string | number;
+  expireAt?: string | number;
   token?: string;
 }
 

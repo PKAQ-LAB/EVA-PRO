@@ -4,7 +4,6 @@ import {
   ProTable,
 } from '@ant-design/pro-components';
 import { App, Button, Descriptions, Drawer } from 'antd';
-import dayjs from 'dayjs';
 import React from 'react';
 import { useRecordView, viewRow } from '@/components/RecordView';
 import {
@@ -14,10 +13,10 @@ import {
   textColumn,
 } from '@/components/TablePresentation';
 import useMenuAccess from '@/utils/useMenuAccess';
+import { formatLogTime } from '../format';
 import { type OnlineUserItem, queryOnlineUsers } from './service';
 
-const fmt = (val?: string) =>
-  val ? dayjs(val).format('YYYY-MM-DD HH:mm:ss') : '-';
+const fmt = formatLogTime;
 
 const OnlinePage: React.FC = () => {
   const canAction = useMenuAccess('/log/online');

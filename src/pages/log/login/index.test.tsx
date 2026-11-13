@@ -85,7 +85,8 @@ it.each([false, true])(
   async (dark) => {
     render(content(dark));
     await screen.findByText('fixture-user');
-    expect(screen.getByRole('table').closest('.ant-table')).toHaveClass(
+    expect(screen.getByText('2026-10-29 12:00:00')).toBeInTheDocument();
+    expect(screen.getByText('fixture-user').closest('.ant-table')).toHaveClass(
       'ant-table-bordered',
       'ant-table-small',
     );
@@ -103,6 +104,7 @@ it.each([false, true])(
     expect(dialog).not.toHaveTextContent('PRIVATE_');
     expect(dialog).not.toHaveTextContent('创建人');
     expect(within(dialog).getByText('失败')).toBeInTheDocument();
+    expect(within(dialog).getByText('2026-10-29 12:00:00')).toBeInTheDocument();
     expect(
       mocks.request.mock.calls.filter(
         ([url]) => url === `${APIS.LOGINLOG_GET}/${fixture.id}`,
